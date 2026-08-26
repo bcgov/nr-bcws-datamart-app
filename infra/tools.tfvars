@@ -1,0 +1,14 @@
+# ========================================================================================================
+# Terraform Variables for Tools Environment -- Only static values should go here for tools specific tfvars
+# NO SECRETS OR SENSITIVE VALUES SHOULD BE STORED IN THESE FILES
+# ========================================================================================================
+
+# -----------------------------------------------------------------------------
+# App Service Configuration override for tools environment
+# -----------------------------------------------------------------------------
+app_service_sku_name_backend              = "B1" # Basic tier for development (B1, B2, B3, S1, S2, S3, P1V2, P2V2, P3V2)
+enable_apim                               = false
+enable_frontdoor                          = true
+enable_container_apps                     = true
+enable_app_service_backend                = false # Disable App Service for backend in favor of Container Apps
+prevent_rg_deletion_if_contains_resources = false # Allow delete with resources in lower env

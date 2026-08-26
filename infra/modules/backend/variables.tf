@@ -1,0 +1,212 @@
+variable "api_image" {
+  description = "The Docker image for the backend API."
+  type        = string
+  nullable    = false
+}
+
+variable "app_env" {
+  description = "The deployment environment (e.g., dev, test, prod)."
+  type        = string
+  nullable    = false
+}
+
+variable "app_name" {
+  description = "The base name of the application. Used for naming Azure resources."
+  type        = string
+  nullable    = false
+}
+
+variable "app_service_sku_name_backend" {
+  description = "The SKU name for the backend App Service plan."
+  type        = string
+  nullable    = false
+}
+
+variable "app_service_plan_worker_count" {
+  description = <<-EOT
+  App Service Plan worker count (instance count).
+
+  Why this exists:
+  - The AVM App Service Plan (serverfarm) module can default to multiple workers.
+  - For Basic tiers (e.g., B1), requesting multiple workers can trigger Azure capacity/conflict errors (e.g., 409) depending on region/quota/availability.
+
+  Recommended default:
+  - Keep this at 1 for Basic SKUs unless you explicitly need more instances.
+
+  References:
+  - AVM serverfarm module: https://registry.terraform.io/modules/Azure/avm-res-web-serverfarm/azurerm/1.0.0
+  - AzureRM Service Plan worker_count: https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/service_plan#worker_count
+  EOT
+  type        = number
+  default     = 1
+
+  validation {
+    condition     = var.app_service_plan_worker_count >= 1
+    error_message = "app_service_plan_worker_count must be >= 1."
+  }
+}
+
+variable "app_service_subnet_id" {
+  description = "The subnet ID for the App Service."
+  type        = string
+  nullable    = false
+}
+
+variable "appinsights_connection_string" {
+  description = "The Application Insights connection string for monitoring."
+  type        = string
+  sensitive   = true
+  nullable    = false
+}
+
+variable "appinsights_instrumentation_key" {
+  description = "The Application Insights instrumentation key."
+  type        = string
+  sensitive   = true
+  nullable    = false
+}
+
+variable "enable_backend_autoscale" {
+  description = "Whether autoscaling is enabled for the backend App Service plan."
+  type        = bool
+  default     = true
+}
+
+variable "backend_subnet_id" {
+  description = "The subnet ID for the backend App Service."
+  type        = string
+  nullable    = false
+}
+
+variable "common_tags" {
+  description = "A map of tags to apply to resources."
+  type        = map(string)
+  default     = {}
+}
+
+variable "container_registry_url" {
+  description = "The URL of the container registry to pull images from."
+  type        = string
+  nullable    = false
+  default     = "https://ghcr.io"
+}
+
+variable "database_name" {
+  description = "The name of the PostgreSQL database."
+  type        = string
+  nullable    = false
+}
+
+variable "db_master_password" {
+  description = "The password for the PostgreSQL admin user."
+  type        = string
+  sensitive   = true
+  nullable    = false
+}
+
+
+variable "frontend_frontdoor_resource_guid" {
+  description = "The resource GUID for the Front Door service associated with the frontend App Service."
+  type        = string
+  nullable    = true
+}
+
+variable "frontend_possible_outbound_ip_addresses" {
+  description = "Possible outbound IP addresses for the frontend App Service."
+  type        = string
+  nullable    = false
+}
+
+variable "enable_frontdoor" {
+  description = "Whether Front Door is enabled. Controls backend IP restrictions for Front Door headers."
+  type        = bool
+  nullable    = false
+}
+
+variable "location" {
+  description = "The Azure region where resources will be created."
+  type        = string
+  nullable    = false
+}
+
+variable "log_analytics_workspace_id" {
+  description = "The resource ID of the Log Analytics workspace for diagnostics."
+  type        = string
+  nullable    = false
+}
+
+variable "log_level" {
+  description = "Backend Winston/Nest log level for structured application logs that can flow to Application Insights."
+  type        = string
+  default     = "info"
+
+  validation {
+    condition     = contains(["error", "warn", "info", "http", "verbose", "debug", "silly"], var.log_level)
+    error_message = "log_level must be one of: error, warn, info, http, verbose, debug, silly."
+  }
+}
+
+variable "http_access_log_mode" {
+  description = "Controls request access logging written to container stdout for LAW ingestion. Supported values: off, failures, all."
+  type        = string
+  default     = "failures"
+
+  validation {
+    condition     = contains(["off", "failures", "all"], var.http_access_log_mode)
+    error_message = "http_access_log_mode must be one of: off, failures, all."
+  }
+}
+
+variable "slow_query_log_threshold_ms" {
+  description = "Emit Prisma slow-query diagnostics to container stdout when query duration meets or exceeds this threshold in milliseconds. Set to -1 to disable."
+  type        = number
+  default     = 1000
+
+  validation {
+    condition     = var.slow_query_log_threshold_ms >= -1
+    error_message = "slow_query_log_threshold_ms must be greater than or equal to -1."
+  }
+}
+
+variable "node_env" {
+  description = "The Node.js environment (e.g., production, development)."
+  type        = string
+  default     = "production"
+}
+
+variable "postgres_host" {
+  description = "The FQDN of the PostgreSQL server."
+  type        = string
+  nullable    = false
+}
+
+variable "postgresql_admin_username" {
+  description = "The admin username for the PostgreSQL server."
+  type        = string
+  nullable    = false
+}
+
+
+variable "repo_name" {
+  description = "The repository name, used for resource naming."
+  type        = string
+  nullable    = false
+}
+
+variable "resource_group_name" {
+  description = "The name of the resource group in which to create resources."
+  type        = string
+  nullable    = false
+}
+
+variable "resource_group_id" {
+  description = "The resource ID of the resource group in which to create resources (required by avm-res-web-site's parent_id argument)."
+  type        = string
+  nullable    = false
+}
+
+variable "enable_telemetry" {
+  description = "Whether AVM modules should send telemetry."
+  type        = bool
+  default     = false
+}

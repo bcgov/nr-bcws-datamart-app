@@ -1,0 +1,21 @@
+terraform {
+  required_version = ">= 1.12.0"
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 5.0.0, < 6.0.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = ">= 3.8.1, < 4.0.0"
+    }
+    time = {
+      source  = "hashicorp/time"
+      version = ">= 0.13.1, < 1.0.0"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = ">= 3.2.4, < 4.0.0"
+    }
+  }
+}

@@ -1,0 +1,680 @@
+# -------------
+# Common Variables for Azure Infrastructure
+# -------------
+
+variable "api_image" {
+  description = "The image for the API container"
+  type        = string
+}
+
+variable "app_env" {
+  description = "Application environment (dev, test, prod)"
+  type        = string
+}
+
+variable "app_name" {
+  description = "Name of the application"
+  type        = string
+}
+
+variable "app_service_sku_name_backend" {
+  description = "SKU name for the backend App Service Plan"
+  type        = string
+  default     = "B1" # Basic tier 
+}
+
+variable "app_service_sku_name_frontend" {
+  description = "SKU name for the frontend App Service Plan"
+  type        = string
+  default     = "B1" # Basic tier 
+}
+
+variable "client_id" {
+  description = "Azure client ID for the service principal"
+  type        = string
+  sensitive   = true
+
+  validation {
+    condition     = can(regex("^[0-9a-fA-F-]{36}$", var.client_id))
+    error_message = "client_id must be a valid GUID string."
+  }
+}
+
+variable "common_tags" {
+  description = "Common tags to apply to all resources"
+  type        = map(string)
+}
+
+variable "database_name" {
+  description = "Name of the database to create"
+  type        = string
+  default     = "app"
+}
+
+
+
+variable "enable_acr" {
+  description = "Whether to create an Azure Container Registry (ACR) using the AVM module."
+  type        = bool
+  default     = false
+}
+
+variable "acr_name" {
+  description = "ACR name (5-50 lowercase alphanumeric). Required when enable_acr=true."
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = !var.enable_acr || can(regex("^[a-z0-9]{5,50}$", var.acr_name))
+    error_message = "When enable_acr=true, acr_name must be 5-50 characters, lowercase alphanumeric only (a-z, 0-9)."
+  }
+}
+
+variable "acr_sku" {
+  description = <<-EOT
+  ACR SKU (Basic, Standard, Premium).
+
+  Pricing/feature guidance:
+  - Basic: lowest cost, best for dev/test and light usage.
+  - Standard: higher throughput/limits than Basic for many production workloads.
+  - Premium: required for Private Link/private endpoints.
+
+  Official pricing: https://azure.microsoft.com/en-us/pricing/details/container-registry/#pricing
+  EOT
+  type        = string
+  default     = "Basic"
+}
+
+variable "acr_public_network_access_enabled" {
+  description = <<-EOT
+  Whether public access is permitted for the ACR.
+
+  Note (BC Gov Azure Landing Zone): public ACR and Basic SKU are allowed.
+  If you need private connectivity (Private Link/private endpoints), keep public access disabled and use Premium.
+  EOT
+  type        = bool
+  default     = true
+}
+
+variable "acr_enable_private_endpoint" {
+  description = "Whether to create a private endpoint (Private Link) for the ACR. Premium is required when enabled."
+  type        = bool
+  default     = false
+}
+variable "acr_admin_enabled" {
+  description = "Whether the admin user is enabled for the ACR."
+  type        = bool
+  default     = false
+}
+variable "enable_app_service_frontend" {
+  description = "Whether to enable the App Service frontend"
+  type        = bool
+  default     = true
+  validation {
+    # Valid when at least one ingress option is enabled.
+    condition     = var.enable_frontdoor || var.enable_app_service_frontend
+    error_message = "At least one of Frontdoor or App Service Frontend must be enabled."
+  }
+}
+variable "enable_app_service_backend" {
+  description = "Whether to enable the App Service backend (default backend hosting option)"
+  type        = bool
+  default     = true
+  validation {
+    # Valid when at least one backend hosting option is enabled.
+    condition     = var.enable_container_apps || var.enable_app_service_backend
+    error_message = "At least one of App Service Backend or Container Apps must be enabled."
+  }
+}
+variable "enable_database_migrations_aci" {
+  description = "Whether to enable the ACI for database migrations using Flyway"
+  type        = bool
+  default     = true
+}
+
+variable "flyway_image" {
+  description = "The image for the Flyway container"
+  type        = string
+}
+
+variable "frontend_image" {
+  description = "The image for the Frontend container"
+  type        = string
+}
+
+# Container Apps Configuration (optional, alongside App Service)
+variable "enable_container_apps" {
+  description = "Enable Azure Container Apps alongside App Service (optional for higher scaling needs)"
+  type        = bool
+  default     = false
+}
+
+variable "container_apps_cpu" {
+  description = "CPU allocation for Container Apps (in cores)"
+  type        = number
+  default     = 0.25
+
+  validation {
+    condition     = var.container_apps_cpu > 0
+    error_message = "container_apps_cpu must be greater than 0."
+  }
+}
+
+variable "container_apps_memory" {
+  description = "Memory allocation for Container Apps"
+  type        = string
+  default     = ".5Gi"
+
+  validation {
+    condition     = can(regex("^[0-9]+(\\.[0-9]+)?(Gi|Mi)$", var.container_apps_memory))
+    error_message = "container_apps_memory must use Mi or Gi units, e.g. 512Mi or 0.5Gi."
+  }
+}
+
+variable "container_apps_min_replicas" {
+  description = "Minimum number of replicas for Container Apps"
+  type        = number
+  default     = 0
+}
+
+variable "container_apps_max_replicas" {
+  description = "Maximum number of replicas for Container Apps"
+  type        = number
+  default     = 3
+
+  validation {
+    condition     = var.container_apps_max_replicas >= var.container_apps_min_replicas
+    error_message = "container_apps_max_replicas must be greater than or equal to container_apps_min_replicas."
+  }
+}
+
+variable "enable_frontdoor" {
+  description = "Enable Azure Front Door (set false to expose App Service directly)"
+  type        = bool
+  default     = false
+}
+
+variable "frontdoor_sku_name" {
+  description = "SKU name for the Front Door"
+  type        = string
+  default     = "Standard_AzureFrontDoor"
+
+  validation {
+    condition     = contains(["Standard_AzureFrontDoor", "Premium_AzureFrontDoor"], var.frontdoor_sku_name)
+    error_message = "frontdoor_sku_name must be Standard_AzureFrontDoor or Premium_AzureFrontDoor."
+  }
+}
+
+variable "rate_limit_duration_in_minutes" {
+  description = "Duration in minutes for Front Door rate limiting"
+  type        = number
+  default     = 1
+
+  validation {
+    condition     = var.rate_limit_duration_in_minutes >= 1 && var.rate_limit_duration_in_minutes <= 60
+    error_message = "rate_limit_duration_in_minutes must be between 1 and 60."
+  }
+}
+
+variable "rate_limit_threshold" {
+  description = "Request threshold for Front Door rate limiting (requests per duration)"
+  type        = number
+  default     = 60
+
+  validation {
+    condition     = var.rate_limit_threshold >= 1 && var.rate_limit_threshold <= 2147483647
+    error_message = "rate_limit_threshold must be between 1 and 2147483647."
+  }
+}
+
+variable "location" {
+  description = "Azure region for resources"
+  type        = string
+  default     = "Canada Central"
+}
+
+variable "log_analytics_retention_days" {
+  description = "Number of days to retain data in Log Analytics Workspace"
+  type        = number
+  default     = 30
+
+  validation {
+    condition     = var.log_analytics_retention_days >= 30 && var.log_analytics_retention_days <= 730
+    error_message = "log_analytics_retention_days must be between 30 and 730."
+  }
+}
+
+variable "log_analytics_sku" {
+  description = "SKU for Log Analytics Workspace"
+  type        = string
+  default     = "PerGB2018"
+}
+
+variable "backend_log_level" {
+  description = "Winston/Nest log level for structured backend application logs that are eligible for AppTraces export."
+  type        = string
+  default     = "info"
+
+  validation {
+    condition     = contains(["error", "warn", "info", "http", "verbose", "debug", "silly"], var.backend_log_level)
+    error_message = "backend_log_level must be one of: error, warn, info, http, verbose, debug, silly."
+  }
+}
+
+variable "backend_http_access_log_mode" {
+  description = "Controls backend request access logs written to container stdout for LAW ingestion. Supported values: off, failures, all."
+  type        = string
+  default     = "failures"
+
+  validation {
+    condition     = contains(["off", "failures", "all"], var.backend_http_access_log_mode)
+    error_message = "backend_http_access_log_mode must be one of: off, failures, all."
+  }
+}
+
+variable "backend_slow_query_log_threshold_ms" {
+  description = "Emit backend Prisma slow-query diagnostics to container stdout when query duration meets or exceeds this threshold in milliseconds. Set to -1 to disable."
+  type        = number
+  default     = 1000
+
+  validation {
+    condition     = var.backend_slow_query_log_threshold_ms >= -1
+    error_message = "backend_slow_query_log_threshold_ms must be greater than or equal to -1."
+  }
+}
+
+variable "enable_application_alerts" {
+  description = "Whether application alert resources should be created when alert recipients are configured."
+  type        = bool
+  default     = true
+}
+
+variable "application_alert_emails" {
+  description = "Email recipients for backend application alerts. If empty, PostgreSQL alert recipients are reused when available."
+  type        = list(string)
+  default     = []
+}
+
+variable "application_runtime_issue_alert_threshold" {
+  description = "Number of matching runtime failure log entries within the alert window required to trigger the backend runtime issue alert."
+  type        = number
+  default     = 2
+
+  validation {
+    condition     = var.application_runtime_issue_alert_threshold >= 1
+    error_message = "application_runtime_issue_alert_threshold must be greater than or equal to 1."
+  }
+}
+
+variable "application_database_issue_alert_threshold" {
+  description = "Number of matching database connectivity failures within the alert window required to trigger the backend database alert."
+  type        = number
+  default     = 2
+
+  validation {
+    condition     = var.application_database_issue_alert_threshold >= 1
+    error_message = "application_database_issue_alert_threshold must be greater than or equal to 1."
+  }
+}
+
+variable "backend_postgres_host_override" {
+  description = "Optional override for the backend application's PostgreSQL host. Use only when intentionally testing startup failures caused by database connectivity issues."
+  type        = string
+  default     = null
+  nullable    = true
+}
+
+variable "app_service_http_5xx_alert_threshold" {
+  description = "Total backend App Service HTTP 5xx responses in five minutes required to trigger the platform error alert."
+  type        = number
+  default     = 5
+
+  validation {
+    condition     = var.app_service_http_5xx_alert_threshold >= 1
+    error_message = "app_service_http_5xx_alert_threshold must be greater than or equal to 1."
+  }
+}
+
+variable "backend_http_5xx_alert_threshold" {
+  description = "Total backend HTTP 5xx responses in Container Apps request logs within five minutes required to trigger the backend HTTP 5xx log alert. The backend App Service remains covered by the native Http5xx metric alert."
+  type        = number
+  default     = 5
+
+  validation {
+    condition     = var.backend_http_5xx_alert_threshold >= 1
+    error_message = "backend_http_5xx_alert_threshold must be greater than or equal to 1."
+  }
+}
+
+variable "container_app_restart_alert_threshold" {
+  description = "Total backend container restarts in fifteen minutes required to trigger the restart alert."
+  type        = number
+  default     = 3
+
+  validation {
+    condition     = var.container_app_restart_alert_threshold >= 1
+    error_message = "container_app_restart_alert_threshold must be greater than or equal to 1."
+  }
+}
+
+variable "postgres_alert_emails" {
+  description = "List of email addresses to receive PostgreSQL alerts"
+  type        = list(string)
+  default     = []
+}
+
+variable "enable_postgres_alerts" {
+  description = "Enable creation of PostgreSQL metric alerts and action group"
+  type        = bool
+  default     = false
+}
+
+variable "enable_postgres_auto_grow" {
+  description = "Enable auto-grow for PostgreSQL Flexible Server storage"
+  type        = bool
+  default     = true
+}
+
+variable "postgres_backup_retention_period" {
+  description = "Backup retention period in days for PostgreSQL Flexible Server"
+  type        = number
+  default     = 7
+  validation {
+    condition     = var.postgres_backup_retention_period >= 7 && var.postgres_backup_retention_period <= 35
+    error_message = "postgres_backup_retention_period must be between 7 and 35 days (Azure Flexible Server limits)."
+  }
+}
+
+variable "postgres_diagnostic_log_categories" {
+  description = "List of PostgreSQL diagnostic log categories to enable"
+  type        = list(string)
+  default     = ["PostgreSQLLogs"]
+}
+
+variable "postgres_diagnostic_metric_categories" {
+  description = "List of PostgreSQL diagnostic metric categories to enable"
+  type        = list(string)
+  default     = ["AllMetrics"]
+}
+
+variable "postgres_enable_diagnostic_insights" {
+  description = "Enable Azure Monitor diagnostic settings for PostgreSQL server"
+  type        = bool
+  default     = true
+}
+
+variable "postgres_enable_server_logs" {
+  description = "Enable detailed PostgreSQL server logs (connections, disconnections, duration, statements)"
+  type        = bool
+  default     = true
+}
+
+variable "enable_postgres_geo_redundant_backup" {
+  description = "Enable geo-redundant backup for PostgreSQL Flexible Server"
+  type        = bool
+  default     = false
+}
+
+variable "enable_postgres_ha" {
+  description = "Enable high availability for PostgreSQL Flexible Server"
+  type        = bool
+  default     = false
+}
+
+variable "enable_postgres_is_postgis" {
+  description = "Enable PostGIS extension for PostgreSQL Flexible Server"
+  type        = bool
+  default     = false
+}
+
+variable "postgres_log_min_duration_statement_ms" {
+  description = "Sets log_min_duration_statement in ms (-1 disables; 0 logs all statements)."
+  type        = number
+  default     = 500
+  validation {
+    condition     = var.postgres_log_min_duration_statement_ms >= -1
+    error_message = "postgres_log_min_duration_statement_ms must be >= -1."
+  }
+}
+
+variable "postgres_log_statement_mode" {
+  description = "Value for log_statement (none | ddl | mod | all). If postgres_enable_server_logs=false this is overridden to none."
+  type        = string
+  default     = "ddl"
+  validation {
+    condition     = contains(["none", "ddl", "mod", "all"], var.postgres_log_statement_mode)
+    error_message = "postgres_log_statement_mode must be one of: none, ddl, mod, all"
+  }
+}
+
+variable "postgres_maintenance_day_of_week" {
+  description = "Maintenance window day of week (0=Monday .. 6=Sunday)"
+  type        = number
+  default     = 6
+  validation {
+    condition     = var.postgres_maintenance_day_of_week >= 0 && var.postgres_maintenance_day_of_week <= 6
+    error_message = "postgres_maintenance_day_of_week must be between 0 and 6."
+  }
+}
+
+variable "postgres_maintenance_start_hour" {
+  description = "Maintenance window start hour (0-23 UTC)"
+  type        = number
+  default     = 3
+  validation {
+    condition     = var.postgres_maintenance_start_hour >= 0 && var.postgres_maintenance_start_hour <= 23
+    error_message = "postgres_maintenance_start_hour must be 0-23."
+  }
+}
+
+variable "postgres_maintenance_start_minute" {
+  description = "Maintenance window start minute (0-59)"
+  type        = number
+  default     = 0
+  validation {
+    condition     = var.postgres_maintenance_start_minute >= 0 && var.postgres_maintenance_start_minute <= 59
+    error_message = "postgres_maintenance_start_minute must be 0-59."
+  }
+}
+
+variable "enable_postgres_maintenance_window" {
+  description = "Enable a fixed maintenance window for PostgreSQL Flexible Server (controls patching & potentially backup scheduling stability)."
+  type        = bool
+  default     = false
+}
+
+variable "postgres_metric_alerts" {
+  description = "Map defining PostgreSQL metric alerts (metric_name, operator, threshold, aggregation, description)"
+  type = map(object({
+    metric_name = string
+    operator    = string
+    threshold   = number
+    aggregation = string
+    description = string
+  }))
+  default = {
+    cpu_percent = {
+      metric_name = "cpu_percent"
+      operator    = "GreaterThan"
+      threshold   = 80
+      aggregation = "Average"
+      description = "CPU > 80%"
+    }
+    storage_used = {
+      metric_name = "storage_used"
+      operator    = "GreaterThan"
+      threshold   = 85
+      aggregation = "Average"
+      description = "Storage used > 85%"
+    }
+    active_connections = {
+      metric_name = "active_connections"
+      operator    = "GreaterThan"
+      threshold   = 100
+      aggregation = "Average"
+      description = "Active connections > 100"
+    }
+  }
+}
+
+variable "postgres_pg_stat_statements_max" {
+  description = "Value for pg_stat_statements.max (number of statements tracked)."
+  type        = number
+  default     = 5000
+  validation {
+    condition     = var.postgres_pg_stat_statements_max >= 100
+    error_message = "postgres_pg_stat_statements_max must be >= 100."
+  }
+}
+
+variable "postgres_sku_name" {
+  description = "SKU name for PostgreSQL Flexible Server"
+  type        = string
+  default     = "B_Standard_B1ms"
+  validation {
+    condition     = !var.enable_postgres_ha || can(regex("^(GP_|MO_)", var.postgres_sku_name))
+    error_message = "High availability requires a General Purpose (GP_) or Memory Optimized (MO_) SKU. Change postgres_sku_name or disable enable_postgres_ha."
+  }
+}
+
+variable "postgres_standby_availability_zone" {
+  description = "Availability zone for standby replica of PostgreSQL Flexible Server"
+  type        = string
+  default     = "1"
+}
+
+variable "postgres_storage_mb" {
+  description = "Storage in MB for PostgreSQL Flexible Server"
+  type        = number
+  default     = 32768
+  validation {
+    condition     = var.postgres_storage_mb >= 32768 && var.postgres_storage_mb % 1024 == 0
+    error_message = "postgres_storage_mb must be >= 32768 and a multiple of 1024."
+  }
+}
+
+variable "postgres_track_io_timing" {
+  description = "Enable track_io_timing (true/false). Minor overhead; useful for performance diagnostics."
+  type        = bool
+  default     = true
+}
+
+variable "postgres_version" {
+  description = "Version of PostgreSQL Flexible Server"
+  type        = string
+  default     = "18"
+}
+
+variable "postgres_zone" {
+  description = "Availability zone for PostgreSQL server"
+  type        = string
+  default     = "1"
+}
+
+variable "postgresql_admin_username" {
+  description = "Administrator username for PostgreSQL server"
+  type        = string
+  default     = "pgadmin"
+}
+
+variable "repo_name" {
+  description = "Name of the repository, used for resource naming"
+  type        = string
+  default     = "quickstart-azure-containers"
+}
+
+variable "resource_group_name" {
+  description = "Name of the resource group"
+  type        = string
+}
+
+variable "subscription_id" {
+  description = "Azure subscription ID"
+  type        = string
+  sensitive   = true
+
+  validation {
+    condition     = can(regex("^[0-9a-fA-F-]{36}$", var.subscription_id))
+    error_message = "subscription_id must be a valid GUID string."
+  }
+}
+
+variable "tenant_id" {
+  description = "Azure tenant ID"
+  type        = string
+  sensitive   = true
+
+  validation {
+    condition     = can(regex("^[0-9a-fA-F-]{36}$", var.tenant_id))
+    error_message = "tenant_id must be a valid GUID string."
+  }
+}
+
+variable "use_oidc" {
+  description = "Use OIDC for authentication"
+  type        = bool
+  default     = true
+}
+
+variable "vnet_address_space" {
+  type        = string
+  description = "Address space for the virtual network, it is created by platform team"
+}
+
+variable "vnet_name" {
+  description = "Name of the existing virtual network"
+  type        = string
+}
+
+variable "vnet_resource_group_name" {
+  description = "Resource group name where the virtual network exists"
+  type        = string
+}
+
+# -------------
+# API Management Variables
+# -------------
+
+variable "enable_apim" {
+  description = "Whether to enable API Management service"
+  type        = bool
+  default     = false
+}
+
+variable "apim_publisher_name" {
+  description = "The name of the publisher/company for APIM"
+  type        = string
+  default     = "BC Government"
+}
+
+variable "apim_publisher_email" {
+  description = "The email address of the publisher/company for APIM"
+  type        = string
+  default     = "no-reply@gov.bc.ca"
+}
+
+variable "apim_sku_name" {
+  description = "The SKU of the API Management service"
+  type        = string
+  default     = "StandardV2_1" # this one or "PremiumV2" works in landing zone. `_1 ` is the capacity.
+}
+
+
+variable "apim_enable_diagnostic_settings" {
+  description = "Whether to enable diagnostic settings for the API Management service"
+  type        = bool
+  default     = true
+}
+
+variable "apim_enable_application_insights_logger" {
+  description = "Whether to enable Application Insights logger for the API Management service"
+  type        = bool
+  default     = true
+}
+
+
+variable "prevent_rg_deletion_if_contains_resources" {
+  description = "AzureRM provider feature flag: refuse to delete a resource group if Azure reports it still contains resources. Set false to allow RG deletion even when Azure-managed/auto-created resources remain (e.g., App Insights Smart Detector rules)."
+  type        = bool
+  default     = true
+}
