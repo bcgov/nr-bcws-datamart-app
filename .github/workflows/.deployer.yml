@@ -27,6 +27,32 @@ on:
         required: true
         type: string
         description: "The stack prefix to use for the resources"
+  workflow_dispatch:
+    inputs:
+      ### Required
+      environment_name:
+        description: "The name of the environment to deploy to"
+        required: true
+        default: "dev"
+        type: string
+      command:
+        description: "The terragrunt command to run"
+        required: true
+        default: "apply"
+        type: string
+      tag:
+        description: "The tag of the containers to deploy"
+        default: "latest"
+        type: string
+        required: false
+      app_env:
+        required: false
+        type: string
+        description: "The APP env separates between Azure ENV and Actual APP, since Azure dev is where PR, and TEST is deployed"
+      stack_prefix:
+        required: true
+        type: string
+        description: "The stack prefix to use for the resources"
 
 env:
   TF_VERSION: 1.12.2
