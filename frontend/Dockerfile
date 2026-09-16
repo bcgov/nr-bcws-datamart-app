@@ -4,7 +4,8 @@ FROM node:24.18.1-slim AS build
 # Copy, build static files; see .dockerignore for exclusions
 WORKDIR /app
 COPY . ./
-RUN npm run deploy
+RUN npm install
+RUN npm run build
 
 # Deploy using Caddy to host static files
 FROM caddy:2.11.4-alpine
@@ -12,7 +13,7 @@ RUN apk add --no-cache ca-certificates curl
 
 
 # Copy static files, verify Caddyfile formatting
-COPY --from=build /app/dist /srv
+COPY --from=build /app/dist/nr-bcws-datamart-app-ui/browser /srv
 COPY Caddyfile /etc/caddy/Caddyfile
 RUN caddy fmt /etc/caddy/Caddyfile
 

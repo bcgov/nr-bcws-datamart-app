@@ -7,7 +7,7 @@
 	log {
 		output stdout
 		format console
-		level {$LOG_LEVEL}
+		level INFO
 	}
 	root * /srv
 	encode zstd gzip
