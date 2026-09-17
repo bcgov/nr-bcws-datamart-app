@@ -23,7 +23,7 @@
     "@angular/platform-browser-dynamic": "^18.0.2",
     "@angular/router": "^18.0.2",
     "@bcgov/bc-sans": "^2.1.1",
-    "@bcgov/nr-ngx-component-lib": "0.0.89",
+    "@bcgov/nr-ngx-component-lib": "0.0.90",
     "@busacca/ng-pick-datetime": "12.0.0",
     "moment": "^2.30.1",
     "ngx-pagination": "^6.0.3",
