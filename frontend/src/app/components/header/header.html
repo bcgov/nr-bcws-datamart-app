@@ -1,29 +1,13 @@
-<header class="bcds-header">
-  <div class="bcds-header--container">
-    <div class="header-brand">
-        <a routerLink="/" class="logo-link"
-            aria-label="BC Wildfire Service Home"
-            (keydown.space)="navigateHome($event)">
-            <img src="assets/BCWS_H1_rgb_pos.png"
-                alt="BC Wildfire Service's logo"
-                class="bcgov-logo"/>
-        </a>
-        <div class="bcds-header--line"></div>
-        <h1 class="bcds-header--title">
-        Wildfire DataMart
-        </h1>
-    </div>
-
-    <div class="menu-container">
-        <nrcl-button
-            (click)="toggleMenu()"
-            aria-label="Menu"
-            [attr.aria-expanded]="menuOpen">
-            Menu ☰
-        </nrcl-button>
-        <app-menu
-            [open]="menuOpen">
-        </app-menu>
-    </div>
-  </div>
-</header>
+            <nrcl-application-header
+                [title]="title"
+                [homeUrl]="homeUrl"
+                [skipLinksEnabled]="skipLinksEnabled"
+                [skipLinkTarget]="skipLinkTarget"
+                [skipLinkLabel]="skipLinkLabel"
+                logoSrc="assets/BCWS_H1_rgb_pos.png"
+                logoAlt="BC Wildfire Service logo"
+                logoLinkAriaLabel="BC Wildfire Service home"
+                [showMenu]="showMenu"
+                [menuTitle]="menuTitle"
+            >
+            </nrcl-application-header>

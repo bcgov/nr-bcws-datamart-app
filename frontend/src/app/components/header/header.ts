@@ -8,6 +8,13 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent {
   menuOpen = false;
+  title = 'Wildfire DataMart'
+  homeUrl = '/'
+  skipLinksEnabled = true
+  skipLinkTarget = 'main-content'
+  skipLinkLabel = 'Skip to main content'
+  showMenu = false
+  menuTitle = "-"
 
   constructor(private router: Router) {}
 
@@ -19,4 +26,5 @@ export class HeaderComponent {
     event.preventDefault();
     this.router.navigate(['/']);
   }
+  
 }
