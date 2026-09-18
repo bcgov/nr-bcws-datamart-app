@@ -6,7 +6,17 @@ import { Router } from '@angular/router';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
+
+
+
 export class HeaderComponent {
+  private readonly routes: Record<string, string> = {
+    home: '/',
+    download: '/download-data'
+  };
+
+
+
   skipLabel = 'Skip to main content';
   logoAriaLabel = 'BC Wildfire Service logo';
   title = 'Wildfire DataMart';
@@ -64,4 +74,14 @@ export class HeaderComponent {
 
   clickSkip(): void {
   }
+
+
+onMenuItemClick(menuId: string): void {
+  const route = this.routes[menuId];
+
+  if (route) {
+    this.router.navigate([route]);
+  }
+}
+
 }

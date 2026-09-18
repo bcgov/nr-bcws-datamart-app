@@ -7,6 +7,7 @@ import { HeaderComponent } from './components/header/header.component';
 
 import { NrNgxComponentLibModule } from '@bcgov/nr-ngx-component-lib';
 import { HomeComponent } from './components/home/home.component';
+import { DownloadDataComponent } from './components/download-data/download-data.component';
 
 import { routes } from './app.routes';
 
@@ -14,7 +15,8 @@ import { routes } from './app.routes';
   declarations: [
     App,
     HeaderComponent,
-    HomeComponent
+    HomeComponent,
+    DownloadDataComponent
   ],
   imports: [
     BrowserModule,
