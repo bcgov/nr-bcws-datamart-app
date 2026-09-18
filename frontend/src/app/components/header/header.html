@@ -1,13 +1,15 @@
-            <nrcl-application-header
-                [title]="title"
-                [homeUrl]="homeUrl"
-                [skipLinksEnabled]="skipLinksEnabled"
-                [skipLinkTarget]="skipLinkTarget"
-                [skipLinkLabel]="skipLinkLabel"
-                logoSrc="assets/BCWS_H1_rgb_pos.png"
-                logoAlt="BC Wildfire Service logo"
-                logoLinkAriaLabel="BC Wildfire Service home"
-                [showMenu]="showMenu"
-                [menuTitle]="menuTitle"
-            >
-            </nrcl-application-header>
+            
+                <nrcl-application-header
+                    [title]="title"
+                    [skipLabel]="skipLabel"
+                    [logoAriaLabel]="logoAriaLabel"
+                    (clickLogo)="clickLogo()"
+                    (clickSkip)="clickSkip()"
+                >
+                    <nrcl-application-menu
+                        label="Menu"
+                        [items]="menuItems"
+                        icon = "menu"
+                    ></nrcl-application-menu>
+                </nrcl-application-header>
+         

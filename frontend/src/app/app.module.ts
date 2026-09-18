@@ -4,20 +4,20 @@ import { RouterModule } from '@angular/router';
 
 import { App } from './app';
 import { HeaderComponent } from './components/header/header';
-import { MenuComponent } from './components/menu/menu';
 
 import { NrNgxComponentLibModule } from '@bcgov/nr-ngx-component-lib';
 
 @NgModule({
   declarations: [
     App,
-    HeaderComponent,
-    MenuComponent
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot([]),
-    NrNgxComponentLibModule
+    NrNgxComponentLibModule,
+    
+    
   ],
   bootstrap: [App]
 })
