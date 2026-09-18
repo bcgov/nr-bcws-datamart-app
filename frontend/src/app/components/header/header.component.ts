@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
-  templateUrl: './header.html',
-  styleUrl: './header.scss'
+  templateUrl: './header.component.html',
+  styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
   skipLabel = 'Skip to main content';
