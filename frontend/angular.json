@@ -42,7 +42,14 @@
   },
   "configurations": {
     "production": {
-      "outputHashing": "all"
+      "outputHashing": "all",
+      "optimization": {
+        "scripts": true,
+        "styles": {
+          "minify": true,
+          "inlineCritical": false
+        }
+      }
     },
     "development": {
       "sourceMap": true,
