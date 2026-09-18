@@ -1,0 +1,16 @@
+            
+                <nrcl-application-header
+                    [title]="title"
+                    [skipLabel]="skipLabel"
+                    [logoAriaLabel]="logoAriaLabel"
+                    (clickLogo)="clickLogo()"
+                    (clickSkip)="clickSkip()"
+                >
+                    <nrcl-application-menu
+                        label="Menu"
+                        [items]="menuItems"
+                        icon = "menu"
+                        (itemClick)="onMenuItemClick($event)"
+                    ></nrcl-application-menu>
+                </nrcl-application-header>
+         
