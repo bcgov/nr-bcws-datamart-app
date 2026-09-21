@@ -10,13 +10,15 @@ import { HomeComponent } from './components/home/home.component';
 import { DownloadDataComponent } from './components/download-data/download-data.component';
 
 import { routes } from './app.routes';
+import { HomeCardComponent } from './components/home-card/home-card.component';
 
 @NgModule({
   declarations: [
     App,
     HeaderComponent,
     HomeComponent,
-    DownloadDataComponent
+    DownloadDataComponent,
+    HomeCardComponent
   ],
   imports: [
     BrowserModule,

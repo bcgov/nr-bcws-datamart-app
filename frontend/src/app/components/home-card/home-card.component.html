@@ -1,0 +1,14 @@
+<button
+    class="home-card"
+    (click)="navigate()"
+    [attr.aria-label]="title">
+
+    <div class="icon-circle">
+        <nrcl-icon>{{ icon }}</nrcl-icon>
+    </div>
+
+    <h2>{{ title }}</h2>
+
+    <p>{{ description }}</p>
+
+</button>
