@@ -23,6 +23,15 @@ locals {
       service_tag               = null
       virtual_network_subnet_id = null
       headers                   = null
+    },
+    {
+      action                    = "Deny"
+      name                      = "AllowVivid"
+      priority                  = 300
+      ip_address                = "0.0.0.0/0"
+      service_tag               = null
+      virtual_network_subnet_id = null
+      headers                   = null
     }
   ]
 }
