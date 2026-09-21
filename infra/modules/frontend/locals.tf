@@ -17,9 +17,9 @@ locals {
     ] : [
     {
       action                    = "Allow"
-      name                      = "AllowAll"
+      name                      = "AllowVivid"
       priority                  = 200
-      ip_address                = "0.0.0.0/0"
+      ip_address                = var.vivid_cidr
       service_tag               = null
       virtual_network_subnet_id = null
       headers                   = null

@@ -148,6 +148,12 @@ variable "enable_frontdoor" {
   nullable    = false
 }
 
+variable "vivid_cidr" {
+  description = "Vivid CIDR block, used to restrict access to DEV"
+  type = string
+  default = ""
+}
+
 variable "enable_telemetry" {
   description = "Whether AVM modules should send telemetry."
   type        = bool

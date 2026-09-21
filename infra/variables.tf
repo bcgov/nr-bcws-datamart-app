@@ -641,6 +641,12 @@ variable "enable_apim" {
   default     = false
 }
 
+variable "vivid_cidr" {
+  description = "Vivid CIDR block, used to limit access to DEV environment"
+  type = string
+  default = ""
+}
+
 variable "apim_publisher_name" {
   description = "The name of the publisher/company for APIM"
   type        = string
