@@ -5,13 +5,14 @@
     </section>
 
     <section class="card-grid">
-
         <app-home-card
             *ngFor="let card of cards"
             [title]="card.title"
             [description]="card.description"
-            [icon]="card.icon">
+            [icon]="card.icon"
+            [route]="card.route">
         </app-home-card>
-
     </section>
+
+    <app-footer></app-footer>
 </main>

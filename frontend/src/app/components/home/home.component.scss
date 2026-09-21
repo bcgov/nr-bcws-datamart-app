@@ -42,12 +42,15 @@ $color-datamart-hero-background: #002e4f;
 
 .card-grid {
     display: grid;
-
-    grid-template-columns: repeat(2, 1fr);
-
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
-
     padding: 48px;
+}
+
+@media (max-width: 992px) {
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {

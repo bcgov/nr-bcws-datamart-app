@@ -11,6 +11,7 @@ import { DownloadDataComponent } from './components/download-data/download-data.
 
 import { routes } from './app.routes';
 import { HomeCardComponent } from './components/home-card/home-card.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { HomeCardComponent } from './components/home-card/home-card.component';
     HeaderComponent,
     HomeComponent,
     DownloadDataComponent,
-    HomeCardComponent
+    HomeCardComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

@@ -11,41 +11,40 @@ import { Component } from '@angular/core';
 export class HomeComponent {
 
 
-
-
-
 cards = [
   {
     title: 'Search and download',
     description:
       'Select the weather stations you want data from, a date range, and the data you want to download.',
-    icon: 'search'
+    icon: 'download',
+    route: '/download-data'
   },
   {
     title: 'API options',
     description: 'Available in GraphQL and REST API.',
-    icon: 'api'
+    icon: 'api',
+    route: '/api'
   },
   {
     title: 'MCP server',
     description: 'Use your own AI tools to ask for things and get answers.',
-    icon: 'mcp-server'
+    icon: 'robot',
+    route: '/mcp-server'
   },
   {
     title: 'Weather stations',
     description: 'Explore the list of weather stations across British Columbia.',
-    icon: 'location_on'
+    icon: 'weather-station',
+    route: '/weather-stations'
   },
   {
     title: 'Data limitations',
     description:
       'Important limitations, assumptions, and interpretation notes for BC Wildfire Service weather station data.',
-    icon: 'info'
+    icon: 'info',
+    route: '/data-limitations'
   }
 ];
-
-
-
 
 
 
