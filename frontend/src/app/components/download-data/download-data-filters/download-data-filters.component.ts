@@ -5,4 +5,11 @@ import { Component } from '@angular/core';
   templateUrl: './download-data-filters.component.html',
   styleUrl: './download-data-filters.component.scss'
 })
-export class DownloadDataFiltersComponent {}
+export class DownloadDataFiltersComponent {
+
+  filtersExpanded = false;
+
+  toggleFilters(): void {
+        this.filtersExpanded = !this.filtersExpanded;
+    }
+}

@@ -32,7 +32,7 @@ export class HeaderComponent {
 		},
 		{
 			id: 'download',
-			label: 'Download Data',
+			label: 'Station Selection',
 			icon: 'get_app'
 		},
 		{

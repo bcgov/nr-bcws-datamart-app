@@ -1,50 +1,134 @@
+$header-background-color: #f1f8fe;
+$border-color: #d8d8d8;
+$text-primary-color: #2d2d2d;
+$link-color: #255a90;
+$button-background-color: #ffffff;
+
+:host {
+    display: block;
+
+    width: 100vw;
+
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+
+    background: $header-background-color;
+    border-bottom: 1px solid $border-color;
+}
+
 .download-data-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
 
-    gap: 50px;
+    width: 100%;
 
     padding: 15px 20px;
+
+    box-sizing: border-box;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+
+    gap: 30px;
+
+    width: 100%;
 }
 
 .header-content {
     display: flex;
+    align-items: center;
+
+    gap: 30px;
+}
+
+.header-text {
+    display: flex;
     flex-direction: column;
-    gap: 8px;
+    align-items: flex-start;
+}
 
-    h1 {
-        margin: 0;
+.header-text h1 {
+    margin: 0;
 
-        font-family: 'BC Sans', sans-serif;
-        font-size: 24px;
-        font-weight: 400;
-        line-height: 36px;
-    }
+    color: $text-primary-color;
 
-    p {
-        margin: 0;
+    font-family: 'BC Sans', sans-serif;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 36px;
 
-        font-family: 'BC Sans', sans-serif;
-        font-size: 16px;
-        font-weight: 400;
-        line-height: 27px;
-    }
+    font-feature-settings:
+        'liga' off,
+        'clig' off;
+}
+
+.header-text p {
+    margin: 0;
+
+    color: $text-primary-color;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 27px;
 }
 
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 16px;
+
+    gap: 20px;
 }
 
-.selected-stations-link {
-    text-decoration: none;
+.selected-stations-button {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 7px 12px;
+
+    border-radius: 2px;
+    border: 1px solid $border-color;
+    background: $button-background-color;
+
+    cursor: pointer;
+}
+
+.selected-stations-text {
+    color: $link-color;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 27px;
+
+    text-decoration-line: underline;
+}
+
+.selected-stations-button nrcl-icon {
+    color: $text-primary-color;
+}
+
+.view-data-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 @media (max-width: 992px) {
-    .download-data-header {
+    .header-content {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .header-actions {
+        flex-wrap: wrap;
+        width: 100%;
     }
 }

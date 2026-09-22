@@ -1,24 +1,46 @@
 <section class="download-data-header">
 
-    <div class="header-content">
-        <h1>Select weather stations</h1>
+    <div class="header-container">
 
-        <p>
-            Choose one or more stations to view weather data.
-        </p>
-    </div>
+        <div class="header-content">
 
-    <div class="header-actions">
-        <a>
-        
-            0 stations selected
-        </a>
+            <div class="header-text">
+                <h1>Select weather stations</h1>
 
-        <button
-            type="button"
-            class="view-data-button">
-            View data
-        </button>
+                <p>
+                    Choose one or more stations to view weather data.
+                </p>
+            </div>
+
+            <div class="header-actions">
+
+                <button
+                    type="button"
+                    class="selected-stations-button">
+
+                    <span class="selected-stations-text">
+                        0 stations selected
+                    </span>
+
+                    <nrcl-icon>
+                        chevron_right
+                    </nrcl-icon>
+
+                </button>
+
+                <nrcl-button primary>
+                    <span class="view-data-content">
+                        View data
+
+                        <nrcl-icon>
+                            arrow_forward
+                        </nrcl-icon>
+                    </span>
+                </nrcl-button>
+
+            </div>
+
+        </div>
 
     </div>
 
