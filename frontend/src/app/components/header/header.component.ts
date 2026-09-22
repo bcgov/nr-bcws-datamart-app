@@ -76,6 +76,7 @@ export class HeaderComponent {
 	}
 
 	clickSkip(): void {
+		document.getElementById('main-content')?.focus();
 	}
 
 
