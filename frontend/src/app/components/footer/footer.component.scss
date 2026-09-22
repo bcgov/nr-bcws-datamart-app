@@ -1,0 +1,49 @@
+.footer {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+}
+
+.acknowledgement {
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 32px;
+    gap: 8px;
+
+    background: #252423;
+
+    border-top: 4px solid #fbd389;
+    border-bottom: 4px solid #fbd389;
+
+    p {
+        margin: 0;
+        max-width: 1200px;
+
+        color: #ffffff;
+
+        font-family: 'BC Sans', sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 21px;
+        text-align: center;
+    }
+}
+
+.copyright {
+    padding: 16px 0;
+
+    color: #474543;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 21px;
+
+    text-align: center;
+}

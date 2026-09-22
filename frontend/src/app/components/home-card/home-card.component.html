@@ -1,0 +1,34 @@
+<a
+    *ngIf="route"
+    class="home-card"
+    [routerLink]="route"
+    [attr.aria-label]="title">
+
+    <div class="icon-circle">
+        <nrcl-icon>{{ icon }}</nrcl-icon>
+    </div>
+
+    <h2 class="home-card-title">{{ title }}</h2>
+
+    <p class="home-card-description">{{ description }}</p>
+
+
+</a>
+
+<a
+    *ngIf="externalUrl"
+    class="home-card"
+    [href]="externalUrl"
+    target="_blank"
+    rel="noopener noreferrer"
+    [attr.aria-label]="title">
+
+    <div class="icon-circle">
+        <nrcl-icon>{{ icon }}</nrcl-icon>
+    </div>
+
+    <h2 class="home-card-title">{{ title }}</h2>
+
+    <p class="home-card-description">{{ description }}</p>
+
+</a>
