@@ -105,3 +105,58 @@ $link-color: #255a90;
     padding: 0 !important;
     border-radius: 0 !important;
 }
+
+.filters-toggle-button {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 7px 12px;
+
+    border: 1px solid $border-color;
+    border-radius: 2px;
+
+    background: $background-color;
+
+    cursor: pointer;
+
+    &:hover {
+        background: $panel-background-color;
+    }
+
+    &:focus-visible {
+        outline: 3px solid var(--nrcl-application-header-focus-color);
+        outline-offset: 2px;
+    }
+}
+
+.clear-filters-button {
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
+
+    color: $link-color;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 27px;
+
+    text-decoration-line: underline;
+
+    &:hover {
+        color: #1a5a96;
+        text-decoration-thickness: 2px;
+    }
+
+    &:focus-visible {
+        outline: 3px solid var(--nrcl-application-header-focus-color);
+        outline-offset: 2px;
+
+        border-radius: 2px;
+    }
+}

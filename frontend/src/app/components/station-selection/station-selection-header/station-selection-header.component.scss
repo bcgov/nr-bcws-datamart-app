@@ -2,7 +2,10 @@ $header-background-color: #f1f8fe;
 $border-color: #d8d8d8;
 $text-primary-color: #2d2d2d;
 $link-color: #255a90;
+$link-hover-color: #1a5a96;
 $button-background-color: #ffffff;
+$button-hover-background-color: #f2f2f2;
+$button-active-background-color: #e6e6e6;
 
 :host {
     display: block;
@@ -97,6 +100,19 @@ $button-background-color: #ffffff;
     background: $button-background-color;
 
     cursor: pointer;
+
+    &:hover {
+        background: $button-hover-background-color;
+    }
+
+    &:focus-visible {
+        outline: 3px solid var(--nrcl-application-header-focus-color);
+        outline-offset: 2px;
+    }
+
+    &:active {
+        background: $button-active-background-color;
+    }
 }
 
 .selected-stations-text {
@@ -118,6 +134,7 @@ $button-background-color: #ffffff;
 .view-data-content {
     display: flex;
     align-items: center;
+
     gap: 8px;
 }
 
