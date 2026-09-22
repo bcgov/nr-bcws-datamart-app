@@ -16,7 +16,7 @@ cards = [
 		title: 'Search and download',
 		description: 'Select the weather stations you want data from, a date range, and the data you want to download.',
 		icon: 'download',
-		route: '/download-data'
+		route: '/station-selection'
 	},
 		{
 		title: 'API options',

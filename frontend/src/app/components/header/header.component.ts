@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class HeaderComponent {
 	private readonly routes: Record<string, string> = {
 		home: '/',
-		download: '/download-data'
+		download: '/station-selection'
 	};
 
 	private readonly externalLinks: Record<string, string> = {

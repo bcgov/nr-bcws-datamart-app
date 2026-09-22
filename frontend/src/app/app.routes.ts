@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
-import { DownloadDataComponent } from './components/download-data/download-data.component';
+import { StationSelectionComponent } from './components/station-selection/station-selection.component';
 
 export const routes: Routes = [
   {
@@ -8,8 +8,8 @@ export const routes: Routes = [
     component: HomeComponent
   },
   {
-    path: 'download-data',
-    component: DownloadDataComponent
+    path: 'station-selection',
+    component: StationSelectionComponent
   },
   {
     path: '**',
