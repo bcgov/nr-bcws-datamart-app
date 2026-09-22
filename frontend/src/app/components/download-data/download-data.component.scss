@@ -1,1 +1,13 @@
-/* intentionally empty */
+.download-data-content {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 16px;
+
+    margin-top: 16px;
+}
+
+@media (max-width: 992px) {
+    .download-data-content {
+        grid-template-columns: 1fr;
+    }
+}
