@@ -129,6 +129,7 @@ module "frontend" {
   appinsights_resource_id               = module.monitoring.appinsights_resource_id
   common_tags                           = var.common_tags
   enable_frontdoor                      = var.enable_frontdoor
+  vivid_cidr                            = var.vivid_cidr
   frontend_frontdoor_id                 = var.enable_frontdoor ? module.frontdoor[0].frontdoor_id : null
   frontend_frontdoor_resource_guid      = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
   frontend_image                        = var.frontend_image
