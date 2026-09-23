@@ -14,8 +14,9 @@ import { HomeCardComponent } from './components/home-card/home-card.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { StationSelectionFiltersComponent } from './components/station-selection/station-selection-filters/station-selection-filters.component';
 import { StationSelectionHeaderComponent } from './components/station-selection/station-selection-header/station-selection-header.component';
-import { StationSelectionMapComponent } from './components/station-selection/station-selection-map/station-selection-map.component';
-import { StationSelectionStationListComponent } from './components/station-selection/station-selection-station-list/station-selection-station-list.component';
+import { StationSelectionMapComponent } from './components/station-selection/station-selection-content/station-selection-map/station-selection-map.component';
+import { StationSelectionStationListComponent } from './components/station-selection/station-selection-content/station-selection-station-list/station-selection-station-list.component';
+import { StationSelectionContentComponent } from './components/station-selection/station-selection-content/station-selection-content.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { StationSelectionStationListComponent } from './components/station-selec
     StationSelectionComponent,
     StationSelectionHeaderComponent,
     StationSelectionFiltersComponent,
+    StationSelectionContentComponent,
     StationSelectionStationListComponent,
     StationSelectionMapComponent,
     HomeCardComponent,

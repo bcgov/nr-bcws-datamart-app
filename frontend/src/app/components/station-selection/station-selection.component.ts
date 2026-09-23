@@ -5,4 +5,6 @@ import { Component } from '@angular/core';
   templateUrl: './station-selection.component.html',
   styleUrl: './station-selection.component.scss'
 })
-export class StationSelectionComponent {}
+export class StationSelectionComponent {
+
+}
