@@ -88,10 +88,29 @@ $link-color: #255a90;
     text-decoration-line: underline;
 }
 
+.filter-toolbar {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+}
+
+.filter-toolbar nrcl-filter-search {
+    flex: 1;
+}
+
 @media (max-width: 992px) {
+
     .filter-toolbar {
-        flex-direction: column;
-        align-items: stretch;
+        flex-direction: row;
+        align-items: center;
+
+        gap: 12px;
+    }
+
+    .filter-toolbar nrcl-filter-search {
+        flex: 1;
+        min-width: 0;
     }
 
     .filter-actions {
@@ -99,7 +118,6 @@ $link-color: #255a90;
         align-items: flex-start;
     }
 }
-
 ::ng-deep nrcl-filters-panel {
     border: none !important;
     padding: 0 !important;
