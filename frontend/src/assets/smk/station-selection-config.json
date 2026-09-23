@@ -1,0 +1,121 @@
+
+{
+    "version": "1.2.7",
+    "name": "Wildfire DataMart",
+    "createdBy": "SMK Developer",
+    "createdDate": "2026-09-23T18:52:34.467Z",
+    "viewer": {
+        "type": "leaflet",
+        "location": {
+            "extent": [
+                -140.80078125000004,
+                61.62728646147466,
+                -108.72070312500002,
+                46.13417004624326
+            ],
+            "center": [
+                -124.76074218750003,
+                51.88072825385896
+            ],
+            "zoom": 6.0
+        },
+        "esriApiKey": "",
+        "baseMap": "BCGov"
+    },
+    "tools": [
+        {
+            "type": "toolbar",
+            "enabled": true
+        },
+        {
+            "type": "list-menu",
+            "enabled": false,
+            "title": "Wildfire DataMart"
+        },
+        {
+            "type": "pan",
+            "enabled": true
+        },
+        {
+            "type": "zoom",
+            "enabled": true
+        },
+        {
+            "type": "about",
+            "enabled": false,
+            "title": "About Wildfire DataMart",
+            "position": "list-menu",
+            "content": "<p>Welcome to SMK!</p><p>Wildfire DataMart</p>"
+        },
+        {
+            "type": "layers",
+            "enabled": false
+        },
+        {
+            "type": "baseMaps",
+            "enabled": false
+        },
+        {
+            "type": "identify",
+            "enabled": true,
+            "showPanel": true,
+            "showWidget": true,
+            "style": {
+                "strokeWidth": 1.0,
+                "strokeStyle": "1, 1",
+                "strokeColor": "#000000",
+                "strokeOpacity": 0.8,
+                "fillColor": "#000000",
+                "fillOpacity": 0.5,
+                "markerSize": [
+                    20,
+                    20
+                ],
+                "markerOffset": [
+                    10,
+                    0
+                ]
+            }
+        },
+        {
+            "type": "search",
+            "enabled": false
+        },
+        {
+            "type": "coordinate",
+            "enabled": true
+        },
+        {
+            "type": "markup",
+            "enabled": false
+        },
+        {
+            "type": "scale",
+            "enabled": false
+        },
+        {
+            "type": "minimap",
+            "enabled": false
+        },
+        {
+            "type": "directions",
+            "enabled": false
+        },
+        {
+            "type": "location",
+            "enabled": false
+        },
+        {
+            "type": "select",
+            "enabled": true
+        },
+        {
+            "type": "geomark",
+            "geomarkService": {
+                "url": "https://apps.gov.bc.ca/pub/geomark"
+            },
+            "position": "list-menu",
+            "enabled": false
+        }
+    ]
+}
