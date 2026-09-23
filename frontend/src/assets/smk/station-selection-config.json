@@ -86,7 +86,7 @@
     },
     {
       "type": "layers",
-      "enabled": true
+      "enabled": false
     },
     {
       "type": "baseMaps",

@@ -79,11 +79,43 @@ export class StationSelectionMapComponent implements AfterViewInit {
 						{
 							icon: L.divIcon({
 								className: 'weather-station-marker',
-								iconSize: [10, 10],
-								iconAnchor: [5, 5]
+								iconSize: [20, 20],
+								iconAnchor: [10, 10],
+								html: `
+									<svg width="20" height="20" viewBox="0 0 20 20">
+										<circle
+											class="station-marker-inner"
+											cx="10"
+											cy="10"
+											r="6.5"
+										/>
+										<circle
+											class="station-marker-outer"
+											cx="10"
+											cy="10"
+											r="9"
+										/>
+									</svg>
+								`
 							})
 						}
 					);
+
+					marker.on('mouseover', () => {
+						marker.getElement()?.classList.add('hover');
+					});
+
+					marker.on('mouseout', () => {
+						marker.getElement()?.classList.remove('hover');
+					});
+
+					marker.on('popupopen', () => {
+						marker.getElement()?.classList.add('active');
+					});
+
+					marker.on('popupclose', () => {
+						marker.getElement()?.classList.remove('active');
+					});
 
 					marker.feature = {
 						type: 'Feature',
