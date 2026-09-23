@@ -1,5 +1,81 @@
-<section class="station-selection-content">
-    <app-station-selection-station-list></app-station-selection-station-list>
+@if (!isMobile) {
 
-    <app-station-selection-map></app-station-selection-map>
-</section>
+    <section class="station-selection-content">
+
+        <app-station-selection-station-list>
+        </app-station-selection-station-list>
+
+        <app-station-selection-map>
+        </app-station-selection-map>
+
+    </section>
+
+}
+
+@if (isMobile) {
+
+    <section class="station-selection-mobile">
+
+        <nav
+            class="station-selection-mobile-tabs"
+            aria-label="Station selection view">
+
+            <button
+                type="button"
+                class="station-selection-tab"
+                [class.active]="activeMobileTab === 'list'"
+                (click)="activeMobileTab = 'list'">
+
+                <div class="station-selection-tab-content">
+
+                    <div class="station-selection-tab-icon">
+                        <nrcl-icon>list</nrcl-icon>
+                    </div>
+
+                    <span class="station-selection-tab-label">
+                        Find in List
+                    </span>
+
+                </div>
+
+            </button>
+
+            <button
+                type="button"
+                class="station-selection-tab"
+                [class.active]="activeMobileTab === 'map'"
+                (click)="activeMobileTab = 'map'">
+
+                <div class="station-selection-tab-content">
+
+                    <div class="station-selection-tab-icon">
+                        <nrcl-icon>location_on</nrcl-icon>
+                    </div>
+
+                    <span class="station-selection-tab-label">
+                        Find on Map
+                    </span>
+
+                </div>
+
+            </button>
+
+        </nav>
+
+        @if (activeMobileTab === 'list') {
+
+            <app-station-selection-station-list>
+            </app-station-selection-station-list>
+
+        }
+
+        @if (activeMobileTab === 'map') {
+
+            <app-station-selection-map>
+            </app-station-selection-map>
+
+        }
+
+    </section>
+
+}

@@ -104,7 +104,7 @@
     },
     {
       "type": "coordinate",
-      "enabled": true
+      "enabled": false
     },
     {
       "type": "markup",
@@ -112,7 +112,7 @@
     },
     {
       "type": "scale",
-      "enabled": true
+      "enabled": false
     },
     {
       "type": "minimap",
