@@ -1,0 +1,18 @@
+<main>
+    <section class="hero">
+    <h1 id="main-content" tabindex="-1">BC Wildfire Service Weather DataMart</h1>
+        <p> View and download hourly weather observations from more than 280 weather stations across B.C.</p>
+    </section>
+
+    <section class="card-grid">
+        <app-home-card
+            *ngFor="let card of cards"
+            [title]="card.title"
+            [description]="card.description"
+            [icon]="card.icon"
+            [route]="card.route">
+        </app-home-card>
+    </section>
+
+    <app-footer></app-footer>
+</main>

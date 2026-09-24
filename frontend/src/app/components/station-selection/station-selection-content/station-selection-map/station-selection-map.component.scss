@@ -1,0 +1,63 @@
+$station-marker-default-color: #898785;
+$station-marker-hover-color: #353433;
+$station-marker-active-color: #2e5dd7;
+$station-marker-selected-color: #1e5189;
+
+:host {
+    display: block;
+    height: 100%;
+    min-height: 0;
+}
+
+.station-selection-map {
+    height: 100%;
+}
+
+#station-map {
+    width: 100%;
+    height: 100%;
+}
+
+/* Default */
+:host ::ng-deep .station-marker-inner {
+    fill: $station-marker-default-color;
+    stroke: $station-marker-default-color;
+}
+
+:host ::ng-deep .station-marker-outer {
+    fill: none;
+    stroke: $station-marker-default-color;
+    stroke-width: 2;
+}
+
+/* Hover */
+:host ::ng-deep .weather-station-marker.hover:not(.active):not(.selected)
+    .station-marker-inner {
+    fill: $station-marker-hover-color;
+    stroke: $station-marker-hover-color;
+}
+
+:host ::ng-deep .weather-station-marker.hover:not(.active):not(.selected)
+    .station-marker-outer {
+    stroke: $station-marker-hover-color;
+}
+
+/* Active (popup open) */
+:host ::ng-deep .weather-station-marker.active .station-marker-inner {
+    fill: $station-marker-active-color;
+    stroke: $station-marker-active-color;
+}
+
+:host ::ng-deep .weather-station-marker.active .station-marker-outer {
+    stroke: $station-marker-active-color;
+}
+
+/* Selected (future station selection ticket) */
+:host ::ng-deep .weather-station-marker.selected .station-marker-inner {
+    fill: $station-marker-selected-color;
+    stroke: $station-marker-selected-color;
+}
+
+:host ::ng-deep .weather-station-marker.selected .station-marker-outer {
+    stroke: $station-marker-selected-color;
+}

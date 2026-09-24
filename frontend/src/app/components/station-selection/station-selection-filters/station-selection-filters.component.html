@@ -1,0 +1,74 @@
+<section class="station-selection-filters">
+
+    <div class="filter-toolbar">
+
+        <button
+            type="button"
+            class="filters-toggle-button"
+            (click)="toggleFilters()">
+
+            <span>Filters</span>
+
+            <nrcl-icon>
+                {{ filtersExpanded ? 'expand_less' : 'expand_more' }}
+            </nrcl-icon>
+
+        </button>
+
+        <nrcl-filter-search
+            placeholder="Search stations">
+        </nrcl-filter-search>
+
+    </div>
+
+    @if (filtersExpanded) {
+
+        <div class="filters-outer-container">
+
+            <div class="filters-inner-container">
+
+                <nrcl-filters-panel
+                    class="filters-panel"
+                    [showClear]="false">
+
+                    <nrcl-filter-select
+                        label="Fire Centre">
+                    </nrcl-filter-select>
+
+                    <nrcl-filter-select
+                        label="Fire Zone">
+                    </nrcl-filter-select>
+
+                    <nrcl-filter-container
+                        label="Latitude">
+                        Placeholder
+                    </nrcl-filter-container>
+
+                    <nrcl-filter-container
+                        label="Longitude">
+                        Placeholder
+                    </nrcl-filter-container>
+
+                </nrcl-filters-panel>
+
+                <div class="filter-actions">
+
+                    <nrcl-button primary>
+                        Apply filters
+                    </nrcl-button>
+
+                    <button
+                        type="button"
+                        class="clear-filters-button">
+                        Clear filters
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    }
+
+</section>

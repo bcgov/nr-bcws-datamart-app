@@ -1,0 +1,138 @@
+{
+  "version": "1.2.7",
+  "name": "Wildfire DataMart",
+  "createdBy": "SMK Developer",
+
+  "viewer": {
+    "type": "leaflet",
+    "location": {
+      "extent": [
+        -140.80078125000004,
+        61.62728646147466,
+        -108.72070312500002,
+        46.13417004624326
+      ],
+      "center": [
+        -125,
+        54
+      ],
+      "zoom": 6
+    },
+    "esriApiKey": "",
+    "baseMap": "BCGov"
+  },
+
+  "layers": [
+    {
+      "type": "wms",
+      "id": "fire-centres",
+      "title": "BC Wildfire Fire Centres",
+      "isVisible": true,
+      "isQueryable": false,
+      "opacity": 0.65,
+
+      "serviceUrl": "https://openmaps.gov.bc.ca/geo/pub/wms",
+      "layerName": "pub:WHSE_LEGAL_ADMIN_BOUNDARIES.DRP_MOF_FIRE_CENTRES_SP",
+      "styleName": "3458",
+
+      "titleAttribute": "MOF_FIRE_CENTRE_NAME",
+      "geometryAttribute": "GEOMETRY",
+
+      "attributes": [
+        {
+          "name": "MOF_FIRE_CENTRE_ID",
+          "title": "Fire Centre ID",
+          "visible": true
+        },
+        {
+          "name": "MOF_FIRE_CENTRE_NAME",
+          "title": "Fire Centre Name",
+          "visible": true
+        }
+      ]
+    },
+    {
+        "type": "vector",
+        "id": "weather-stations",
+        "title": "Weather Stations",
+        "isVisible": true,
+        "isQueryable": true,
+        "titleAttribute": "stationName",
+        "dataUrl": "/assets/smk/stub.geojson"
+    }     
+  ],
+
+  "tools": [
+    {
+      "type": "toolbar",
+      "enabled": true
+    },
+    {
+      "type": "list-menu",
+      "enabled": false,
+      "title": "Wildfire DataMart"
+    },
+    {
+      "type": "pan",
+      "enabled": true
+    },
+    {
+      "type": "zoom",
+      "enabled": true
+    },
+    {
+      "type": "about",
+      "enabled": false
+    },
+    {
+      "type": "layers",
+      "enabled": false
+    },
+    {
+      "type": "baseMaps",
+      "enabled": false
+    },
+    {
+      "type": "identify",
+      "enabled": true,
+      "showPanel": true,
+      "showWidget": true
+    },
+    {
+      "type": "search",
+      "enabled": true
+    },
+    {
+      "type": "coordinate",
+      "enabled": false
+    },
+    {
+      "type": "markup",
+      "enabled": false
+    },
+    {
+      "type": "scale",
+      "enabled": false
+    },
+    {
+      "type": "minimap",
+      "enabled": false
+    },
+    {
+      "type": "directions",
+      "enabled": false
+    },
+    {
+      "type": "location",
+      "enabled": true
+    },
+    {
+      "type": "select",
+      "enabled": true
+    },
+    {
+      "type": "geomark",
+      "enabled": false
+    }
+  ]
+}
