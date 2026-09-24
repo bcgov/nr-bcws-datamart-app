@@ -58,7 +58,7 @@
         "isVisible": true,
         "isQueryable": true,
         "titleAttribute": "stationName",
-        "dataUrl": "/assets/smk/empty.geojson"
+        "dataUrl": "/assets/smk/stub.geojson"
     }     
   ],
 
