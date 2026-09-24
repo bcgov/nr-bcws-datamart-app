@@ -32,6 +32,7 @@ export class StationSelectionMapComponent implements AfterViewInit {
 
 	private async loadStations(): Promise<void> {
 
+		// temporarily hardcoded until we have a properly deployed API via the pipeline, then we can access it via an environment variable
 		const response = await fetch(
 			'https://container-app-api-yujhzooydm766.bluewater-fbba4d31.canadacentral.azurecontainerapps.io/api/weather_stations'
 		);
