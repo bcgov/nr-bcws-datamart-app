@@ -24,6 +24,12 @@
 		header_up Host {http.reverse_proxy.upstream.hostport}
 		header_up X-Real-IP {remote_host}
 	}
+
+	# 'unsafe-eval', Required by BCGov SMK/Turf runtime.
+	# Without 'unsafe-eval', turf-6.5.0.min.js fails CSP checks when it uses
+	# dynamic function generation, leaving window.turf empty and causing SMK
+	# vector layers (e.g. weather-stations) to fail loading with:
+	# TypeError: turf.featureEach is not a function
 	header {
 		-Server
 		X-Frame-Options "SAMEORIGIN"
@@ -32,11 +38,6 @@
 		X-Content-Type-Options "nosniff"
 		Strict-Transport-Security "max-age=31536000"
 		Content-Security-Policy "default-src 'self' https://*.gov.bc.ca https://*.azurefd.net;
-			# Required by BCGov SMK/Turf runtime.
-			# Without 'unsafe-eval', turf-6.5.0.min.js fails CSP checks when it uses
-			# dynamic function generation, leaving window.turf empty and causing SMK
-			# vector layers (e.g. weather-stations) to fail loading with:
-			# TypeError: turf.featureEach is not a function
 			script-src 'self' 'unsafe-eval' https://*.gov.bc.ca https://*.azurefd.net;
 			worker-src 'self' blob:;
 			style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com 'unsafe-inline' https://*.azurefd.net;
