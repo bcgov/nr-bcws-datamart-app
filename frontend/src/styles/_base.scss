@@ -1137,3 +1137,19 @@ section, .info-field {
         content: "—";
     }
 }
+
+/* ==========================================================================
+   SMK Identify Panel Customization
+
+   The default SMK Identify panel displays a "Zoom To" command above the
+   feature content. Weather station markers already provide the necessary
+   map context and selection workflow, and the command is not part of the
+   station information panel requirements.
+
+   Hiding the command reduces vertical space and allows the station
+   information content to appear closer to the panel header.
+   ========================================================================== */
+
+.smk-command-button.smk-zoom {
+    display: none !important;
+}
