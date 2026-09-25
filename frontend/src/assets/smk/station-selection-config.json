@@ -5,6 +5,7 @@
 
   "viewer": {
     "type": "leaflet",
+    "activeTool": "pan",
     "location": {
       "extent": [
         -140.80078125000004,
@@ -52,14 +53,55 @@
       ]
     },
     {
-        "type": "vector",
-        "id": "weather-stations",
-        "title": "Weather Stations",
-        "isVisible": true,
-        "isQueryable": true,
-        "titleAttribute": "stationName",
-        "dataUrl": "/assets/smk/stub.geojson"
-    }     
+    "type": "vector",
+    "id": "popup-link",
+    "title": "Reporting Stations",
+    "isQueryable": true,
+    "useClustering": false,
+    "dataUrl": "/assets/smk/stub.geojson",
+    "titleAttribute": "stationName",
+    "popupTemplate": "<div id='weatherStationPopup'>{{window.weatherStationPopup(feature.properties)}}</div>",
+    "attributes": [
+        {
+        "name": "stationName",
+        "title": "Station Name",
+        "visible": true
+        }
+    ],
+    "queries": [
+    {
+        "id": "station-query",
+        "title": "Station Search",
+        "description": "Search for a reporting weather station",
+        "parameters": [
+        {
+            "id": "param1",
+            "type": "input",
+            "title": "Station Name",
+            "value": ""
+        }
+        ],
+        "predicate": {
+        "operator": "and",
+        "arguments": [
+            {
+            "operator": "contains",
+            "arguments": [
+                {
+                "operand": "attribute",
+                "name": "stationName"
+                },
+                {
+                "operand": "parameter",
+                "id": "param1"
+                }
+            ]
+            }
+        ]
+        }
+    }
+    ]
+    }
   ],
 
   "tools": [
@@ -93,10 +135,18 @@
       "enabled": false
     },
     {
-      "type": "identify",
-      "enabled": true,
-      "showPanel": true,
-      "showWidget": true
+    "type": "identify",
+    "enabled": true,
+    "showWidget": true,
+    "command": {
+        "select": false,
+        "radius": true,
+        "radiusUnit": true,
+        "nearBy": true
+    },
+    "radius": 10,
+    "radiusUnit": "px",
+    "tolerance": 12
     },
     {
       "type": "search",
@@ -124,7 +174,7 @@
     },
     {
       "type": "location",
-      "enabled": true
+      "enabled": false
     },
     {
       "type": "select",
