@@ -1,0 +1,84 @@
+<section class="data-download-page">
+
+    <div class="data-download-page__container">
+
+        <h1 class="data-download-page__title">
+            Weather Data Download
+        </h1>
+
+        <p class="data-download-page__subtitle">
+            Pagination and table rendering test page.
+        </p>
+
+        <nrcl-row-list-desktop>
+
+            <mat-table
+                [dataSource]="rows | paginate: {
+                    id: 'download-table',
+                    itemsPerPage: pageSize,
+                    currentPage: pageNumber,
+                    totalItems: rows.length
+                }">
+
+                <ng-container matColumnDef="stationName">
+
+                    <mat-header-cell *matHeaderCellDef>
+                        Station Name
+                    </mat-header-cell>
+
+                    <mat-cell *matCellDef="let row">
+                        {{ row.stationName }}
+                    </mat-cell>
+
+                </ng-container>
+
+                <ng-container matColumnDef="stationCode">
+
+                    <mat-header-cell *matHeaderCellDef>
+                        Station Code
+                    </mat-header-cell>
+
+                    <mat-cell *matCellDef="let row">
+                        {{ row.stationCode }}
+                    </mat-cell>
+
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+
+                    <mat-header-cell *matHeaderCellDef>
+                        Status
+                    </mat-header-cell>
+
+                    <mat-cell *matCellDef="let row">
+                        {{ row.status }}
+                    </mat-cell>
+
+                </ng-container>
+
+                <mat-header-row
+                    *matHeaderRowDef="columns; sticky: true">
+                </mat-header-row>
+
+                <mat-row
+                    *matRowDef="let row; columns: columns;">
+                </mat-row>
+
+            </mat-table>
+
+        </nrcl-row-list-desktop>
+
+        <nrcl-gap vertical></nrcl-gap>
+
+        <nrcl-row-list-pagination
+            paginationId="download-table"
+            [pageSize]="pageSize"
+            [pageNumber]="pageNumber"
+            [rowCount]="rows.length"
+            (pageNumberChange)="onPageNumberChange($event)"
+            (pageSizeChange)="onPageSizeChange($event)">
+        </nrcl-row-list-pagination>
+
+    </div>
+
+</section>

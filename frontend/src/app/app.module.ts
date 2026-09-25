@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { MatTableModule } from '@angular/material/table';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 import { App } from './app';
 import { HeaderComponent } from './components/header/header.component';
@@ -18,6 +20,7 @@ import { StationSelectionMapComponent } from './components/station-selection/sta
 import { StationSelectionStationListComponent } from './components/station-selection/station-selection-content/station-selection-station-list/station-selection-station-list.component';
 import { StationSelectionContentComponent } from './components/station-selection/station-selection-content/station-selection-content.component';
 import { StationInformationPanelComponent } from './components/station-selection/station-selection-content/station-selection-map/station-information-panel/station-information-panel.component';
+import { DataDownloadComponent } from './components/data-download/data-download.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +34,7 @@ import { StationInformationPanelComponent } from './components/station-selection
     StationSelectionStationListComponent,
     StationSelectionMapComponent,
     StationInformationPanelComponent,
+    DataDownloadComponent,
     HomeCardComponent,
     FooterComponent
   ],
@@ -38,6 +42,8 @@ import { StationInformationPanelComponent } from './components/station-selection
     BrowserModule,
     RouterModule.forRoot(routes),
     NrNgxComponentLibModule,
+    MatTableModule,
+    NgxPaginationModule,
     
     
   ],
