@@ -31,6 +31,11 @@ export class StationSelectionMapComponent
     private smk: any;
     private map: any;
 	private activeMarker: L.Marker | null = null;
+
+	private stationMarkers = new Map<string, L.Marker>();
+	private popupComponentRef: any;
+	private popupHost: HTMLElement | null = null;
+
 	
 	constructor(
 		private readonly appRef: ApplicationRef,
@@ -45,9 +50,9 @@ export class StationSelectionMapComponent
 
 			if (reading) {
 
-				setTimeout(() => {
-					me.buildPopup(reading);
-				}, 1000);
+				setTimeout(() => { me.buildPopup(reading); }, 1000);
+
+				me.setActiveMarker(reading.stationName);
 
 				return 'Loading...';
 			}
@@ -56,14 +61,29 @@ export class StationSelectionMapComponent
 		};
 	}
 
-	private buildPopup(
-		reading: any
-	): void {
+	private monitorPopupHost(popupHost: HTMLElement): void {
 
-		const popupHost =
-			document.getElementById(
-				'weatherStationPopup'
-			);
+		const observer = new MutationObserver(() => {
+
+			if (!popupHost.isConnected) {
+
+				this.activeMarker?.getElement()?.classList.remove('active');
+
+				this.activeMarker = null;
+
+				observer.disconnect();
+			}
+		});
+
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true
+		});
+	}
+
+	private buildPopup(reading: any): void {
+
+		const popupHost = document.getElementById('weatherStationPopup');
 
 		if (!popupHost) {
 			return;
@@ -71,25 +91,23 @@ export class StationSelectionMapComponent
 
 		popupHost.innerHTML = '';
 
-		const componentRef =
-			createComponent(
-				StationInformationPanelComponent,
-				{
-					environmentInjector:
-						this.environmentInjector
-				}
-			);
-
-		componentRef.instance.station =
-			reading.station;
-
-		this.appRef.attachView(
-			componentRef.hostView
+		const componentRef = createComponent(
+			StationInformationPanelComponent,
+			{
+				environmentInjector: this.environmentInjector
+			}
 		);
 
-		popupHost.appendChild(
-			componentRef.location.nativeElement
-		);
+		componentRef.instance.station = reading.station;
+
+		this.popupComponentRef = componentRef;
+		this.popupHost = popupHost;
+
+		this.appRef.attachView(componentRef.hostView);
+
+		this.monitorPopupHost(popupHost);
+
+		popupHost.appendChild(componentRef.location.nativeElement);
 	}
 
 	async ngAfterViewInit(): Promise<void> {
@@ -102,12 +120,9 @@ export class StationSelectionMapComponent
 			]
 		});
 
-		this.map =
-			this.smk.$viewer.map;
+		this.map = this.smk.$viewer.map;
 
 		const identify = this.smk.getToolById('IdentifyFeatureTool');
-
-		console.log(identify);
 
 		identify.active = true;
 
@@ -200,6 +215,8 @@ export class StationSelectionMapComponent
 
 		this.initializeStationMarker(marker, row);
 
+		this.stationMarkers.set(station.STATION_NAME, marker);
+
 		return marker;
 	}
 
@@ -221,6 +238,19 @@ export class StationSelectionMapComponent
 		marker.on('mouseout', () => {
 			marker.getElement()?.classList.remove('hover');
 		});
+	}
+
+	private setActiveMarker(stationName: string): void {
+
+		this.stationMarkers.forEach(marker => {
+			marker.getElement()?.classList.remove('active');
+		});
+
+		const marker = this.stationMarkers.get(stationName);
+
+		marker?.getElement()?.classList.add('active');
+
+		this.activeMarker = marker ?? null;
 	}
 
 }                       
