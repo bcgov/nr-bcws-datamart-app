@@ -61,3 +61,21 @@ $station-marker-selected-color: #1e5189;
 :host ::ng-deep .weather-station-marker.selected .station-marker-outer {
     stroke: $station-marker-selected-color;
 }
+
+
+::ng-deep .leaflet-popup-close-button {
+    width: 32px !important;
+    height: 32px !important;
+
+    font-size: 24px !important;
+    line-height: 32px !important;
+
+    color: #2d2d2d !important;
+
+    top: 8px !important;
+    right: 8px !important;
+}
+
+::ng-deep .leaflet-popup-content {
+    margin: 20px !important;
+}

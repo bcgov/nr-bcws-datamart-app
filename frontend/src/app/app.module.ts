@@ -17,6 +17,7 @@ import { StationSelectionHeaderComponent } from './components/station-selection/
 import { StationSelectionMapComponent } from './components/station-selection/station-selection-content/station-selection-map/station-selection-map.component';
 import { StationSelectionStationListComponent } from './components/station-selection/station-selection-content/station-selection-station-list/station-selection-station-list.component';
 import { StationSelectionContentComponent } from './components/station-selection/station-selection-content/station-selection-content.component';
+import { StationInformationPanelComponent } from './components/station-selection/station-selection-content/station-selection-map/station-information-panel/station-information-panel.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { StationSelectionContentComponent } from './components/station-selection
     StationSelectionContentComponent,
     StationSelectionStationListComponent,
     StationSelectionMapComponent,
+    StationInformationPanelComponent,
     HomeCardComponent,
     FooterComponent
   ],

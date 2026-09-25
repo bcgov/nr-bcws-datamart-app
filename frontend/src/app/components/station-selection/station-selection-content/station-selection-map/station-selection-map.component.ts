@@ -1,19 +1,26 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, ApplicationRef, Component, EnvironmentInjector, createComponent
+} from '@angular/core';
+
 import * as L from 'leaflet';
 
+import { StationInformationPanelComponent } from './station-information-panel/station-information-panel.component';
 
 declare const SMK: any;
 
 @Component({
-    selector: 'app-station-selection-map',
-    templateUrl: './station-selection-map.component.html',
-    styleUrl: './station-selection-map.component.scss'
+	selector: 'app-station-selection-map',
+	templateUrl: './station-selection-map.component.html',
+	styleUrl: './station-selection-map.component.scss'
 })
-
 export class StationSelectionMapComponent implements AfterViewInit {
 
-    private smk: any;
+	private smk: any;
 	private map: any;
+
+	constructor(
+		private readonly appRef: ApplicationRef,
+		private readonly environmentInjector: EnvironmentInjector
+	) {}
 
 	async ngAfterViewInit(): Promise<void> {
 
@@ -32,7 +39,8 @@ export class StationSelectionMapComponent implements AfterViewInit {
 
 	private async loadStations(): Promise<void> {
 
-		// temporarily hardcoded until we have a properly deployed API via the pipeline, then we can access it via an environment variable
+		// temporarily hardcoded until we have a properly deployed API via the pipeline,
+		// then we can access it via an environment variable
 		const response = await fetch(
 			'https://container-app-api-yujhzooydm766.bluewater-fbba4d31.canadacentral.azurecontainerapps.io/api/weather_stations'
 		);
@@ -41,8 +49,6 @@ export class StationSelectionMapComponent implements AfterViewInit {
 
 		this.renderStations(data.value);
 	}
-
-	
 
 	private renderStations(stations: any[]): void {
 
@@ -133,15 +139,22 @@ export class StationSelectionMapComponent implements AfterViewInit {
 						}
 					};
 
-					marker.bindPopup(`
-						<strong>${station.STATION_NAME}</strong>
-						<br>
-						Acronym: ${station.STATION_ACRONYM}
-						<br>
-						Lat: ${station.LATITUDE}
-						<br>
-						Long: ${station.LONGITUDE}
-					`);
+					const componentRef = createComponent(
+						StationInformationPanelComponent,
+						{
+							environmentInjector: this.environmentInjector
+						}
+					);
+
+					componentRef.instance.station = station;
+
+					this.appRef.attachView(
+						componentRef.hostView
+					);
+
+					marker.bindPopup(
+						componentRef.location.nativeElement
+					);
 
 					layer.addLayer(marker);
 				});
