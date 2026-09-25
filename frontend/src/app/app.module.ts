@@ -1,7 +1,12 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+
 import { MatTableModule } from '@angular/material/table';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
 import { NgxPaginationModule } from 'ngx-pagination';
 
 import { App } from './app';
@@ -43,6 +48,9 @@ import { DataDownloadComponent } from './components/data-download/data-download.
     RouterModule.forRoot(routes),
     NrNgxComponentLibModule,
     MatTableModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    MatFormFieldModule,
     NgxPaginationModule,
     
     

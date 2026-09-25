@@ -1,8 +1,188 @@
+$color-border: #d8d8d8;
+
+$color-link: #255a90;
+
+$color-text-primary: #2d2d2d;
+$color-text-secondary: #474543;
+
+$color-background-white: #ffffff;
+
 .station-selection-station-list {
-    min-height: 600px;
+    display: flex;
+    flex-direction: column;
 
     padding: 16px;
 
-    border: 1px solid #d8d8d8;
+    border: 1px solid $color-border;
     border-radius: 4px;
+
+    background: $color-background-white;
+}
+
+.station-selection-station-list__count {
+    margin-bottom: 4px;
+
+    color: $color-text-primary;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 27px;
+}
+
+.station-selection-station-list__controls {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+
+    padding: 8px 0;
+}
+
+.station-selection-station-list__select-all {
+    display: flex;
+    align-items: center;
+
+    flex: 1 0 0;
+}
+
+.station-selection-station-list__select-all-label {
+    color: $color-text-primary;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 21px;
+}
+
+.station-selection-station-list__sort {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    padding: 0 12px;
+
+    border: none;
+    background: transparent;
+
+    color: $color-text-primary;
+    text-align: center;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 21px;
+
+    cursor: pointer;
+}
+
+.station-selection-station-list__showing {
+    margin-top: 8px;
+    margin-bottom: 4px;
+
+    color: $color-text-secondary;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 21px;
+}
+
+.station-selection-station-list ::ng-deep nrcl-row-list-desktop {
+    
+    overflow-y: auto;
+}
+
+.station-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    flex: 1 0 0;
+}
+
+.station-row__content {
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: flex-start;
+
+    flex: 1 0 0;
+
+    padding: 10px 15px 10px 0;
+}
+
+.station-row__name {
+    margin: 0;
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    color: $color-link;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 27px;
+
+    text-align: left;
+
+    text-decoration-line: underline;
+
+    cursor: pointer;
+}
+
+.station-row__details {
+    display: flex;
+    gap: 16px;
+
+    color: $color-text-secondary;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 21px;
+}
+
+::ng-deep .mat-mdc-header-row {
+    border-top: 1px solid $color-border;
+}
+
+::ng-deep .mat-column-selected {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 48px;
+    min-width: 48px;
+    max-width: 48px;
+
+    height: 68px;
+    padding: 10px 0;
+}
+
+::ng-deep .mat-column-station {
+    width: 100%;
+}
+
+::ng-deep .mat-mdc-row {
+    min-height: 68px;
+}
+
+::ng-deep .mat-mdc-cell {
+    vertical-align: middle;
+}
+
+:host ::ng-deep nrcl-row-list-pagination .page-size {
+    display: none !important;
+}
+
+:host ::ng-deep nrcl-row-list-pagination .summary {
+    display: none !important;
 }

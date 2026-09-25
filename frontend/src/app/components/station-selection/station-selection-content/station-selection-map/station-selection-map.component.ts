@@ -11,6 +11,7 @@ import * as L from 'leaflet';
 import {
     StationInformationPanelComponent
 } from './station-information-panel/station-information-panel.component';
+import { StationDataService } from '../../../../services/station-data.service';
 
 declare const SMK: any;
 
@@ -39,7 +40,8 @@ export class StationSelectionMapComponent
 	
 	constructor(
 		private readonly appRef: ApplicationRef,
-		private readonly environmentInjector: EnvironmentInjector
+		private readonly environmentInjector: EnvironmentInjector,
+		private readonly stationDataService: StationDataService
 	) {
 
 		const me = this;
@@ -127,25 +129,17 @@ export class StationSelectionMapComponent
 
 		identify.active = true;
 
-		await this.loadStations();
+		await this.stationDataService.loadStations();
+
+		this.stationDataService.stations$
+			.subscribe(stations => {
+
+				this.renderStations(
+					stations
+				);
+			});
 	}
 
-	private async loadStations(): Promise<void> {
-
-		const response = await fetch(
-			'https://container-app-api-yujhzooydm766.bluewater-fbba4d31.canadacentral.azurecontainerapps.io/api/weather_stations'
-		);
-
-		const data =
-			await response.json();
-
-		this.renderStations(
-			data.value
-		);
-	}
-
-
-	
 	private renderStations(stations: any[]): void {
 
 		const uniqueStations = [

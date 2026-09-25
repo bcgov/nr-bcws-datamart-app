@@ -1,3 +1,128 @@
 <aside class="station-selection-station-list">
-    Station List Placeholder
+
+    <div class="station-selection-station-list__count">
+        {{ stations.length }} stations
+    </div>
+
+    <nrcl-row-list-desktop>
+
+        <mat-table
+            [dataSource]="stations | paginate: {
+                id: 'station-selection-list',
+                itemsPerPage: pageSize,
+                currentPage: pageNumber,
+                totalItems: stations.length
+            }">
+
+            <ng-container matColumnDef="selected">
+
+                <mat-header-cell *matHeaderCellDef>
+                    <mat-checkbox disabled>
+                    </mat-checkbox>
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let station">
+                    <mat-checkbox disabled>
+                    </mat-checkbox>
+                </mat-cell>
+
+            </ng-container>
+
+            <ng-container matColumnDef="station">
+
+                <mat-header-cell *matHeaderCellDef>
+
+                    <div class="station-selection-station-list__controls">
+
+                        <div class="station-selection-station-list__select-all">
+
+                            <span class="station-selection-station-list__select-all-label">
+                                Select All
+                            </span>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="station-selection-station-list__sort">
+
+                            Sort: Name, A-Z
+
+                            <nrcl-icon>
+                                expand_more
+                            </nrcl-icon>
+
+                        </button>
+
+                    </div>
+
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let station">
+
+                    <div class="station-row">
+
+                        <div class="station-row__content">
+
+                            <button
+                                type="button"
+                                class="station-row__name">
+
+                                {{ display(station.STATION_NAME) }}
+
+                            </button>
+
+                            <div class="station-row__details">
+
+                                <span>
+                                    Station Code:
+                                    {{ display(station.STATION_CODE) }}
+                                </span>
+
+                                <span>
+                                    Acronym:
+                                    {{ display(station.STATION_ACRONYM) }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </mat-cell>
+
+            </ng-container>
+
+            <mat-header-row
+                *matHeaderRowDef="columns; sticky: true">
+            </mat-header-row>
+
+            <mat-row
+                *matRowDef="let row; columns: columns;">
+            </mat-row>
+
+        </mat-table>
+
+    </nrcl-row-list-desktop>
+
+    <div class="station-selection-station-list__showing">
+
+        Showing:
+        {{ startRow }}-{{ endRow }}
+        of
+        {{ stations.length }}
+        stations
+
+    </div>
+
+    <nrcl-row-list-pagination
+        paginationId="station-selection-list"
+        [pageSize]="pageSize"
+        [pageNumber]="pageNumber"
+        [rowCount]="stations.length"
+        (pageNumberChange)="onPageNumberChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)">
+    </nrcl-row-list-pagination>
+
 </aside>
