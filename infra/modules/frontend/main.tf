@@ -27,7 +27,7 @@ module "frontend_plan" {
 
 module "frontend_site" {
   source  = "Azure/avm-res-web-site/azurerm"
-  version = "0.22.0"
+  version = "0.23.0"
 
   kind                     = "webapp"
   name                     = "${var.repo_name}-${var.app_env}-frontend"
@@ -47,35 +47,35 @@ module "frontend_site" {
 
   site_config = {
     always_on                               = true
-    container_registry_use_managed_identity = true
+    container_registry_use_managed_identity = local.frontend_registry_is_acr
     minimum_tls_version                     = "1.3"
     health_check_path                       = "/"
-    health_check_eviction_time_in_min       = 2
     ftps_state                              = "Disabled"
 
     ip_restriction_default_action = var.enable_frontdoor ? "Deny" : "Allow"
     ip_restriction                = local.frontend_ip_restrictions
 
     application_stack = {
-      default = {
-        docker_image_name   = var.frontend_image
-        docker_registry_url = var.container_registry_url
+      docker = {
+        docker_registry_url = "https://${local.frontend_registry_host}"
+        docker_image_name   = local.frontend_repository
+        docker_image_tag    = local.frontend_image_tag
       }
     }
 
     cors = {
-      default = {
-        allowed_origins     = ["*"]
-        support_credentials = false
-      }
+      allowed_origins     = ["*"]
+      support_credentials = false
     }
   }
 
   app_settings = {
-    PORT                                  = "80"
-    WEBSITES_PORT                         = "3000"
-    WEBSITES_ENABLE_APP_SERVICE_STORAGE   = "false"
-    DOCKER_ENABLE_CI                      = "true"
+    PORT                                = "80"
+    WEBSITES_PORT                       = "3000"
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
+    DOCKER_ENABLE_CI                    = "true"
+    # Health check eviction time in minutes; the AVM module has no site_config equivalent.
+    WEBSITE_HEALTHCHECK_MAXPINGFAILURES   = "2"
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY        = var.appinsights_instrumentation_key
     VITE_BACKEND_URL                      = coalesce(var.backend_url, "https://${var.repo_name}-${var.app_env}-api.azurewebsites.net")
@@ -85,10 +85,12 @@ module "frontend_site" {
   logs = {
     default = {
       detailed_error_messages = true
-      failed_request_tracing  = true
+      failed_requests_tracing = true
       application_logs = {
         default = {
-          file_system_level = "Off"
+          file_system = {
+            level = "Off"
+          }
         }
       }
       http_logs = {
