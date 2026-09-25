@@ -43,6 +43,8 @@ module "frontend_site" {
     system_assigned = true
   }
 
+  public_network_access_enabled = true
+
   site_config = {
     always_on                               = true
     container_registry_use_managed_identity = local.frontend_registry_is_acr
