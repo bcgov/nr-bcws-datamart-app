@@ -50,9 +50,10 @@ export class StationSelectionMapComponent
 
 			if (reading) {
 
-				setTimeout(() => { me.buildPopup(reading); }, 1000);
-
-				me.setActiveMarker(reading.stationName);
+				setTimeout(() => {
+					me.buildPopup(reading);
+					me.setActiveMarker(reading.stationName);
+				}, 100);
 
 				return 'Loading...';
 			}
@@ -231,13 +232,7 @@ export class StationSelectionMapComponent
 			}
 		};
 
-		marker.on('mouseover', () => {
-			marker.getElement()?.classList.add('hover');
-		});
 
-		marker.on('mouseout', () => {
-			marker.getElement()?.classList.remove('hover');
-		});
 	}
 
 	private setActiveMarker(stationName: string): void {

@@ -37,17 +37,66 @@ $station-marker-selected-color: #1e5189;
 }
 
 /* Hover */
+/* Base marker styling */
+:host ::ng-deep .station-marker-inner {
+    fill: $station-marker-default-color;
+    stroke: $station-marker-default-color;
+    transition:
+        fill 0.15s ease,
+        stroke 0.15s ease;
+}
+
+:host ::ng-deep .station-marker-outer {
+    fill: none;
+    stroke: $station-marker-default-color;
+    stroke-width: 2;
+    transition:
+        stroke 0.15s ease,
+        stroke-width 0.15s ease;
+}
+
+/* CSS Hover */
 :host ::ng-deep
-.weather-station-marker.hover:not(.active):not(.selected)
+.weather-station-marker:hover:not(.active):not(.selected)
 .station-marker-inner {
     fill: $station-marker-hover-color;
     stroke: $station-marker-hover-color;
 }
 
 :host ::ng-deep
-.weather-station-marker.hover:not(.active):not(.selected)
+.weather-station-marker:hover:not(.active):not(.selected)
 .station-marker-outer {
     stroke: $station-marker-hover-color;
+}
+
+/* Active (popup open / identified) */
+:host ::ng-deep
+.weather-station-marker.active
+.station-marker-inner {
+    fill: $station-marker-active-color;
+    stroke: $station-marker-active-color;
+}
+
+:host ::ng-deep
+.weather-station-marker.active
+.station-marker-outer {
+    stroke: $station-marker-active-color;
+    stroke-width: 3;
+}
+
+/* Selected */
+:host ::ng-deep
+.weather-station-marker.selected
+.station-marker-inner {
+    fill: $station-marker-selected-color;
+    stroke: $station-marker-selected-color;
+}
+
+:host ::ng-deep
+.weather-station-marker.selected
+.station-marker-outer {
+    stroke: $station-marker-selected-color;
+    stroke-width: 3;
 }
 
 /* Active (popup open / identified) */
@@ -97,3 +146,5 @@ $station-marker-selected-color: #1e5189;
 ::ng-deep .leaflet-popup-content {
     margin: 20px !important;
 }
+
+
