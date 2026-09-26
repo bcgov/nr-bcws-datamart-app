@@ -6,6 +6,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { NgxPaginationModule } from 'ngx-pagination';
 
@@ -51,9 +52,8 @@ import { DataDownloadComponent } from './components/data-download/data-download.
     MatCheckboxModule,
     MatSelectModule,
     MatFormFieldModule,
+    MatMenuModule,
     NgxPaginationModule,
-    
-    
   ],
   bootstrap: [App]
 })

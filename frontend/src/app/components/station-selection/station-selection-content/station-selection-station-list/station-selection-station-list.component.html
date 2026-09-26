@@ -7,7 +7,7 @@
     <nrcl-row-list-desktop>
 
         <mat-table
-            [dataSource]="stations | paginate: {
+            [dataSource]="sortedStations | paginate: {
                 id: 'station-selection-list',
                 itemsPerPage: pageSize,
                 currentPage: pageNumber,
@@ -44,15 +44,52 @@
 
                         <button
                             type="button"
-                            class="station-selection-station-list__sort">
+                            class="station-selection-station-list__sort"
+                            [matMenuTriggerFor]="sortMenu">
 
-                            Sort: Name, A-Z
+                            Sort: {{ sortLabel }}
 
                             <nrcl-icon>
                                 expand_more
                             </nrcl-icon>
 
                         </button>
+
+                        <mat-menu #sortMenu="matMenu">
+
+                            <button
+                                mat-menu-item
+                                (click)="setSort('nameAsc')">
+
+                                Name (A-Z)
+
+                            </button>
+
+                            <button
+                                mat-menu-item
+                                (click)="setSort('nameDesc')">
+
+                                Name (Z-A)
+
+                            </button>
+
+                            <button
+                                mat-menu-item
+                                (click)="setSort('codeAsc')">
+
+                                Code (Low-High)
+
+                            </button>
+
+                            <button
+                                mat-menu-item
+                                (click)="setSort('codeDesc')">
+
+                                Code (High-Low)
+
+                            </button>
+
+                        </mat-menu>
 
                     </div>
 
