@@ -13,11 +13,8 @@ $color-focus-border: #2e5dd7;
 .station-selection-station-list {
     display: flex;
     flex-direction: column;
-
+    
     padding: 16px;
-
-    border: 1px solid $color-border;
-    border-radius: 4px;
 
     background: $color-background-white;
 }
