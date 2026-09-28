@@ -178,10 +178,6 @@ $color-focus-border: #2e5dd7;
     line-height: 21px;
 }
 
-::ng-deep .mat-mdc-header-row {
-    border-top: 1px solid $color-border;
-}
-
 ::ng-deep .mat-column-selected {
     display: flex;
     justify-content: center;
@@ -199,8 +195,23 @@ $color-focus-border: #2e5dd7;
     width: 100%;
 }
 
+::ng-deep .mat-mdc-header-row {
+    border-color: $color-border;
+    border-style: solid;
+    border-width: 1px;
+}
+
 ::ng-deep .mat-mdc-row {
     min-height: 68px;
+
+    border-color: $color-border;
+    border-style: solid;
+    border-width: 0 1px 1px 1px;
+}
+
+::ng-deep .mat-mdc-cell,
+::ng-deep .mat-mdc-header-cell {
+    border-bottom: none !important;
 }
 
 ::ng-deep .mat-mdc-cell {
