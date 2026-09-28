@@ -18,11 +18,12 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/nr-bcws-datamart-app-ui",
+            "outputPath": {
+              "base": "dist/nr-bcws-datamart-app-ui"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -46,7 +47,8 @@
             ],
             "scripts": [
               "node_modules/@bcgov/smk/dist/smk.js"
-            ]
+            ],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -71,10 +73,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "nr-bcws-datamart-app-ui:build:production"
+              "buildTarget": "nr-bcws-datamart-app-ui:build:production"
             },
             "development": {
-              "browserTarget": "nr-bcws-datamart-app-ui:build:development"
+              "buildTarget": "nr-bcws-datamart-app-ui:build:development"
             }
           },
           "defaultConfiguration": "development"

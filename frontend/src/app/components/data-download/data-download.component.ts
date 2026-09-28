@@ -4,7 +4,8 @@ import { Component } from '@angular/core';
 @Component({
     selector: 'app-data-download',
     templateUrl: './data-download.component.html',
-    styleUrl: './data-download.component.scss'
+    styleUrl: './data-download.component.scss',
+    standalone: false
 })
 export class DataDownloadComponent {
 

@@ -3,7 +3,8 @@ import { Component, Input } from '@angular/core';
 @Component({
     selector: 'app-station-information-panel',
     templateUrl: './station-information-panel.component.html',
-    styleUrl: './station-information-panel.component.scss'
+    styleUrl: './station-information-panel.component.scss',
+    standalone: false
 })
 export class StationInformationPanelComponent {
 

@@ -15,7 +15,8 @@ type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
 @Component({
     selector: 'app-station-selection-station-list',
     templateUrl: './station-selection-station-list.component.html',
-    styleUrl: './station-selection-station-list.component.scss'
+    styleUrl: './station-selection-station-list.component.scss',
+    standalone: false
 })
 export class StationSelectionStationListComponent implements OnInit {
 

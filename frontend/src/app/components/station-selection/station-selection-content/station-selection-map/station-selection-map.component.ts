@@ -24,7 +24,8 @@ declare global {
 @Component({
     selector: 'app-station-selection-map',
     templateUrl: './station-selection-map.component.html',
-    styleUrl: './station-selection-map.component.scss'
+    styleUrl: './station-selection-map.component.scss',
+    standalone: false
 })
 export class StationSelectionMapComponent
     implements AfterViewInit {

@@ -5,7 +5,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
     selector: 'app-station-selection-content',
     templateUrl: './station-selection-content.component.html',
-    styleUrl: './station-selection-content.component.scss'
+    styleUrl: './station-selection-content.component.scss',
+    standalone: false
 })
 export class StationSelectionContentComponent {
 

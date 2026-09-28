@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-station-selection-filters',
-  templateUrl: './station-selection-filters.component.html',
-  styleUrl: './station-selection-filters.component.scss'
+    selector: 'app-station-selection-filters',
+    templateUrl: './station-selection-filters.component.html',
+    styleUrl: './station-selection-filters.component.scss',
+    standalone: false
 })
 export class StationSelectionFiltersComponent {
 
