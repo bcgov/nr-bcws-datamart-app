@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -11,6 +11,10 @@ export class StationDataService {
 
   private loaded = false;
   private loading = false;
+
+  constructor(
+    private readonly ngZone: NgZone,
+  ) {}
 
   async loadStations(): Promise<void> {
     if (this.loaded || this.loading) {
@@ -35,9 +39,10 @@ export class StationDataService {
         ).values(),
       ];
 
-      this.stationsSubject.next(uniqueStations);
-
-      this.loaded = true;
+      this.ngZone.run(() => {
+        this.stationsSubject.next(uniqueStations);
+        this.loaded = true;
+      });
     } finally {
       this.loading = false;
     }
