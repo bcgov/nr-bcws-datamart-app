@@ -1,5 +1,5 @@
 # Build
-FROM node:20-slim AS build
+FROM node:22-slim AS build
 
 # Copy source
 WORKDIR /app
@@ -15,7 +15,7 @@ FROM caddy:2.11.4-alpine
 RUN apk add --no-cache ca-certificates curl
 
 # Copy Angular build output
-COPY --from=build /app/dist/nr-bcws-datamart-app-ui /srv
+COPY --from=build /app/dist/nr-bcws-datamart-app-ui/browser /srv
 
 # Configure Caddy
 COPY Caddyfile /etc/caddy/Caddyfile
