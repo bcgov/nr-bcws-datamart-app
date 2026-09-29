@@ -103,7 +103,9 @@ export class StationSelectionMapComponent implements AfterViewInit {
     // SMK/Leaflet initialization can fail during Angular HMR
     // if the container is initialized before the browser has
     // completed the current render cycle.
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => resolve()),
+    );
 
     this.smk = await SMK.INIT({
       containerSel: '#station-map',
