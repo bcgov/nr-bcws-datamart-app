@@ -111,8 +111,6 @@ export class StationSelectionMapComponent implements AfterViewInit {
 
     identify.active = true;
 
-    await this.stationDataService.loadStations();
-
     this.stationDataService.stations$.subscribe((stations) => {
       this.renderStations(stations);
     });
