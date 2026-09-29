@@ -1,9 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-home-card',
   templateUrl: './home-card.component.html',
-  styleUrl: './home-card.component.scss'
+  styleUrl: './home-card.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class HomeCardComponent {
   @Input() title = '';

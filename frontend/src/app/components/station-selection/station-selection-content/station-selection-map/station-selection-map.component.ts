@@ -1,245 +1,207 @@
 import {
-    AfterViewInit,
-    ApplicationRef,
-    Component,
-    EnvironmentInjector,
-    createComponent
+  AfterViewInit,
+  ApplicationRef,
+  Component,
+  EnvironmentInjector,
+  createComponent,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 
 import * as L from 'leaflet';
 
-import {
-    StationInformationPanelComponent
-} from './station-information-panel/station-information-panel.component';
+import { StationInformationPanelComponent } from './station-information-panel/station-information-panel.component';
 import { StationDataService } from '../../../../services/station-data.service';
 
 declare const SMK: any;
 
 declare global {
-    interface Window {
-        weatherStationPopup: (reading: any) => string;
-    }
+  interface Window {
+    weatherStationPopup: (reading: any) => string;
+  }
 }
 
 @Component({
-    selector: 'app-station-selection-map',
-    templateUrl: './station-selection-map.component.html',
-    styleUrl: './station-selection-map.component.scss'
+  selector: 'app-station-selection-map',
+  templateUrl: './station-selection-map.component.html',
+  styleUrl: './station-selection-map.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
-export class StationSelectionMapComponent
-    implements AfterViewInit {
+export class StationSelectionMapComponent implements AfterViewInit {
+  private smk: any;
+  private map: any;
+  private activeMarker: L.Marker | null = null;
 
-    private smk: any;
-    private map: any;
-	private activeMarker: L.Marker | null = null;
+  private stationMarkers = new Map<string, L.Marker>();
+  private popupComponentRef: any;
+  private popupHost: HTMLElement | null = null;
 
-	private stationMarkers = new Map<string, L.Marker>();
-	private popupComponentRef: any;
-	private popupHost: HTMLElement | null = null;
+  constructor(
+    private readonly appRef: ApplicationRef,
+    private readonly environmentInjector: EnvironmentInjector,
+    private readonly stationDataService: StationDataService,
+  ) {
+    const me = this;
 
-	
-	constructor(
-		private readonly appRef: ApplicationRef,
-		private readonly environmentInjector: EnvironmentInjector,
-		private readonly stationDataService: StationDataService
-	) {
+    window.weatherStationPopup = function (reading: any): string {
+      if (reading) {
+        setTimeout(() => {
+          me.buildPopup(reading);
+          me.setActiveMarker(reading.stationName);
+        }, 100);
 
-		const me = this;
+        return 'Loading...';
+      }
 
-		window.weatherStationPopup = function (
-			reading: any
-		): string {
+      return 'Station not found';
+    };
+  }
 
-			if (reading) {
+  private monitorPopupHost(popupHost: HTMLElement): void {
+    const observer = new MutationObserver(() => {
+      if (!popupHost.isConnected) {
+        this.activeMarker?.getElement()?.classList.remove('active');
 
-				setTimeout(() => {
-					me.buildPopup(reading);
-					me.setActiveMarker(reading.stationName);
-				}, 100);
+        this.activeMarker = null;
 
-				return 'Loading...';
-			}
+        observer.disconnect();
+      }
+    });
 
-			return 'Station not found';
-		};
-	}
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+  }
 
-	private monitorPopupHost(popupHost: HTMLElement): void {
+  private buildPopup(reading: any): void {
+    const popupHost = document.getElementById('weatherStationPopup');
 
-		const observer = new MutationObserver(() => {
+    if (!popupHost) {
+      return;
+    }
 
-			if (!popupHost.isConnected) {
+    popupHost.innerHTML = '';
 
-				this.activeMarker?.getElement()?.classList.remove('active');
+    const componentRef = createComponent(StationInformationPanelComponent, {
+      environmentInjector: this.environmentInjector,
+    });
 
-				this.activeMarker = null;
+    componentRef.instance.station = reading.station;
 
-				observer.disconnect();
-			}
-		});
+    this.popupComponentRef = componentRef;
+    this.popupHost = popupHost;
 
-		observer.observe(document.body, {
-			childList: true,
-			subtree: true
-		});
-	}
+    this.appRef.attachView(componentRef.hostView);
 
-	private buildPopup(reading: any): void {
+    this.monitorPopupHost(popupHost);
 
-		const popupHost = document.getElementById('weatherStationPopup');
+    popupHost.appendChild(componentRef.location.nativeElement);
+  }
 
-		if (!popupHost) {
-			return;
-		}
+  async ngAfterViewInit(): Promise<void> {
+    this.smk = await SMK.INIT({
+      containerSel: '#station-map',
+      config: ['./assets/smk/station-selection-config.json', '?'],
+    });
 
-		popupHost.innerHTML = '';
+    this.map = this.smk.$viewer.map;
 
-		const componentRef = createComponent(
-			StationInformationPanelComponent,
-			{
-				environmentInjector: this.environmentInjector
-			}
-		);
+    const identify = this.smk.getToolById('IdentifyFeatureTool');
 
-		componentRef.instance.station = reading.station;
+    identify.active = true;
 
-		this.popupComponentRef = componentRef;
-		this.popupHost = popupHost;
+    await this.stationDataService.loadStations();
 
-		this.appRef.attachView(componentRef.hostView);
+    this.stationDataService.stations$.subscribe((stations) => {
+      this.renderStations(stations);
+    });
+  }
 
-		this.monitorPopupHost(popupHost);
+  private renderStations(stations: any[]): void {
+    const uniqueStations = [
+      ...new Map(stations.map((station) => [station.WEATHER_STATION_GUID, station])).values(),
+    ];
 
-		popupHost.appendChild(componentRef.location.nativeElement);
-	}
+    this.map.eachLayer((layer: any) => {
+      if (
+        !Object.prototype.hasOwnProperty.call(layer, '_smk_id') ||
+        layer._smk_id !== 'popup-link'
+      ) {
+        return;
+      }
 
-	async ngAfterViewInit(): Promise<void> {
+      const intLayer = this.smk?.$viewer?.layerId?.[layer._smk_id];
 
-		this.smk = await SMK.INIT({
-			containerSel: '#station-map',
-			config: [
-				'./assets/smk/station-selection-config.json',
-				'?'
-			]
-		});
+      intLayer?.clear?.();
+      intLayer?.clearLayer?.();
+      layer.clearLayers?.();
 
-		this.map = this.smk.$viewer.map;
+      uniqueStations.forEach((station) => {
+        const marker = this.createStationMarker(station);
 
-		const identify = this.smk.getToolById('IdentifyFeatureTool');
+        if (marker) {
+          layer.addLayer(marker);
+        }
+      });
+    });
 
-		identify.active = true;
+    this.map.invalidateSize();
+  }
 
-		await this.stationDataService.loadStations();
+  private createStationMarker(station: any): L.Marker | null {
+    if (station.LATITUDE == null || station.LONGITUDE == null) {
+      return null;
+    }
 
-		this.stationDataService.stations$
-			.subscribe(stations => {
-
-				this.renderStations(
-					stations
-				);
-			});
-	}
-
-	private renderStations(stations: any[]): void {
-
-		const uniqueStations = [
-			...new Map(
-				stations.map(station => [
-					station.WEATHER_STATION_GUID,
-					station
-				])
-			).values()
-		];
-
-		this.map.eachLayer((layer: any) => {
-
-			if (
-				!Object.prototype.hasOwnProperty.call(layer, '_smk_id') ||
-				layer._smk_id !== 'popup-link'
-			) {
-				return;
-			}
-
-			const intLayer = this.smk?.$viewer?.layerId?.[layer._smk_id];
-
-			intLayer?.clear?.();
-			intLayer?.clearLayer?.();
-			layer.clearLayers?.();
-
-			uniqueStations.forEach(station => {
-				const marker = this.createStationMarker(station);
-
-				if (marker) {
-					layer.addLayer(marker);
-				}
-			});
-		});
-
-		this.map.invalidateSize();
-	}
-
-	private createStationMarker(station: any): L.Marker | null {
-
-		if (station.LATITUDE == null || station.LONGITUDE == null) {
-			return null;
-		}
-
-		const marker = L.marker(
-			[station.LATITUDE, station.LONGITUDE],
-			{
-				icon: L.divIcon({
-					className: 'weather-station-marker',
-					iconSize: [20, 20],
-					iconAnchor: [10, 10],
-					html: `
+    const marker = L.marker([station.LATITUDE, station.LONGITUDE], {
+      icon: L.divIcon({
+        className: 'weather-station-marker',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+        html: `
 						<svg width="20" height="20" viewBox="0 0 20 20">
 							<circle class="station-marker-inner" cx="10" cy="10" r="6.5"></circle>
 							<circle class="station-marker-outer" cx="10" cy="10" r="9"></circle>
 						</svg>
-					`
-				})
-			}
-		);
+					`,
+      }),
+    });
 
-		const row = {
-			station,
-			stationName: station.STATION_NAME,
-			latitude: station.LATITUDE,
-			longitude: station.LONGITUDE
-		};
+    const row = {
+      station,
+      stationName: station.STATION_NAME,
+      latitude: station.LATITUDE,
+      longitude: station.LONGITUDE,
+    };
 
-		this.initializeStationMarker(marker, row);
+    this.initializeStationMarker(marker, row);
 
-		this.stationMarkers.set(station.STATION_NAME, marker);
+    this.stationMarkers.set(station.STATION_NAME, marker);
 
-		return marker;
-	}
+    return marker;
+  }
 
-	private initializeStationMarker(marker: L.Marker, row: any): void {
+  private initializeStationMarker(marker: L.Marker, row: any): void {
+    marker.feature = {
+      type: 'Feature',
+      properties: row,
+      geometry: {
+        type: 'Point',
+        coordinates: [row.latitude, row.longitude],
+      },
+    };
+  }
 
-		marker.feature = {
-			type: 'Feature',
-			properties: row,
-			geometry: {
-				type: 'Point',
-				coordinates: [row.latitude, row.longitude]
-			}
-		};
+  private setActiveMarker(stationName: string): void {
+    this.stationMarkers.forEach((marker) => {
+      marker.getElement()?.classList.remove('active');
+    });
 
+    const marker = this.stationMarkers.get(stationName);
 
-	}
+    marker?.getElement()?.classList.add('active');
 
-	private setActiveMarker(stationName: string): void {
-
-		this.stationMarkers.forEach(marker => {
-			marker.getElement()?.classList.remove('active');
-		});
-
-		const marker = this.stationMarkers.get(stationName);
-
-		marker?.getElement()?.classList.add('active');
-
-		this.activeMarker = marker ?? null;
-	}
-
-}                       
+    this.activeMarker = marker ?? null;
+  }
+}
