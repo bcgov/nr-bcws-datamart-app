@@ -1,8 +1,12 @@
 $header-background-color: #f1f8fe;
+
 $border-color: #d8d8d8;
+
 $text-primary-color: #2d2d2d;
+
 $link-color: #255a90;
 $link-hover-color: #1a5a96;
+
 $button-background-color: #ffffff;
 $button-hover-background-color: #f2f2f2;
 $button-active-background-color: #e6e6e6;
@@ -97,6 +101,7 @@ $button-active-background-color: #e6e6e6;
 
     border-radius: 2px;
     border: 1px solid $border-color;
+
     background: $button-background-color;
 
     cursor: pointer;
@@ -138,6 +143,18 @@ $button-active-background-color: #e6e6e6;
     gap: 8px;
 }
 
+.dialog-message {
+    margin: 0;
+
+    color: $text-primary-color;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 27px;
+}
+
 @media (max-width: 992px) {
     .header-content {
         flex-direction: column;
@@ -150,7 +167,6 @@ $button-active-background-color: #e6e6e6;
     }
 }
 
-
 ::ng-deep .no-stations-selected-dialog {
 
     .nrcl-button.secondary {
@@ -158,9 +174,10 @@ $button-active-background-color: #e6e6e6;
     }
 
     .mat-mdc-dialog-surface {
+        border: 1px solid $border-color;
         border-radius: 4px;
-        border: 1px solid #d8d8d8;
-        background: #fff;
+
+        background: $button-background-color;
 
         box-shadow:
             0 4.8px 14.4px rgba(0, 0, 0, 0.18),
@@ -168,15 +185,17 @@ $button-active-background-color: #e6e6e6;
     }
 
     .title-bar {
-        background: #fff !important;
         padding: 24px;
-        border-bottom: 1px solid #d8d8d8;
+
+        background: $button-background-color !important;
+
+        border-bottom: 1px solid $border-color;
     }
 
     .title-bar h1 {
         margin: 0;
 
-        color: #2d2d2d !important;
+        color: $text-primary-color !important;
 
         font-family: 'BC Sans', sans-serif;
         font-size: 20px;
@@ -185,22 +204,42 @@ $button-active-background-color: #e6e6e6;
         line-height: 34px;
     }
 
-    .mat-mdc-dialog-content {
-        padding: 24px !important;
+    .title-bar .close button {
+        display: flex;
+        align-items: flex-start;
+
+        gap: 8px;
+
+        padding: 6px;
+
+        border-radius: 4px;
+
+        background: transparent;
+
+        color: $text-primary-color;
     }
 
-    // THIS IS THE IMPORTANT PART
+    .title-bar .close mat-icon {
+        color: $text-primary-color !important;
+    }
+
+    .mat-mdc-dialog-content {
+        padding: 24px !important;
+
+        background: $button-background-color;
+    }
 
     .action-button-wrapper {
-        background: #fff !important;
-        border-top: 1px solid #d8d8d8 !important;
-
-        padding: 16px 24px !important;
-
         display: flex;
         justify-content: flex-end;
         align-items: center;
 
         width: 100%;
+
+        padding: 16px 24px !important;
+
+        background: $button-background-color !important;
+
+        border-top: 1px solid $border-color !important;
     }
 }

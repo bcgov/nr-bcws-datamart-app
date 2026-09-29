@@ -2,6 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   OnInit,
+  TemplateRef,
   ViewChild,
 } from '@angular/core';
 
@@ -10,7 +11,6 @@ import { Router } from '@angular/router';
 import { DialogService } from '@bcgov/nr-ngx-component-lib';
 
 import { SelectedStationsService } from '../../../services/selected-stations.service';
-import { NoStationsSelectedDialogComponent } from '../no-stations-selected-dialog/no-stations-selected-dialog.component';
 
 @Component({
   selector: 'app-station-selection-header',
@@ -20,8 +20,8 @@ import { NoStationsSelectedDialogComponent } from '../no-stations-selected-dialo
   standalone: false,
 })
 export class StationSelectionHeaderComponent implements OnInit {
-  @ViewChild(NoStationsSelectedDialogComponent)
-  noStationsSelectedDialog!: NoStationsSelectedDialogComponent;
+  @ViewChild('noStationsSelectedDialog', { static: true })
+  noStationsSelectedDialog!: TemplateRef<unknown>;
 
   selectedCount = 0;
 
@@ -40,16 +40,16 @@ export class StationSelectionHeaderComponent implements OnInit {
   viewData(): void {
     if (this.selectedCount === 0) {
       this.dialogService.openConfirmDialog(
-      {
-        title: 'Select a Weather Station',
-        saveLabel: 'OK',
-        template: this.noStationsSelectedDialog.content,
-      },
-      {
-        disableClose: false,
-        panelClass: ['no-stations-selected-dialog'],
-      },
-    );
+        {
+          title: 'Select a Weather Station',
+          saveLabel: 'OK',
+          template: this.noStationsSelectedDialog,
+        },
+        {
+          disableClose: false,
+          panelClass: ['no-stations-selected-dialog'],
+        },
+      );
 
       return;
     }

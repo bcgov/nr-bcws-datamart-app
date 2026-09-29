@@ -34,18 +34,15 @@
 
                 </button>
 
-                <nrcl-button
-                    primary
+                <nrcl-button primary
                     (click)="viewData()">
 
                     <span class="view-data-content">
-
                         View data
 
                         <nrcl-icon>
                             arrow_forward
                         </nrcl-icon>
-
                     </span>
 
                 </nrcl-button>
@@ -58,5 +55,10 @@
 
 </section>
 
-<app-no-stations-selected-dialog>
-</app-no-stations-selected-dialog>
+<ng-template #noStationsSelectedDialog>
+
+    <p class="dialog-message">
+        To view data, select at least one weather station from the map or list.
+    </p>
+
+</ng-template>
