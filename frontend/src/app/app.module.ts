@@ -27,6 +27,7 @@ import { StationSelectionStationListComponent } from './components/station-selec
 import { StationSelectionContentComponent } from './components/station-selection/station-selection-content/station-selection-content.component';
 import { StationInformationPanelComponent } from './components/station-selection/station-selection-content/station-selection-map/station-information-panel/station-information-panel.component';
 import { DataDownloadComponent } from './components/data-download/data-download.component';
+import { NoStationsSelectedDialogComponent } from './components/station-selection/no-stations-selected-dialog/no-stations-selected-dialog.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { DataDownloadComponent } from './components/data-download/data-download.
     StationSelectionStationListComponent,
     StationSelectionMapComponent,
     StationInformationPanelComponent,
+    NoStationsSelectedDialogComponent,
     DataDownloadComponent,
     HomeCardComponent,
     FooterComponent

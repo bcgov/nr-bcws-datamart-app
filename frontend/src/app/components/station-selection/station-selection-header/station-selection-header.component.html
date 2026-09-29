@@ -5,11 +5,15 @@
         <div class="header-content">
 
             <div class="header-text">
-                <h1>Select weather stations</h1>
+
+                <h1>
+                    Select weather stations
+                </h1>
 
                 <p>
                     Choose one or more stations to view weather data.
                 </p>
+
             </div>
 
             <div class="header-actions">
@@ -30,14 +34,20 @@
 
                 </button>
 
-                <nrcl-button primary routerLink="/data-download">
+                <nrcl-button
+                    primary
+                    (click)="viewData()">
+
                     <span class="view-data-content">
+
                         View data
 
                         <nrcl-icon>
                             arrow_forward
                         </nrcl-icon>
+
                     </span>
+
                 </nrcl-button>
 
             </div>
@@ -47,3 +57,6 @@
     </div>
 
 </section>
+
+<app-no-stations-selected-dialog>
+</app-no-stations-selected-dialog>

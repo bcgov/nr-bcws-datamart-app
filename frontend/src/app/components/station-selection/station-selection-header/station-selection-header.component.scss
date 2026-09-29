@@ -149,3 +149,58 @@ $button-active-background-color: #e6e6e6;
         width: 100%;
     }
 }
+
+
+::ng-deep .no-stations-selected-dialog {
+
+    .nrcl-button.secondary {
+        display: none;
+    }
+
+    .mat-mdc-dialog-surface {
+        border-radius: 4px;
+        border: 1px solid #d8d8d8;
+        background: #fff;
+
+        box-shadow:
+            0 4.8px 14.4px rgba(0, 0, 0, 0.18),
+            0 25.6px 57.6px rgba(0, 0, 0, 0.22);
+    }
+
+    .title-bar {
+        background: #fff !important;
+        padding: 24px;
+        border-bottom: 1px solid #d8d8d8;
+    }
+
+    .title-bar h1 {
+        margin: 0;
+
+        color: #2d2d2d !important;
+
+        font-family: 'BC Sans', sans-serif;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 34px;
+    }
+
+    .mat-mdc-dialog-content {
+        padding: 24px !important;
+    }
+
+    // THIS IS THE IMPORTANT PART
+
+    .action-button-wrapper {
+        background: #fff !important;
+        border-top: 1px solid #d8d8d8 !important;
+
+        padding: 16px 24px !important;
+
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        width: 100%;
+    }
+}
