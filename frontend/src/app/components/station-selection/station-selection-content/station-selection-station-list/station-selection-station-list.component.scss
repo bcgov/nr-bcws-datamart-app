@@ -222,3 +222,12 @@ $color-focus-border: #2e5dd7;
 :host ::ng-deep nrcl-row-list-pagination .summary {
     display: none !important;
 }
+
+:host ::ng-deep .mat-mdc-checkbox-checked .mdc-checkbox__background {
+    background-color: #013366 !important;
+    border-color: #013366 !important;
+}
+
+:host ::ng-deep .mat-mdc-checkbox-checked .mdc-checkbox__checkmark {
+    color: #ffffff !important;
+}
