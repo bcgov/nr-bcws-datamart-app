@@ -1,70 +1,61 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-    selector: 'app-station-information-panel',
-    templateUrl: './station-information-panel.component.html',
-    styleUrl: './station-information-panel.component.scss',
-    standalone: false
+  selector: 'app-station-information-panel',
+  templateUrl: './station-information-panel.component.html',
+  styleUrl: './station-information-panel.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class StationInformationPanelComponent {
+  @Input()
+  station: any;
 
-    @Input()
-    station: any;
+  display(value: any): string {
+    return value === null || value === undefined || value === '' ? '–' : String(value);
+  }
 
-    
-
-    display(value: any): string {
-        return value === null || value === undefined || value === '' ? '–' : String(value);
+  get installationDate(): string {
+    if (!this.station?.INSTALLATION_TIMESTAMP_MSEC) {
+      return '–';
     }
 
-    get installationDate(): string {
+    return new Date(this.station.INSTALLATION_TIMESTAMP_MSEC).toLocaleDateString();
+  }
 
-        if (!this.station?.INSTALLATION_TIMESTAMP_MSEC) {
-            return '–';
-        }
+  get indicatorLabel(): string {
+    switch (this.station?.STATION_STATUS_CODE) {
+      case 'ACTIVE':
+        return 'Future';
 
-        return new Date(
-            this.station.INSTALLATION_TIMESTAMP_MSEC
-        ).toLocaleDateString();
+      case 'ARCHIVED':
+      case 'DISABLED':
+        return 'Active';
+
+      case 'PROJECT':
+      case 'TEST':
+        return 'Ok';
+
+      default:
+        return 'Not defined';
     }
+  }
 
-    get indicatorLabel(): string {
+  get indicatorClass(): string {
+    switch (this.station?.STATION_STATUS_CODE) {
+      case 'ACTIVE':
+        return 'future';
 
-        switch (this.station?.STATION_STATUS_CODE) {
+      case 'ARCHIVED':
+      case 'DISABLED':
+        return 'active';
 
-            case 'ACTIVE':
-                return 'Future';
+      case 'PROJECT':
+      case 'TEST':
+        return 'ok';
 
-            case 'ARCHIVED':
-            case 'DISABLED':
-                return 'Active';
-
-            case 'PROJECT':
-            case 'TEST':
-                return 'Ok';
-
-            default:
-                return 'Not defined';
-        }
+      default:
+        return 'none';
     }
-
-    get indicatorClass(): string {
-
-        switch (this.station?.STATION_STATUS_CODE) {
-
-            case 'ACTIVE':
-                return 'future';
-
-            case 'ARCHIVED':
-            case 'DISABLED':
-                return 'active';
-
-            case 'PROJECT':
-            case 'TEST':
-                return 'ok';
-
-            default:
-                return 'none';
-        }
-    }
+  }
 }
