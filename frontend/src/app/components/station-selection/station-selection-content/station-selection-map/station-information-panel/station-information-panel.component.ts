@@ -1,4 +1,10 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+
+import { SelectedStationsService } from '../../../../../services/selected-stations.service';
 
 @Component({
   selector: 'app-station-information-panel',
@@ -11,8 +17,26 @@ export class StationInformationPanelComponent {
   @Input()
   station: any;
 
+  constructor(
+    private readonly selectedStationsService: SelectedStationsService,
+  ) {}
+
   display(value: any): string {
-    return value === null || value === undefined || value === '' ? '–' : String(value);
+    return value === null || value === undefined || value === ''
+      ? '–'
+      : String(value);
+  }
+
+  get isSelected(): boolean {
+    return this.selectedStationsService.isSelected(this.station);
+  }
+
+  selectStation(): void {
+    this.selectedStationsService.addStation(this.station);
+  }
+
+  removeStation(): void {
+    this.selectedStationsService.removeStation(this.station);
   }
 
   get installationDate(): string {
@@ -20,25 +44,9 @@ export class StationInformationPanelComponent {
       return '–';
     }
 
-    return new Date(this.station.INSTALLATION_TIMESTAMP_MSEC).toLocaleDateString();
-  }
-
-  get indicatorLabel(): string {
-    switch (this.station?.STATION_STATUS_CODE) {
-      case 'ACTIVE':
-        return 'Future';
-
-      case 'ARCHIVED':
-      case 'DISABLED':
-        return 'Active';
-
-      case 'PROJECT':
-      case 'TEST':
-        return 'Ok';
-
-      default:
-        return 'Not defined';
-    }
+    return new Date(
+      this.station.INSTALLATION_TIMESTAMP_MSEC,
+    ).toLocaleDateString();
   }
 
   get indicatorClass(): string {

@@ -19,7 +19,9 @@
                     class="selected-stations-button">
 
                     <span class="selected-stations-text">
-                        0 stations selected
+                        {{ selectedCount }}
+                        {{ selectedCount === 1 ? 'station' : 'stations' }}
+                        selected
                     </span>
 
                     <nrcl-icon>
