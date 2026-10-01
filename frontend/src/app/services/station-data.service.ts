@@ -1,6 +1,8 @@
 import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+const WEATHER_STATIONS_API = 'https://container-app-api-yujhzooydm766.bluewater-fbba4d31.canadacentral.azurecontainerapps.io/api/weather_stations';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -12,22 +14,15 @@ export class StationDataService {
   private loaded = false;
   private loading = false;
 
-  constructor(
-    private readonly ngZone: NgZone,
-  ) {}
+  constructor(private readonly ngZone: NgZone) {}
 
   async loadStations(): Promise<void> {
-    if (this.loaded || this.loading) {
-      return;
-    }
+    if (this.loaded || this.loading) return;
 
     this.loading = true;
 
     try {
-      const response = await this.fetchWithRetry(
-        'https://container-app-api-yujhzooydm766.bluewater-fbba4d31.canadacentral.azurecontainerapps.io/api/weather_stations',
-      );
-
+      const response = await this.fetchWithRetry(WEATHER_STATIONS_API);
       const data = await response.json();
 
       const uniqueStations = [
@@ -48,10 +43,30 @@ export class StationDataService {
     }
   }
 
-  private async fetchWithRetry(
-    url: string,
-    maxAttempts = 3,
-  ): Promise<Response> {
+  async loadStationsByIds( stationGuids: string[] ): Promise<any[]> {
+    if (stationGuids.length === 0) return [];
+
+    const filter = stationGuids
+      .map((id) => `WEATHER_STATION_GUID eq '${id}'`)
+      .join(' or ');
+
+    const response = await this.fetchWithRetry(
+      `${WEATHER_STATIONS_API}?$filter=${encodeURIComponent(filter)}`,
+    );
+
+    const data = await response.json();
+
+    return [
+      ...new Map(
+        data.value.map((station: any) => [
+          station.WEATHER_STATION_GUID,
+          station,
+        ]),
+      ).values(),
+    ];
+  }
+
+  private async fetchWithRetry( url: string, maxAttempts = 3, ): Promise<Response> {
     let lastError: unknown;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {

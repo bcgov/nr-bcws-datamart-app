@@ -167,35 +167,217 @@ $button-active-background-color: #e6e6e6;
     }
 }
 
-::ng-deep .no-stations-selected-dialog {
+    ::ng-deep .no-stations-selected-dialog {
+        .nrcl-button.secondary {
+            display: none;
+        }
 
-    .nrcl-button.secondary {
-        display: none;
+        .mat-mdc-dialog-surface {
+            border: 1px solid $border-color;
+            border-radius: 4px;
+
+            background: $button-background-color;
+
+            box-shadow:
+                0 4.8px 14.4px rgba(0, 0, 0, 0.18),
+                0 25.6px 57.6px rgba(0, 0, 0, 0.22);
+        }
+
+        .title-bar {
+            padding: 24px;
+
+            background: $button-background-color !important;
+
+            border-bottom: 1px solid $border-color;
+        }
+
+        .title-bar h1 {
+            margin: 0;
+
+            color: $text-primary-color !important;
+
+            font-family: 'BC Sans', sans-serif;
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 34px;
+        }
+
+        .title-bar .close button {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 8px;
+
+            padding: 6px;
+
+            border-radius: 4px;
+
+            background: transparent;
+
+            color: $text-primary-color;
+        }
+
+        .title-bar .close mat-icon {
+            color: $text-primary-color !important;
+        }
+
+        .mat-mdc-dialog-content {
+            padding: 24px !important;
+
+            background: $button-background-color;
+        }
+
+        .action-button-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+
+            width: 100%;
+
+            padding: 16px 24px !important;
+
+            background: $button-background-color !important;
+
+            border-top: 1px solid $border-color !important;
+        }
     }
 
-    .mat-mdc-dialog-surface {
-        border: 1px solid $border-color;
-        border-radius: 4px;
 
-        background: $button-background-color;
+    ::ng-deep .selected-stations-dialog {
 
-        box-shadow:
-            0 4.8px 14.4px rgba(0, 0, 0, 0.18),
-            0 25.6px 57.6px rgba(0, 0, 0, 0.22);
+        .mat-mdc-dialog-surface {
+            border: 1px solid $border-color;
+            border-radius: 4px;
+
+            background: $button-background-color;
+
+            box-shadow:
+                0 4.8px 14.4px rgba(0, 0, 0, 0.18),
+                0 25.6px 57.6px rgba(0, 0, 0, 0.22);
+        }
+
+        .title-bar {
+            padding: 24px;
+
+            background: $button-background-color !important;
+
+            border-bottom: 1px solid $border-color;
+        }
+
+        .title-bar h1 {
+            margin: 0;
+
+            color: $text-primary-color !important;
+
+            font-family: 'BC Sans', sans-serif;
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 34px;
+        }
+
+        .title-bar .close button {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 8px;
+
+            padding: 6px;
+
+            border-radius: 4px;
+
+            background: transparent;
+
+            color: $text-primary-color;
+        }
+
+        .title-bar .close mat-icon {
+            color: $text-primary-color !important;
+        }
+
+        .mat-mdc-dialog-content {
+            padding: 24px !important;
+
+            background: $button-background-color;
+        }
+
+        
+        .mat-mdc-table {
+            width: 100%;
+        }
+
+        .mat-mdc-header-row {
+            background: #ffffff;
+        }
+
+        .mat-mdc-header-cell {
+            font-weight: 700;
+        }
+
+        .nrcl-button.secondary {
+            display: none;
+        }
+
+        .mat-mdc-dialog-actions {
+            background: $button-background-color !important;
+        }
+
+        .action-button-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+
+            width: 100%;
+
+            padding: 16px 24px !important;
+
+            background: $button-background-color !important;
+
+            border-top: 1px solid $border-color !important;
+        }
+
+        nrcl-row-list-desktop,
+            .nrcl-row-list-desktop {
+                border-left: none !important;
+                border-right: none !important;
+                box-shadow: none !important;
+            }
+
+        .mat-mdc-table {
+            border-left: none !important;
+            border-right: none !important;
+        }
+
+        .mat-mdc-row {
+            border-left: none !important;
+            border-right: none !important;
+        }
+
+        .content-wrapper {
+            padding: 10px 25px 30px 25px !important;
+        }
+
+        .mat-mdc-header-row {
+            border-top: none !important;
+            border-left: none !important;
+            border-right: none !important;
+        }
+        
     }
 
-    .title-bar {
-        padding: 24px;
+    .selected-stations-header {
+        display: flex;
+        align-items: center;
 
-        background: $button-background-color !important;
+        gap: 16px;
 
-        border-bottom: 1px solid $border-color;
+        margin-bottom: 24px;
     }
-
-    .title-bar h1 {
+    .selected-stations-count {
         margin: 0;
 
-        color: $text-primary-color !important;
+        color: $text-primary-color;
 
         font-family: 'BC Sans', sans-serif;
         font-size: 20px;
@@ -204,42 +386,32 @@ $button-active-background-color: #e6e6e6;
         line-height: 34px;
     }
 
-    .title-bar .close button {
+    .remove-selected-button {
         display: flex;
-        align-items: flex-start;
-
-        gap: 8px;
-
-        padding: 6px;
-
-        border-radius: 4px;
-
-        background: transparent;
-
-        color: $text-primary-color;
-    }
-
-    .title-bar .close mat-icon {
-        color: $text-primary-color !important;
-    }
-
-    .mat-mdc-dialog-content {
-        padding: 24px !important;
-
-        background: $button-background-color;
-    }
-
-    .action-button-wrapper {
-        display: flex;
-        justify-content: flex-end;
         align-items: center;
 
-        width: 100%;
-
-        padding: 16px 24px !important;
-
-        background: $button-background-color !important;
-
-        border-top: 1px solid $border-color !important;
+        gap: 8px;
     }
-}
+
+    .remove-action {
+        color: $link-color;
+
+        font-family: 'BC Sans', sans-serif;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 27px;
+
+        text-decoration: underline;
+
+        background: none;
+        border: none;
+
+        cursor: pointer;
+
+        &:hover {
+            color: $link-hover-color;
+        }
+    }
+
+    

@@ -41,8 +41,17 @@ export class SelectedStationsService {
     );
   }
 
+  clearStations(): void {
+    this.selectedStationsSubject.next([]);
+  }
+
   get count(): number {
     return this.selectedStationsSubject.value.length;
   }
+
+  get selectedStations(): any[] {
+    return this.selectedStationsSubject.value;
+  }
+
   
 }
