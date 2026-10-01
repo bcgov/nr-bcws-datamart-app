@@ -363,7 +363,14 @@ $button-active-background-color: #e6e6e6;
             border-left: none !important;
             border-right: none !important;
         }
-        
+                    
+    }
+
+    ::ng-deep .selected-stations-dialog.empty-state {
+
+        .action-button-wrapper {
+            display: none !important;
+        }
     }
 
     .selected-stations-header {
@@ -415,3 +422,22 @@ $button-active-background-color: #e6e6e6;
     }
 
     
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        gap: 16px;
+
+        padding: 24px;
+    }
+
+    ::ng-deep .selected-stations-dialog {
+
+    &:has(.empty-state) {
+        ~ .mat-mdc-dialog-actions,
+        .mat-mdc-dialog-actions {
+            display: none !important;
+        }
+    }
+}

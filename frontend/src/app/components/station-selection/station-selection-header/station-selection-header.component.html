@@ -73,7 +73,27 @@
 
 <ng-template #selectedStationsDialog>
 
-    <div class="selected-stations-dialog">
+    <div class="selected-stations-dialog" [class.empty-state]="selectedCount === 0">
+        @if (selectedCount === 0) {
+
+            <div class="empty-state">
+
+                <h3>No Stations Selected</h3>
+
+                <p class="dialog-message">
+                    Select stations from the map or station list.
+                    Your selections will appear here.
+                </p>
+
+                <nrcl-button primary
+                    (click)="closeSelectedStationsDialog()">
+                    OK
+                </nrcl-button>
+
+            </div>
+
+        } @else {
+
 
         <div class="selected-stations-header">
 
@@ -234,6 +254,7 @@
             (pageSizeChange)="onPageSizeChange($event)">
         </nrcl-row-list-pagination>
 
+    }
     </div>
 
 </ng-template>

@@ -152,6 +152,7 @@ export class StationSelectionHeaderComponent implements OnInit {
     this.pageNumber = 1;
   }
 
+
   removeStation(station: any): void {
     this.selectedStationsService.removeStation(station);
 
@@ -268,4 +269,13 @@ export class StationSelectionHeaderComponent implements OnInit {
         return '';
     }
   }
+
+  closeSelectedStationsDialog(): void {
+    (
+      document.querySelector(
+        '.selected-stations-dialog .title-bar .close button',
+      ) as HTMLButtonElement
+    )?.click();
+  }
+
 }
