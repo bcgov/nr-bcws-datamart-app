@@ -8,6 +8,8 @@ import {
 
 import { Router } from '@angular/router';
 
+import { Sort } from '@angular/material/sort';
+
 import { DialogService } from '@bcgov/nr-ngx-component-lib';
 
 import { SelectedStationsService } from '../../../services/selected-stations.service';
@@ -51,6 +53,8 @@ export class StationSelectionHeaderComponent implements OnInit {
 
   pageSize = 10;
   pageNumber = 1;
+  sortColumn = 'stationName';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
 
   constructor(
@@ -110,6 +114,17 @@ export class StationSelectionHeaderComponent implements OnInit {
       );
 
     this.selectedStations = await this.stationDataService.loadStationsByIds(stationGuids,);
+
+    this.selectedStations.sort((a, b) =>
+      String(a.STATION_NAME).localeCompare(
+        String(b.STATION_NAME),
+        undefined,
+        { sensitivity: 'base' },
+      ),
+    );
+
+    this.sortColumn = 'stationName';
+    this.sortDirection = 'asc';
 
     this.pageNumber = 1; 
 
@@ -176,4 +191,81 @@ export class StationSelectionHeaderComponent implements OnInit {
   }
 
 
+  onSortChange(sort: Sort): void {
+    if (!sort.direction) {
+      this.sortColumn = 'stationName';
+      this.sortDirection = 'asc';
+
+      return;
+    }
+
+    this.sortColumn = sort.active;
+    this.sortDirection = sort.direction as 'asc' | 'desc';
+
+    this.selectedStations.sort((a, b) => {
+      const aValue = this.getSortValue(a, sort.active);
+      const bValue = this.getSortValue(b, sort.active);
+
+      const numericColumns = [
+        'latitude',
+        'longitude',
+        'elevation',
+      ];
+
+      if (numericColumns.includes(sort.active)) {
+        const result = Number(aValue ?? 0) - Number(bValue ?? 0);
+
+        return sort.direction === 'desc'
+          ? -result
+          : result;
+      }
+
+      const result = String(aValue ?? '').localeCompare(
+        String(bValue ?? ''),
+        undefined,
+        {
+          numeric: true,
+          sensitivity: 'base',
+        },
+      );
+
+      return sort.direction === 'desc'
+        ? -result
+        : result;
+    });
+  }
+
+  private getSortValue(station: any, column: string): any {
+    switch (column) {
+      case 'stationName':
+        return station.STATION_NAME;
+
+      case 'stationCode':
+        return station.STATION_CODE;
+
+      case 'stationAcronym':
+        return station.STATION_ACRONYM;
+
+      case 'fireCentre':
+        return station.FIRE_CENTRE_ORG_UNIT_IDENT;
+
+      case 'fireZone':
+        return station.ZONE_ORG_UNIT_IDENTIFIER;
+
+      case 'latitude':
+        return station.LATITUDE;
+
+      case 'longitude':
+        return station.LONGITUDE;
+
+      case 'elevation':
+        return station.ELEVATION_M;
+
+      case 'status':
+        return station.STATION_STATUS_DESC;
+
+      default:
+        return '';
+    }
+  }
 }

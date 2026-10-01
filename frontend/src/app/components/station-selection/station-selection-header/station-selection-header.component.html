@@ -94,17 +94,22 @@
 
         </div>
 
-        <nrcl-row-list-desktop>
+      <nrcl-row-list-desktop>
 
-            <table mat-table [dataSource]="selectedStations | paginate: {
-                    id: 'selected-stations',
-                    itemsPerPage: pageSize,
-                    currentPage: pageNumber,
-                    totalItems: selectedCount
-            }">
+        <table mat-table
+            [dataSource]="selectedStations | paginate: {
+                id: 'selected-stations',
+                itemsPerPage: pageSize,
+                currentPage: pageNumber,
+                totalItems: selectedCount
+            }"
+            matSort
+            [matSortActive]="'stationName'"
+            [matSortDirection]="'asc'"
+            (matSortChange)="onSortChange($event)">
 
             <ng-container matColumnDef="stationName">
-                <mat-header-cell *matHeaderCellDef>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="stationName">
                     Station Name
                 </mat-header-cell>
 
@@ -114,7 +119,7 @@
             </ng-container>
 
             <ng-container matColumnDef="stationCode">
-                <mat-header-cell *matHeaderCellDef>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="stationCode">
                     Station Code
                 </mat-header-cell>
 
@@ -124,7 +129,7 @@
             </ng-container>
 
             <ng-container matColumnDef="stationAcronym">
-                <mat-header-cell *matHeaderCellDef>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="stationAcronym">
                     Station Acronym
                 </mat-header-cell>
 
@@ -134,7 +139,7 @@
             </ng-container>
 
             <ng-container matColumnDef="fireCentre">
-                <mat-header-cell *matHeaderCellDef>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="fireCentre">
                     Fire Centre
                 </mat-header-cell>
 
@@ -144,7 +149,7 @@
             </ng-container>
 
             <ng-container matColumnDef="fireZone">
-                <mat-header-cell *matHeaderCellDef>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="fireZone">
                     Fire Zone
                 </mat-header-cell>
 
@@ -154,7 +159,7 @@
             </ng-container>
 
             <ng-container matColumnDef="latitude">
-                <mat-header-cell *matHeaderCellDef>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="latitude">
                     Latitude
                 </mat-header-cell>
 
@@ -164,7 +169,7 @@
             </ng-container>
 
             <ng-container matColumnDef="longitude">
-                <mat-header-cell *matHeaderCellDef>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="longitude">
                     Longitude
                 </mat-header-cell>
 
@@ -174,7 +179,7 @@
             </ng-container>
 
             <ng-container matColumnDef="elevation">
-                <mat-header-cell *matHeaderCellDef>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="elevation">
                     Elevation (m)
                 </mat-header-cell>
 
@@ -184,7 +189,7 @@
             </ng-container>
 
             <ng-container matColumnDef="status">
-                <mat-header-cell *matHeaderCellDef>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="status">
                     Status
                 </mat-header-cell>
 
@@ -195,20 +200,15 @@
 
             <ng-container matColumnDef="remove">
                 <mat-header-cell *matHeaderCellDef aria-label="Actions">
-                    
                 </mat-header-cell>
 
                 <mat-cell *matCellDef="let station">
-
                     <button
                         type="button"
                         class="remove-action"
                         (click)="removeStation(station)">
-
                         Remove
-
                     </button>
-
                 </mat-cell>
             </ng-container>
 
@@ -220,10 +220,9 @@
                 *matRowDef="let row; columns: displayedColumns;">
             </mat-row>
 
-            </table>
+        </table>
 
-        </nrcl-row-list-desktop>
-
+    </nrcl-row-list-desktop>
         <nrcl-gap vertical></nrcl-gap>
 
         <nrcl-row-list-pagination
