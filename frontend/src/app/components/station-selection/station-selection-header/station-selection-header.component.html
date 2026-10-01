@@ -18,9 +18,8 @@
 
             <div class="header-actions">
 
-                <button
-                    type="button"
-                    class="selected-stations-button">
+                <button type="button" class="selected-stations-button"
+                    (click)="viewSelectedStations()">
 
                     <span class="selected-stations-text">
                         {{ selectedCount }}
@@ -59,6 +58,15 @@
 
     <p class="dialog-message">
         To view data, select at least one weather station from the map or list.
+    </p>
+
+</ng-template>
+
+<ng-template #emptySelectedStationsDialog>
+
+    <p class="dialog-message">
+        Select stations from the map or station list.
+        Your selections will appear here.
     </p>
 
 </ng-template>

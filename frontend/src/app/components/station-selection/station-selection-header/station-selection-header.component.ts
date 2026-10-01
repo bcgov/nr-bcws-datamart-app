@@ -23,6 +23,9 @@ export class StationSelectionHeaderComponent implements OnInit {
   @ViewChild('noStationsSelectedDialog', { static: true })
   noStationsSelectedDialog!: TemplateRef<unknown>;
 
+  @ViewChild('emptySelectedStationsDialog', { static: true })
+  emptySelectedStationsDialog!: TemplateRef<unknown>;
+
   selectedCount = 0;
 
   constructor(
@@ -55,5 +58,26 @@ export class StationSelectionHeaderComponent implements OnInit {
     }
 
     this.router.navigate(['/data-download']);
+  }
+
+  viewSelectedStations(): void {
+    if (this.selectedCount === 0) {
+      this.dialogService.openConfirmDialog(
+        {
+          title: 'No Stations Selected',
+          saveLabel: 'OK',
+          template: this.emptySelectedStationsDialog,
+        },
+        {
+          disableClose: false,
+          panelClass: ['no-stations-selected-dialog'],
+        },
+      );
+
+      return;
+    }
+
+    // WFWX-3009
+    // Eventually opens full-screen Selected Stations dialog
   }
 }
