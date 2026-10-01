@@ -7,6 +7,8 @@ $text-primary-color: #2d2d2d;
 $link-color: #255a90;
 $link-hover-color: #1a5a96;
 
+$focus-border-color: #2e5dd7;
+
 $button-background-color: #ffffff;
 $button-hover-background-color: #f2f2f2;
 $button-active-background-color: #e6e6e6;
@@ -363,6 +365,23 @@ $button-active-background-color: #e6e6e6;
             border-left: none !important;
             border-right: none !important;
         }
+
+        &:has(.empty-state) {
+            ~ .mat-mdc-dialog-actions,
+            .mat-mdc-dialog-actions {
+                display: none !important;
+            }
+        }
+
+        .mat-sort-header:focus-visible,
+            .mat-sort-header-container:focus-visible {
+                outline: none;
+
+                background-color: $header-background-color;
+
+                border: 2px solid $focus-border-color;
+                border-radius: 4px;
+            }
                     
     }
 
@@ -419,9 +438,17 @@ $button-active-background-color: #e6e6e6;
         &:hover {
             color: $link-hover-color;
         }
-    }
 
-    
+        &:focus-visible {
+            outline: none;
+
+            background-color: $header-background-color;
+
+            border: 2px solid $focus-border-color;
+            border-radius: 4px;
+        }
+    }
+        
     .empty-state {
         display: flex;
         flex-direction: column;
@@ -432,12 +459,3 @@ $button-active-background-color: #e6e6e6;
         padding: 24px;
     }
 
-    ::ng-deep .selected-stations-dialog {
-
-    &:has(.empty-state) {
-        ~ .mat-mdc-dialog-actions,
-        .mat-mdc-dialog-actions {
-            display: none !important;
-        }
-    }
-}
