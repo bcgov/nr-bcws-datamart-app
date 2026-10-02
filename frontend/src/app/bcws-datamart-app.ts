@@ -88,7 +88,6 @@ export class BcwsDatamartApp {
             case 'copyright':   openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=1AAACC9C65754E4D89A118B875E0FBDA' ); break
         }
     }
-
 }
 
 function openExternalLink( url: string ) {
