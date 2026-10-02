@@ -73,35 +73,19 @@ export class StationDataService {
 
     const predicates: string[] = [];
 
-    if (filters.elevationMin !== null) {
-      predicates.push(`ELEVATION_M ge ${filters.elevationMin}`);
-    }
+    if (filters.elevationMin !== null) predicates.push(`ELEVATION_M ge ${filters.elevationMin}`);
 
-    if (filters.elevationMax !== null) {
-      predicates.push(`ELEVATION_M le ${filters.elevationMax}`);
-    }
+    if (filters.elevationMax !== null) predicates.push(`ELEVATION_M le ${filters.elevationMax}`);
 
-    if (filters.latitudeMin !== null) {
-      predicates.push(`LATITUDE ge ${filters.latitudeMin}`);
-    }
+    if (filters.latitudeMin !== null) predicates.push(`LATITUDE ge ${filters.latitudeMin}`);
 
-    if (filters.latitudeMax !== null) {
-      predicates.push(`LATITUDE le ${filters.latitudeMax}`);
-    }
+    if (filters.latitudeMax !== null) predicates.push(`LATITUDE le ${filters.latitudeMax}`);
 
-    if (filters.longitudeMin !== null) {
-      predicates.push(`LONGITUDE ge ${filters.longitudeMin}`);
-    }
+    if (filters.longitudeMin !== null) predicates.push(`LONGITUDE ge ${filters.longitudeMin}`);
 
-    if (filters.longitudeMax !== null) {
-      predicates.push(`LONGITUDE le ${filters.longitudeMax}`);
-    }
+    if (filters.longitudeMax !== null) predicates.push(`LONGITUDE le ${filters.longitudeMax}`);
 
-    if (filters.stationStatus) {
-      predicates.push(
-        `STATION_STATUS_DESC eq '${filters.stationStatus}'`,
-      );
-    }
+    if (filters.stationStatus) predicates.push(`STATION_STATUS_DESC eq '${filters.stationStatus}'`);
 
     const url = predicates.length
       ? `${WEATHER_STATIONS_API}?$filter=${encodeURIComponent(predicates.join(' and '))}`
@@ -119,7 +103,17 @@ export class StationDataService {
       ).values(),
     ];
 
-    this.ngZone.run(() => this.stationsSubject.next(uniqueStations));
+    const filteredStations =
+      filters.searchText?.trim()
+        ? uniqueStations.filter(
+            (station: any) =>
+              station.STATION_NAME?.toLowerCase().includes(
+                filters.searchText!.trim().toLowerCase(),
+              ),
+          )
+        : uniqueStations;
+
+    this.ngZone.run(() => this.stationsSubject.next(filteredStations));
   }
 
   async clearFilters(): Promise<void> {

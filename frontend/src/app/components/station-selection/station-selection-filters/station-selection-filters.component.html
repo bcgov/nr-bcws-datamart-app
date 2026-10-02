@@ -18,9 +18,10 @@
         </button>
 
         <nrcl-filter-search
-            placeholder="Search stations">
+            placeholder="Search stations"
+            [value]="searchText"
+            (valueChange)="onSearchChanged($event)">
         </nrcl-filter-search>
-
     </div>
 
     @if (filtersExpanded) {

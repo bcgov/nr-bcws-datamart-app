@@ -23,6 +23,8 @@ import { FormsModule } from '@angular/forms';
 export class StationSelectionFiltersComponent {
   filtersExpanded = false;
 
+  searchText = '';
+
   elevationMin: number | null = null;
   elevationMax: number | null = null;
 
@@ -44,20 +46,26 @@ export class StationSelectionFiltersComponent {
 
   async applyFilters(): Promise<void> {
 
-    const filters: StationFilters = {
-      elevationMin: this.elevationMin,
-      elevationMax: this.elevationMax,
-      latitudeMin: this.latitudeMin,
-      latitudeMax: this.latitudeMax,
-      longitudeMin: this.longitudeMin,
-      longitudeMax: this.longitudeMax,
-      stationStatus: this.stationStatus,
-    };
+  const filters: StationFilters = {
+    searchText: this.searchText,
+
+    elevationMin: this.elevationMin,
+    elevationMax: this.elevationMax,
+
+    latitudeMin: this.latitudeMin,
+    latitudeMax: this.latitudeMax,
+
+    longitudeMin: this.longitudeMin,
+    longitudeMax: this.longitudeMax,
+
+    stationStatus: this.stationStatus,
+  };
 
     await this.stationDataService.loadStationsFiltered(filters);
   }
 
   async clearFilters(): Promise<void> {
+    this.searchText = '';
 
     this.elevationMin = null;
     this.elevationMax = null;
@@ -77,6 +85,7 @@ export class StationSelectionFiltersComponent {
 
     let count = 0;
 
+    if (this.searchText?.trim()) count++;
     if (this.elevationMin !== null || this.elevationMax !== null) count++;
     if (this.latitudeMin !== null || this.latitudeMax !== null) count++;
     if (this.longitudeMin !== null || this.longitudeMax !== null) count++;
@@ -87,6 +96,12 @@ export class StationSelectionFiltersComponent {
 
   get isMobileView(): boolean {
     return window.innerWidth <= 992;
+  }
+
+  async onSearchChanged(value: string): Promise<void> {
+    this.searchText = value;
+
+    await this.applyFilters();
   }
 
 }

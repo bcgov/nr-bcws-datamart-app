@@ -1,4 +1,5 @@
 export interface StationFilters {
+    searchText: string | null;
     elevationMin: number | null;
     elevationMax: number | null;
 
