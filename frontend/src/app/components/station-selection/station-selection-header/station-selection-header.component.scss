@@ -1,0 +1,461 @@
+$header-background-color: #f1f8fe;
+
+$border-color: #d8d8d8;
+
+$text-primary-color: #2d2d2d;
+
+$link-color: #255a90;
+$link-hover-color: #1a5a96;
+
+$focus-border-color: #2e5dd7;
+
+$button-background-color: #ffffff;
+$button-hover-background-color: #f2f2f2;
+$button-active-background-color: #e6e6e6;
+
+:host {
+    display: block;
+
+    width: 100vw;
+
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+
+    background: $header-background-color;
+    border-bottom: 1px solid $border-color;
+}
+
+.station-selection-header {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+
+    padding: 15px 20px;
+
+    box-sizing: border-box;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+
+    gap: 30px;
+
+    width: 100%;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+
+    gap: 30px;
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.header-text h1 {
+    margin: 0;
+
+    color: $text-primary-color;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 36px;
+
+    font-feature-settings:
+        'liga' off,
+        'clig' off;
+}
+
+.header-text p {
+    margin: 0;
+
+    color: $text-primary-color;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 27px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+}
+
+.selected-stations-button {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 7px 12px;
+
+    border-radius: 2px;
+    border: 1px solid $border-color;
+
+    background: $button-background-color;
+
+    cursor: pointer;
+
+    &:hover {
+        background: $button-hover-background-color;
+    }
+
+    &:focus-visible {
+        outline: 3px solid var(--nrcl-application-header-focus-color);
+        outline-offset: 2px;
+    }
+
+    &:active {
+        background: $button-active-background-color;
+    }
+}
+
+.selected-stations-text {
+    color: $link-color;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 27px;
+
+    text-decoration-line: underline;
+}
+
+.selected-stations-button nrcl-icon {
+    color: $text-primary-color;
+}
+
+.view-data-content {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.dialog-message {
+    margin: 0;
+
+    color: $text-primary-color;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 27px;
+}
+
+@media (max-width: 992px) {
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+}
+
+    ::ng-deep .no-stations-selected-dialog {
+        .nrcl-button.secondary {
+            display: none;
+        }
+
+        .mat-mdc-dialog-surface {
+            border: 1px solid $border-color;
+            border-radius: 4px;
+
+            background: $button-background-color;
+
+            box-shadow:
+                0 4.8px 14.4px rgba(0, 0, 0, 0.18),
+                0 25.6px 57.6px rgba(0, 0, 0, 0.22);
+        }
+
+        .title-bar {
+            padding: 24px;
+
+            background: $button-background-color !important;
+
+            border-bottom: 1px solid $border-color;
+        }
+
+        .title-bar h1 {
+            margin: 0;
+
+            color: $text-primary-color !important;
+
+            font-family: 'BC Sans', sans-serif;
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 34px;
+        }
+
+        .title-bar .close button {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 8px;
+
+            padding: 6px;
+
+            border-radius: 4px;
+
+            background: transparent;
+
+            color: $text-primary-color;
+        }
+
+        .title-bar .close mat-icon {
+            color: $text-primary-color !important;
+        }
+
+        .mat-mdc-dialog-content {
+            padding: 24px !important;
+
+            background: $button-background-color;
+        }
+
+        .action-button-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+
+            width: 100%;
+
+            padding: 16px 24px !important;
+
+            background: $button-background-color !important;
+
+            border-top: 1px solid $border-color !important;
+        }
+    }
+
+
+    ::ng-deep .selected-stations-dialog {
+
+        .mat-mdc-dialog-surface {
+            border: 1px solid $border-color;
+            border-radius: 4px;
+
+            background: $button-background-color;
+
+            box-shadow:
+                0 4.8px 14.4px rgba(0, 0, 0, 0.18),
+                0 25.6px 57.6px rgba(0, 0, 0, 0.22);
+        }
+
+        .title-bar {
+            padding: 24px;
+
+            background: $button-background-color !important;
+
+            border-bottom: 1px solid $border-color;
+        }
+
+        .title-bar h1 {
+            margin: 0;
+
+            color: $text-primary-color !important;
+
+            font-family: 'BC Sans', sans-serif;
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 34px;
+        }
+
+        .title-bar .close button {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 8px;
+
+            padding: 6px;
+
+            border-radius: 4px;
+
+            background: transparent;
+
+            color: $text-primary-color;
+        }
+
+        .title-bar .close mat-icon {
+            color: $text-primary-color !important;
+        }
+
+        .mat-mdc-dialog-content {
+            padding: 24px !important;
+
+            background: $button-background-color;
+        }
+
+        
+        .mat-mdc-table {
+            width: 100%;
+        }
+
+        .mat-mdc-header-row {
+            background: #ffffff;
+        }
+
+        .mat-mdc-header-cell {
+            font-weight: 700;
+        }
+
+        .nrcl-button.secondary {
+            display: none;
+        }
+
+        .mat-mdc-dialog-actions {
+            background: $button-background-color !important;
+        }
+
+        .action-button-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+
+            width: 100%;
+
+            padding: 16px 24px !important;
+
+            background: $button-background-color !important;
+
+            border-top: 1px solid $border-color !important;
+        }
+
+        nrcl-row-list-desktop,
+            .nrcl-row-list-desktop {
+                border-left: none !important;
+                border-right: none !important;
+                box-shadow: none !important;
+            }
+
+        .mat-mdc-table {
+            border-left: none !important;
+            border-right: none !important;
+        }
+
+        .mat-mdc-row {
+            border-left: none !important;
+            border-right: none !important;
+        }
+
+        .content-wrapper {
+            padding: 10px 25px 30px 25px !important;
+        }
+
+        .mat-mdc-header-row {
+            border-top: none !important;
+            border-left: none !important;
+            border-right: none !important;
+        }
+
+        &:has(.empty-state) {
+            ~ .mat-mdc-dialog-actions,
+            .mat-mdc-dialog-actions {
+                display: none !important;
+            }
+        }
+
+        .mat-sort-header:focus-visible,
+            .mat-sort-header-container:focus-visible {
+                outline: none;
+
+                background-color: $header-background-color;
+
+                border: 2px solid $focus-border-color;
+                border-radius: 4px;
+            }
+                    
+    }
+
+    ::ng-deep .selected-stations-dialog.empty-state {
+
+        .action-button-wrapper {
+            display: none !important;
+        }
+    }
+
+    .selected-stations-header {
+        display: flex;
+        align-items: center;
+
+        gap: 16px;
+
+        margin-bottom: 24px;
+    }
+    .selected-stations-count {
+        margin: 0;
+
+        color: $text-primary-color;
+
+        font-family: 'BC Sans', sans-serif;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 34px;
+    }
+
+    .remove-selected-button {
+        display: flex;
+        align-items: center;
+
+        gap: 8px;
+    }
+
+    .remove-action {
+        color: $link-color;
+
+        font-family: 'BC Sans', sans-serif;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 27px;
+
+        text-decoration: underline;
+
+        background: none;
+        border: none;
+
+        cursor: pointer;
+
+        &:hover {
+            color: $link-hover-color;
+        }
+
+        &:focus-visible {
+            outline: none;
+
+            background-color: $header-background-color;
+
+            border: 2px solid $focus-border-color;
+            border-radius: 4px;
+        }
+    }
+        
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        gap: 16px;
+
+        padding: 24px;
+    }
+

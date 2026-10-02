@@ -1,0 +1,132 @@
+$color-black: #000000;
+
+$color-text-primary: #2d2d2d;
+$color-text-secondary: #474543;
+
+$color-border-default: #d8d8d8;
+
+$color-status-active: #42814a;
+$color-status-archived: #d8292f;
+$color-status-ok: #2d2d2d;
+
+.station-information-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    width: 100%;
+    min-width: 280px;
+
+    font-family: 'BC Sans', sans-serif;
+}
+
+.station-information-panel__title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: -2px;
+}
+
+.station-information-panel__title {
+    color: $color-black;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 27px;
+}
+
+.station-information-panel__divider {
+    width: 100%;
+    height: 1px;
+
+    background-color: $color-border-default;
+
+    margin-bottom: -2px;
+}
+
+.station-information-panel__station-name {
+    margin: 0;
+
+    color: $color-text-primary;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 30.6px;
+
+    font-feature-settings:
+        'liga' off,
+        'clig' off;
+}
+
+.station-information-panel__content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.station-information-panel__row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.station-information-panel__row--status {
+    gap: 8px;
+}
+
+.station-information-panel__row-label {
+    color: $color-text-secondary;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 21px;
+}
+
+.station-information-panel__row-value {
+    color: $color-text-secondary;
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 21px;
+}
+
+.station-information-panel__actions {
+    display: flex;
+    justify-content: center;
+
+    width: 100%;
+    margin-top: 8px;
+}
+
+.station-information-panel__actions nrcl-button {
+    display: block;
+    width: 100%;
+}
+
+.station-information-panel__actions ::ng-deep button {
+    width: 100%;
+}
+
+:host ::ng-deep .status-future {
+    --nrcl-indicator-text-color: #{$color-status-active};
+    --nrcl-indicator-border-color: #{$color-status-active};
+}
+
+:host ::ng-deep .status-active {
+    --nrcl-indicator-text-color: #{$color-status-archived};
+    --nrcl-indicator-border-color: #{$color-status-archived};
+}
+
+:host ::ng-deep .status-ok {
+    --nrcl-indicator-text-color: #{$color-status-ok};
+    --nrcl-indicator-border-color: #{$color-status-ok};
+}
