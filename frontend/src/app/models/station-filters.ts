@@ -1,10 +1,12 @@
 export interface StationFilters {
-  elevationMin: number | null;
-  elevationMax: number | null;
+    elevationMin: number | null;
+    elevationMax: number | null;
 
-  latitudeOperator: 'gt' | 'lt' | 'eq';
-  latitudeValue: number | null;
+    latitudeMin: number | null;
+    latitudeMax: number | null;
 
-  longitudeOperator: 'gt' | 'lt' | 'eq';
-  longitudeValue: number | null;
+    longitudeMin: number | null;
+    longitudeMax: number | null;
+
+    stationStatus: string | null;
 }
