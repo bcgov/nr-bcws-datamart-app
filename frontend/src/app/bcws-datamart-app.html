@@ -1,5 +1,18 @@
 <nrcl-application>
-    <app-header />
+    <nrcl-application-header
+        [title]="title"
+        [skipLabel]="skipLabel"
+        [logoAriaLabel]="logoAriaLabel"
+        (logoClick)="onLogoClick()"
+        (skipClick)="onSkipClick()"
+    >
+        <nrcl-application-menu
+            label="Menu"
+            icon = "menu"
+            [items]="menuItems"
+            (menuItemClick)="onMenuItemClick($event)"
+        ></nrcl-application-menu>
+    </nrcl-application-header>
 
     <router-outlet></router-outlet>
 </nrcl-application>
