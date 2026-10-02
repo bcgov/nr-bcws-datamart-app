@@ -4,9 +4,9 @@ import { ApplicationComponent } from '@bcgov/nr-ngx-component-lib';
 import { RouterModule } from '@angular/router';
 
 @Component( {
-    selector: 'app-root',
-    templateUrl: './app.html',
-    styleUrl: './app.scss',
+    selector: 'bcws-datamart-app',
+    templateUrl: './bcws-datamart-app.html',
+    styleUrl: './bcws-datamart-app.scss',
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
         ApplicationComponent,
@@ -14,4 +14,4 @@ import { RouterModule } from '@angular/router';
         RouterModule
     ]
 } )
-export class App { }
+export class BcwsDatamartApp { }
