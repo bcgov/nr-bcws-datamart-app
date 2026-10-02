@@ -7,7 +7,9 @@
             class="filters-toggle-button"
             (click)="toggleFilters()">
 
-            <span>Filters</span>
+           <span>
+                Filters{{ activeFilterCount ? ' (' + activeFilterCount + ')' : '' }}
+            </span>
 
             <nrcl-icon>
                 {{ filtersExpanded ? 'expand_less' : 'expand_more' }}
@@ -27,9 +29,7 @@
 
             <div class="filters-inner-container">
 
-                <nrcl-filters-panel
-                    class="filters-panel"
-                    [showClear]="false">
+                <nrcl-filters-panel class="filters-panel" [showClear]="false">
 
                     <nrcl-filter-select
                         label="Fire Centre">
@@ -39,16 +39,62 @@
                         label="Fire Zone">
                     </nrcl-filter-select>
 
-                    <nrcl-filter-container
-                        label="Latitude">
-                        Placeholder
+                    <nrcl-filter-container label="Elevation (m)">
+                        <div class="elevation-content">
+                            <input
+                                type="number"
+                                placeholder="Min"
+                                [(ngModel)]="elevationMin"
+                                (blur)="applyFilters()"
+                                (keydown.enter)="applyFilters()">
+
+                            <span>-</span>
+
+                            <input
+                                type="number"
+                                placeholder="Max"
+                                [(ngModel)]="elevationMax"
+                                (blur)="applyFilters()"
+                                (keydown.enter)="applyFilters()">
+                        </div>
+                    </nrcl-filter-container>
+                    <nrcl-filter-container label="Latitude">
+                        <div class="coordinate-content">
+                            <input
+                                type="number"
+                                [(ngModel)]="latitudeValue"
+                                (blur)="applyFilters()"
+                                (keydown.enter)="applyFilters()">
+
+                            <select
+                                [(ngModel)]="latitudeOperator"
+                                (change)="applyFilters()">
+
+                                <option value="eq">=</option>
+                                <option value="gt">&gt;</option>
+                                <option value="lt">&lt;</option>
+                            </select>
+                        </div>
                     </nrcl-filter-container>
 
-                    <nrcl-filter-container
-                        label="Longitude">
-                        Placeholder
-                    </nrcl-filter-container>
+                    <nrcl-filter-container label="Longitude">
+                        <div class="coordinate-content">
+                            <input
+                                type="number"
+                                [(ngModel)]="longitudeValue"
+                                (blur)="applyFilters()"
+                                (keydown.enter)="applyFilters()">
 
+                            <select
+                                [(ngModel)]="longitudeOperator"
+                                (change)="applyFilters()">
+
+                                <option value="eq">=</option>
+                                <option value="gt">&gt;</option>
+                                <option value="lt">&lt;</option>
+                            </select>
+                        </div>
+                    </nrcl-filter-container>
                 </nrcl-filters-panel>
 
                 <div class="filter-actions">
@@ -57,9 +103,9 @@
                         Apply filters
                     </nrcl-button>
 
-                    <button
-                        type="button"
-                        class="clear-filters-button">
+                    <button type="button"
+                        class="clear-filters-button"
+                        (click)="clearFilters()">
                         Clear filters
                     </button>
 

@@ -11,6 +11,7 @@ import * as L from 'leaflet';
 
 import { StationInformationPanelComponent } from './station-information-panel/station-information-panel.component';
 import { StationDataService } from '../../../../services/station-data.service';
+import { SelectedStationsService } from '../../../../services/selected-stations.service';
 
 declare const SMK: any;
 
@@ -40,6 +41,7 @@ export class StationSelectionMapComponent implements AfterViewInit {
     private readonly appRef: ApplicationRef,
     private readonly environmentInjector: EnvironmentInjector,
     private readonly stationDataService: StationDataService,
+    private readonly selectedStationsService: SelectedStationsService,
   ) {
     const me = this;
 
@@ -47,7 +49,7 @@ export class StationSelectionMapComponent implements AfterViewInit {
       if (reading) {
         setTimeout(() => {
           me.buildPopup(reading);
-          me.setActiveMarker(reading.stationName);
+          me.setActiveMarker(reading.station.WEATHER_STATION_GUID,);
         }, 100);
 
         return 'Loading...';
@@ -100,6 +102,13 @@ export class StationSelectionMapComponent implements AfterViewInit {
   }
 
   async ngAfterViewInit(): Promise<void> {
+    // SMK/Leaflet initialization can fail during Angular HMR
+    // if the container is initialized before the browser has
+    // completed the current render cycle.
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => resolve()),
+    );
+
     this.smk = await SMK.INIT({
       containerSel: '#station-map',
       config: ['./assets/smk/station-selection-config.json', '?'],
@@ -111,10 +120,12 @@ export class StationSelectionMapComponent implements AfterViewInit {
 
     identify.active = true;
 
-    await this.stationDataService.loadStations();
-
     this.stationDataService.stations$.subscribe((stations) => {
       this.renderStations(stations);
+    });
+
+    this.selectedStationsService.selectedStations$.subscribe((stations) => {
+        this.updateSelectedMarkers(stations);
     });
   }
 
@@ -177,7 +188,7 @@ export class StationSelectionMapComponent implements AfterViewInit {
 
     this.initializeStationMarker(marker, row);
 
-    this.stationMarkers.set(station.STATION_NAME, marker);
+    this.stationMarkers.set(station.WEATHER_STATION_GUID, marker,);
 
     return marker;
   }
@@ -193,15 +204,32 @@ export class StationSelectionMapComponent implements AfterViewInit {
     };
   }
 
-  private setActiveMarker(stationName: string): void {
-    this.stationMarkers.forEach((marker) => {
-      marker.getElement()?.classList.remove('active');
-    });
+  private setActiveMarker( stationGuid: string,): void {
+    this.stationMarkers.forEach((marker) => { marker.getElement()?.classList.remove('active');});
 
-    const marker = this.stationMarkers.get(stationName);
+    const marker = this.stationMarkers.get(stationGuid);
 
     marker?.getElement()?.classList.add('active');
 
     this.activeMarker = marker ?? null;
   }
-}
+
+
+  private updateSelectedMarkers(selectedStations: any[],): void {
+
+    const selectedIds = new Set(
+      selectedStations.map(
+        (station) => station.WEATHER_STATION_GUID,
+      ),
+    );
+
+    this.stationMarkers.forEach((marker, stationGuid) => {
+
+      if (selectedIds.has(stationGuid)) {
+        marker.getElement()?.classList.add('selected');
+      } else {
+        marker.getElement()?.classList.remove('selected');
+      }
+    });
+  }
+  }

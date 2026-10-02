@@ -106,14 +106,17 @@
         </div>
 
         <div class="station-information-panel__actions">
-
-            <nrcl-button
-                primary
-                label="Select Station">
-            </nrcl-button>
-
+            @if (!isSelected) {
+                <nrcl-button primary
+                    label="Select Station"
+                    (click)="selectStation()">
+                </nrcl-button>
+            } @else {
+                <nrcl-button secondary
+                    label="Remove Station"
+                    (click)="removeStation()">
+                </nrcl-button>
+            }
         </div>
-
     </div>
-
 }

@@ -5,21 +5,26 @@
         <div class="header-content">
 
             <div class="header-text">
-                <h1>Select weather stations</h1>
+
+                <h1>
+                    Select weather stations
+                </h1>
 
                 <p>
                     Choose one or more stations to view weather data.
                 </p>
+
             </div>
 
             <div class="header-actions">
 
-                <button
-                    type="button"
-                    class="selected-stations-button">
+                <button type="button" class="selected-stations-button"
+                    (click)="viewSelectedStations()">
 
                     <span class="selected-stations-text">
-                        0 stations selected
+                        {{ selectedCount }}
+                        {{ selectedCount === 1 ? 'station' : 'stations' }}
+                        selected
                     </span>
 
                     <nrcl-icon>
@@ -28,7 +33,9 @@
 
                 </button>
 
-                <nrcl-button primary routerLink="/data-download">
+                <nrcl-button primary
+                    (click)="viewData()">
+
                     <span class="view-data-content">
                         View data
 
@@ -36,6 +43,7 @@
                             arrow_forward
                         </nrcl-icon>
                     </span>
+
                 </nrcl-button>
 
             </div>
@@ -45,3 +53,208 @@
     </div>
 
 </section>
+
+<ng-template #noStationsSelectedDialog>
+
+    <p class="dialog-message">
+        To view data, select at least one weather station from the map or list.
+    </p>
+
+</ng-template>
+
+<ng-template #emptySelectedStationsDialog>
+
+    <p class="dialog-message">
+        Select stations from the map or station list.
+        Your selections will appear here.
+    </p>
+
+</ng-template>
+
+<ng-template #selectedStationsDialog>
+
+    <div class="selected-stations-dialog" [class.empty-state]="selectedCount === 0">
+        @if (selectedCount === 0) {
+
+            <div class="empty-state">
+
+                <h3>No Stations Selected</h3>
+
+                <p class="dialog-message">
+                    Select stations from the map or station list.
+                    Your selections will appear here.
+                </p>
+
+                <nrcl-button primary
+                    (click)="closeSelectedStationsDialog()">
+                    OK
+                </nrcl-button>
+
+            </div>
+
+        } @else {
+
+
+        <div class="selected-stations-header">
+
+            <h3>
+                {{ selectedCount }}
+                {{ selectedCount === 1 ? 'Station' : 'Stations' }}
+                Selected
+            </h3>
+
+            <button
+                type="button"
+                class="remove-action"
+                (click)="clearSelectedStations()">
+
+                Remove all
+
+            </button>
+
+        </div>
+
+      <nrcl-row-list-desktop>
+
+        <table mat-table
+            [dataSource]="selectedStations | paginate: {
+                id: 'selected-stations',
+                itemsPerPage: pageSize,
+                currentPage: pageNumber,
+                totalItems: selectedCount
+            }"
+            matSort
+            [matSortActive]="'stationName'"
+            [matSortDirection]="'asc'"
+            (matSortChange)="onSortChange($event)">
+
+            <ng-container matColumnDef="stationName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="stationName">
+                    Station Name
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let station">
+                    {{ station.STATION_NAME }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="stationCode">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="stationCode">
+                    Station Code
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let station">
+                    {{ station.STATION_CODE }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="stationAcronym">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="stationAcronym">
+                    Station Acronym
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let station">
+                    {{ station.STATION_ACRONYM }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="fireCentre">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="fireCentre">
+                    Fire Centre
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let station">
+                    {{ station.FIRE_CENTRE_ORG_UNIT_IDENT }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="fireZone">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="fireZone">
+                    Fire Zone
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let station">
+                    {{ station.ZONE_ORG_UNIT_IDENTIFIER }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="latitude">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="latitude">
+                    Latitude
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let station">
+                    {{ station.LATITUDE }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="longitude">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="longitude">
+                    Longitude
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let station">
+                    {{ station.LONGITUDE }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="elevation">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="elevation">
+                    Elevation (m)
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let station">
+                    {{ station.ELEVATION_M }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="status">
+                    Status
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let station">
+                    {{ station.STATION_STATUS_DESC }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="remove">
+                <mat-header-cell *matHeaderCellDef aria-label="Actions">
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let station">
+                    <button
+                        type="button"
+                        class="remove-action"
+                        (click)="removeStation(station)">
+                        Remove
+                    </button>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row
+                *matHeaderRowDef="displayedColumns; sticky: true">
+            </mat-header-row>
+
+            <mat-row
+                *matRowDef="let row; columns: displayedColumns;">
+            </mat-row>
+
+        </table>
+
+    </nrcl-row-list-desktop>
+        <nrcl-gap vertical></nrcl-gap>
+
+        <nrcl-row-list-pagination
+            paginationId="selected-stations"
+            [pageSize]="pageSize"
+            [pageNumber]="pageNumber"
+            [rowCount]="selectedCount"
+            (pageNumberChange)="onPageNumberChange($event)"
+            (pageSizeChange)="onPageSizeChange($event)">
+        </nrcl-row-list-pagination>
+
+    }
+    </div>
+
+</ng-template>

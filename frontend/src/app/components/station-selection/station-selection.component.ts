@@ -1,4 +1,10 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnInit,
+} from '@angular/core';
+
+import { StationDataService } from '../../services/station-data.service';
 
 @Component({
   selector: 'app-station-selection',
@@ -7,4 +13,13 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
-export class StationSelectionComponent {}
+export class StationSelectionComponent implements OnInit {
+
+  constructor(
+    private readonly stationDataService: StationDataService,
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    await this.stationDataService.loadStations();
+  }
+}

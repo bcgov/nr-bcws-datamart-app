@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { StationDataService } from '../../../../services/station-data.service';
+import { SelectedStationsService } from '../../../../services/selected-stations.service';
 
 interface WeatherStationRow {
   WEATHER_STATION_GUID: string;
@@ -30,7 +31,10 @@ export class StationSelectionStationListComponent implements OnInit {
 
   stations: WeatherStationRow[] = [];
 
-  constructor(private readonly stationDataService: StationDataService) {}
+  constructor(
+    private readonly stationDataService: StationDataService,
+    private readonly selectedStationsService: SelectedStationsService,
+  ) {}
 
   ngOnInit(): void {
     this.stationDataService.stations$.subscribe((stations) => (this.stations = stations));
@@ -38,6 +42,37 @@ export class StationSelectionStationListComponent implements OnInit {
 
   display(value: unknown): string {
     return value === null || value === undefined || value === '' ? '–' : String(value);
+  }
+
+  isSelected(station: WeatherStationRow): boolean {
+    return this.selectedStationsService.isSelected(station);
+  }
+
+  toggleStation(station: WeatherStationRow): void {
+    this.selectedStationsService.isSelected(station)
+      ? this.selectedStationsService.removeStation(station)
+      : this.selectedStationsService.addStation(station);
+  }
+
+  get visibleStations(): WeatherStationRow[] {
+    const start = (this.pageNumber - 1) * this.pageSize;
+
+    return this.sortedStations.slice(start, start + this.pageSize);
+  }
+
+  get allVisibleSelected(): boolean {
+    return this.visibleStations.length > 0 &&
+      this.visibleStations.every((station) => this.selectedStationsService.isSelected(station));
+  }
+
+  toggleSelectAll(): void {
+    if (this.allVisibleSelected) {
+      this.visibleStations.forEach((station) => this.selectedStationsService.removeStation(station));
+
+      return;
+    }
+
+    this.visibleStations.forEach((station) => this.selectedStationsService.addStation(station));
   }
 
   setSort(sortOption: SortOption): void {
@@ -72,14 +107,10 @@ export class StationSelectionStationListComponent implements OnInit {
 
     switch (this.sortOption) {
       case 'nameAsc':
-        return stations.sort((a, b) =>
-          this.display(a.STATION_NAME).localeCompare(this.display(b.STATION_NAME)),
-        );
+        return stations.sort((a, b) => this.display(a.STATION_NAME).localeCompare(this.display(b.STATION_NAME)));
 
       case 'nameDesc':
-        return stations.sort((a, b) =>
-          this.display(b.STATION_NAME).localeCompare(this.display(a.STATION_NAME)),
-        );
+        return stations.sort((a, b) => this.display(b.STATION_NAME).localeCompare(this.display(a.STATION_NAME)));
 
       case 'codeAsc':
         return stations.sort((a, b) => Number(a.STATION_CODE) - Number(b.STATION_CODE));
