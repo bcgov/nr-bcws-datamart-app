@@ -28,6 +28,7 @@ import { StationSelectionContentComponent } from './components/station-selection
 import { StationInformationPanelComponent } from './components/station-selection/station-selection-content/station-selection-map/station-information-panel/station-information-panel.component';
 import { DataDownloadComponent } from './components/data-download/data-download.component';
 import { MatSortModule } from '@angular/material/sort';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { MatSortModule } from '@angular/material/sort';
     MatFormFieldModule,
     MatMenuModule,
     MatSortModule,
+    FormsModule,
     NgxPaginationModule,
   ],
   bootstrap: [App]
