@@ -4,6 +4,7 @@ import {
   OnInit,
   TemplateRef,
   ViewChild,
+  ChangeDetectorRef,
 } from '@angular/core';
 
 import { Router } from '@angular/router';
@@ -72,13 +73,17 @@ export class StationSelectionHeaderComponent implements OnInit {
     private readonly selectedStationsService: SelectedStationsService,
     private readonly dialogService: DialogService,
     private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   
 
   ngOnInit(): void {
     this.selectedStationsService.selectedStations$.subscribe(
-      (stations) => (this.selectedCount = stations.length),
+      (stations) => {
+        this.selectedCount = stations.length;
+        this.cdr.markForCheck();
+      },
     );
   }
 
