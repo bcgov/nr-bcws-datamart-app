@@ -13,7 +13,7 @@ import { Sort } from '@angular/material/sort';
 import { DialogService } from '@bcgov/nr-ngx-component-lib';
 
 import { SelectedStationsService } from '../../../services/selected-stations.service';
-import { StationDataService } from '../../../services/station-data.service';
+
 
 
 @Component({
@@ -59,7 +59,6 @@ export class StationSelectionHeaderComponent implements OnInit {
 
   constructor(
     private readonly selectedStationsService: SelectedStationsService,
-    private readonly stationDataService: StationDataService,
     private readonly dialogService: DialogService,
     private readonly router: Router,
   ) {}
@@ -92,7 +91,7 @@ export class StationSelectionHeaderComponent implements OnInit {
     this.router.navigate(['/data-download']);
   }
 
-  async viewSelectedStations(): Promise<void> {
+  viewSelectedStations(): void {
     if (this.selectedCount === 0) {
       this.dialogService.openConfirmDialog(
         {
@@ -109,11 +108,9 @@ export class StationSelectionHeaderComponent implements OnInit {
       return;
     }
 
-    const stationGuids = this.selectedStationsService.selectedStations.map(
-        (station) => station.WEATHER_STATION_GUID,
-      );
-
-    this.selectedStations = await this.stationDataService.loadStationsByIds(stationGuids,);
+    this.selectedStations = [
+      ...this.selectedStationsService.selectedStations,
+    ];
 
     this.selectedStations.sort((a, b) =>
       String(a.STATION_NAME).localeCompare(
@@ -126,7 +123,7 @@ export class StationSelectionHeaderComponent implements OnInit {
     this.sortColumn = 'stationName';
     this.sortDirection = 'asc';
 
-    this.pageNumber = 1; 
+    this.pageNumber = 1;
 
     this.dialogService.openConfirmDialog(
       {
