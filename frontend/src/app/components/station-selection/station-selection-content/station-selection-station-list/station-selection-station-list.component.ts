@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 import { StationDataService } from '../../../../services/station-data.service';
 import { SelectedStationsService } from '../../../../services/selected-stations.service';
@@ -47,11 +47,16 @@ export class StationSelectionStationListComponent implements OnInit {
   constructor(
     private readonly stationDataService: StationDataService,
     private readonly selectedStationsService: SelectedStationsService,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.stationDataService.stations$.subscribe((stations) => (this.stations = stations));
+    this.stationDataService.stations$.subscribe((stations) => {
+      this.stations = stations;
+      this.cdr.markForCheck();
+    });
   }
+
 
   display(value: unknown): string {
     return value === null || value === undefined || value === '' ? '–' : String(value);
