@@ -5,13 +5,18 @@ import {
 } from '@angular/core';
 
 import { SelectedStationsService } from '../../../../../services/selected-stations.service';
+import { ButtonComponent, IconComponent, IndicatorComponent } from '@bcgov/nr-ngx-component-lib';
 
 @Component({
   selector: 'app-station-information-panel',
   templateUrl: './station-information-panel.component.html',
   styleUrl: './station-information-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [
+    IconComponent,
+    IndicatorComponent,
+    ButtonComponent
+  ]
 })
 export class StationInformationPanelComponent {
   @Input()

@@ -1,12 +1,16 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
+import { ApplicationHeaderComponent, ApplicationMenuComponent } from '@bcgov/nr-ngx-component-lib';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [
+    ApplicationHeaderComponent,
+    ApplicationMenuComponent
+  ]
 })
 export class HeaderComponent {
   private readonly routes: Record<string, string> = {

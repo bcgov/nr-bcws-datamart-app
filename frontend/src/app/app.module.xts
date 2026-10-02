@@ -13,7 +13,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { App } from './app';
 import { HeaderComponent } from './components/header/header.component';
 
-import { NrNgxComponentLibModule } from '@bcgov/nr-ngx-component-lib';
+// import { NrNgxComponentLibModule } from '@bcgov/nr-ngx-component-lib';
 import { HomeComponent } from './components/home/home.component';
 import { StationSelectionComponent } from './components/station-selection/station-selection.component';
 
@@ -32,8 +32,8 @@ import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    App,
-    HeaderComponent,
+    // App,
+    // HeaderComponent,
     HomeComponent,
     StationSelectionComponent,
     StationSelectionHeaderComponent,
@@ -49,7 +49,7 @@ import { FormsModule } from '@angular/forms';
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes),
-    NrNgxComponentLibModule,
+    // NrNgxComponentLibModule,
     MatTableModule,
     MatCheckboxModule,
     MatSelectModule,

@@ -26,7 +26,8 @@ declare global {
   templateUrl: './station-selection-map.component.html',
   styleUrl: './station-selection-map.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [    
+  ]
 })
 export class StationSelectionMapComponent implements AfterViewInit {
   private smk: any;

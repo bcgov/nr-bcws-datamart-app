@@ -2,6 +2,11 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { StationDataService } from '../../../../services/station-data.service';
 import { SelectedStationsService } from '../../../../services/selected-stations.service';
+import { IconComponent, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
+import { MatTableModule } from '@angular/material/table';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { MatMenuModule } from '@angular/material/menu';
 
 interface WeatherStationRow {
   WEATHER_STATION_GUID: string;
@@ -18,7 +23,15 @@ type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
   templateUrl: './station-selection-station-list.component.html',
   styleUrl: './station-selection-station-list.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [
+    RowListDesktopComponent,
+    MatTableModule,
+    MatCheckboxModule,
+    RowListPaginationComponent,
+    NgxPaginationModule,
+    MatMenuModule,
+    IconComponent
+  ]
 })
 export class StationSelectionStationListComponent implements OnInit {
   columns = ['selected', 'station'];

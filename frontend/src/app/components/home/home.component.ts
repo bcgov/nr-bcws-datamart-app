@@ -1,13 +1,18 @@
 // components/home/home.component.ts
 
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { FooterComponent } from '../footer/footer.component';
+import { HomeCardComponent } from '../home-card/home-card.component';
 
 @Component({
   selector: 'app-home',
-  standalone: false,
   templateUrl: './home.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./home.component.scss'],
+  imports: [
+    FooterComponent,
+    HomeCardComponent
+  ]
 })
 export class HomeComponent {
   cards = [

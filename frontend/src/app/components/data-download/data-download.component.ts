@@ -1,11 +1,20 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { MatTableModule } from '@angular/material/table';
+import { GapComponent, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-data-download',
   templateUrl: './data-download.component.html',
   styleUrl: './data-download.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [
+    RowListDesktopComponent,
+    NgxPaginationModule,
+    RowListPaginationComponent,
+    MatTableModule,
+    GapComponent,
+  ]
 })
 export class DataDownloadComponent {
   columns = ['stationName', 'stationCode', 'status'];

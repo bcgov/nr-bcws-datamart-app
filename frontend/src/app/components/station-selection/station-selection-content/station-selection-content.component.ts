@@ -1,13 +1,20 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { StationSelectionMapComponent } from './station-selection-map/station-selection-map.component';
+import { StationSelectionStationListComponent } from './station-selection-station-list/station-selection-station-list.component';
+import { IconComponent } from '@bcgov/nr-ngx-component-lib';
 
 @Component({
   selector: 'app-station-selection-content',
   templateUrl: './station-selection-content.component.html',
   styleUrl: './station-selection-content.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [
+    StationSelectionMapComponent,
+    StationSelectionStationListComponent,
+    IconComponent
+  ]
 })
 export class StationSelectionContentComponent {
   activeMobileTab: 'list' | 'map' = 'list';

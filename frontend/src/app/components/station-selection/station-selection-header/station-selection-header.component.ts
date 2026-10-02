@@ -8,11 +8,13 @@ import {
 
 import { Router } from '@angular/router';
 
-import { Sort } from '@angular/material/sort';
+import { MatSortModule, Sort } from '@angular/material/sort';
 
-import { DialogService } from '@bcgov/nr-ngx-component-lib';
+import { ButtonComponent, DialogService, GapComponent, IconComponent, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
 
 import { SelectedStationsService } from '../../../services/selected-stations.service';
+import { MatTableModule } from '@angular/material/table';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 
@@ -21,7 +23,16 @@ import { SelectedStationsService } from '../../../services/selected-stations.ser
   templateUrl: './station-selection-header.component.html',
   styleUrl: './station-selection-header.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [
+    IconComponent,
+    ButtonComponent,
+    RowListDesktopComponent,
+    MatTableModule,
+    MatSortModule,
+    NgxPaginationModule,
+    RowListPaginationComponent,
+    GapComponent
+  ]
 })
 export class StationSelectionHeaderComponent implements OnInit {
   @ViewChild('noStationsSelectedDialog', { static: true })
