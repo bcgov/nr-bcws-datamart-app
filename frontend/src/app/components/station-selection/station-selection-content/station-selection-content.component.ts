@@ -1,5 +1,5 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StationSelectionMapComponent } from './station-selection-map/station-selection-map.component';
 import { StationSelectionStationListComponent } from './station-selection-station-list/station-selection-station-list.component';
@@ -23,12 +23,16 @@ export class StationSelectionContentComponent {
 
   private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private readonly breakpointObserver: BreakpointObserver) {
+  constructor(
+      private readonly breakpointObserver: BreakpointObserver,
+      private readonly cdr: ChangeDetectorRef,
+    ) {
     this.breakpointObserver
       .observe(['(max-width: 992px)'])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
         this.isMobile = result.matches;
+        this.cdr.markForCheck();
       });
   }
 }
