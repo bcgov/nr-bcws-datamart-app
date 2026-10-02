@@ -10,6 +10,7 @@ $link-color: #255a90;
     gap: 16px;
 
     margin-top: 16px;
+    margin-bottom: 16px;
 }
 
 .filter-toolbar {
@@ -115,6 +116,13 @@ $link-color: #255a90;
     border-radius: 0 !important;
 }
 
+:host ::ng-deep {
+    .nrcl-filter-select,
+    .nrcl-filter-container {
+        margin-bottom: 24px !important;
+    }
+}
+
 @media (max-width: 992px) {
 
     .filter-toolbar {
@@ -132,149 +140,117 @@ $link-color: #255a90;
         flex: 1;
         min-width: 0;
     }
+}
+
+@media (max-width: 992px) {
+
+    .filters-inner-container {
+        gap: 24px;
+        padding: 20px;
+    }
 
     .filter-actions {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////
-// Custom multi-input filters (Elevation, Latitude, Longitude)
-
-:host ::ng-deep
-nrcl-filter-container[label='Elevation (m)'],
-:host ::ng-deep
-nrcl-filter-container[label='Latitude'],
-:host ::ng-deep
-nrcl-filter-container[label='Longitude'] {
-
-    .mat-mdc-input-element {
-        display: none;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
     }
 
-    .mat-mdc-form-field-infix {
-        min-height: unset;
-        width: auto;
-    }
-
-    .content {
-        padding: 0;
-    }
-
-    .mdc-notched-outline__leading,
-    .mdc-notched-outline__notch,
-    .mdc-notched-outline__trailing {
-        border-color: transparent !important;
-    }
-
-    .mat-mdc-text-field-wrapper {
-        background: transparent !important;
-        border: none !important;
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-// Elevation
+// Range filters
 
-.elevation-content {
+.range-filter-group {
+    display: inline-flex;
+
+    flex-direction: column;
+
+    width: 250px;
+
+    margin-right: 8px;
+    margin-bottom: 24px;
+
+    vertical-align: top;
+}
+
+.range-filter-title {
+    color: rgba(0, 0, 0, 0.6);
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+
+    margin-bottom: 0;
+}
+
+.range-filter-row {
     display: flex;
-    align-items: center;
+
     gap: 8px;
+
+    width: 250px;
+
+    flex-wrap: nowrap;
 }
 
-.elevation-content input {
-    width: 90px;
+.range-filter-field {
+    display: flex;
+    flex-direction: column;
+
+    width: 115px;
+}
+
+.range-filter-label {
+    color: rgba(0, 0, 0, 0.6);
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+
+    margin-bottom: 4px;
+}
+
+.range-filter-field input {
+    width: 100%;
     height: 40px;
 
     padding: 0 12px;
 
     border: 1px solid #d8d8d8;
     border-radius: 4px;
-    background: #fff;
+
+    background: #ffffff;
 
     box-sizing: border-box;
 
     font-family: 'BC Sans', sans-serif;
     font-size: 14px;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+
+    &:hover {
+        border-color: #999999;
+    }
+
+    &:focus {
+        outline: none;
+
+        border-color: #255a90;
+
+        box-shadow: 0 0 0 1px #255a90;
+    }
 }
-
-.elevation-content span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    height: 40px;
-
-    font-family: 'BC Sans', sans-serif;
-    font-size: 14px;
-
-    color: var(--typography-color-primary, #2d2d2d);
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-// Latitude / Longitude
-
-.coordinate-content {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.coordinate-content input {
-    width: 120px;
-    height: 40px;
-
-    padding: 0 12px;
-
-    border: 1px solid #d8d8d8;
-    border-radius: 4px;
-    background: #fff;
-
-    box-sizing: border-box;
-
-    font-family: 'BC Sans', sans-serif;
-    font-size: 14px;
-}
-
-.coordinate-content select {
-    width: 56px;
-    height: 40px;
-
-    border: 1px solid #d8d8d8;
-    border-radius: 4px;
-    background: #fff;
-
-    font-family: 'BC Sans', sans-serif;
-    font-size: 14px;
-
-    text-align: center;
-
-    cursor: pointer;
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-// Standard NRCL filters (Fire Centre / Fire Zone)
 
 :host ::ng-deep {
 
-    .mdc-floating-label--float-above {
-        transform: translateY(-32px) scale(0.75) !important;
+    .nrcl-filter-select {
+        margin-top: 35px !important;
+        margin-bottom: 24px !important;
     }
 
-    nrcl-filter-select {
-
-        .mdc-notched-outline__leading,
-        .mdc-notched-outline__notch,
-        .mdc-notched-outline__trailing {
-            border-color: transparent !important;
-        }
-
-        .mat-mdc-text-field-wrapper {
-            border: 1px solid #d8d8d8;
-            border-radius: 4px;
-            background: #fff;
-        }
-    }
 }

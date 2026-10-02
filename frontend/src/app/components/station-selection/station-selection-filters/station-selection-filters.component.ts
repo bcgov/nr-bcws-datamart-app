@@ -23,14 +23,18 @@ import { FormsModule } from '@angular/forms';
 export class StationSelectionFiltersComponent {
   filtersExpanded = false;
 
+  searchText = '';
+
   elevationMin: number | null = null;
   elevationMax: number | null = null;
 
-  latitudeOperator: 'gt' | 'lt' | 'eq' = 'gt';
-  latitudeValue: number | null = null;
+  latitudeMin: number | null = null;
+  latitudeMax: number | null = null;
 
-  longitudeOperator: 'gt' | 'lt' | 'eq' = 'gt';
-  longitudeValue: number | null = null;
+  longitudeMin: number | null = null;
+  longitudeMax: number | null = null;
+
+  stationStatus: string | null = null;
 
   constructor(
     private readonly stationDataService: StationDataService,
@@ -42,28 +46,37 @@ export class StationSelectionFiltersComponent {
 
   async applyFilters(): Promise<void> {
 
-    const filters: StationFilters = {
-      elevationMin: this.elevationMin,
-      elevationMax: this.elevationMax,
-      latitudeOperator: this.latitudeOperator,
-      latitudeValue: this.latitudeValue,
-      longitudeOperator: this.longitudeOperator,
-      longitudeValue: this.longitudeValue,
-    };
+  const filters: StationFilters = {
+    searchText: this.searchText,
+
+    elevationMin: this.elevationMin,
+    elevationMax: this.elevationMax,
+
+    latitudeMin: this.latitudeMin,
+    latitudeMax: this.latitudeMax,
+
+    longitudeMin: this.longitudeMin,
+    longitudeMax: this.longitudeMax,
+
+    stationStatus: this.stationStatus,
+  };
 
     await this.stationDataService.loadStationsFiltered(filters);
   }
 
   async clearFilters(): Promise<void> {
+    this.searchText = '';
 
     this.elevationMin = null;
     this.elevationMax = null;
 
-    this.latitudeOperator = 'gt';
-    this.latitudeValue = null;
+    this.latitudeMin = null;
+    this.latitudeMax = null;
 
-    this.longitudeOperator = 'gt';
-    this.longitudeValue = null;
+    this.longitudeMin = null;
+    this.longitudeMax = null;
+
+    this.stationStatus = null;
 
     await this.stationDataService.clearFilters();
   }
@@ -72,11 +85,23 @@ export class StationSelectionFiltersComponent {
 
     let count = 0;
 
+    if (this.searchText?.trim()) count++;
     if (this.elevationMin !== null || this.elevationMax !== null) count++;
-    if (this.latitudeValue !== null) count++;
-    if (this.longitudeValue !== null) count++;
+    if (this.latitudeMin !== null || this.latitudeMax !== null) count++;
+    if (this.longitudeMin !== null || this.longitudeMax !== null) count++;
+    if (this.stationStatus) count++;
 
     return count;
+  }
+
+  get isMobileView(): boolean {
+    return window.innerWidth <= 992;
+  }
+
+  async onSearchChanged(value: string): Promise<void> {
+    this.searchText = value;
+
+    await this.applyFilters();
   }
 
 }
