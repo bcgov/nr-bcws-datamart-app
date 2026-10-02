@@ -18,8 +18,7 @@ export class PageHomeComponent {
     cards = [
         {
             title: 'Search and download',
-            description:
-                'Select the weather stations you want data from, a date range, and the data you want to download.',
+            description: 'Select the weather stations you want data from, a date range, and the data you want to download.',
             icon: 'download',
             route: '/station-selection',
         },
@@ -43,8 +42,7 @@ export class PageHomeComponent {
         },
         {
             title: 'Data limitations',
-            description:
-                'Important limitations, assumptions, and interpretation notes for BC Wildfire Service weather station data.',
+            description: 'Important limitations, assumptions, and interpretation notes for BC Wildfire Service weather station data.',
             icon: 'info',
             route: '/data-limitations',
         },

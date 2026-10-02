@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './components/home/home.component';
 import { StationSelectionComponent } from './components/station-selection/station-selection.component';
 import { DataDownloadComponent } from './components/data-download/data-download.component';
+import { PageHomeComponent } from './pages/home/home.component';
 
 export const bcwsDatamartAppRoutes: Routes = [
     {
         path: '',
-        component: HomeComponent
+        component: PageHomeComponent
     },
     {
         path: 'station-selection',
