@@ -43,8 +43,20 @@
                         label="Station Status">
                     </nrcl-filter-select>
 
-                    <nrcl-filter-container label="Elevation (m)">
-                        <div class="range-filter-content">
+                   <div class="range-filter-group">
+
+                    <div class="range-filter-title">
+                        Elevation (m)
+                    </div>
+
+                    <div class="range-filter-row">
+
+                        <div class="range-filter-field">
+
+                            <label class="range-filter-label">
+                                Min
+                            </label>
+
                             <input
                                 type="number"
                                 placeholder="e.g. 500"
@@ -52,7 +64,13 @@
                                 (blur)="applyFilters()"
                                 (keydown.enter)="applyFilters()">
 
-                            <span>-</span>
+                        </div>
+
+                        <div class="range-filter-field">
+
+                            <label class="range-filter-label">
+                                Max
+                            </label>
 
                             <input
                                 type="number"
@@ -60,11 +78,27 @@
                                 [(ngModel)]="elevationMax"
                                 (blur)="applyFilters()"
                                 (keydown.enter)="applyFilters()">
-                        </div>
-                    </nrcl-filter-container>
 
-                    <nrcl-filter-container label="Latitude (decimal degrees)">
-                        <div class="range-filter-content">
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="range-filter-group">
+
+                    <div class="range-filter-title">
+                        Latitude (decimal degrees)
+                    </div>
+
+                    <div class="range-filter-row">
+
+                        <div class="range-filter-field">
+
+                            <label class="range-filter-label">
+                                Min
+                            </label>
+
                             <input
                                 type="number"
                                 placeholder="e.g. 49.25"
@@ -72,7 +106,13 @@
                                 (blur)="applyFilters()"
                                 (keydown.enter)="applyFilters()">
 
-                            <span>-</span>
+                        </div>
+
+                        <div class="range-filter-field">
+
+                            <label class="range-filter-label">
+                                Max
+                            </label>
 
                             <input
                                 type="number"
@@ -80,11 +120,27 @@
                                 [(ngModel)]="latitudeMax"
                                 (blur)="applyFilters()"
                                 (keydown.enter)="applyFilters()">
-                        </div>
-                    </nrcl-filter-container>
 
-                    <nrcl-filter-container label="Longitude (decimal degrees)">
-                        <div class="range-filter-content">
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="range-filter-group">
+
+                    <div class="range-filter-title">
+                        Longitude (decimal degrees)
+                    </div>
+
+                    <div class="range-filter-row">
+
+                        <div class="range-filter-field">
+
+                            <label class="range-filter-label">
+                                Min
+                            </label>
+
                             <input
                                 type="number"
                                 placeholder="e.g. -130.00"
@@ -92,7 +148,13 @@
                                 (blur)="applyFilters()"
                                 (keydown.enter)="applyFilters()">
 
-                            <span>-</span>
+                        </div>
+
+                        <div class="range-filter-field">
+
+                            <label class="range-filter-label">
+                                Max
+                            </label>
 
                             <input
                                 type="number"
@@ -100,8 +162,13 @@
                                 [(ngModel)]="longitudeMax"
                                 (blur)="applyFilters()"
                                 (keydown.enter)="applyFilters()">
+
                         </div>
-                    </nrcl-filter-container>
+
+                    </div>
+
+                </div>
+
 
                 </nrcl-filters-panel>
                 <div class="filter-actions">

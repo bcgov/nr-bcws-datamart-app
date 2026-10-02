@@ -116,6 +116,13 @@ $link-color: #255a90;
     border-radius: 0 !important;
 }
 
+:host ::ng-deep {
+    .nrcl-filter-select,
+    .nrcl-filter-container {
+        margin-bottom: 24px !important;
+    }
+}
+
 @media (max-width: 992px) {
 
     .filter-toolbar {
@@ -142,119 +149,98 @@ $link-color: #255a90;
         padding: 20px;
     }
 
-    :host ::ng-deep {
-        .nrcl-filter-select,
-        .nrcl-filter-container {
-            margin-bottom: 24px !important;
-        }
-    }
-
-    .range-filter-content input {
-        flex: 1;
-    }
-
     .filter-actions {
         display: flex;
         flex-direction: row;
         align-items: center;
         gap: 16px;
     }
-}
 
-//////////////////////////////////////////////////////////////////////////////////
-// Custom multi-input filters (Elevation, Latitude, Longitude)
-
-:host ::ng-deep
-nrcl-filter-container[label='Elevation (m)'],
-:host ::ng-deep
-nrcl-filter-container[label='Latitude (decimal degrees)'],
-:host ::ng-deep
-nrcl-filter-container[label='Longitude (decimal degrees)'] {
-
-    min-width: 320px;
-
-    .mat-mdc-input-element {
-        display: none;
-    }
-
-    .content {
-        padding: 0;
-    }
-
-    .mdc-notched-outline__leading,
-    .mdc-notched-outline__notch,
-    .mdc-notched-outline__trailing {
-        border-color: transparent !important;
-    }
-
-    .mat-mdc-text-field-wrapper {
-        background: transparent !important;
-        border: none !important;
+    .range-filter-row {
+        flex-direction: column;
     }
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-// Elevation / Latitude / Longitude
+// Range filters
 
-.range-filter-content {
+.range-filter-group {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
 
-    flex-wrap: wrap;
+    gap: 2px;
+
+    margin-bottom: 16px;
 }
 
-.range-filter-content input {
-    width: 115px;
+.range-filter-title {
+    color: rgba(0, 0, 0, 0.6);
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+
+    margin-bottom: 2px;
+}
+
+.range-filter-row {
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: nowrap;
+}
+
+.range-filter-field {
+    display: flex;
+    flex-direction: column;
+
+    width: 120px;
+    flex-shrink: 0;
+}
+
+.range-filter-label {
+    color: rgba(0, 0, 0, 0.6);
+
+    font-family: 'BC Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+
+    margin-bottom: 4px;
+}
+
+.range-filter-field input {
+    width: 100%;
     height: 40px;
 
     padding: 0 12px;
 
     border: 1px solid #d8d8d8;
     border-radius: 4px;
-    background: #fff;
+
+    background: #ffffff;
 
     box-sizing: border-box;
 
     font-family: 'BC Sans', sans-serif;
     font-size: 14px;
-}
 
-.range-filter-content span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
 
-    height: 40px;
-
-    font-family: 'BC Sans', sans-serif;
-    font-size: 14px;
-
-    color: var(--typography-color-primary, #2d2d2d);
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-// Standard NRCL filters (Fire Centre / Fire Zone / Station Status)
-
-:host ::ng-deep {
-
-    .mdc-floating-label--float-above {
-        transform: translateY(-32px) scale(0.75) !important;
+    &:hover {
+        border-color: #999999;
     }
 
-    nrcl-filter-select {
+    &:focus {
+        outline: none;
 
-        .mdc-notched-outline__leading,
-        .mdc-notched-outline__notch,
-        .mdc-notched-outline__trailing {
-            border-color: transparent !important;
-        }
+        border-color: #255a90;
 
-        .mat-mdc-text-field-wrapper {
-            border: 1px solid #d8d8d8;
-            border-radius: 4px;
-            background: #fff;
-        }
+        box-shadow: 0 0 0 1px #255a90;
     }
 }
 
