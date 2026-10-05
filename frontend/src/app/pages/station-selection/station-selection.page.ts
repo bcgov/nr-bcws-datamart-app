@@ -1,7 +1,8 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    inject
+    inject,
+    OnInit
 } from '@angular/core';
 import { StationDataService } from '../../services/station-data.service';
 import { StationSelectionContentComponent } from './content/station-selection-content.component';
@@ -19,6 +20,10 @@ import { StationSelectionHeaderComponent } from './header/station-selection-head
         StationSelectionHeaderComponent
     ]
 })
-export class StationSelectionPage {
+export class StationSelectionPage implements OnInit {
     stationDataService = inject(StationDataService)
+
+    ngOnInit(): void {
+        this.stationDataService.loadStations();
+    }    
 }
