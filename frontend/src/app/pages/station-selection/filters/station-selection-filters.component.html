@@ -1,0 +1,161 @@
+<section class="station-selection-filters">
+    <div class="filter-toolbar">
+        <button
+            type="button"
+            class="filters-toggle-button"
+            (click)="toggleFilters()">
+
+           <span>
+                Filters{{ activeFilterCount ? ' (' + activeFilterCount + ')' : '' }}
+            </span>
+
+            <nrcl-icon>
+                {{ filtersExpanded ? 'expand_less' : 'expand_more' }}
+            </nrcl-icon>
+
+        </button>
+
+        <nrcl-filter-search
+            placeholder="Search stations"
+            [value]="searchText"
+            (valueChange)="onSearchChanged($event)">
+        </nrcl-filter-search>
+    </div>
+
+    @if (filtersExpanded) {
+        <div class="filters-outer-container">
+            <div class="filters-inner-container">
+                <nrcl-filters-panel class="filters-panel" [showClear]="false">
+                    <nrcl-filter-select
+                        label="Fire Centre">
+                    </nrcl-filter-select>
+
+                    <nrcl-filter-select
+                        label="Fire Zone">
+                    </nrcl-filter-select>
+
+                    <nrcl-filter-select
+                        label="Station Status">
+                    </nrcl-filter-select>
+
+                    <div class="range-filter-group">
+                        <div class="range-filter-title">
+                            Elevation (m)
+                        </div>
+
+                        <div class="range-filter-row">
+                            <div class="range-filter-field">
+                                <label class="range-filter-label">
+                                    Min
+                                </label>
+
+                                <input
+                                    type="number"
+                                    placeholder="e.g. 500"
+                                    [(ngModel)]="elevationMin"
+                                    (blur)="applyFilters()"
+                                    (keydown.enter)="applyFilters()">
+                            </div>
+
+                            <div class="range-filter-field">
+                                <label class="range-filter-label">
+                                    Max
+                                </label>
+
+                                <input
+                                    type="number"
+                                    placeholder="e.g. 1,500"
+                                    [(ngModel)]="elevationMax"
+                                    (blur)="applyFilters()"
+                                    (keydown.enter)="applyFilters()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="range-filter-group">
+                        <div class="range-filter-title">
+                            Latitude (decimal degrees)
+                        </div>
+
+                        <div class="range-filter-row">
+                            <div class="range-filter-field">
+                                <label class="range-filter-label">
+                                    Min
+                                </label>
+
+                                <input
+                                    type="number"
+                                    placeholder="e.g. 49.25"
+                                    [(ngModel)]="latitudeMin"
+                                    (blur)="applyFilters()"
+                                    (keydown.enter)="applyFilters()">
+                            </div>
+
+                            <div class="range-filter-field">
+                                <label class="range-filter-label">
+                                    Max
+                                </label>
+
+                                <input
+                                    type="number"
+                                    placeholder="e.g. 55.00"
+                                    [(ngModel)]="latitudeMax"
+                                    (blur)="applyFilters()"
+                                    (keydown.enter)="applyFilters()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="range-filter-group">
+                        <div class="range-filter-title">
+                            Longitude (decimal degrees)
+                        </div>
+
+                        <div class="range-filter-row">
+                            <div class="range-filter-field">
+                                <label class="range-filter-label">
+                                    Min
+                                </label>
+
+                                <input
+                                    type="number"
+                                    placeholder="e.g. -130.00"
+                                    [(ngModel)]="longitudeMin"
+                                    (blur)="applyFilters()"
+                                    (keydown.enter)="applyFilters()">
+                            </div>
+
+                            <div class="range-filter-field">
+                                <label class="range-filter-label">
+                                    Max
+                                </label>
+
+                                <input
+                                    type="number"
+                                    placeholder="e.g. -120.00"
+                                    [(ngModel)]="longitudeMax"
+                                    (blur)="applyFilters()"
+                                    (keydown.enter)="applyFilters()">
+                            </div>
+                        </div>
+                    </div>
+                </nrcl-filters-panel>
+
+                <div class="filter-actions">
+                    @if (isMobileView) {
+                        <nrcl-button primary
+                            (click)="toggleFilters()">
+                            Apply filters
+                        </nrcl-button>
+                    }
+    
+                    <button type="button"
+                        class="clear-filters-button"
+                        (click)="clearFilters()">
+                        Clear filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</section>

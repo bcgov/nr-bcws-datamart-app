@@ -1,0 +1,43 @@
+<section class="hero">
+    <h1 id="main-content" tabindex="-1">BC Wildfire Service Weather DataMart</h1>
+    <p>View and download hourly weather observations from more than 280 weather stations across B.C.</p>
+</section>
+
+<section class="card-grid">
+    <home-card 
+        title="Search and download"
+        description="Select the weather stations you want data from, a date range, and the data you want to download."
+        icon="download"
+        route="/station-selection"
+    ></home-card>
+
+    <home-card 
+        title="API options"
+        description="Available in GraphQL and REST API."
+        icon="api"
+        route="/api"
+    ></home-card>
+
+    <home-card 
+        title="MCP server"
+        description="Use your own AI tools to ask for things and get answers."
+        icon="mcp-server"
+        route="/mcp-server"
+    ></home-card>
+
+    <home-card 
+        title="Weather stations"
+        description="Explore the list of weather stations across British Columbia."
+        icon="format_list_bulleted"
+        route="/weather-stations"
+    ></home-card>
+
+    <home-card 
+        title="Data limitations"
+        description="Important limitations, assumptions, and interpretation notes for BC Wildfire Service weather station data."
+        icon="info"
+        route="/data-limitations"
+    ></home-card>
+</section>
+
+<app-footer></app-footer>
