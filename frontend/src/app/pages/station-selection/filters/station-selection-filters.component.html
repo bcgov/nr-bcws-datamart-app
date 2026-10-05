@@ -1,7 +1,5 @@
 <section class="station-selection-filters">
-
     <div class="filter-toolbar">
-
         <button
             type="button"
             class="filters-toggle-button"
@@ -14,23 +12,17 @@
             <nrcl-icon>
                 {{ filtersExpanded ? 'expand_less' : 'expand_more' }}
             </nrcl-icon>
-
         </button>
 
         <nrcl-filter-search
             placeholder="Search stations">
         </nrcl-filter-search>
-
     </div>
 
     @if (filtersExpanded) {
-
         <div class="filters-outer-container">
-
             <div class="filters-inner-container">
-
                 <nrcl-filters-panel class="filters-panel" [showClear]="false">
-
                     <nrcl-filter-select
                         label="Fire Centre">
                     </nrcl-filter-select>
@@ -58,6 +50,7 @@
                                 (keydown.enter)="applyFilters()">
                         </div>
                     </nrcl-filter-container>
+
                     <nrcl-filter-container label="Latitude">
                         <div class="coordinate-content">
                             <input
@@ -98,7 +91,6 @@
                 </nrcl-filters-panel>
 
                 <div class="filter-actions">
-
                     <nrcl-button primary>
                         Apply filters
                     </nrcl-button>
@@ -108,13 +100,8 @@
                         (click)="clearFilters()">
                         Clear filters
                     </button>
-
                 </div>
-
             </div>
-
         </div>
-
     }
-
 </section>

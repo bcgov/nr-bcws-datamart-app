@@ -1,12 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-
-import { StationDataService } from '../../../../services/station-data.service';
-import { SelectedStationsService } from '../../../../services/selected-stations.service';
-import { IconComponent, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
-import { MatTableModule } from '@angular/material/table';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import { NgxPaginationModule } from 'ngx-pagination';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatTableModule } from '@angular/material/table';
+import { IconComponent, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { SelectedStationsService } from '../../../../services/selected-stations.service';
+import { StationDataService } from '../../../../services/station-data.service';
 
 interface WeatherStationRow {
   WEATHER_STATION_GUID: string;
@@ -19,9 +18,9 @@ interface WeatherStationRow {
 type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
 
 @Component({
-  selector: 'app-station-selection-station-list',
-  templateUrl: './station-selection-station-list.component.html',
-  styleUrl: './station-selection-station-list.component.scss',
+  selector: 'station-selection-content-list',
+  templateUrl: './station-selection-content-list.component.html',
+  styleUrl: './station-selection-content-list.component.scss',
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RowListDesktopComponent,
@@ -33,7 +32,7 @@ type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
     IconComponent
   ]
 })
-export class StationSelectionStationListComponent implements OnInit {
+export class StationSelectionContentListComponent implements OnInit {
   columns = ['selected', 'station'];
 
   pageNumber = 1;

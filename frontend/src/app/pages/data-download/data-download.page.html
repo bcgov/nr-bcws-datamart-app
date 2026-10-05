@@ -1,7 +1,5 @@
 <section class="data-download-page">
-
     <div class="data-download-page__container">
-
         <h1 class="data-download-page__title">
             Weather Data Download
         </h1>
@@ -11,7 +9,6 @@
         </p>
 
         <nrcl-row-list-desktop>
-
             <mat-table
                 [dataSource]="rows | paginate: {
                     id: 'download-table',
@@ -21,7 +18,6 @@
                 }">
 
                 <ng-container matColumnDef="stationName">
-
                     <mat-header-cell *matHeaderCellDef>
                         Station Name
                     </mat-header-cell>
@@ -29,11 +25,9 @@
                     <mat-cell *matCellDef="let row">
                         {{ row.stationName }}
                     </mat-cell>
-
                 </ng-container>
 
                 <ng-container matColumnDef="stationCode">
-
                     <mat-header-cell *matHeaderCellDef>
                         Station Code
                     </mat-header-cell>
@@ -41,11 +35,9 @@
                     <mat-cell *matCellDef="let row">
                         {{ row.stationCode }}
                     </mat-cell>
-
                 </ng-container>
 
                 <ng-container matColumnDef="status">
-
                     <mat-header-cell *matHeaderCellDef>
                         Status
                     </mat-header-cell>
@@ -53,7 +45,6 @@
                     <mat-cell *matCellDef="let row">
                         {{ row.status }}
                     </mat-cell>
-
                 </ng-container>
 
                 <mat-header-row
@@ -63,7 +54,6 @@
                 <mat-row
                     *matRowDef="let row; columns: columns;">
                 </mat-row>
-
             </mat-table>
 
         </nrcl-row-list-desktop>
@@ -78,7 +68,5 @@
             (pageNumberChange)="onPageNumberChange($event)"
             (pageSizeChange)="onPageSizeChange($event)">
         </nrcl-row-list-pagination>
-
     </div>
-
 </section>

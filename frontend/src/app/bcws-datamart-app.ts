@@ -79,13 +79,10 @@ export class BcwsDatamartApp {
         switch ( menuId ) {
             case 'home':        this.router.navigate( [ '/' ] ); break
             case 'download':    this.router.navigate( [ '/station-selection' ] ); break
-            case 'list':        this.snackbarUtilService.information( 'Unimplmented', 1000 ); break
-            case 'graph':       this.snackbarUtilService.information( 'Unimplmented', 1000 ); break
-            case 'server':      this.snackbarUtilService.information( 'Unimplmented', 1000 ); break
-            case 'data':        this.snackbarUtilService.information( 'Unimplmented', 1000 ); break
             case 'disclaimer':  openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=79F93E018712422FBC8E674A67A70535' ); break
             case 'privacy':     openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=9E890E16955E4FF4BF3B0E07B4722932' ); break
             case 'copyright':   openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=1AAACC9C65754E4D89A118B875E0FBDA' ); break
+            default:            this.snackbarUtilService.information( menuId + ' is not implmented', 1000 ); break
         }
     }
 }
