@@ -3,21 +3,27 @@ import { DataDownloadPage } from './pages/data-download/data-download.page';
 import { HomePage } from './pages/home/home.page';
 import { StationSelectionPage } from './pages/station-selection/station-selection.page';
 
+export const ROUTE = {
+    HOME: '',
+    STATION_SELECTION: 'station-selection',
+    DATA_DOWNLOAD: 'data-download',
+} 
+
 export const bcwsDatamartAppRoutes: Routes = [
     {
-        path: '',
+        path: ROUTE.HOME,
         component: HomePage
     },
     {
-        path: 'station-selection',
+        path: ROUTE.STATION_SELECTION,
         component: StationSelectionPage
     },
     {
-        path: 'data-download',
+        path: ROUTE.DATA_DOWNLOAD,
         component: DataDownloadPage
     },
     {
         path: '**',
-        redirectTo: ''
+        redirectTo: ROUTE.HOME
     }
 ];

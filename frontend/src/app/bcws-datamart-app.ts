@@ -1,6 +1,20 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ApplicationComponent, ApplicationHeaderComponent, ApplicationMenuComponent, SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
+import { filter, Subscription } from 'rxjs';
+import { ROUTE } from './bcws-datamart-app.routes';
+
+const MENU = {
+    HOME: 'home',
+    STATION_SELECTION: 'station-selection',
+    LIST: 'list',
+    GRAPH: 'graph',
+    SERVER: 'server',
+    DATA: 'data',
+    DISCLAIMER: 'disclaimer',
+    PRIVACY: 'privacy',
+    COPYRIGHT: 'copyright',
+}
 
 @Component( {
     selector: 'bcws-datamart-app',
@@ -14,7 +28,7 @@ import { ApplicationComponent, ApplicationHeaderComponent, ApplicationMenuCompon
         RouterModule,
     ]
 } )
-export class BcwsDatamartApp {
+export class BcwsDatamartApp implements OnInit, OnDestroy {
     router = inject( Router )
     snackbarUtilService = inject( SnackbarUtilService )
 
@@ -24,52 +38,68 @@ export class BcwsDatamartApp {
 
     menuItems = [
         {
-            id: 'home',
+            id: MENU.HOME,
             label: 'Home',
             icon: 'home-outline',
         },
         {
-            id: 'download',
+            id: MENU.STATION_SELECTION,
             label: 'Station Selection',
             icon: 'get_app',
         },
         {
-            id: 'list',
+            id: MENU.LIST,
             label: 'Weather Station List',
             icon: 'format_list_bulleted',
         },
         {
-            id: 'graph',
+            id: MENU.GRAPH,
             label: 'Graph QL and API',
             icon: 'control_camera',
         },
         {
-            id: 'server',
+            id: MENU.SERVER,
             label: 'MCP Server',
             icon: 'mcp-server',
         },
         {
-            id: 'data',
+            id: MENU.DATA,
             label: 'Data Information',
-            icon: 'info',
             icon: 'info;{"fill":false}',
         },
         {
-            id: 'disclaimer',
+            id: MENU.DISCLAIMER,
             label: 'Disclaimer',
         },
         {
-            id: 'privacy',
+            id: MENU.PRIVACY,
             label: 'Privacy',
         },
         {
-            id: 'copyright',
+            id: MENU.COPYRIGHT,
             label: 'Copyright',
         },
-    ];
+    ]
+
+    routeSubscription!: Subscription
+    currentItemId?: string
+
+    ngOnInit() {
+        this.routeSubscription = this.router.events
+            .pipe(
+                filter( event => event instanceof NavigationEnd )
+            )
+            .subscribe( ( event: NavigationEnd ) => {
+                this.onRouteChanged( event.urlAfterRedirects )
+            } )
+    }
+
+    ngOnDestroy() {
+        this.routeSubscription.unsubscribe()
+    }
 
     onLogoClick(): void {
-        this.router.navigate( [ '/' ] );
+        this.router.navigate( [ ROUTE.HOME ] );
     }
 
     onSkipClick(): void {
@@ -78,13 +108,26 @@ export class BcwsDatamartApp {
 
     onMenuItemClick( menuId: string ): void {
         switch ( menuId ) {
-            case 'home':        this.router.navigate( [ '/' ] ); break
-            case 'download':    this.router.navigate( [ '/station-selection' ] ); break
-            case 'disclaimer':  openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=79F93E018712422FBC8E674A67A70535' ); break
-            case 'privacy':     openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=9E890E16955E4FF4BF3B0E07B4722932' ); break
-            case 'copyright':   openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=1AAACC9C65754E4D89A118B875E0FBDA' ); break
-            default:            this.snackbarUtilService.information( menuId + ' is not implmented', 1000 ); break
+            case MENU.HOME: this.router.navigate( [ ROUTE.HOME ] ); break
+            case MENU.STATION_SELECTION: this.router.navigate( [ ROUTE.STATION_SELECTION ] ); break
+            case MENU.DISCLAIMER: openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=79F93E018712422FBC8E674A67A70535' ); break
+            case MENU.PRIVACY: openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=9E890E16955E4FF4BF3B0E07B4722932' ); break
+            case MENU.COPYRIGHT: openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=1AAACC9C65754E4D89A118B875E0FBDA' ); break
+            default: this.snackbarUtilService.information( menuId + ' is not implmented', 1000 ); break
         }
+    }
+
+    onRouteChanged( url: string ) {
+        let route
+        if ( url.startsWith( '/' ) ) route = url.substring( 1 )
+        
+        switch ( route ) {
+            case ROUTE.HOME: this.currentItemId = MENU.HOME; break
+            case ROUTE.STATION_SELECTION: this.currentItemId = MENU.STATION_SELECTION; break
+            default: this.currentItemId = undefined
+        }
+
+        // console.log( 'Navigated to:', url, this.currentItemId );
     }
 }
 
