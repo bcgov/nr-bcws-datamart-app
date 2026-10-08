@@ -52,6 +52,7 @@ export class BcwsDatamartApp {
             id: 'data',
             label: 'Data Information',
             icon: 'info',
+            icon: 'info;{"fill":false}',
         },
         {
             id: 'disclaimer',

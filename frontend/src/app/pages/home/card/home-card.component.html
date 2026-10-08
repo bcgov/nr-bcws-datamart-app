@@ -1,7 +1,7 @@
 @if (route) {
     <a class="home-card" [routerLink]="route" [attr.aria-label]="title">
         <div class="icon-circle">
-            <nrcl-icon>{{ icon }}</nrcl-icon>
+            <nrcl-icon [fill]="false">{{ icon }}</nrcl-icon>
         </div>
         <h2 class="home-card-title">{{ title }}</h2>
         <p class="home-card-description">{{ description }}</p>
