@@ -13,6 +13,7 @@ import { ButtonComponent, DialogService, GapComponent, IconComponent, RowListDes
 import { MatTableModule } from '@angular/material/table';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SelectedStationsService } from '../../../services/selected-stations.service';
+import { ROUTE } from '../../../bcws-datamart-app.routes';
 
 @Component({
     selector: 'station-selection-header',
@@ -93,7 +94,7 @@ export class StationSelectionHeaderComponent implements OnInit {
             return;
         }
 
-        this.router.navigate(['/data-download']);
+        this.router.navigate( [ ROUTE.DATA_DOWNLOAD ] );
     }
 
     viewSelectedStations(): void {
