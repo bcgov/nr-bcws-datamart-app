@@ -51,18 +51,24 @@
             "type": "vector",
             "id": "weather-stations",
             "title": "Reporting Stations",
+            "isVisible": false,
             "isQueryable": false,
             "useClustering": false,
-            "dataUrl": "/assets/smk/data.json",
-            "isInternal": false,
+            "#dataUrl": "/assets/smk/data.json",
+            "isInternal": true,
             "titleAttribute": "stationName",
             "@popupTemplate": "<div id='weatherStationPopup'>{{window.weatherStationPopup(feature.properties)}}</div>",
+            "opacity": 0.65,    
               "style": {
                 "strokeColor": "green",
                 "strokeWidth": 8,
                 "strokeOpacity": 0.8,
                 "fillOpacity": 0.6,
-                "fillColor": "blue"
+                "fillColor": "blue",
+                "markerUrl": "/assets/smk/marker.svg",
+                "markerSize": [ 21, 25 ],
+                "markerOffset": [ 10, 25 ]
+
             },
             "attributes": [
                 {

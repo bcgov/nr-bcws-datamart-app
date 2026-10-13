@@ -82,7 +82,7 @@ export class StationDataService {
             // console.log(url)
         return fetch( url )
             .then( res => {
-                console.log(res)
+                // console.log(res)
                 if ( !res.ok ) {
                     throw Error( res.statusText )
                 }

@@ -21,12 +21,15 @@ declare global {
 }
 
 export type GeoJsonPoint<P> = {
-    type: 'Feature',
-    properties: P,
-    geometry: {
-        type: 'Point',
-        coordinates: [ number, number ]
-    }
+    // type: "FeatureCollection",
+    // features: [ {
+        type: 'Feature',
+        properties: P,
+        geometry: {
+            type: 'Point',
+            coordinates: [ number, number ]
+        }
+    // } ]
 }
 
 export type ClickCallback = ( event: any ) => void
@@ -105,6 +108,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
             .then( stations => {
                 // console.log(stations)
                 this.loadLayer( 'weather-stations', () => {
+                        // return this.toGeoJsonPoints<WeatherStation>( stations, ( s ) => [ s.LONGITUDE, s.LATITUDE ] )
                     return {
                         "type": "FeatureCollection",
                         "features": this.toGeoJsonPoints<WeatherStation>( stations, ( s ) => [ s.LONGITUDE, s.LATITUDE ] )
@@ -123,9 +127,15 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
             } )
             .then( () => {
                 // console.log( 'loading layer', layerId )
-                console.log(data())
-                // this.smk.$viewer.layerId[ layerId ].load( data() )
+                // console.log(data())
+                debugger
+                let features = data()
+                // features.forEach( ( ft: any ) => {
+                    this.smk.$viewer.layerId[ layerId ].loadFeatures( features )
+                // } )
                 // this.smk.$viewer.layerId[ layerId ].setClickCallback( clickCallback )
+                // return this.showLayer( layerId, true )
+        return this.smk.$viewer.refreshLayers()
             } )
     }
 
@@ -136,6 +146,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
     private showLayer( layerId: string, visible: boolean ): Promise<void> {
         this.smk.$viewer.displayContext.layers.setItemVisible( layerId, visible )
 
+        // return this.smk.$viewer.changedLayerVisibility()
         return this.smk.$viewer.refreshLayers()
     }
 
@@ -286,12 +297,15 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
     toGeoJsonPoints<P>( stations: P[], point: ( prop: P ) => [ number, number ] ): GeoJsonPoint<P>[] {
         return stations.map( s => {
             return {
-                type: 'Feature',
-                properties: s,
-                geometry: {
-                    type: 'Point',
-                    coordinates: point( s )
-                }
+                // type: "FeatureCollection",
+                // features: [ {
+                    type: 'Feature',
+                    properties: s,
+                    geometry: {
+                        type: 'Point',
+                        coordinates: point( s )
+                    }
+                // } ]
             }
         } )
     } 
