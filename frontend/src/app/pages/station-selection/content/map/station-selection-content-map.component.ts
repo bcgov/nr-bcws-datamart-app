@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import * as L from 'leaflet';
 import { SelectedStationsService } from '../../../../services/selected-stations.service';
-import { StationDataService } from '../../../../services/station-data.service';
+import { StationDataService, WeatherStation } from '../../../../services/station-data.service';
 import { StationSelectionContentMapInformationPanelComponent } from './information-panel/station-selection-content-map-information-panel.component';
 
 declare const SMK: any;
@@ -19,6 +19,17 @@ declare global {
         weatherStationPopup: (reading: any) => string;
     }
 }
+
+export type GeoJsonPoint<P> = {
+    type: 'Feature',
+    properties: P,
+    geometry: {
+        type: 'Point',
+        coordinates: [ number, number ]
+    }
+}
+
+export type ClickCallback = ( event: any ) => void
 
 @Component({
     selector: 'station-selection-content-map',
@@ -57,6 +68,75 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
 
             return 'Station not found';
         };
+    }
+
+    ngAfterViewInit() {
+        // SMK/Leaflet initialization can fail during Angular HMR
+        // if the container is initialized before the browser has
+        // completed the current render cycle.
+        Promise.resolve()
+            .then( () => {
+                return new Promise<void>( res => requestAnimationFrame( () => res() ) )
+            } )
+            .then( () => {
+                return SMK.INIT({
+                    containerSel: '#station-map',
+                    config: ['./assets/smk/station-selection-config.json', '?'],
+                } )
+            } )
+            .then( ( smk ) => {
+                this.smk = smk
+                this.map = this.smk.$viewer.map;
+
+                // const identify = this.smk.getToolById('IdentifyFeatureTool');
+
+                // identify.active = true;
+
+                // this.stationDataService.stations$.subscribe((stations) => {
+                //     this.renderStations(stations);
+                // });
+
+                // this.selectedStationsService.selectedStations$.subscribe((stations) => {
+                //     this.updateSelectedMarkers(stations);
+                // });
+                // console.log(this.smk)
+                return this.stationDataService.getStations()
+            } )
+            .then( stations => {
+                // console.log(stations)
+                this.loadLayer( 'weather-stations', () => {
+                    return {
+                        "type": "FeatureCollection",
+                        "features": this.toGeoJsonPoints<WeatherStation>( stations, ( s ) => [ s.LONGITUDE, s.LATITUDE ] )
+                    }
+                } )
+            } )
+            .catch( console.warn )
+    }
+
+    private loadLayer( layerId: string, data: () => any, clickCallback?: ClickCallback ): Promise<void> {
+        return Promise.resolve()
+            .then( () => {
+                this.clearLayer( layerId )
+
+                return this.showLayer( layerId, true )
+            } )
+            .then( () => {
+                // console.log( 'loading layer', layerId )
+                console.log(data())
+                // this.smk.$viewer.layerId[ layerId ].load( data() )
+                // this.smk.$viewer.layerId[ layerId ].setClickCallback( clickCallback )
+            } )
+    }
+
+    private clearLayer( layerId: string ) {
+        this.smk.$viewer.layerId[ layerId ].clear()
+    }
+
+    private showLayer( layerId: string, visible: boolean ): Promise<void> {
+        this.smk.$viewer.displayContext.layers.setItemVisible( layerId, visible )
+
+        return this.smk.$viewer.refreshLayers()
     }
 
     private monitorPopupHost(popupHost: HTMLElement): void {
@@ -101,33 +181,6 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
         popupHost.appendChild(componentRef.location.nativeElement);
     }
 
-    async ngAfterViewInit(): Promise<void> {
-        // SMK/Leaflet initialization can fail during Angular HMR
-        // if the container is initialized before the browser has
-        // completed the current render cycle.
-        await new Promise<void>((resolve) =>
-            requestAnimationFrame(() => resolve()),
-        );
-
-        this.smk = await SMK.INIT({
-            containerSel: '#station-map',
-            config: ['./assets/smk/station-selection-config.json', '?'],
-        });
-
-        this.map = this.smk.$viewer.map;
-
-        const identify = this.smk.getToolById('IdentifyFeatureTool');
-
-        identify.active = true;
-
-        this.stationDataService.stations$.subscribe((stations) => {
-            this.renderStations(stations);
-        });
-
-        this.selectedStationsService.selectedStations$.subscribe((stations) => {
-            this.updateSelectedMarkers(stations);
-        });
-    }
 
     private renderStations(stations: any[]): void {
         const uniqueStations = [
@@ -229,4 +282,17 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
             }
         });
     }
+
+    toGeoJsonPoints<P>( stations: P[], point: ( prop: P ) => [ number, number ] ): GeoJsonPoint<P>[] {
+        return stations.map( s => {
+            return {
+                type: 'Feature',
+                properties: s,
+                geometry: {
+                    type: 'Point',
+                    coordinates: point( s )
+                }
+            }
+        } )
+    } 
 }

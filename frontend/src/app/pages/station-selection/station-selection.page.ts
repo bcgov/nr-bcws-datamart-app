@@ -24,6 +24,6 @@ export class StationSelectionPage implements OnInit {
     stationDataService = inject(StationDataService)
 
     ngOnInit(): void {
-        this.stationDataService.loadStations();
+    //     this.stationDataService.loadStations();
     }    
 }

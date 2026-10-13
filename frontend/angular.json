@@ -38,7 +38,7 @@
                             },
                             {
                                 "glob": "**/*",
-                                "input": "node_modules/@bcgov/smk/dist/assets",
+                                "input": "node_modules/@qqnluaq/smk/dist/assets",
                                 "output": "assets"
                             }
                             {
@@ -51,7 +51,7 @@
                             "src/styles/main.scss"
                         ],
                         "scripts": [
-                            "node_modules/@bcgov/smk/dist/smk.js"
+                            "node_modules/@qqnluaq/smk/dist/smk.js"
                         ],
                         "browser": "src/main.ts"
                     },

@@ -14,7 +14,6 @@ import { StationDataService } from '../../../services/station-data.service';
         FilterSearchComponent,
         FiltersPanelComponent,
         FilterSelectComponent,
-        FilterContainerComponent,
         FormsModule,
         ButtonComponent
     ]
@@ -57,7 +56,7 @@ export class StationSelectionFiltersComponent {
             stationStatus: this.stationStatus,
         };
 
-        await this.stationDataService.loadStationsFiltered( filters );
+        // await this.stationDataService.loadStationsFiltered( filters );
     }
 
     async clearFilters(): Promise<void> {
@@ -74,7 +73,7 @@ export class StationSelectionFiltersComponent {
 
         this.stationStatus = null;
 
-        await this.stationDataService.clearFilters();
+        // await this.stationDataService.clearFilters();
     }
 
     get activeFilterCount(): number {
