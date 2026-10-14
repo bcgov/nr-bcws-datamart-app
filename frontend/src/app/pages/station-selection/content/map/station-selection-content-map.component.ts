@@ -7,7 +7,7 @@ import {
     createComponent,
     inject,
 } from '@angular/core';
-import * as L from 'leaflet';
+// import * as L from 'leaflet';
 import { SelectedStationsService } from '../../../../services/selected-stations.service';
 import { StationDataService, WeatherStation } from '../../../../services/station-data.service';
 import { StationSelectionContentMapInformationPanelComponent } from './information-panel/station-selection-content-map-information-panel.component';
@@ -50,9 +50,9 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
 
     private smk: any;
     private map: any;
-    private activeMarker: L.Marker | null = null;
+    // private activeMarker: L.Marker | null = null;
 
-    private stationMarkers = new Map<string, L.Marker>();
+    // private stationMarkers = new Map<string, L.Marker>();
     private popupComponentRef: any;
     private popupHost: HTMLElement | null = null;
 
@@ -103,19 +103,35 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
                 //     this.updateSelectedMarkers(stations);
                 // });
                 // console.log(this.smk)
+                this.smk.$viewer.selected.addedFeatures( ( ev:any ) => {
+                    let ids = Object.keys( this.smk.$viewer.selected.featureSet )
+                    console.log('selected.addedFeatures',ids)
+                    this.smk.$viewer.selected.highlight( ids )
+                } )
+
                 return this.stationDataService.getStations()
             } )
             .then( stations => {
-                // console.log(stations)
+                console.log(stations)
                 this.loadLayer( 'weather-stations', () => {
                         // return this.toGeoJsonPoints<WeatherStation>( stations, ( s ) => [ s.LONGITUDE, s.LATITUDE ] )
                     return {
                         "type": "FeatureCollection",
-                        "features": this.toGeoJsonPoints<WeatherStation>( stations, ( s ) => [ s.LONGITUDE, s.LATITUDE ] )
+                        // "features": this.toGeoJsonPoints<WeatherStation>( stations, ( s ) => [ s.LONGITUDE, s.LATITUDE ] )
+                        "features": this.toGeoJsonPoints<WeatherStation>( stations, ( s ) => this.randomPoint() )
                     }
                 } )
             } )
             .catch( console.warn )
+    }
+
+    randomPoint(): [ number, number ] {
+        const LONG = [ -139.1782, -110.3533 ]
+        const LAT = [ 47.6039, 60.5939 ]
+        return [
+            Math.random() * ( LONG[ 1 ] - LONG[ 0 ] ) + LONG[ 0 ],
+            Math.random() * ( LAT[ 1 ] - LAT[ 0 ] ) + LAT[ 0 ],
+        ]
     }
 
     private loadLayer( layerId: string, data: () => any, clickCallback?: ClickCallback ): Promise<void> {
@@ -128,14 +144,15 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
             .then( () => {
                 // console.log( 'loading layer', layerId )
                 // console.log(data())
-                debugger
+                // debugger
                 let features = data()
                 // features.forEach( ( ft: any ) => {
-                    this.smk.$viewer.layerId[ layerId ].loadFeatures( features )
+                // console.log(features.features.map( (f:any) => f.geometry.coordinates ))
+                    this.smk.$viewer.layerId[ layerId ].loadLayer( features )
                 // } )
                 // this.smk.$viewer.layerId[ layerId ].setClickCallback( clickCallback )
                 // return this.showLayer( layerId, true )
-        return this.smk.$viewer.refreshLayers()
+        // return this.smk.$viewer.refreshLayers()
             } )
     }
 
@@ -153,10 +170,10 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
     private monitorPopupHost(popupHost: HTMLElement): void {
         const observer = new MutationObserver(() => {
             if (!popupHost.isConnected) {
-                this.activeMarker?.getElement()?.classList.remove('active');
+                // this.activeMarker?.getElement()?.classList.remove('active');
 
-                this.activeMarker = null;
-
+                // this.activeMarker = null;
+// 
                 observer.disconnect();
             }
         });
@@ -213,69 +230,69 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
             layer.clearLayers?.();
 
             uniqueStations.forEach((station) => {
-                const marker = this.createStationMarker(station);
+                // const marker = this.createStationMarker(station);
 
-                if (marker) {
-                    layer.addLayer(marker);
-                }
+                // if (marker) {
+                    // layer.addLayer(marker);
+                // }
             });
         });
 
         this.map.invalidateSize();
     }
 
-    private createStationMarker(station: any): L.Marker | null {
-        if (station.LATITUDE == null || station.LONGITUDE == null) {
-            return null;
-        }
+    // private createStationMarker(station: any): L.Marker | null {
+    //     if (station.LATITUDE == null || station.LONGITUDE == null) {
+    //         return null;
+    //     }
 
-        const marker = L.marker([station.LATITUDE, station.LONGITUDE], {
-            icon: L.divIcon({
-                className: 'weather-station-marker',
-                iconSize: [20, 20],
-                iconAnchor: [10, 10],
-                html: `
-						<svg width="20" height="20" viewBox="0 0 20 20">
-							<circle class="station-marker-inner" cx="10" cy="10" r="6.5"></circle>
-							<circle class="station-marker-outer" cx="10" cy="10" r="9"></circle>
-						</svg>
-					`,
-            }),
-        });
+    //     const marker = L.marker([station.LATITUDE, station.LONGITUDE], {
+    //         icon: L.divIcon({
+    //             className: 'weather-station-marker',
+    //             iconSize: [20, 20],
+    //             iconAnchor: [10, 10],
+    //             html: `
+	// 					<svg width="20" height="20" viewBox="0 0 20 20">
+	// 						<circle class="station-marker-inner" cx="10" cy="10" r="6.5"></circle>
+	// 						<circle class="station-marker-outer" cx="10" cy="10" r="9"></circle>
+	// 					</svg>
+	// 				`,
+    //         }),
+    //     });
 
-        const row = {
-            station,
-            stationName: station.STATION_NAME,
-            latitude: station.LATITUDE,
-            longitude: station.LONGITUDE,
-        };
+    //     const row = {
+    //         station,
+    //         stationName: station.STATION_NAME,
+    //         latitude: station.LATITUDE,
+    //         longitude: station.LONGITUDE,
+    //     };
 
-        this.initializeStationMarker(marker, row);
+    //     this.initializeStationMarker(marker, row);
 
-        this.stationMarkers.set(station.WEATHER_STATION_GUID, marker,);
+    //     // this.stationMarkers.set(station.WEATHER_STATION_GUID, marker,);
 
-        return marker;
-    }
+    //     return marker;
+    // }
 
-    private initializeStationMarker(marker: L.Marker, row: any): void {
-        marker.feature = {
-            type: 'Feature',
-            properties: row,
-            geometry: {
-                type: 'Point',
-                coordinates: [row.latitude, row.longitude],
-            },
-        };
-    }
+    // private initializeStationMarker(marker: L.Marker, row: any): void {
+    //     marker.feature = {
+    //         type: 'Feature',
+    //         properties: row,
+    //         geometry: {
+    //             type: 'Point',
+    //             coordinates: [row.latitude, row.longitude],
+    //         },
+    //     };
+    // }
 
     private setActiveMarker(stationGuid: string,): void {
-        this.stationMarkers.forEach((marker) => { marker.getElement()?.classList.remove('active'); });
+        // this.stationMarkers.forEach((marker) => { marker.getElement()?.classList.remove('active'); });
 
-        const marker = this.stationMarkers.get(stationGuid);
+        // const marker = this.stationMarkers.get(stationGuid);
 
-        marker?.getElement()?.classList.add('active');
+        // marker?.getElement()?.classList.add('active');
 
-        this.activeMarker = marker ?? null;
+        // this.activeMarker = marker ?? null;
     }
 
     private updateSelectedMarkers(selectedStations: any[],): void {
@@ -285,13 +302,13 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
             ),
         );
 
-        this.stationMarkers.forEach((marker, stationGuid) => {
-            if (selectedIds.has(stationGuid)) {
-                marker.getElement()?.classList.add('selected');
-            } else {
-                marker.getElement()?.classList.remove('selected');
-            }
-        });
+        // this.stationMarkers.forEach((marker, stationGuid) => {
+        //     if (selectedIds.has(stationGuid)) {
+        //         marker.getElement()?.classList.add('selected');
+        //     } else {
+        //         marker.getElement()?.classList.remove('selected');
+        //     }
+        // });
     }
 
     toGeoJsonPoints<P>( stations: P[], point: ( prop: P ) => [ number, number ] ): GeoJsonPoint<P>[] {
