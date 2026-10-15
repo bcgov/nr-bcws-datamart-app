@@ -21,8 +21,7 @@ import { ButtonComponent, IconComponent, IndicatorComponent } from '@bcgov/nr-ng
 export class StationSelectionContentMapInformationPanelComponent {
     selectedStationsService = inject( SelectedStationsService )
 
-    @Input()
-    station: any;
+    @Input() feature: any;
 
     display(value: any): string {
         return value === null || value === undefined || value === ''
@@ -31,29 +30,29 @@ export class StationSelectionContentMapInformationPanelComponent {
     }
 
     get isSelected(): boolean {
-        return this.selectedStationsService.isSelected(this.station);
+        return this.selectedStationsService.isSelected(this.feature);
     }
 
-    selectStation(): void {
-        this.selectedStationsService.addStation(this.station);
+    onSelectStation(): void {
+        this.selectedStationsService.addStation(this.feature);
     }
 
-    removeStation(): void {
-        this.selectedStationsService.removeStation(this.station);
+    onRemoveStation(): void {
+        this.selectedStationsService.removeStation(this.feature);
     }
 
     get installationDate(): string {
-        if (!this.station?.INSTALLATION_TIMESTAMP_MSEC) {
+        if (!this.feature.properties?.INSTALLATION_TIMESTAMP_MSEC) {
             return '–';
         }
 
         return new Date(
-            this.station.INSTALLATION_TIMESTAMP_MSEC,
+            this.feature.properties.INSTALLATION_TIMESTAMP_MSEC,
         ).toLocaleDateString();
     }
 
     get indicatorClass(): string {
-        switch (this.station?.STATION_STATUS_CODE) {
+        switch (this.feature.properties?.STATION_STATUS_CODE) {
             case 'ACTIVE':
                 return 'future';
 

@@ -57,7 +57,7 @@
             "#dataUrl": "/assets/smk/data.json",
             "isInternal": true,
             "titleAttribute": "stationName",
-            "popupTemplate": "<div id='weatherStationPopup'>{{window.weatherStationPopup(feature.properties)}}</div>",
+            "popupTemplate": "<div id='weatherStationPopup'>{{ window.weatherStationPopup( feature ) }}</div>",
             "opacity": 0.85,    
               "style": {
                 "strokeColor": "green",
@@ -137,7 +137,7 @@
         },
         {
             "type": "layers",
-            "enabled": true
+            "enabled": false
         },
         {
             "type": "baseMaps",
@@ -148,14 +148,45 @@
             "enabled": true,
             "showWidget": true,
             "command": {
-                "select": true,
+                "select": false,
                 "#radius": true,
                 "#radiusUnit": true,
-                "#nearBy": true
+                "nearBy": false
             },
             "radius": 20,
             "radiusUnit": "px",
-            "tolerance": 12
+            "tolerance": 12,
+            "internalLayers": [
+                {
+                    "id": "search-area",
+                    "style": {
+                        "fillOpacity": 0,
+                        "strokeOpacity": 0
+                    }
+                },
+                {
+                    "id": "search-border-1",
+                    "style": {
+                        "fillOpacity": 0,
+                        "strokeOpacity": 0
+                    }
+                },
+                {
+                    "id": "search-border-2",
+                    "style": {
+                        "fillOpacity": 0,
+                        "strokeOpacity": 0
+                    }
+                },
+                {
+                    "id": "location", 
+                    "style": {
+                        "fillOpacity": 0,
+                        "strokeOpacity": 0,
+                        "markerUrl": null
+                    }
+                }
+            ]
         },
         {
             "type": "search",
@@ -186,6 +217,27 @@
             "enabled": false
         },
         {
+            "type": "select-lasso",
+            "enabled": true,
+            "showWidget": true,
+            "showPanel": false,
+            "internalLayers": [
+                {
+                    "id": "highlight-point",
+                    "style": {
+                        "strokeColor": "green",
+                        "strokeWidth": 30,
+                        "strokeOpacity": 0.8,
+                        "markerUrl": null,
+                        "markerSize": null,
+                        "markerOffset": null,
+                        "shadowUrl": null,
+                        "shadowSize": null
+                    }
+                }
+            ]
+        },
+        {
             "type": "select",
             "enabled": true,
             "showWidget": false,
@@ -212,7 +264,7 @@
         },
         {
             "type": "measure",
-            "enabled": true,
+            "enabled": false,
             "position": "toolbar"
         }
     ]

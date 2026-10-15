@@ -55,15 +55,16 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
     // private stationMarkers = new Map<string, L.Marker>();
     private popupComponentRef: any;
     private popupHost: HTMLElement | null = null;
+    stationLayer: { [key:string]: any } = {}
 
     constructor() {
         const me = this;
 
-        window.weatherStationPopup = function (reading: any): string {
-            if (reading) {
+        window.weatherStationPopup = function ( feature: any): string {
+            if ( feature ) {
                 setTimeout(() => {
-                    me.buildPopup(reading);
-                    me.setActiveMarker(reading.station.WEATHER_STATION_GUID,);
+                    me.buildPopup( feature );
+                    // me.setActiveMarker(reading.station.WEATHER_STATION_GUID,);
                 }, 100);
 
                 return 'Loading...';
@@ -99,14 +100,28 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
                 //     this.renderStations(stations);
                 // });
 
-                // this.selectedStationsService.selectedStations$.subscribe((stations) => {
-                //     this.updateSelectedMarkers(stations);
-                // });
+                this.selectedStationsService.selectedStations$.subscribe((stations) => {
+                    this.updateSelectedMarkers(stations);
+                });
+
                 // console.log(this.smk)
                 this.smk.$viewer.selected.addedFeatures( ( ev:any ) => {
                     let ids = Object.keys( this.smk.$viewer.selected.featureSet )
                     console.log('selected.addedFeatures',ids)
                     this.smk.$viewer.selected.highlight( ids )
+                } )
+
+                this.smk.$viewer.lassoed.addedFeatures( ( ev:any ) => {
+                    // let ids = Object.keys( this.smk.$viewer.lassoed.featureSet )
+                    console.log('lassoed.addedFeatures',ev)
+                    // this.smk.$viewer.selected.highlight( ids )
+                    ev.features.forEach( (ft:any) => {
+                    //     // let ft = this.smk.$viewer.lassoed.get( id )
+                    //     // console.log(ft)
+                        this.selectedStationsService.addStation( ft )
+                    } )
+                    // this.selectedStationsService.addStation( ev.features )
+
                 } )
 
                 return this.stationDataService.getStations()
@@ -117,8 +132,20 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
                         // return this.toGeoJsonPoints<WeatherStation>( stations, ( s ) => [ s.LONGITUDE, s.LATITUDE ] )
                     return {
                         "type": "FeatureCollection",
-                        // "features": this.toGeoJsonPoints<WeatherStation>( stations, ( s ) => [ s.LONGITUDE, s.LATITUDE ] )
-                        "features": this.toGeoJsonPoints<WeatherStation>( stations, ( s ) => this.randomPoint() )
+                        "features": stations.map( (s:any) => {
+                            [ s.LONGITUDE, s.LATITUDE ] = this.randomPoint()
+                            s.WEATHER_STATION_GUID = crypto.randomUUID()
+
+                            return {
+                                type: 'Feature',
+                                properties: s,
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: [ s.LONGITUDE, s.LATITUDE ]
+                                }
+                            }
+                        } )
+                        // "features": this.toGeoJsonPoints<WeatherStation>( stations, ( s ) => this.randomPoint() )
                     }
                 } )
             } )
@@ -153,6 +180,13 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
                 // this.smk.$viewer.layerId[ layerId ].setClickCallback( clickCallback )
                 // return this.showLayer( layerId, true )
         // return this.smk.$viewer.refreshLayers()
+
+                this.stationLayer = {}
+                this.smk.$viewer.visibleLayer[ layerId ].getLayers().forEach( (featureLayer:any) => {
+                    let key: string = featureLayer.feature.properties[ 'WEATHER_STATION_GUID' ]
+                    this.stationLayer[ key ] = featureLayer
+                } )
+                console.log(this.stationLayer)
             } )
     }
 
@@ -184,7 +218,8 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
         });
     }
 
-    private buildPopup(reading: any): void {
+    private buildPopup( feature: any ): void {
+        // debugger
         const popupHost = document.getElementById('weatherStationPopup');
 
         if (!popupHost) {
@@ -196,8 +231,15 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
         const componentRef = createComponent(StationSelectionContentMapInformationPanelComponent, {
             environmentInjector: this.environmentInjector,
         });
-
-        componentRef.instance.station = reading.station;
+console.log(feature)
+        componentRef.instance.feature = {
+            ...feature,
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [ feature.properties.LONGITUDE, feature.properties.LATITUDE ]
+            }
+        }//.station;
 
         this.popupComponentRef = componentRef;
         this.popupHost = popupHost;
@@ -295,12 +337,17 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
         // this.activeMarker = marker ?? null;
     }
 
-    private updateSelectedMarkers(selectedStations: any[],): void {
-        const selectedIds = new Set(
-            selectedStations.map(
-                (station) => station.WEATHER_STATION_GUID,
-            ),
-        );
+    private updateSelectedMarkers( selectedFeatures: any[],): void {
+        let selected = this.smk.$viewer.selected
+
+        selected.clear()
+        selected.add( "weather-stations", selectedFeatures )
+
+        // const selectedIds = new Set(
+        //     selectedStations.map(
+        //         (station) => station.WEATHER_STATION_GUID,
+        //     ),
+        // );
 
         // this.stationMarkers.forEach((marker, stationGuid) => {
         //     if (selectedIds.has(stationGuid)) {
@@ -317,7 +364,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
                 // type: "FeatureCollection",
                 // features: [ {
                     type: 'Feature',
-                    properties: s,
+                    properties: { ...s, WEATHER_STATION_GUID: crypto.randomUUID() },
                     geometry: {
                         type: 'Point',
                         coordinates: point( s )
