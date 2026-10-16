@@ -1,5 +1,6 @@
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     inject,
     OnInit
@@ -13,17 +14,23 @@ import { StationSelectionHeaderComponent } from './header/station-selection-head
     selector: 'station-selection-page',
     templateUrl: './station-selection.page.html',
     styleUrl: './station-selection.page.scss',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         StationSelectionContentComponent,
         StationSelectionFiltersComponent,
-        StationSelectionHeaderComponent
+        StationSelectionHeaderComponent,
     ]
 })
 export class StationSelectionPage implements OnInit {
     stationDataService = inject(StationDataService)
+    changeDetectorRef = inject(ChangeDetectorRef)
 
     ngOnInit(): void {
-        this.stationDataService.loadStations();
+        // hack to make page load properly
+        setTimeout(() => {
+            this.changeDetectorRef.detectChanges()
+        }, 1000);
+
+        this.stationDataService.initialize()
     }    
 }

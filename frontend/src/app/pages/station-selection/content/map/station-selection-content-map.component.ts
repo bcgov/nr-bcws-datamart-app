@@ -7,10 +7,11 @@ import {
     createComponent,
     inject,
 } from '@angular/core';
-import * as L from 'leaflet';
+// import * as L from 'leaflet';
 import { SelectedStationsService } from '../../../../services/selected-stations.service';
 import { StationDataService } from '../../../../services/station-data.service';
 import { StationSelectionContentMapInformationPanelComponent } from './information-panel/station-selection-content-map-information-panel.component';
+import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 
 declare const SMK: any;
 
@@ -33,23 +34,17 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
     environmentInjector = inject( EnvironmentInjector )
     stationDataService = inject( StationDataService )
     selectedStationsService = inject( SelectedStationsService )
+    snackbarUtilService = inject( SnackbarUtilService )
 
-    private smk: any;
-    private map: any;
-    private activeMarker: L.Marker | null = null;
-
-    private stationMarkers = new Map<string, L.Marker>();
-    private popupComponentRef: any;
-    private popupHost: HTMLElement | null = null;
+    smk: any;
+    stationLayer: { [key:string]: any } = {}
+    activeStationId?: string|null
 
     constructor() {
-        const me = this;
-
-        window.weatherStationPopup = function (reading: any): string {
-            if (reading) {
+        window.weatherStationPopup = ( feature: any ): string => {
+            if ( feature ) {
                 setTimeout(() => {
-                    me.buildPopup(reading);
-                    me.setActiveMarker(reading.station.WEATHER_STATION_GUID,);
+                    this.buildPopup( feature );
                 }, 100);
 
                 return 'Loading...';
@@ -59,13 +54,124 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
         };
     }
 
+    ngAfterViewInit() {
+        Promise.resolve()
+            .then( () => {
+                // SMK/Leaflet initialization can fail during Angular HMR
+                // if the container is initialized before the browser has
+                // completed the current render cycle.
+                return new Promise<void>( res => requestAnimationFrame( () => res() ) )
+            } )
+            .then( () => {
+                return SMK.INIT({
+                    containerSel: '#station-map',
+                    config: ['./assets/smk/station-selection-config.json', '?'],
+                } )
+            } )
+            .then( ( smk ) => {
+                this.smk = smk
+
+                this.selectedStationsService.selectedStations$.subscribe((stations) => {
+                    this.smk.$viewer.selected.clear()
+                    this.smk.$viewer.selected.add( "weather-stations", stations )
+                });
+
+                this.smk.$viewer.selected.addedFeatures( ( ev:any ) => {
+                    let ids = Object.keys( this.smk.$viewer.selected.featureSet )
+                    this.smk.$viewer.selected.highlight( ids )
+
+                    ev.features.forEach( ( ft: any ) => {
+                        let stationId = ft.properties[ 'WEATHER_STATION_GUID' ]
+                        this.toggleStationSelected( stationId, true )
+                    } )
+                } )
+
+                this.smk.$viewer.selected.removedFeatures( ( ev:any ) => {
+                    let ids = Object.keys( this.smk.$viewer.selected.featureSet )
+                    this.smk.$viewer.selected.highlight( ids )
+
+                    ev.features.forEach( ( ft: any ) => {
+                        let stationId = ft.properties[ 'WEATHER_STATION_GUID' ]
+                        this.toggleStationSelected( stationId, false )
+                    } )
+                } )
+
+                this.smk.$viewer.selected.clearedFeatures( ( ev:any ) => {
+                    this.smk.$viewer.selected.highlight()
+
+                    Object.keys( this.stationLayer ).forEach( (id:any) => {
+                        this.toggleStationSelected( id, false )
+                    } )
+                } )
+
+                this.smk.$viewer.lassoed.addedFeatures( ( ev:any ) => {
+                    this.selectedStationsService.addStations( ev.features )
+                    if ( ev.features.length == 1 ) {
+                        this.snackbarUtilService.successful( 'Selected 1 station', 2000 )
+                    }
+                    else {
+                        this.snackbarUtilService.successful( 'Selected ' + ev.features.length + ' stations', 2000 )
+                    }
+                } )
+
+                this.smk.$viewer.map.on( 'lasso.finished', (event:any) => {
+                    if ( event.layers.length == 0 ) {
+                        this.snackbarUtilService.information( 'No stations found in this area', 2000 )
+                    }
+                } )
+
+                this.stationDataService.stations$.subscribe( (stations) => {
+                    this.loadLayer( 'weather-stations', {
+                        "type": "FeatureCollection",
+                        "features": stations
+                    } )
+                } )
+
+                this.smk.on( 'SelectLassoListTool', {
+                    'activate': () => {
+                        if ( this.smk.$tool.SelectLassoListTool.active ) {
+                            this.snackbarUtilService.information( 'Draw an area on the map to select stations', 2000 )
+                        }
+                        console.log('activate',this.smk.$tool.SelectLassoListTool.active )
+                    }
+                } )
+            } )
+            .catch( console.warn )
+    }
+
+    loadLayer( layerId: string, featureCollection: any ): Promise<void> {
+        return Promise.resolve()
+            .then( () => {
+                this.smk.$viewer.layerId[ layerId ].clear()
+                this.smk.$viewer.displayContext.layers.setItemVisible( layerId, true )
+
+                return this.smk.$viewer.refreshLayers()
+            } )
+            .then( () => {
+                this.smk.$viewer.layerId[ layerId ].loadLayer( featureCollection )
+
+                this.stationLayer = {}
+                this.smk.$viewer.visibleLayer[ layerId ].getLayers().forEach( (featureLayer:any) => {
+                    let key: string = featureLayer.feature.properties[ 'WEATHER_STATION_GUID' ]
+                    this.stationLayer[ key ] = featureLayer
+                } )
+            } )
+    }
+
+    toggleStationActive( id: string|null, toggle: boolean ) {
+        if ( this.activeStationId ) this.stationLayer[ this.activeStationId ]._icon.classList.toggle( 'active', false )
+        if ( id ) this.stationLayer[ id ]._icon.classList.toggle( 'active', toggle )
+        this.activeStationId = id
+    }
+
+    toggleStationSelected( id: string, toggle: boolean ) {
+        this.stationLayer[ id ]._icon.classList.toggle( 'selected', toggle )
+    }
+
     private monitorPopupHost(popupHost: HTMLElement): void {
         const observer = new MutationObserver(() => {
             if (!popupHost.isConnected) {
-                this.activeMarker?.getElement()?.classList.remove('active');
-
-                this.activeMarker = null;
-
+                this.toggleStationActive( null, true )
                 observer.disconnect();
             }
         });
@@ -76,7 +182,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
         });
     }
 
-    private buildPopup(reading: any): void {
+    private buildPopup( feature: any ): void {
         const popupHost = document.getElementById('weatherStationPopup');
 
         if (!popupHost) {
@@ -89,144 +195,21 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
             environmentInjector: this.environmentInjector,
         });
 
-        componentRef.instance.station = reading.station;
+        this.toggleStationActive( feature.properties[ 'WEATHER_STATION_GUID' ], true )
 
-        this.popupComponentRef = componentRef;
-        this.popupHost = popupHost;
+        componentRef.instance.feature = {
+            ...feature,
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [ feature.properties.LONGITUDE, feature.properties.LATITUDE ]
+            }
+        }
 
         this.appRef.attachView(componentRef.hostView);
 
         this.monitorPopupHost(popupHost);
 
         popupHost.appendChild(componentRef.location.nativeElement);
-    }
-
-    async ngAfterViewInit(): Promise<void> {
-        // SMK/Leaflet initialization can fail during Angular HMR
-        // if the container is initialized before the browser has
-        // completed the current render cycle.
-        await new Promise<void>((resolve) =>
-            requestAnimationFrame(() => resolve()),
-        );
-
-        this.smk = await SMK.INIT({
-            containerSel: '#station-map',
-            config: ['./assets/smk/station-selection-config.json', '?'],
-        });
-
-        this.map = this.smk.$viewer.map;
-
-        const identify = this.smk.getToolById('IdentifyFeatureTool');
-
-        identify.active = true;
-
-        this.stationDataService.stations$.subscribe((stations) => {
-            this.renderStations(stations);
-        });
-
-        this.selectedStationsService.selectedStations$.subscribe((stations) => {
-            this.updateSelectedMarkers(stations);
-        });
-    }
-
-    private renderStations(stations: any[]): void {
-        const uniqueStations = [
-            ...new Map(stations.map((station) => [station.WEATHER_STATION_GUID, station])).values(),
-        ];
-
-        this.map.eachLayer((layer: any) => {
-            if (
-                !Object.prototype.hasOwnProperty.call(layer, '_smk_id') ||
-                layer._smk_id !== 'popup-link'
-            ) {
-                return;
-            }
-
-            const intLayer = this.smk?.$viewer?.layerId?.[layer._smk_id];
-
-            intLayer?.clear?.();
-            intLayer?.clearLayer?.();
-            layer.clearLayers?.();
-
-            uniqueStations.forEach((station) => {
-                const marker = this.createStationMarker(station);
-
-                if (marker) {
-                    layer.addLayer(marker);
-                }
-            });
-        });
-
-        this.map.invalidateSize();
-    }
-
-    private createStationMarker(station: any): L.Marker | null {
-        if (station.LATITUDE == null || station.LONGITUDE == null) {
-            return null;
-        }
-
-        const marker = L.marker([station.LATITUDE, station.LONGITUDE], {
-            icon: L.divIcon({
-                className: 'weather-station-marker',
-                iconSize: [20, 20],
-                iconAnchor: [10, 10],
-                html: `
-						<svg width="20" height="20" viewBox="0 0 20 20">
-							<circle class="station-marker-inner" cx="10" cy="10" r="6.5"></circle>
-							<circle class="station-marker-outer" cx="10" cy="10" r="9"></circle>
-						</svg>
-					`,
-            }),
-        });
-
-        const row = {
-            station,
-            stationName: station.STATION_NAME,
-            latitude: station.LATITUDE,
-            longitude: station.LONGITUDE,
-        };
-
-        this.initializeStationMarker(marker, row);
-
-        this.stationMarkers.set(station.WEATHER_STATION_GUID, marker,);
-
-        return marker;
-    }
-
-    private initializeStationMarker(marker: L.Marker, row: any): void {
-        marker.feature = {
-            type: 'Feature',
-            properties: row,
-            geometry: {
-                type: 'Point',
-                coordinates: [row.latitude, row.longitude],
-            },
-        };
-    }
-
-    private setActiveMarker(stationGuid: string,): void {
-        this.stationMarkers.forEach((marker) => { marker.getElement()?.classList.remove('active'); });
-
-        const marker = this.stationMarkers.get(stationGuid);
-
-        marker?.getElement()?.classList.add('active');
-
-        this.activeMarker = marker ?? null;
-    }
-
-    private updateSelectedMarkers(selectedStations: any[],): void {
-        const selectedIds = new Set(
-            selectedStations.map(
-                (station) => station.WEATHER_STATION_GUID,
-            ),
-        );
-
-        this.stationMarkers.forEach((marker, stationGuid) => {
-            if (selectedIds.has(stationGuid)) {
-                marker.getElement()?.classList.add('selected');
-            } else {
-                marker.getElement()?.classList.remove('selected');
-            }
-        });
     }
 }
