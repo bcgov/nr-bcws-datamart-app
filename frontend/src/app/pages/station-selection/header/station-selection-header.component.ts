@@ -119,8 +119,8 @@ export class StationSelectionHeaderComponent implements OnInit {
         ];
 
         this.selectedStations.sort((a, b) =>
-            String(a.STATION_NAME).localeCompare(
-                String(b.STATION_NAME),
+            String(a.properties.STATION_NAME).localeCompare(
+                String(b.properties.STATION_NAME),
                 undefined,
                 { sensitivity: 'base' },
             ),
@@ -161,8 +161,8 @@ export class StationSelectionHeaderComponent implements OnInit {
         this.selectedStations =
             this.selectedStations.filter(
                 (s) =>
-                    s.WEATHER_STATION_GUID !==
-                    station.WEATHER_STATION_GUID,
+                    s.properties.WEATHER_STATION_GUID !==
+                    station.properties.WEATHER_STATION_GUID,
             );
 
         this.selectedCount = this.selectedStations.length;
@@ -240,31 +240,31 @@ export class StationSelectionHeaderComponent implements OnInit {
     private getSortValue(station: any, column: string): any {
         switch (column) {
             case 'stationName':
-                return station.STATION_NAME;
+                return station.properties.STATION_NAME;
 
             case 'stationCode':
-                return station.STATION_CODE;
+                return station.properties.STATION_CODE;
 
             case 'stationAcronym':
-                return station.STATION_ACRONYM;
+                return station.properties.STATION_ACRONYM;
 
             case 'fireCentre':
-                return station.FIRE_CENTRE_ORG_UNIT_IDENT;
+                return station.properties.FIRE_CENTRE_ORG_UNIT_IDENT;
 
             case 'fireZone':
-                return station.ZONE_ORG_UNIT_IDENTIFIER;
+                return station.properties.ZONE_ORG_UNIT_IDENTIFIER;
 
             case 'latitude':
-                return station.LATITUDE;
+                return station.properties.LATITUDE;
 
             case 'longitude':
-                return station.LONGITUDE;
+                return station.properties.LONGITUDE;
 
             case 'elevation':
-                return station.ELEVATION_M;
+                return station.properties.ELEVATION_M;
 
             case 'status':
-                return station.STATION_STATUS_DESC;
+                return station.properties.STATION_STATUS_DESC;
 
             default:
                 return '';

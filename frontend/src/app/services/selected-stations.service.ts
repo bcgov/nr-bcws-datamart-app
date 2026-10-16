@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { GeoJsonPoint, WeatherStation } from './station-data.service';
 
 @Injectable( {
     providedIn: 'root',
 } )
 export class SelectedStationsService {
-    private readonly selectedStationsSubject = new BehaviorSubject<any[]>( [] );
+    private readonly selectedStationsSubject = new BehaviorSubject<GeoJsonPoint<WeatherStation>[]>( [] );
 
     readonly selectedStations$ = this.selectedStationsSubject.asObservable();
 
-    addStation( station: any ): void {
+    addStation( station: GeoJsonPoint<WeatherStation> ): void {
         const stations = this.selectedStationsSubject.value;
 
         const exists = stations.some(
@@ -26,7 +27,24 @@ export class SelectedStationsService {
         ] );
     }
 
-    removeStation( station: any ): void {
+    addStations( stations: GeoJsonPoint<WeatherStation>[] ): void {
+        const existingStations = this.selectedStationsSubject.value;
+
+        let newStations = stations.filter( s => {
+            return !existingStations.some( e => {
+                return e.properties.WEATHER_STATION_GUID == s.properties.WEATHER_STATION_GUID
+            } )
+        } )
+
+        if ( newStations.length == 0 ) return
+
+        this.selectedStationsSubject.next( [
+            ...existingStations,
+            ...newStations,
+        ] )
+    }
+
+    removeStation( station: GeoJsonPoint<WeatherStation> ): void {
         this.selectedStationsSubject.next(
             this.selectedStationsSubject.value.filter(
                 ( s ) => s.properties.WEATHER_STATION_GUID !== station.properties.WEATHER_STATION_GUID,
@@ -34,7 +52,7 @@ export class SelectedStationsService {
         );
     }
 
-    isSelected( station: any ): boolean {
+    isSelected( station: GeoJsonPoint<WeatherStation> ): boolean {
         return this.selectedStationsSubject.value.some(
             ( s ) => s.properties.WEATHER_STATION_GUID === station.properties.WEATHER_STATION_GUID,
         );

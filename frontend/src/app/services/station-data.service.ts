@@ -1,7 +1,6 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-
-import { StationFilters } from '../models/station-filters';
+import { Filter } from '../pages/station-selection/filters/station-selection-filters.component';
 
 const WEATHER_STATIONS_API = 'https://container-app-api-yujhzooydm766.bluewater-fbba4d31.canadacentral.azurecontainerapps.io/api/weather_stations';
 
@@ -46,18 +45,33 @@ export type WeatherStation = {
     LAST_UPDATED_TIMESTAMP_MSEC: string       // 1790210860551
 }
 
+export type GeoJsonPoint<P> = {
+    type: 'Feature',
+    properties: P,
+    geometry: {
+        type: 'Point',
+        coordinates: [ number, number ]
+    }
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class StationDataService {
-//   private readonly stationsSubject = new BehaviorSubject<any[]>([]);
-
-//   readonly stations$ = this.stationsSubject.asObservable();
+    private readonly stationsSubject = new BehaviorSubject<any[]>([]);
+    
+    readonly stations$ = this.stationsSubject.asObservable();
   
-    private _stationsPromise?: Promise<WeatherStation[]>
+    private _stationsPromise?: Promise<GeoJsonPoint<WeatherStation>[]>
 
-    getStations(): Promise<WeatherStation[]> {
-        console.log('getStations')
+    initialize() {
+        this.loadStations()
+            .then( stations => {
+                this.stationsSubject.next( stations )
+            } )
+    }
+
+    loadStations(): Promise<GeoJsonPoint<WeatherStation>[]> {
         if ( this._stationsPromise ) return this._stationsPromise
 
         let fetchPage: ( url: string, accum: WeatherStation[], m: number ) => Promise<WeatherStation[]> = ( url, accum, maxPages ) => { 
@@ -73,16 +87,46 @@ export class StationDataService {
                 } )
         }
 
-        this._stationsPromise = fetchPage( WEATHER_STATIONS_API, [], 2 )        
+        this._stationsPromise = fetchPage( WEATHER_STATIONS_API, [], 2 )
+            .then( stations => {
+                return stations.map( s => {
+                    // remove when API is fixed
+                    [ s.LONGITUDE, s.LATITUDE ] = randomPoint()
+                    s.WEATHER_STATION_GUID = crypto.randomUUID()
+
+                    return {
+                        type: 'Feature',
+                        properties: s,
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [ s.LONGITUDE, s.LATITUDE ]
+                        }
+                    }
+                } )
+            } )
 
         return this._stationsPromise
     }
 
+    filterStations( filter: Filter ): Promise<GeoJsonPoint<WeatherStation>[]> {
+        return this.loadStations()
+            .then( stations => {
+                let filteredStations = stations.filter( s => {
+                    return textFilter( s.properties.STATION_NAME, filter.search )
+                        && rangeFilter( s.properties.ELEVATION_M, filter.elevation )
+                        && rangeFilter( s.properties.LATITUDE, filter.latitude )
+                        && rangeFilter( s.properties.LONGITUDE, filter.longitude )
+                } )
+
+                this.stationsSubject.next( filteredStations )
+
+                return filteredStations
+            } )
+    }
+
     fetchWithRetry( url: string, description: string, retries = 3, delay = 1000 ): Promise<Response> {
-            // console.log(url)
         return fetch( url )
             .then( res => {
-                // console.log(res)
                 if ( !res.ok ) {
                     throw Error( res.statusText )
                 }
@@ -105,147 +149,25 @@ export class StationDataService {
                 }
             } )
     }
+}
 
-//   private loaded = false;
-//   private loading = false;
+function randomPoint(): [ number, number ] {
+    const LONG = [ -139.1782, -110.3533 ]
+    const LAT = [ 47.6039, 60.5939 ]
+    return [
+        Math.random() * ( LONG[ 1 ] - LONG[ 0 ] ) + LONG[ 0 ],
+        Math.random() * ( LAT[ 1 ] - LAT[ 0 ] ) + LAT[ 0 ],
+    ]
+}
 
-//   constructor(private readonly ngZone: NgZone) {}
+function textFilter( text: string, filter: string ): boolean {
+    if ( !filter ) return true
+    return text.toLowerCase().includes( filter.toLowerCase().trim() )
+}
 
-//   async loadStations(): Promise<void> {
-//     if (this.loaded || this.loading) return;
-
-//     this.loading = true;
-
-//     try {
-//       const response = await this.fetchWithRetry(WEATHER_STATIONS_API);
-//       const data = await response.json();
-
-//       const uniqueStations = [
-//         ...new Map(
-//           data.value.map((station: any) => [
-//             station.WEATHER_STATION_GUID,
-//             station,
-//           ]),
-//         ).values(),
-//       ];
-
-//       this.ngZone.run(() => {
-//         this.stationsSubject.next(uniqueStations);
-//         this.loaded = true;
-//       });
-//     } finally {
-//       this.loading = false;
-//     }
-//   }
-
-//   async loadStationsByIds( stationGuids: string[] ): Promise<any[]> {
-//     if (stationGuids.length === 0) return [];
-
-//     const filter = stationGuids
-//       .map((id) => `WEATHER_STATION_GUID eq '${id}'`)
-//       .join(' or ');
-
-//     const response = await this.fetchWithRetry(
-//       `${WEATHER_STATIONS_API}?$filter=${encodeURIComponent(filter)}`,
-//     );
-
-//     const data = await response.json();
-
-//     return [
-//       ...new Map(
-//         data.value.map((station: any) => [
-//           station.WEATHER_STATION_GUID,
-//           station,
-//         ]),
-//       ).values(),
-//     ];
-//   }
-
-//   async loadStationsFiltered(filters: StationFilters): Promise<void> {
-
-//     const predicates: string[] = [];
-
-//     if (filters.elevationMin !== null) predicates.push(`ELEVATION_M ge ${filters.elevationMin}`);
-
-//     if (filters.elevationMax !== null) predicates.push(`ELEVATION_M le ${filters.elevationMax}`);
-
-//     if (filters.latitudeMin !== null) predicates.push(`LATITUDE ge ${filters.latitudeMin}`);
-
-//     if (filters.latitudeMax !== null) predicates.push(`LATITUDE le ${filters.latitudeMax}`);
-
-//     if (filters.longitudeMin !== null) predicates.push(`LONGITUDE ge ${filters.longitudeMin}`);
-
-//     if (filters.longitudeMax !== null) predicates.push(`LONGITUDE le ${filters.longitudeMax}`);
-
-//     if (filters.stationStatus) predicates.push(`STATION_STATUS_DESC eq '${filters.stationStatus}'`);
-
-//     const url = predicates.length
-//       ? `${WEATHER_STATIONS_API}?$filter=${encodeURIComponent(predicates.join(' and '))}`
-//       : WEATHER_STATIONS_API;
-
-//     const response = await this.fetchWithRetry(url);
-//     const data = await response.json();
-
-//     const uniqueStations = [
-//       ...new Map(
-//         data.value.map((station: any) => [
-//           station.WEATHER_STATION_GUID,
-//           station,
-//         ]),
-//       ).values(),
-//     ];
-
-//     const filteredStations =
-//       filters.searchText?.trim()
-//         ? uniqueStations.filter(
-//             (station: any) =>
-//               station.STATION_NAME?.toLowerCase().includes(
-//                 filters.searchText!.trim().toLowerCase(),
-//               ),
-//           )
-//         : uniqueStations;
-
-//     this.ngZone.run(() => this.stationsSubject.next(filteredStations));
-//   }
-
-//   async clearFilters(): Promise<void> {
-//     this.loaded = false;
-//     await this.loadStations();
-//   }
-
-// //   private async fetchWithRetry( url: string, maxAttempts = 3, ): Promise<Response> {
-// //     let lastError: unknown;
-
-// //     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-// //       try {
-// //         const response = await fetch(url);
-
-// //         if (!response.ok) {
-// //           throw new Error(
-// //             `Request failed with status ${response.status}`,
-// //           );
-// //         }
-
-// //         return response;
-// //       } catch (error) {
-// //         lastError = error;
-
-// //         if (attempt < maxAttempts) {
-// //           await this.delay(attempt * 1000);
-// //         }
-// //       }
-// //     }
-
-// //     throw lastError;
-// //   }
-
-//   private delay(milliseconds: number): Promise<void> {
-//     return new Promise((resolve) =>
-//       setTimeout(resolve, milliseconds),
-//     );
-//   }
-
-//   get stations(): any[] {
-//     return this.stationsSubject.value;
-//   }
+function rangeFilter( value: number, range: string[] ): boolean {
+    if ( !range[ 0 ] && !range[ 1 ] ) return true
+    let min = Number( range[ 0 ] )
+    let max = Number( range[ 1 ] )
+    return value >= min && value <= max
 }

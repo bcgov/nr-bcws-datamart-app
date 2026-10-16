@@ -1,10 +1,50 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ButtonComponent, FilterContainerComponent, FilterSearchComponent, FilterSelectComponent, FiltersPanelComponent, IconComponent } from '@bcgov/nr-ngx-component-lib';
-import { StationFilters } from '../../../models/station-filters';
-import { StationDataService } from '../../../services/station-data.service';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    inject,
+    Input,
+    Output
+} from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { ButtonComponent, FilterSearchComponent, FilterSelectComponent, FiltersPanelComponent, IconComponent } from "@bcgov/nr-ngx-component-lib";
+import { StationDataService } from "../../../services/station-data.service";
 
-@Component( {
+export type Filter = {
+	search: string
+	fireCentre: string[]
+	fireZone: string[]
+	stationStatus: string[]
+	elevation: string[]
+    latitude: string[]
+	longitude: string[]
+}
+
+export function emptyFilter(): Filter {
+	return {
+		search: '',
+        fireCentre: [],
+        fireZone: [],
+        stationStatus: [],
+        elevation: [],
+        latitude: [],
+		longitude: [],
+	}
+}
+
+export function initialFilter(): Filter {
+	return {
+		search: '',
+        fireCentre: [],
+        fireZone: [],
+        stationStatus: [],
+        elevation: [],
+        latitude: [],
+		longitude: [],
+	}
+}
+
+@Component({
     selector: 'station-selection-filters',
     templateUrl: './station-selection-filters.component.html',
     styleUrl: './station-selection-filters.component.scss',
@@ -17,84 +57,100 @@ import { StationDataService } from '../../../services/station-data.service';
         FormsModule,
         ButtonComponent
     ]
-} )
+})
 export class StationSelectionFiltersComponent {
-    stationDataService = inject( StationDataService )
+	// codeTableService = inject(CodeTableService)
+    stationDataService = inject(StationDataService)
 
+    @Input() filter: Filter = emptyFilter()
+	@Output() filterChange = new EventEmitter<Filter>()
+
+	private _filterChangeTimeout: any
     filtersExpanded = false;
 
-    searchText = '';
+	// fireZoneOptions = this.codeTableService.fireZoneWithNotAssigned.items
 
-    elevationMin: number | null = null;
-    elevationMax: number | null = null;
+    onSearchTextChange( ev: any ) {
+        if ( !this.filter ) return
+		this.filter.search = ev
+		this.emitFilterChange()
+	}
 
-    latitudeMin: number | null = null;
-    latitudeMax: number | null = null;
+	// onFireCentreChange(ev) {
+	// 	this.filter.fireCentre = ev;
 
-    longitudeMin: number | null = null;
-    longitudeMax: number | null = null;
+	// 	if (this.filter.fireCentre?.length > 0) {
+	// 		this.fireZoneOptions = this.codeTableService.fireZone.forCentre( this.filter.fireCentre[0] )
+	// 	} 
+    //     else {
+	// 		this.fireZoneOptions = this.codeTableService.fireZoneWithNotAssigned.items;
+	// 	}
 
-    stationStatus: string | null = null;
+	// 	this.emitFilterChange();
+	// }
+
+	// onFireZoneChange(ev) {
+	// 	this.filter.fireZone = ev
+	// 	this.emitFilterChange()
+	// }
+
+	onStationStatusChange( ev:any ) {
+		this.filter.stationStatus = ev
+		this.emitFilterChange()
+	}
+
+	onElevationChange( min: any, max: any ) {
+		this.filter.elevation = [ min, max ]
+		this.emitFilterChange()
+	}
+	
+	onLatitudeChange( min: any, max: any ) {
+		this.filter.latitude = [ min, max ]
+		this.emitFilterChange()
+	}
+
+	onLongitudeChange( min: any, max: any ) {
+		this.filter.longitude = [ min, max ]
+		this.emitFilterChange()
+	}
+
+	onClearSearchAndFilters() {
+		this.filter = emptyFilter()
+	    // this.fireZoneOptions = this.codeTableService.fireZoneWithNotAssigned.items;
+		this.emitFilterChange()
+	}
+
+	emitFilterChange() {
+		if (this._filterChangeTimeout) clearTimeout(this._filterChangeTimeout)
+
+		this._filterChangeTimeout = setTimeout(() => {
+			this.filterChange.emit({...this.filter})
+		}, 200)
+
+        this.stationDataService.filterStations( this.filter )
+	}
 
     toggleFilters(): void {
         this.filtersExpanded = !this.filtersExpanded;
     }
 
-    async applyFilters(): Promise<void> {
-        const filters: StationFilters = {
-            searchText: this.searchText,
-
-            elevationMin: this.elevationMin,
-            elevationMax: this.elevationMax,
-
-            latitudeMin: this.latitudeMin,
-            latitudeMax: this.latitudeMax,
-
-            longitudeMin: this.longitudeMin,
-            longitudeMax: this.longitudeMax,
-
-            stationStatus: this.stationStatus,
-        };
-
-        // await this.stationDataService.loadStationsFiltered( filters );
-    }
-
-    async clearFilters(): Promise<void> {
-        this.searchText = '';
-
-        this.elevationMin = null;
-        this.elevationMax = null;
-
-        this.latitudeMin = null;
-        this.latitudeMax = null;
-
-        this.longitudeMin = null;
-        this.longitudeMax = null;
-
-        this.stationStatus = null;
-
-        // await this.stationDataService.clearFilters();
-    }
-
     get activeFilterCount(): number {
         let count = 0;
 
-        if ( this.searchText?.trim() ) count++;
-        if ( this.elevationMin !== null || this.elevationMax !== null ) count++;
-        if ( this.latitudeMin !== null || this.latitudeMax !== null ) count++;
-        if ( this.longitudeMin !== null || this.longitudeMax !== null ) count++;
-        if ( this.stationStatus ) count++;
+        if ( this.filter.search?.trim() ) count++;
+        if ( this.filter.elevation[0] || this.filter.elevation[1] ) count++;
+        if ( this.filter.latitude[0] || this.filter.latitude[1] ) count++;
+        if ( this.filter.longitude[0] || this.filter.longitude[1] ) count++;
+        if ( this.filter.stationStatus[0] ) count++;
 
         return count;
+    }
+
+    async applyFilters(): Promise<void> {
     }
 
     get isMobileView(): boolean {
         return window.innerWidth <= 992;
     }
 
-    async onSearchChanged( value: string ): Promise<void> {
-        this.searchText = value;
-
-        await this.applyFilters();
-    }
 }

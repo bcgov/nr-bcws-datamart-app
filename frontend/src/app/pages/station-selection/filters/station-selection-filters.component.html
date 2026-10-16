@@ -5,20 +5,19 @@
             class="filters-toggle-button"
             (click)="toggleFilters()">
 
-           <span>
+            <span>
                 Filters{{ activeFilterCount ? ' (' + activeFilterCount + ')' : '' }}
             </span>
 
             <nrcl-icon>
                 {{ filtersExpanded ? 'expand_less' : 'expand_more' }}
             </nrcl-icon>
-
         </button>
 
         <nrcl-filter-search
             placeholder="Search stations"
-            [value]="searchText"
-            (valueChange)="onSearchChanged($event)">
+            [value]="filter.search"
+            (valueChange)="onSearchTextChange($event)">
         </nrcl-filter-search>
     </div>
 
@@ -27,16 +26,19 @@
             <div class="filters-inner-container">
                 <nrcl-filters-panel class="filters-panel" [showClear]="false">
                     <nrcl-filter-select
-                        label="Fire Centre">
-                    </nrcl-filter-select>
+                        label="Fire Centre"
+                        [value]="filter.fireCentre"
+                    ></nrcl-filter-select>
 
                     <nrcl-filter-select
-                        label="Fire Zone">
-                    </nrcl-filter-select>
+                        label="Fire Zone"
+                        [value]="filter.fireZone"
+                    ></nrcl-filter-select>
 
                     <nrcl-filter-select
-                        label="Station Status">
-                    </nrcl-filter-select>
+                        label="Station Status"
+                        [value]="filter.stationStatus"
+                    ></nrcl-filter-select>
 
                     <div class="range-filter-group">
                         <div class="range-filter-title">
@@ -52,9 +54,11 @@
                                 <input
                                     type="number"
                                     placeholder="e.g. 500"
-                                    [(ngModel)]="elevationMin"
+                                    [value]="filter.elevation[0]"
+                                    (change)="onElevationChange( $event?.target?.value, filter.elevation[1] )"
                                     (blur)="applyFilters()"
-                                    (keydown.enter)="applyFilters()">
+                                    (keydown.enter)="applyFilters()"
+                                >
                             </div>
 
                             <div class="range-filter-field">
@@ -65,9 +69,11 @@
                                 <input
                                     type="number"
                                     placeholder="e.g. 1,500"
-                                    [(ngModel)]="elevationMax"
+                                    [value]="filter.elevation[1]"
+                                    (change)="onElevationChange( filter.elevation[0], $event?.target?.value )"
                                     (blur)="applyFilters()"
-                                    (keydown.enter)="applyFilters()">
+                                    (keydown.enter)="applyFilters()"
+                                >
                             </div>
                         </div>
                     </div>
@@ -86,9 +92,12 @@
                                 <input
                                     type="number"
                                     placeholder="e.g. 49.25"
-                                    [(ngModel)]="latitudeMin"
+                                    [value]="filter.latitude[0]"
+                                    (change)="onLatitudeChange( $event?.target?.value, filter.latitude[1] )"
+
                                     (blur)="applyFilters()"
-                                    (keydown.enter)="applyFilters()">
+                                    (keydown.enter)="applyFilters()"
+                                >
                             </div>
 
                             <div class="range-filter-field">
@@ -99,9 +108,11 @@
                                 <input
                                     type="number"
                                     placeholder="e.g. 55.00"
-                                    [(ngModel)]="latitudeMax"
+                                    [value]="filter.latitude[1]"
+                                    (change)="onLatitudeChange( filter.latitude[0], $event?.target?.value )"
                                     (blur)="applyFilters()"
-                                    (keydown.enter)="applyFilters()">
+                                    (keydown.enter)="applyFilters()"
+                                >
                             </div>
                         </div>
                     </div>
@@ -120,9 +131,11 @@
                                 <input
                                     type="number"
                                     placeholder="e.g. -130.00"
-                                    [(ngModel)]="longitudeMin"
+                                    [value]="filter.longitude[0]"
+                                    (change)="onLongitudeChange( $event?.target?.value, filter.longitude[1] )"
                                     (blur)="applyFilters()"
-                                    (keydown.enter)="applyFilters()">
+                                    (keydown.enter)="applyFilters()"
+                                >
                             </div>
 
                             <div class="range-filter-field">
@@ -133,9 +146,11 @@
                                 <input
                                     type="number"
                                     placeholder="e.g. -120.00"
-                                    [(ngModel)]="longitudeMax"
+                                    [value]="filter.longitude[1]"
+                                    (change)="onLongitudeChange( filter.longitude[0], $event?.target?.value )"
                                     (blur)="applyFilters()"
-                                    (keydown.enter)="applyFilters()">
+                                    (keydown.enter)="applyFilters()"
+                                >
                             </div>
                         </div>
                     </div>
@@ -151,7 +166,7 @@
     
                     <button type="button"
                         class="clear-filters-button"
-                        (click)="clearFilters()">
+                        (click)="onClearSearchAndFilters()">
                         Clear filters
                     </button>
                 </div>

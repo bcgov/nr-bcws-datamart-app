@@ -1,19 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { JsonPipe } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { IconComponent, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SelectedStationsService } from '../../../../services/selected-stations.service';
-import { StationDataService } from '../../../../services/station-data.service';
-
-interface WeatherStationRow {
-    WEATHER_STATION_GUID: string;
-    STATION_CODE: string;
-    STATION_NAME: string;
-    STATION_ACRONYM: string | null;
-    STATUS?: string;
-}
+import { GeoJsonPoint, StationDataService, WeatherStation } from '../../../../services/station-data.service';
 
 type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
 
@@ -29,49 +22,42 @@ type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
         RowListPaginationComponent,
         NgxPaginationModule,
         MatMenuModule,
-        IconComponent
+        IconComponent,
+        JsonPipe
     ]
 })
 export class StationSelectionContentListComponent implements OnInit {
-    columns = ['selected', 'station'];
+    stationDataService = inject( StationDataService )
+    selectedStationsService = inject( SelectedStationsService )
+    changeDetectorRef = inject( ChangeDetectorRef )
 
     pageNumber = 1;
-
     pageSize = 10;
-
     sortOption: SortOption = 'nameAsc';
-
-    stations: WeatherStationRow[] = [];
-
-    constructor(
-        private readonly stationDataService: StationDataService,
-        private readonly selectedStationsService: SelectedStationsService,
-        private readonly cdr: ChangeDetectorRef,
-    ) { }
+    stations: GeoJsonPoint<WeatherStation>[] = [];
 
     ngOnInit(): void {
-        // this.stationDataService.stations$.subscribe((stations) => {
-        //     this.stations = stations;
-        //     this.cdr.markForCheck();
-        // });
+        this.stationDataService.stations$.subscribe( (stations) => {
+            this.stations = stations
+            this.pageNumber = 1
+        } )
     }
-
 
     display(value: unknown): string {
         return value === null || value === undefined || value === '' ? '–' : String(value);
     }
 
-    isSelected(station: WeatherStationRow): boolean {
+    isSelected(station: GeoJsonPoint<WeatherStation>): boolean {
         return this.selectedStationsService.isSelected(station);
     }
 
-    toggleStation(station: WeatherStationRow): void {
+    toggleStation(station: GeoJsonPoint<WeatherStation>): void {
         this.selectedStationsService.isSelected(station)
             ? this.selectedStationsService.removeStation(station)
             : this.selectedStationsService.addStation(station);
     }
 
-    get visibleStations(): WeatherStationRow[] {
+    get visibleStations(): GeoJsonPoint<WeatherStation>[] {
         const start = (this.pageNumber - 1) * this.pageSize;
 
         return this.sortedStations.slice(start, start + this.pageSize);
@@ -119,21 +105,21 @@ export class StationSelectionContentListComponent implements OnInit {
         }
     }
 
-    get sortedStations(): WeatherStationRow[] {
+    get sortedStations(): GeoJsonPoint<WeatherStation>[] {
         const stations = [...this.stations];
 
         switch (this.sortOption) {
             case 'nameAsc':
-                return stations.sort((a, b) => this.display(a.STATION_NAME).localeCompare(this.display(b.STATION_NAME)));
+                return stations.sort((a, b) => this.display(a.properties.STATION_NAME).localeCompare(this.display(b.properties.STATION_NAME)));
 
             case 'nameDesc':
-                return stations.sort((a, b) => this.display(b.STATION_NAME).localeCompare(this.display(a.STATION_NAME)));
+                return stations.sort((a, b) => this.display(b.properties.STATION_NAME).localeCompare(this.display(a.properties.STATION_NAME)));
 
             case 'codeAsc':
-                return stations.sort((a, b) => Number(a.STATION_CODE) - Number(b.STATION_CODE));
+                return stations.sort((a, b) => Number(a.properties.STATION_CODE) - Number(b.properties.STATION_CODE));
 
             case 'codeDesc':
-                return stations.sort((a, b) => Number(b.STATION_CODE) - Number(a.STATION_CODE));
+                return stations.sort((a, b) => Number(b.properties.STATION_CODE) - Number(a.properties.STATION_CODE));
 
             default:
                 return stations;
