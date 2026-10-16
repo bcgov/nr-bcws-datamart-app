@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -8,8 +7,8 @@ import {
 } from '@angular/core';
 import { StationDataService } from '../../services/station-data.service';
 import { StationSelectionContentComponent } from './content/station-selection-content.component';
-import { StationSelectionHeaderComponent } from './header/station-selection-header.component';
 import { StationSelectionFiltersComponent } from './filters/station-selection-filters.component';
+import { StationSelectionHeaderComponent } from './header/station-selection-header.component';
 
 @Component({
     selector: 'station-selection-page',
@@ -20,7 +19,6 @@ import { StationSelectionFiltersComponent } from './filters/station-selection-fi
         StationSelectionContentComponent,
         StationSelectionFiltersComponent,
         StationSelectionHeaderComponent,
-        JsonPipe
     ]
 })
 export class StationSelectionPage implements OnInit {

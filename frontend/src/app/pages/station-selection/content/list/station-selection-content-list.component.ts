@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
@@ -23,7 +22,6 @@ type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
         NgxPaginationModule,
         MatMenuModule,
         IconComponent,
-        JsonPipe
     ]
 })
 export class StationSelectionContentListComponent implements OnInit {
