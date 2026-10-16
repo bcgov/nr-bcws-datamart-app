@@ -11,6 +11,7 @@ import {
 import { SelectedStationsService } from '../../../../services/selected-stations.service';
 import { StationDataService } from '../../../../services/station-data.service';
 import { StationSelectionContentMapInformationPanelComponent } from './information-panel/station-selection-content-map-information-panel.component';
+import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 
 declare const SMK: any;
 
@@ -33,8 +34,9 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
     environmentInjector = inject( EnvironmentInjector )
     stationDataService = inject( StationDataService )
     selectedStationsService = inject( SelectedStationsService )
+    snackbarUtilService = inject( SnackbarUtilService )
 
-    smk: any; 
+    smk: any;
     stationLayer: { [key:string]: any } = {}
     activeStationId?: string|null
 
@@ -104,6 +106,18 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
 
                 this.smk.$viewer.lassoed.addedFeatures( ( ev:any ) => {
                     this.selectedStationsService.addStations( ev.features )
+                    if ( ev.features.length == 1 ) {
+                        this.snackbarUtilService.successful( 'Selected 1 station', 2000 )
+                    }
+                    else {
+                        this.snackbarUtilService.successful( 'Selected ' + ev.features.length + ' stations', 2000 )
+                    }
+                } )
+
+                this.smk.$viewer.map.on( 'lasso.finished', (event:any) => {
+                    if ( event.layers.length == 0 ) {
+                        this.snackbarUtilService.information( 'No stations found in this area', 2000 )
+                    }
                 } )
 
                 this.stationDataService.stations$.subscribe( (stations) => {
@@ -111,6 +125,15 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
                         "type": "FeatureCollection",
                         "features": stations
                     } )
+                } )
+
+                this.smk.on( 'SelectLassoListTool', {
+                    'activate': () => {
+                        if ( this.smk.$tool.SelectLassoListTool.active ) {
+                            this.snackbarUtilService.information( 'Draw an area on the map to select stations', 2000 )
+                        }
+                        console.log('activate',this.smk.$tool.SelectLassoListTool.active )
+                    }
                 } )
             } )
             .catch( console.warn )
@@ -139,7 +162,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
         if ( this.activeStationId ) this.stationLayer[ this.activeStationId ]._icon.classList.toggle( 'active', false )
         if ( id ) this.stationLayer[ id ]._icon.classList.toggle( 'active', toggle )
         this.activeStationId = id
-    }   
+    }
 
     toggleStationSelected( id: string, toggle: boolean ) {
         this.stationLayer[ id ]._icon.classList.toggle( 'selected', toggle )
