@@ -1,0 +1,30 @@
+:host {
+    --logo-width: calc( 1 * var( --nrcl-application-header-desktop-logo-width ) );
+
+    ::ng-deep .nrcl-dialog .mat-mdc-dialog-title .title-bar {
+        gap: 16px;
+    }
+
+    .logo {
+        width: var(--logo-width);
+        height: calc(var(--logo-width) / var(--nrcl-application-header-logo-aspect));
+        flex-shrink: 0;
+        flex-grow: 0;
+        align-self: flex-start;
+        display: inline-block;
+        background-image: var(--nrcl-application-header-logo-url);
+        background-size: contain;
+        background-position: left center;
+        background-repeat: no-repeat;
+        background-color: white;
+    }
+
+    h1 {
+        margin-top: 0;
+    }
+
+    .dont-show {
+        flex-grow: 1;
+        text-align: left;
+    }
+}
