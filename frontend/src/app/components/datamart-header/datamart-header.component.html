@@ -1,54 +1,13 @@
-<!-- <section class="station-selection-header">
-    <div class="header-container"> -->
-        <div class="container">
-            <div class="title">
-                <ng-content select="section[title]"></ng-content>
-                <!-- <h1>
-                    <Select weather stations>
-                </h1>
+<div class="title">
+    <ng-content select="section[title]"></ng-content>
+</div>
 
-                <h2>
-                    Choose one or more stations to view weather data.
-                </h2> -->
-            </div>
+<div class="actions">
+    <nrcl-button tertiary class="selected-stations-button"
+        [label]="selectedStationsLabel"
+        (click)="onStationsSelectedClick()"
+        iconRight="chevron_right"
+    ></nrcl-button>
 
-            <div class="actions">
-                <nrcl-button tertiary class="selected-stations-button"
-                    [label]="selectedStationsLabel"
-                    (click)="onStationsSelectedClick()"
-                    iconRight="chevron_right"
-                ></nrcl-button>
-                    <!-- <span class="selected-stations-text">
-                        {{ selectedCount }}
-                        {{ selectedCount === 1 ? 'station' : 'stations' }}
-                        selected
-                    </span>
-
-                    <nrcl-icon>
-                        chevron_right
-                    </nrcl-icon>
-                </button>
- -->
-                <ng-content select="section[actions]"></ng-content>
-                <!-- <nrcl-button primary
-                    (click)="viewData()">
-
-                    <span class="view-data-content">
-                        View data
-
-                        <nrcl-icon>
-                            arrow_forward
-                        </nrcl-icon>
-                    </span>
-                </nrcl-button> -->
-            </div>
-        </div>
-    <!-- </div>
-</section> -->
-
-<ng-template #emptySelectedStationsDialog>
-    <p class="dialog-message">
-        Select stations from the map or station list.
-        Your selections will appear here.
-    </p>
-</ng-template>
+    <ng-content select="section[actions]"></ng-content>
+</div>

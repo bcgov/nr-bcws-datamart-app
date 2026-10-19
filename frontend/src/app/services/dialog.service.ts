@@ -2,6 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService as NrclDialogService } from '@bcgov/nr-ngx-component-lib';
 import { DisclaimerDialogComponent, DisclaimerDialogConfig, DisclaimerDialogResult } from '../dialogs/disclaimer/disclaimer.dialog';
+import { MessageDialog, MessageDialogConfig, MessageDialogResult } from '../dialogs/message/message.dialog';
+import { SelectedStationsDialog, SelectedStationsDialogConfig, SelectedStationsDialogResult } from '../dialogs/selected-stations/selected-stations.dialog';
 
 const DEFAULT_CONFIG = {
     autoFocus: false,
@@ -16,7 +18,6 @@ const DEFAULT_CONFIG = {
 export class DialogService {
     dialog = inject( MatDialog )
     nrclDialogService =inject( NrclDialogService )
-    // applicationStateService =inject( ApplicationStateService )
 
     openDisclaimerDialog( data: DisclaimerDialogConfig ) {
         return this.nrclDialogService.openDialog<
@@ -27,4 +28,25 @@ export class DialogService {
             maxWidth: '600px'
         } )
     }   
+
+    openSelectedStationsDialog( data: SelectedStationsDialogConfig ) {
+        return this.nrclDialogService.openDialog<
+            SelectedStationsDialog,
+            SelectedStationsDialogConfig,
+            SelectedStationsDialogResult
+        >( SelectedStationsDialog, data, {
+            minWidth: '95vw',
+            minHeight: '95vh',
+        } )
+    }   
+
+    openMessageDialog( data: MessageDialogConfig ) {
+        return this.nrclDialogService.openDialog<
+            MessageDialog,
+            MessageDialogConfig,
+            MessageDialogResult
+        >( MessageDialog, data, {
+        } )
+    }   
 }
+

@@ -66,7 +66,7 @@ export class SelectedStationsService {
         return this.selectedStationsSubject.value.length;
     }
 
-    get selectedStations(): any[] {
+    get selectedStations(): GeoJsonPoint<WeatherStation>[] {
         return this.selectedStationsSubject.value;
     }
 }
