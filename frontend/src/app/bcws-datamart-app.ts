@@ -146,22 +146,6 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
                     localStorage.setItem('hideDisclaimer', '')
                 }
             } )
-
-        // let dialogRef = this.dialog.open(CollectionNoticeDialogComponent, {
-        //     maxWidth: 400, 
-        //     closeOnNavigation: false,
-        //     panelClass: 'wf-dialog'
-        // });
-
-        
-        // dialogRef.afterClosed().subscribe(result => {
-        //     if (result['dontShowAgain']) {
-        //         localStorage.setItem('dontShowCollectionNoticeWFRMResources', 'true');
-        //     } 
-        //     else {
-        //         localStorage.removeItem('dontShowCollectionNoticeWFRMResources');
-        //     }
-        // });
     }
 
 }
