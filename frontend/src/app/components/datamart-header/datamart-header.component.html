@@ -1,0 +1,45 @@
+<!-- <section class="station-selection-header">
+    <div class="header-container"> -->
+        <div class="container">
+            <div class="title">
+                <ng-content select="section[title]"></ng-content>
+                <!-- <h1>
+                    <Select weather stations>
+                </h1>
+
+                <h2>
+                    Choose one or more stations to view weather data.
+                </h2> -->
+            </div>
+
+            <div class="header-actions">
+                <button type="button" class="selected-stations-button"                    
+                    (click)="onStationsSelectedClick()"
+                >
+                    <span class="selected-stations-text">
+                        {{ selectedCount }}
+                        {{ selectedCount === 1 ? 'station' : 'stations' }}
+                        selected
+                    </span>
+
+                    <nrcl-icon>
+                        chevron_right
+                    </nrcl-icon>
+                </button>
+
+                <ng-content select="section[actions]"></ng-content>
+                <!-- <nrcl-button primary
+                    (click)="viewData()">
+
+                    <span class="view-data-content">
+                        View data
+
+                        <nrcl-icon>
+                            arrow_forward
+                        </nrcl-icon>
+                    </span>
+                </nrcl-button> -->
+            </div>
+        </div>
+    <!-- </div>
+</section> -->
