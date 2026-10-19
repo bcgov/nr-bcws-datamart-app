@@ -57,32 +57,34 @@ $button-active-background-color: #e6e6e6;
     flex-direction: column;
     align-items: flex-start;
 
-    h1 {
-        margin: 0;
+    ::ng-deep {
+        h1 {
+            margin: 0;
 
-        color: $text-primary-color;
+            color: $text-primary-color;
 
-        font-family: 'BC Sans', sans-serif;
-        font-size: 24px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 36px;
+            font-family: 'BC Sans', sans-serif;
+            font-size: 24px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 36px;
 
-        font-feature-settings:
-            'liga' off,
-            'clig' off;
-    }
+            font-feature-settings:
+                'liga' off,
+                'clig' off;
+        }
 
-    h2 {
-        margin: 0;
+        h2 {
+            margin: 0;
 
-        color: $text-primary-color;
+            color: $text-primary-color;
 
-        font-family: 'BC Sans', sans-serif;
-        font-size: 16px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 27px;
+            font-family: 'BC Sans', sans-serif;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 27px;
+        }
     }
 }
 
@@ -93,36 +95,36 @@ $button-active-background-color: #e6e6e6;
     gap: 20px;
 
     .selected-stations-button {
-        display: flex;
-        align-items: center;
+    //     display: flex;
+    //     align-items: center;
 
-        gap: 10px;
+    //     gap: 10px;
 
-        padding: 7px 12px;
+    //     padding: 7px 12px;
 
-        border-radius: 2px;
+        // border-radius: 2px;
         border: 1px solid $border-color;
 
         background: $button-background-color;
 
-        cursor: pointer;
+    //     cursor: pointer;
 
-        &:hover {
-            background: $button-hover-background-color;
-        }
+    //     &:hover {
+    //         background: $button-hover-background-color;
+    //     }
 
-        &:focus-visible {
-            outline: 3px solid var(--nrcl-application-header-focus-color);
-            outline-offset: 2px;
-        }
+    //     &:focus-visible {
+    //         outline: 3px solid var(--nrcl-application-header-focus-color);
+    //         outline-offset: 2px;
+    //     }
 
-        &:active {
-            background: $button-active-background-color;
-        }
+    //     &:active {
+    //         background: $button-active-background-color;
+    //     }
 
-        .nrcl-icon {
-            color: $text-primary-color;
-        }
+    //     .nrcl-icon {
+    //         color: $text-primary-color;
+    //     }
     }
 }
 

@@ -3,11 +3,19 @@
     flex-direction: column;
     height: 100%;
     min-height: 0;
+    // padding-left: var( --nrcl-gutter-space );
+    // padding-right: var( --nrcl-gutter-space );
+    padding-bottom: var( --nrcl-gutter-space );
+    box-sizing: border-box;
+
+    station-selection-content {
+        flex-grow: 1;
+    }
 }
 
-.station-selection {
-    display: flex;
-    flex-direction: column;
+// .station-selection {
+//     display: flex;
+//     flex-direction: column;
 
-    height: calc(100vh - 85px);
-}
+//     height: calc(100vh - 85px);
+// }

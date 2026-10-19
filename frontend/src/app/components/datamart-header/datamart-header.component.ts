@@ -3,17 +3,15 @@ import {
     ChangeDetectorRef,
     Component,
     inject,
+    OnDestroy,
     OnInit,
     TemplateRef,
-    ViewChild,
+    ViewChild
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatSortModule, Sort } from '@angular/material/sort';
-import { ButtonComponent, DialogService, GapComponent, IconComponent, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
-import { MatTableModule } from '@angular/material/table';
-import { NgxPaginationModule } from 'ngx-pagination';
-import { SelectedStationsService } from '../../../services/selected-stations.service';
-import { ROUTE } from '../../../bcws-datamart-app.routes';
+import { ButtonComponent, DialogService, IconComponent } from '@bcgov/nr-ngx-component-lib';
+import { Subscription } from 'rxjs';
+import { SelectedStationsService } from '../../services/selected-stations.service';
 
 @Component({
     selector: 'datamart-header',
@@ -23,15 +21,15 @@ import { ROUTE } from '../../../bcws-datamart-app.routes';
     imports: [
         IconComponent,
         ButtonComponent,
-        RowListDesktopComponent,
-        MatTableModule,
-        MatSortModule,
-        NgxPaginationModule,
-        RowListPaginationComponent,
-        GapComponent
+        // RowListDesktopComponent,
+        // MatTableModule,
+        // MatSortModule,
+        // NgxPaginationModule,
+        // RowListPaginationComponent,
+        // GapComponent
     ]
 })
-export class StationSelectionHeaderComponent implements OnInit {
+export class DataMartHeaderComponent implements OnInit, OnDestroy {
     selectedStationsService = inject( SelectedStationsService )
     dialogService = inject( DialogService )
     router = inject( Router )
@@ -40,15 +38,14 @@ export class StationSelectionHeaderComponent implements OnInit {
     // @ViewChild('noStationsSelectedDialog', { static: true })
     // noStationsSelectedDialog!: TemplateRef<unknown>;
 
-    // @ViewChild('emptySelectedStationsDialog', { static: true })
-    // emptySelectedStationsDialog!: TemplateRef<unknown>;
+    @ViewChild('emptySelectedStationsDialog', { static: true })
+    emptySelectedStationsDialog!: TemplateRef<unknown>;
 
     // @ViewChild('selectedStationsDialog', { static: true })
     // selectedStationsDialog!: TemplateRef<unknown>;
 
     selectedCount = 0;
-
-    selectedStations: any[] = [];
+    // selectedStations: any[] = [];
 
     // displayedColumns = [
     //     'stationName',
@@ -68,8 +65,10 @@ export class StationSelectionHeaderComponent implements OnInit {
     // sortColumn = 'stationName';
     // sortDirection: 'asc' | 'desc' = 'asc';
 
+    selectedStationsSubscription?: Subscription
+
     ngOnInit(): void {
-        this.selectedStationsService.selectedStations$.subscribe(
+        this.selectedStationsSubscription = this.selectedStationsService.selectedStations$.subscribe(
             (stations) => {
                 this.selectedCount = stations.length;
                 this.changeDetectorRef.markForCheck();
@@ -77,27 +76,23 @@ export class StationSelectionHeaderComponent implements OnInit {
         );
     }
 
-    viewData(): void {
-        if (this.selectedCount === 0) {
-            this.dialogService.openConfirmDialog(
-                {
-                    title: 'Select a Weather Station',
-                    saveLabel: 'OK',
-                    template: this.noStationsSelectedDialog,
-                },
-                {
-                    disableClose: false,
-                    panelClass: ['no-stations-selected-dialog'],
-                },
-            );
-
-            return;
-        }
-
-        this.router.navigate( [ ROUTE.DATA_DOWNLOAD ] );
+    ngOnDestroy(): void {
+        if ( this.selectedStationsSubscription ) this.selectedStationsSubscription.unsubscribe()
     }
 
-    viewSelectedStations(): void {
+    get selectedStationsLabel() {
+        if ( this.selectedCount == 0 ) {
+            return 'No station selected'
+        }
+        else if ( this.selectedCount == 1 ) {
+            return '1 station selected'
+        }
+        else {
+            return this.selectedCount + ' stations selected'
+        }
+    }
+
+    onStationsSelectedClick() {        
         if (this.selectedCount === 0) {
             this.dialogService.openConfirmDialog(
                 {
@@ -146,137 +141,209 @@ export class StationSelectionHeaderComponent implements OnInit {
                 ],
             },
         );
-    }
 
-    clearSelectedStations(): void {
-        this.selectedStationsService.clearStations();
-        this.selectedStations = [];
-        this.selectedCount = 0;
-        this.pageNumber = 1;
-    }
+    }    
 
-    removeStation(station: any): void {
-        this.selectedStationsService.removeStation(station);
+    // viewData(): void {
+    //     if (this.selectedCount === 0) {
+    //         this.dialogService.openConfirmDialog(
+    //             {
+    //                 title: 'Select a Weather Station',
+    //                 saveLabel: 'OK',
+    //                 template: this.noStationsSelectedDialog,
+    //             },
+    //             {
+    //                 disableClose: false,
+    //                 panelClass: ['no-stations-selected-dialog'],
+    //             },
+    //         );
 
-        this.selectedStations =
-            this.selectedStations.filter(
-                (s) =>
-                    s.properties.WEATHER_STATION_GUID !==
-                    station.properties.WEATHER_STATION_GUID,
-            );
+    //         return;
+    //     }
 
-        this.selectedCount = this.selectedStations.length;
+    //     this.router.navigate( [ ROUTE.DATA_DOWNLOAD ] );
+    // }
 
-        const maxPage = Math.max(1, Math.ceil(this.selectedCount / this.pageSize),);
+    // viewSelectedStations(): void {
+    //     if (this.selectedCount === 0) {
+    //         this.dialogService.openConfirmDialog(
+    //             {
+    //                 title: 'No Stations Selected',
+    //                 saveLabel: 'OK',
+    //                 template: this.emptySelectedStationsDialog,
+    //             },
+    //             {
+    //                 disableClose: false,
+    //                 panelClass: ['no-stations-selected-dialog'],
+    //             },
+    //         );
 
-        if (this.pageNumber > maxPage) {
-            this.pageNumber = maxPage;
-        }
-    }
+    //         return;
+    //     }
 
-    get pagedStations() {
-        const start = (this.pageNumber - 1) * this.pageSize;
+    //     this.selectedStations = [
+    //         ...this.selectedStationsService.selectedStations,
+    //     ];
 
-        return this.selectedStations.slice(
-            start,
-            start + this.pageSize
-        );
-    }
+    //     this.selectedStations.sort((a, b) =>
+    //         String(a.properties.STATION_NAME).localeCompare(
+    //             String(b.properties.STATION_NAME),
+    //             undefined,
+    //             { sensitivity: 'base' },
+    //         ),
+    //     );
 
-    onPageNumberChange(pageNumber: number) {
-        this.pageNumber = pageNumber;
-    }
+    //     this.sortColumn = 'stationName';
+    //     this.sortDirection = 'asc';
 
-    onPageSizeChange(pageSize: number) {
-        this.pageSize = pageSize;
-        this.pageNumber = 1;
-    }
+    //     this.pageNumber = 1;
+
+    //     this.dialogService.openConfirmDialog(
+    //         {
+    //             title: 'Selected Stations',
+    //             saveLabel: 'Close',
+    //             template: this.selectedStationsDialog,
+    //         },
+    //         {
+    //             disableClose: false,
+    //             panelClass: [
+    //                 'nrcl-dialog',
+    //                 'nrcl-dialog-fullscreen',
+    //                 'selected-stations-dialog',
+    //             ],
+    //         },
+    //     );
+    // }
+
+    // clearSelectedStations(): void {
+    //     this.selectedStationsService.clearStations();
+    //     this.selectedStations = [];
+    //     this.selectedCount = 0;
+    //     this.pageNumber = 1;
+    // }
+
+    // removeStation(station: any): void {
+    //     this.selectedStationsService.removeStation(station);
+
+    //     this.selectedStations =
+    //         this.selectedStations.filter(
+    //             (s) =>
+    //                 s.properties.WEATHER_STATION_GUID !==
+    //                 station.properties.WEATHER_STATION_GUID,
+    //         );
+
+    //     this.selectedCount = this.selectedStations.length;
+
+    //     const maxPage = Math.max(1, Math.ceil(this.selectedCount / this.pageSize),);
+
+    //     if (this.pageNumber > maxPage) {
+    //         this.pageNumber = maxPage;
+    //     }
+    // }
+
+    // get pagedStations() {
+    //     const start = (this.pageNumber - 1) * this.pageSize;
+
+    //     return this.selectedStations.slice(
+    //         start,
+    //         start + this.pageSize
+    //     );
+    // }
+
+    // onPageNumberChange(pageNumber: number) {
+    //     this.pageNumber = pageNumber;
+    // }
+
+    // onPageSizeChange(pageSize: number) {
+    //     this.pageSize = pageSize;
+    //     this.pageNumber = 1;
+    // }
 
 
-    onSortChange(sort: Sort): void {
-        if (!sort.direction) {
-            this.sortColumn = 'stationName';
-            this.sortDirection = 'asc';
+    // onSortChange(sort: Sort): void {
+    //     if (!sort.direction) {
+    //         this.sortColumn = 'stationName';
+    //         this.sortDirection = 'asc';
 
-            return;
-        }
+    //         return;
+    //     }
 
-        this.sortColumn = sort.active;
-        this.sortDirection = sort.direction as 'asc' | 'desc';
+    //     this.sortColumn = sort.active;
+    //     this.sortDirection = sort.direction as 'asc' | 'desc';
 
-        this.selectedStations.sort((a, b) => {
-            const aValue = this.getSortValue(a, sort.active);
-            const bValue = this.getSortValue(b, sort.active);
+    //     this.selectedStations.sort((a, b) => {
+    //         const aValue = this.getSortValue(a, sort.active);
+    //         const bValue = this.getSortValue(b, sort.active);
 
-            const numericColumns = [
-                'latitude',
-                'longitude',
-                'elevation',
-            ];
+    //         const numericColumns = [
+    //             'latitude',
+    //             'longitude',
+    //             'elevation',
+    //         ];
 
-            if (numericColumns.includes(sort.active)) {
-                const result = Number(aValue ?? 0) - Number(bValue ?? 0);
+    //         if (numericColumns.includes(sort.active)) {
+    //             const result = Number(aValue ?? 0) - Number(bValue ?? 0);
 
-                return sort.direction === 'desc'
-                    ? -result
-                    : result;
-            }
+    //             return sort.direction === 'desc'
+    //                 ? -result
+    //                 : result;
+    //         }
 
-            const result = String(aValue ?? '').localeCompare(
-                String(bValue ?? ''),
-                undefined,
-                {
-                    numeric: true,
-                    sensitivity: 'base',
-                },
-            );
+    //         const result = String(aValue ?? '').localeCompare(
+    //             String(bValue ?? ''),
+    //             undefined,
+    //             {
+    //                 numeric: true,
+    //                 sensitivity: 'base',
+    //             },
+    //         );
 
-            return sort.direction === 'desc'
-                ? -result
-                : result;
-        });
-    }
+    //         return sort.direction === 'desc'
+    //             ? -result
+    //             : result;
+    //     });
+    // }
 
-    private getSortValue(station: any, column: string): any {
-        switch (column) {
-            case 'stationName':
-                return station.properties.STATION_NAME;
+    // private getSortValue(station: any, column: string): any {
+    //     switch (column) {
+    //         case 'stationName':
+    //             return station.properties.STATION_NAME;
 
-            case 'stationCode':
-                return station.properties.STATION_CODE;
+    //         case 'stationCode':
+    //             return station.properties.STATION_CODE;
 
-            case 'stationAcronym':
-                return station.properties.STATION_ACRONYM;
+    //         case 'stationAcronym':
+    //             return station.properties.STATION_ACRONYM;
 
-            case 'fireCentre':
-                return station.properties.FIRE_CENTRE_ORG_UNIT_IDENT;
+    //         case 'fireCentre':
+    //             return station.properties.FIRE_CENTRE_ORG_UNIT_IDENT;
 
-            case 'fireZone':
-                return station.properties.ZONE_ORG_UNIT_IDENTIFIER;
+    //         case 'fireZone':
+    //             return station.properties.ZONE_ORG_UNIT_IDENTIFIER;
 
-            case 'latitude':
-                return station.properties.LATITUDE;
+    //         case 'latitude':
+    //             return station.properties.LATITUDE;
 
-            case 'longitude':
-                return station.properties.LONGITUDE;
+    //         case 'longitude':
+    //             return station.properties.LONGITUDE;
 
-            case 'elevation':
-                return station.properties.ELEVATION_M;
+    //         case 'elevation':
+    //             return station.properties.ELEVATION_M;
 
-            case 'status':
-                return station.properties.STATION_STATUS_DESC;
+    //         case 'status':
+    //             return station.properties.STATION_STATUS_DESC;
 
-            default:
-                return '';
-        }
-    }
+    //         default:
+    //             return '';
+    //     }
+    // }
 
-    closeSelectedStationsDialog(): void {
-        (
-            document.querySelector(
-                '.selected-stations-dialog .title-bar .close button',
-            ) as HTMLButtonElement
-        )?.click();
-    }
+    // closeSelectedStationsDialog(): void {
+    //     (
+    //         document.querySelector(
+    //             '.selected-stations-dialog .title-bar .close button',
+    //         ) as HTMLButtonElement
+    //     )?.click();
+    // }
 
 }

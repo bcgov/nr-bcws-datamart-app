@@ -9,6 +9,8 @@ import { StationDataService } from '../../services/station-data.service';
 import { StationSelectionContentComponent } from './content/station-selection-content.component';
 import { StationSelectionFiltersComponent } from './filters/station-selection-filters.component';
 import { StationSelectionHeaderComponent } from './header/station-selection-header.component';
+import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
+import { ButtonComponent } from '@bcgov/nr-ngx-component-lib';
 
 @Component({
     selector: 'station-selection-page',
@@ -19,6 +21,8 @@ import { StationSelectionHeaderComponent } from './header/station-selection-head
         StationSelectionContentComponent,
         StationSelectionFiltersComponent,
         StationSelectionHeaderComponent,
+        DataMartHeaderComponent,
+        ButtonComponent
     ]
 })
 export class StationSelectionPage implements OnInit {
@@ -33,4 +37,6 @@ export class StationSelectionPage implements OnInit {
 
         this.stationDataService.initialize()
     }    
+
+    onViewDataClick() {}
 }
