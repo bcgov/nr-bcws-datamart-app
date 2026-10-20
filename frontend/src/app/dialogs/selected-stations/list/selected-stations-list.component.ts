@@ -3,8 +3,8 @@ import {
     Component,
     inject
 } from '@angular/core';
-import { MatSortModule } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
+import { MatSortModule, Sort, SortDirection } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ButtonComponent, GapComponent, InitialState, RowListBase, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Observable, of } from 'rxjs';
@@ -50,7 +50,7 @@ export class SelectedStationsListComponent extends RowListBase<Filter, TableRow,
     }
     
     parseRows(res: GeoJsonPoint<WeatherStation>[]): TableRow[] {
-        return res
+        return this.sortRows( res )
     }
 
     override parseTotalRowCount(res: any): number {
@@ -75,206 +75,30 @@ export class SelectedStationsListComponent extends RowListBase<Filter, TableRow,
         this.refreshRowList()
     }
 
-    // viewData(): void {
-    //     if (this.selectedCount === 0) {
-    //         this.dialogService.openConfirmDialog(
-    //             {
-    //                 title: 'Select a Weather Station',
-    //                 saveLabel: 'OK',
-    //                 template: this.noStationsSelectedDialog,
-    //             },
-    //             {
-    //                 disableClose: false,
-    //                 panelClass: ['no-stations-selected-dialog'],
-    //             },
-    //         );
+    override onSortChange(ev: Sort): Promise<void> {
+        let res = super.onSortChange( ev )
+        this.sortRows( this.rows )
+        return res
+    }
 
-    //         return;
-    //     }
+    sortRows( rows: TableRow[] ): TableRow[] {
+        let sortFn: ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => number 
+        let sortDir = ( d: SortDirection, sort: number ) => d == 'asc' ? sort : -1 * sort
+        let stringSort = ( field: keyof WeatherStation ) => ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => sortDir( d, (a.properties[field] as string).localeCompare( b.properties[field] as string ) )
+        let numericSort = ( field: keyof WeatherStation ) => ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => sortDir( d, (a.properties[field] as number) - ( b.properties[field] as number ) )
 
-    //     this.router.navigate( [ ROUTE.DATA_DOWNLOAD ] );
-    // }
+        switch ( this.sortActive ) {
+            case 'stationName':     sortFn = stringSort( 'STATION_NAME' ); break
+            case 'stationCode':     sortFn = numericSort( 'STATION_CODE' ); break
+            case 'stationAcronym':  sortFn = stringSort( 'STATION_ACRONYM' ); break
+            case 'fireCentre':      sortFn = numericSort( 'FIRE_CENTRE_ORG_UNIT_IDENT' ); break
+            case 'fireZone':        sortFn = numericSort( 'ZONE_ORG_UNIT_IDENTIFIER' ); break
+            case 'latitude':        sortFn = numericSort( 'LATITUDE' ); break
+            case 'longitude':       sortFn = numericSort( 'LONGITUDE' ); break
+            case 'elevation':       sortFn = numericSort( 'ELEVATION_M' ); break
+            case 'status':          sortFn = stringSort( 'STATION_STATUS_CODE' ); break
+        }
 
-    // viewSelectedStations(): void {
-    //     if (this.selectedCount === 0) {
-    //         this.dialogService.openConfirmDialog(
-    //             {
-    //                 title: 'No Stations Selected',
-    //                 saveLabel: 'OK',
-    //                 template: this.emptySelectedStationsDialog,
-    //             },
-    //             {
-    //                 disableClose: false,
-    //                 panelClass: ['no-stations-selected-dialog'],
-    //             },
-    //         );
-
-    //         return;
-    //     }
-
-    //     this.selectedStations = [
-    //         ...this.selectedStationsService.selectedStations,
-    //     ];
-
-    //     this.selectedStations.sort((a, b) =>
-    //         String(a.properties.STATION_NAME).localeCompare(
-    //             String(b.properties.STATION_NAME),
-    //             undefined,
-    //             { sensitivity: 'base' },
-    //         ),
-    //     );
-
-    //     this.sortColumn = 'stationName';
-    //     this.sortDirection = 'asc';
-
-    //     this.pageNumber = 1;
-
-    //     this.dialogService.openConfirmDialog(
-    //         {
-    //             title: 'Selected Stations',
-    //             saveLabel: 'Close',
-    //             template: this.selectedStationsDialog,
-    //         },
-    //         {
-    //             disableClose: false,
-    //             panelClass: [
-    //                 'nrcl-dialog',
-    //                 'nrcl-dialog-fullscreen',
-    //                 'selected-stations-dialog',
-    //             ],
-    //         },
-    //     );
-    // }
-
-    // clearSelectedStations(): void {
-    //     this.selectedStationsService.clearStations();
-    //     this.selectedStations = [];
-    //     this.selectedCount = 0;
-    //     this.pageNumber = 1;
-    // }
-
-    // removeStation(station: any): void {
-    //     this.selectedStationsService.removeStation(station);
-
-    //     this.selectedStations =
-    //         this.selectedStations.filter(
-    //             (s) =>
-    //                 s.properties.WEATHER_STATION_GUID !==
-    //                 station.properties.WEATHER_STATION_GUID,
-    //         );
-
-    //     this.selectedCount = this.selectedStations.length;
-
-    //     const maxPage = Math.max(1, Math.ceil(this.selectedCount / this.pageSize),);
-
-    //     if (this.pageNumber > maxPage) {
-    //         this.pageNumber = maxPage;
-    //     }
-    // }
-
-    // get pagedStations() {
-    //     const start = (this.pageNumber - 1) * this.pageSize;
-
-    //     return this.selectedStations.slice(
-    //         start,
-    //         start + this.pageSize
-    //     );
-    // }
-
-    // onPageNumberChange(pageNumber: number) {
-    //     this.pageNumber = pageNumber;
-    // }
-
-    // onPageSizeChange(pageSize: number) {
-    //     this.pageSize = pageSize;
-    //     this.pageNumber = 1;
-    // }
-
-
-    // onSortChange(sort: Sort): void {
-    //     if (!sort.direction) {
-    //         this.sortColumn = 'stationName';
-    //         this.sortDirection = 'asc';
-
-    //         return;
-    //     }
-
-    //     this.sortColumn = sort.active;
-    //     this.sortDirection = sort.direction as 'asc' | 'desc';
-
-    //     this.selectedStations.sort((a, b) => {
-    //         const aValue = this.getSortValue(a, sort.active);
-    //         const bValue = this.getSortValue(b, sort.active);
-
-    //         const numericColumns = [
-    //             'latitude',
-    //             'longitude',
-    //             'elevation',
-    //         ];
-
-    //         if (numericColumns.includes(sort.active)) {
-    //             const result = Number(aValue ?? 0) - Number(bValue ?? 0);
-
-    //             return sort.direction === 'desc'
-    //                 ? -result
-    //                 : result;
-    //         }
-
-    //         const result = String(aValue ?? '').localeCompare(
-    //             String(bValue ?? ''),
-    //             undefined,
-    //             {
-    //                 numeric: true,
-    //                 sensitivity: 'base',
-    //             },
-    //         );
-
-    //         return sort.direction === 'desc'
-    //             ? -result
-    //             : result;
-    //     });
-    // }
-
-    // private getSortValue(station: any, column: string): any {
-    //     switch (column) {
-    //         case 'stationName':
-    //             return station.properties.STATION_NAME;
-
-    //         case 'stationCode':
-    //             return station.properties.STATION_CODE;
-
-    //         case 'stationAcronym':
-    //             return station.properties.STATION_ACRONYM;
-
-    //         case 'fireCentre':
-    //             return station.properties.FIRE_CENTRE_ORG_UNIT_IDENT;
-
-    //         case 'fireZone':
-    //             return station.properties.ZONE_ORG_UNIT_IDENTIFIER;
-
-    //         case 'latitude':
-    //             return station.properties.LATITUDE;
-
-    //         case 'longitude':
-    //             return station.properties.LONGITUDE;
-
-    //         case 'elevation':
-    //             return station.properties.ELEVATION_M;
-
-    //         case 'status':
-    //             return station.properties.STATION_STATUS_DESC;
-
-    //         default:
-    //             return '';
-    //     }
-    // }
-
-    // closeSelectedStationsDialog(): void {
-    //     (
-    //         document.querySelector(
-    //             '.selected-stations-dialog .title-bar .close button',
-    //         ) as HTMLButtonElement
-    //     )?.click();
-    // }
-
+        return rows.sort( sortFn!( this.sortDirection ) )
+    }
 }
