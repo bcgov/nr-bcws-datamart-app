@@ -1,28 +1,15 @@
 import { Injectable } from '@angular/core';
-import { CodeDescription, CodeTable } from '@bcgov/nr-ngx-component-lib';
-
-export type CodeDescriptionHeading = CodeDescription & { heading?: string }
-
-class CodeTableHeading extends CodeTable {
-    constructor( _items: CodeDescriptionHeading[], _reload?: () => Promise<CodeDescriptionHeading[]> ) {
-        _items.forEach( i => {
-            if ( i.heading === undefined ) i.heading = i.description
-        } )
-
-        super( _items, _reload )
-    }
-}
 
 @Injectable({
     providedIn: 'root',
 })
 export class CodeTableService {
-    readonly DAILY_WEATHER_COLUMNS = new CodeTableHeading([
+    DAILY_WEATHER_COLUMNS = new CodeTableHeading([
         // weather observations
         { code: "recordType",           description: "Record type" },
         { code: "temperature",          description: "Temperature at noon",                 heading: "Temperature (°C)" },
         { code: "relativeHumidity",     description: "Relative humidity at noon",           heading: "Relative humidity (%)" },
-        { code: "windSpeed",            description: "Wind speed at noon",                  heading: "Wind speed (Km/h)" },
+        { code: "windSpeed",            description: "Wind speed at noon",                  heading: "Wind speed (km/h)" },
         { code: "windDirection",        description: "Wind direction at noon",              heading: "Wind direction (degrees)" },
         { code: "precipitation",        description: "Precipitation in previous 24 hours",  heading: "Daily precipitation (mm)" },
 
@@ -38,14 +25,14 @@ export class CodeTableService {
         { code: "dailyRating",          description: "Daily Severity Rating (DSR)" },
     ])
 
-    readonly HOURLY_WEATHER_COLUMNS = new CodeTableHeading([
+    HOURLY_WEATHER_COLUMNS = new CodeTableHeading([
         // weather observations
-        { code: "temperature",              description: "Temperature",                     heading: "Temperature (°C)" },
-        { code: "windSpeed",                description: "Wind speed",                      heading: "Wind speed (Km/h)" },
-        { code: "windDirection",            description: "Wind direction",                  heading: "Wind direction (degrees)" },
-        { code: "windGust",                 description: "Wind gust",                       heading: "Wind gust (Km/hr)" },
-        { code: "precipitation",            description: "Precipitation",                   heading: "Precipitation (mm)" },
-        { code: "relativeHumidity",         description: "Relative humidity",               heading: "Relative humidity (%)" },
+        { code: "temperature",              description: "Temperature",                     heading: "Temperature (°C)",                    style: 'numeric' },
+        { code: "windSpeed",                description: "Wind speed",                      heading: "Wind speed (km/h)",                   style: 'numeric' },
+        { code: "windDirection",            description: "Wind direction",                  heading: "Wind direction (degrees)",            style: 'numeric' },
+        { code: "windGust",                 description: "Wind gust",                       heading: "Wind gust (km/hr)",                   style: 'numeric' },
+        { code: "precipitation",            description: "Precipitation",                   heading: "Precipitation (mm)",                  style: 'numeric' },
+        { code: "relativeHumidity",         description: "Relative humidity",               heading: "Relative humidity (%)",               style: 'numeric' },
 
         // fire weather calculations
         { code: "fineFuelMoistureCode",     description: "Fine Fuel Moisture Code (FFMC)" },
@@ -53,33 +40,80 @@ export class CodeTableService {
         { code: "fireWeatherIndex",         description: "Fire Weather Index (FWI)" },
 
         // ancillary observations
-        { code: "snowDepth",                description: "Snow depth" },
+        { code: "snowDepth",                description: "Snow depth",                                                                      style: 'numeric' },
         { code: "snowDepthQuality",         description: "Snow depth quality" },
-        { code: "rn1Pluvio1",               description: "Pluvio1 RN" },
+        { code: "rn1Pluvio1",               description: "Pluvio 1 RN" },
         { code: "precipPluvio1Status",      description: "Pluvio 1 precipitation status" },
-        { code: "precipPluvio1Total",       description: "Pluvio 1 precipitation total",    heading: "Pluvio 1 precipitation total (mm)" },
+        { code: "precipPluvio1Total",       description: "Pluvio 1 precipitation total",    heading: "Pluvio 1 precipitation total (mm)",   style: 'numeric' },
         { code: "rn1Pluviop2",              description: "Pluvio 2 RN" },
         { code: "precipPluvio2Status",      description: "Pluvio 2 precipitation status" },
-        { code: "precipPluvio2Total",       description: "Pluvio 2 precipitation total",    heading: "Pluvio 2 precipitation total (mm)" },
+        { code: "precipPluvio2Total",       description: "Pluvio 2 precipitation total",    heading: "Pluvio 2 precipitation total (mm)",   style: 'numeric' },
         { code: "rn1RitPrecipRitStatus",    description: "RIT precipitation status" },
-        { code: "precipRitTotalPrecipRGT",  description: "RIT precipitation total" },
+        { code: "precipRitTotalPrecipRGT",  description: "RIT precipitation total",                                                         style: 'numeric' },
         { code: "solarRadiationLicor",      description: "Solar Radiation Licor" },
         { code: "solarRadiationCM3",        description: "Solar Radiation CM3" },
     ])
 
-    readonly STATIONS_METADATA_COLUMNS = new CodeTableHeading([
+    STATIONS_METADATA_COLUMNS = new CodeTableHeading([
         { code: "stationName",              description: "Station name" },
         { code: "stationCode",              description: "Station code" },
         { code: "stationAcronym",           description: "Station acronym" },
         { code: "fireCentre",               description: "Fire centre" },
         { code: "fireZone",                 description: "Fire zone" },
-        { code: "elevation",                description: "Elevation (m)" },
-        { code: "slope",                    description: "Slope" },
+        { code: "elevation",                description: "Elevation",                       heading: "Elevation (m)",                       style: 'numeric' },
+        { code: "slope",                    description: "Slope",                                                                           style: 'numeric' },
         { code: "geometry",                 description: "Geometry" },
-        { code: "aspect",                   description: "Aspect" },
+        { code: "aspect",                   description: "Aspect",                                                                          style: 'numeric' },
         { code: "pluvioSnowGaugeInd",       description: "Has Pluvio Snow Gauge" },
         { code: "overwinterPrecipInd",      description: "Has Over Winter Precipitation Adjustment" },
-        { code: "latitude",                 description: "Latitude" },
-        { code: "longitude",                description: "Longitude" },
+        { code: "latitude",                 description: "Latitude",                                                                        style: 'numeric' },
+        { code: "longitude",                description: "Longitude",                                                                       style: 'numeric' },
     ])
+}
+
+
+export type CodeDescription = {
+    code: string
+    description: string
+}
+
+export class CodeTable {
+    constructor( 
+        protected _items: ( CodeDescription )[], 
+        protected _reload?: () => Promise<CodeDescription[]> 
+    ) {}
+
+    get items(): CodeDescription[] {
+        return this._items
+    }
+
+    forCode( code: string ): CodeDescription|undefined {
+        return this._items.find( o => o.code == code )
+    }
+
+    reload(): Promise<void> {
+        if ( !this._reload ) return Promise.reject( 'no reload defined' )
+
+        return this._reload()
+            .then( res => {
+                this._items = res
+            } )
+    }
+}
+
+
+export type CodeDescriptionHeading = CodeDescription & { heading?: string, style?: string }
+
+class CodeTableHeading extends CodeTable {
+    constructor( _items: CodeDescriptionHeading[], _reload?: () => Promise<CodeDescriptionHeading[]> ) {
+        _items.forEach( i => {
+            if ( i.heading === undefined ) i.heading = i.description
+        } )
+
+        super( _items, _reload )
+    }
+
+    override forCode( code: string ): CodeDescriptionHeading|undefined {
+        return this._items.find( o => o.code == code )
+    }
 }

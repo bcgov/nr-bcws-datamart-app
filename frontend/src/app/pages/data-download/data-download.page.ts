@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ButtonComponent, GapComponent, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
 import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
-import { DataDownloadFiltersComponent } from './filters/data-download-filters.component';
-import { DataDownloadListComponent } from './list/data-download-list.component';
+import { DataDownloadFiltersComponent, Filter, initialFilter } from './filters/data-download-filters.component';
 import { ROUTE } from '../../bcws-datamart-app.routes';
 import { Router } from '@angular/router';
+import { DataDownloadListDailyComponent } from './list/data-download-list-daily.component';
+import { DataDownloadListHourlyComponent } from './list/data-download-list-hourly.component';
+import { CodeDescriptionHeading, CodeTableService } from '../../services/code-table.service';
 
 @Component({
     selector: 'data-download-page',
@@ -12,10 +14,6 @@ import { Router } from '@angular/router';
     styleUrl: './data-download.page.scss',
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
-        // RowListDesktopComponent,
-        // NgxPaginationModule,
-        // RowListPaginationComponent,
-        // MatTableModule,
         GapComponent,
         DataMartHeaderComponent,
         TabGroupComponent,
@@ -23,34 +21,43 @@ import { Router } from '@angular/router';
         TabContentDirective,
         ButtonComponent,
         DataDownloadFiltersComponent,
-        DataDownloadListComponent,
+        DataDownloadListDailyComponent,
+        DataDownloadListHourlyComponent
     ]
 })
 export class DataDownloadPage {
     router = inject(Router)
+    codeTableService = inject(CodeTableService)
+
+    filter: Filter = initialFilter()
+    hourlyReportColumns: CodeDescriptionHeading[] = []
+    dailyReportColumns: CodeDescriptionHeading[] = []
+
+    onFilterChange( filter: Filter ) {
+        this.filter = { ...filter }
+
+        if ( this.filter.hourlyColumns.length == 0 ) {
+            this.hourlyReportColumns = []
+        }
+        else {
+            this.hourlyReportColumns = [
+                ...this.filter.hourlyColumns.map( c => this.codeTableService.HOURLY_WEATHER_COLUMNS.forCode( c )! ),
+                ...this.filter.metadataColumns.map( c => this.codeTableService.STATIONS_METADATA_COLUMNS.forCode( c )! )
+            ]
+        }
+
+        if ( this.filter.dailyColumns.length == 0 ) {
+            this.dailyReportColumns = []
+        }
+        else {
+            this.dailyReportColumns = [
+                ...this.filter.dailyColumns.map( c => this.codeTableService.DAILY_WEATHER_COLUMNS.forCode( c )! ),
+                ...this.filter.metadataColumns.map( c => this.codeTableService.STATIONS_METADATA_COLUMNS.forCode( c )! )
+            ]
+        }
+    }
 
     onAddMoreStationsClick() {
         this.router.navigate( [ ROUTE.STATION_SELECTION ] )       
     }
-
-    // columns = ['stationName', 'stationCode', 'status'];
-
-    // rows = Array.from({ length: 250 }, (_, index) => ({
-    //     stationName: `Weather Station ${index + 1}`,
-    //     stationCode: `${1000 + index}`,
-    //     status: ['ACTIVE', 'TEST', 'PROJECT'][index % 3],
-    // }));
-
-    // pageSize = 25;
-    // pageNumber = 1;
-
-    // onPageNumberChange(page: number): void {
-    //     this.pageNumber = page;
-    // }
-
-    // onPageSizeChange(size: number): void {
-    //     this.pageSize = size;
-    //     this.pageNumber = 1;
-    // }
-
 }

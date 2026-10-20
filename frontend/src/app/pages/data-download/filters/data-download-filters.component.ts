@@ -7,12 +7,13 @@ import {
     Output
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ButtonComponent, FilterDateComponent, FilterSearchComponent, FilterSelectComponent, FiltersPanelComponent, IconComponent } from "@bcgov/nr-ngx-component-lib";
+import { DATE_FORMATS, FilterDateComponent, FilterSelectComponent, FiltersPanelComponent } from "@bcgov/nr-ngx-component-lib";
+import moment from "moment";
 import { CodeTableService } from "../../../services/code-table.service";
 
 export type Filter = {
-	startDate: string|null
-	endDate: string|null
+	startDate: string|undefined
+	endDate: string|undefined
 	hourlyColumns: string[]
 	dailyColumns: string[]
 	metadataColumns: string[]
@@ -20,8 +21,8 @@ export type Filter = {
 
 export function emptyFilter(): Filter {
 	return {
-        startDate: null,
-        endDate: null,
+        startDate: undefined,
+        endDate: undefined,
         hourlyColumns: [],
         dailyColumns: [],
         metadataColumns: [],
@@ -29,9 +30,10 @@ export function emptyFilter(): Filter {
 }
 
 export function initialFilter(): Filter {
+    let d = moment().format( DATE_FORMATS.datePickerInput )
 	return {
-        startDate: null,
-        endDate: null,
+        startDate: d,
+        endDate: d,
         hourlyColumns: [],
         dailyColumns: [],
         metadataColumns: [],
@@ -44,13 +46,10 @@ export function initialFilter(): Filter {
     styleUrl: './data-download-filters.component.scss',
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
-        IconComponent,
-        FilterSearchComponent,
         FiltersPanelComponent,
         FilterSelectComponent,
         FilterDateComponent,
         FormsModule,
-        ButtonComponent
     ]
 })
 export class DataDownloadFiltersComponent {
