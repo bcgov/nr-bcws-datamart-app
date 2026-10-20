@@ -4,7 +4,7 @@ import {
     inject
 } from '@angular/core';
 import { MatSortModule, Sort, SortDirection } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { ButtonComponent, GapComponent, InitialState, RowListBase, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Observable, of } from 'rxjs';
