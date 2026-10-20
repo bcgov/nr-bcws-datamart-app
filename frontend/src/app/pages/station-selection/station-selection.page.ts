@@ -3,20 +3,17 @@ import {
     ChangeDetectorRef,
     Component,
     inject,
-    OnInit,
-    TemplateRef,
-    ViewChild
+    OnInit
 } from '@angular/core';
+import { Router } from '@angular/router';
+import { ButtonComponent } from '@bcgov/nr-ngx-component-lib';
+import { ROUTE } from '../../bcws-datamart-app.routes';
+import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
+import { DialogService } from '../../services/dialog.service';
+import { SelectedStationsService } from '../../services/selected-stations.service';
 import { StationDataService } from '../../services/station-data.service';
 import { StationSelectionContentComponent } from './content/station-selection-content.component';
 import { StationSelectionFiltersComponent } from './filters/station-selection-filters.component';
-import { StationSelectionHeaderComponent } from './header/station-selection-header.component';
-import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
-import { ButtonComponent } from '@bcgov/nr-ngx-component-lib';
-import { SelectedStationsService } from '../../services/selected-stations.service';
-import { DialogService } from '../../services/dialog.service';
-import { Router } from '@angular/router';
-import { ROUTE } from '../../bcws-datamart-app.routes';
 
 @Component({
     selector: 'station-selection-page',
@@ -26,7 +23,6 @@ import { ROUTE } from '../../bcws-datamart-app.routes';
     imports: [
         StationSelectionContentComponent,
         StationSelectionFiltersComponent,
-        StationSelectionHeaderComponent,
         DataMartHeaderComponent,
         ButtonComponent
     ]

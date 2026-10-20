@@ -1,3 +1,59 @@
+<datamart-header>
+    <section title>
+        <h1>Weather data</h1>
+    </section>
+
+    <section actions>
+        <nrcl-button anchor
+            label="Add more stations"
+            (click)="onAddMoreStationsClick()"
+        ></nrcl-button>
+    </section>
+</datamart-header>
+
+<nrcl-gap/>
+
+<data-download-filters></data-download-filters>
+
+<nrcl-gap/>
+
+<div class="tabs-container">
+    <div class="actions">
+        <nrcl-button primary
+            label="Download"
+            icon="download"
+        ></nrcl-button>
+
+        <nrcl-button 
+            label="Email download link"
+            icon="email"
+        ></nrcl-button>
+
+        <nrcl-button 
+            label="Copy link"
+            icon="link"
+        ></nrcl-button>
+    </div>
+
+    <nrcl-tab-group standard>
+        <nrcl-tab label="Daily Weather Data">
+            <ng-template nrclTabContent>
+                <data-download-list></data-download-list>
+            </ng-template>
+        </nrcl-tab>
+
+        <nrcl-tab label="Hourly Weather Data">
+            <ng-template nrclTabContent>
+                <data-download-list></data-download-list>
+            </ng-template>
+        </nrcl-tab>
+
+    </nrcl-tab-group>
+</div>
+
+
+
+<!--
 <section class="data-download-page">
     <div class="data-download-page__container">
         <h1 class="data-download-page__title">
@@ -70,3 +126,4 @@
         </nrcl-row-list-pagination>
     </div>
 </section>
+-->

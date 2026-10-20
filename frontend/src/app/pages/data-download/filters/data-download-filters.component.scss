@@ -1,0 +1,262 @@
+:host {
+    display: block;
+}
+
+// $border-color: #d8d8d8;
+// $background-color: #ffffff;
+// $panel-background-color: #f2f2f2;
+// $link-color: #255a90;
+
+// .station-selection-filters {
+//     display: flex;
+//     flex-direction: column;
+
+//     gap: 16px;
+
+//     // margin-top: 16px;
+//     // margin-bottom: 16px;
+//     padding: var( --nrcl-gutter-space );
+//     // padding-right: var( --nrcl-gutter-space );
+// }
+
+// .filter-toolbar {
+//     display: flex;
+//     align-items: center;
+
+//     gap: 16px;
+// }
+
+// .filters-toggle-button {
+//     display: flex;
+//     align-items: center;
+
+//     gap: 8px;
+
+//     padding: 7px 12px;
+
+//     border: 1px solid $border-color;
+//     border-radius: 2px;
+
+//     background: $background-color;
+
+//     cursor: pointer;
+
+//     &:hover {
+//         background: $panel-background-color;
+//     }
+
+//     &:focus-visible {
+//         outline: 3px solid var(--nrcl-application-header-focus-color);
+//         outline-offset: 2px;
+//     }
+// }
+
+// .filters-outer-container {
+//     border: 1px solid $border-color;
+//     border-radius: 10px;
+
+//     background: $panel-background-color;
+// }
+
+// .filters-inner-container {
+//     display: flex;
+//     flex-direction: column;
+
+//     gap: 16px;
+
+//     padding: 16px;
+
+//     background: $panel-background-color;
+// }
+
+// .filters-panel {
+//     display: block;
+
+//     background: $panel-background-color;
+// }
+
+// .filter-actions {
+//     display: flex;
+//     align-items: center;
+
+//     gap: 20px;
+
+//     width: 100%;
+
+//     background: $panel-background-color;
+// }
+
+// .clear-filters-button {
+//     padding: 0;
+
+//     border: none;
+//     background: transparent;
+
+//     cursor: pointer;
+
+//     color: $link-color;
+
+//     font-family: 'BC Sans', sans-serif;
+//     font-size: 16px;
+//     font-weight: 400;
+//     line-height: 27px;
+
+//     text-decoration-line: underline;
+
+//     &:hover {
+//         color: #1a5a96;
+//         text-decoration-thickness: 2px;
+//     }
+
+//     &:focus-visible {
+//         outline: 3px solid var(--nrcl-application-header-focus-color);
+//         outline-offset: 2px;
+
+//         border-radius: 2px;
+//     }
+// }
+
+// ::ng-deep nrcl-filters-panel {
+//     border: none !important;
+//     padding: 0 !important;
+//     border-radius: 0 !important;
+// }
+
+// :host ::ng-deep {
+//     .nrcl-filter-select,
+//     .nrcl-filter-container {
+//         margin-bottom: 24px !important;
+//     }
+// }
+
+// @media (max-width: 992px) {
+
+//     .filter-toolbar {
+//         flex-direction: row;
+//         align-items: center;
+
+//         gap: 12px;
+//     }
+
+//     .filters-toggle-button {
+//         flex-shrink: 0;
+//     }
+
+//     .filter-toolbar nrcl-filter-search {
+//         flex: 1;
+//         min-width: 0;
+//     }
+// }
+
+// @media (max-width: 992px) {
+
+//     .filters-inner-container {
+//         gap: 24px;
+//         padding: 20px;
+//     }
+
+//     .filter-actions {
+//         display: flex;
+//         flex-direction: row;
+//         align-items: center;
+//         gap: 16px;
+//     }
+
+// }
+
+// //////////////////////////////////////////////////////////////////////////////////
+// // Range filters
+
+// .range-filter-group {
+//     display: inline-flex;
+
+//     flex-direction: column;
+
+//     width: 250px;
+
+//     margin-right: 8px;
+//     margin-bottom: 24px;
+
+//     vertical-align: top;
+// }
+
+// .range-filter-title {
+//     color: rgba(0, 0, 0, 0.6);
+
+//     font-family: 'BC Sans', sans-serif;
+//     font-size: 12px;
+//     font-weight: 400;
+//     line-height: 16px;
+
+//     margin-bottom: 0;
+// }
+
+// .range-filter-row {
+//     display: flex;
+
+//     gap: 8px;
+
+//     width: 250px;
+
+//     flex-wrap: nowrap;
+// }
+
+// .range-filter-field {
+//     display: flex;
+//     flex-direction: column;
+
+//     width: 115px;
+// }
+
+// .range-filter-label {
+//     color: rgba(0, 0, 0, 0.6);
+
+//     font-family: 'BC Sans', sans-serif;
+//     font-size: 12px;
+//     font-weight: 400;
+//     line-height: 16px;
+
+//     margin-bottom: 4px;
+// }
+
+// .range-filter-field input {
+//     width: 100%;
+//     height: 40px;
+
+//     padding: 0 12px;
+
+//     border: 1px solid #d8d8d8;
+//     border-radius: 4px;
+
+//     background: #ffffff;
+
+//     box-sizing: border-box;
+
+//     font-family: 'BC Sans', sans-serif;
+//     font-size: 14px;
+
+//     transition:
+//         border-color 0.15s ease,
+//         box-shadow 0.15s ease;
+
+//     &:hover {
+//         border-color: #999999;
+//     }
+
+//     &:focus {
+//         outline: none;
+
+//         border-color: #255a90;
+
+//         box-shadow: 0 0 0 1px #255a90;
+//     }
+// }
+
+// :host ::ng-deep {
+
+//     .nrcl-filter-select {
+//         margin-top: 35px !important;
+//         margin-bottom: 24px !important;
+//     }
+
+// }
