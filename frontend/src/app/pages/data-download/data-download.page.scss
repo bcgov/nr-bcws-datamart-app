@@ -22,3 +22,22 @@
         }
     }
 }
+
+:host-context( .nrcl-device-mobile ) {
+    :host {
+        .tabs-container {
+            display: flex;
+            flex-direction: column;
+
+            .actions {
+                position: static;
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .nrcl-tab-group {
+                order: 1;
+            }
+        }
+    }
+}

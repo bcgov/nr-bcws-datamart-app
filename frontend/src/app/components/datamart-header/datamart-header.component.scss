@@ -65,3 +65,9 @@ $button-active-background-color: #e6e6e6;
         }
     }
 }
+
+:host-context( .nrcl-device-mobile ) {
+    :host {
+        flex-direction: column;
+    }
+}
