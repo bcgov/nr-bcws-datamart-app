@@ -1,0 +1,14 @@
+<nrcl-dialog
+    [title]="config.title"
+    [showClose]="true"
+    (cancelClick)="onCancelClick()"
+>
+    <p>{{ config.message }}</p>
+
+    <section actions>
+        <nrcl-button primary
+            label="OK"
+            (click)="onCancelClick()"
+        ></nrcl-button>
+    </section>
+</nrcl-dialog>

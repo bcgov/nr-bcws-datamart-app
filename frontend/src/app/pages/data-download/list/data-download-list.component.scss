@@ -1,0 +1,20 @@
+:host {
+    padding: var( --nrcl-gutter-space ) 0;
+
+    .mat-mdc-header-row, .mat-mdc-row {
+        border: none;
+    }
+
+    .mat-mdc-table {
+        .mat-mdc-header-cell {
+            font-weight: 700;
+            align-items: flex-end;
+        }
+
+        .mat-mdc-header-cell, .mat-mdc-cell,  {
+            flex-basis: 150px;
+            flex-shrink: 0;
+            flex-grow: 1;
+        }
+    }
+}

@@ -1,34 +1,24 @@
-.data-download-page {
-    height: 100%;
-    padding: 32px;
+:host {
+    display: block;
 
-    box-sizing: border-box;
-}
+    data-download-filters {
+        padding: 0 var( --nrcl-gutter-space );
+    }
 
-.data-download-page__container {
-    display: flex;
-    flex-direction: column;
+    .tabs-container {
+        padding: 0 var( --nrcl-gutter-space );
+        position: relative;
 
-    height: 100%;
-}
+        .actions {
+            position: absolute;
+            top: 0;
+            right: var( --nrcl-gutter-space );
 
-.data-download-page__title {
-    margin: 0 0 8px;
-}
-
-.data-download-page__subtitle {
-    margin: 0 0 24px;
-}
-
-/* make width obvious while testing */
-::ng-deep .mat-column-stationName {
-    min-width: 300px;
-}
-
-::ng-deep .mat-column-stationCode {
-    min-width: 150px;
-}
-
-::ng-deep .mat-column-status {
-    min-width: 150px;
+            display: flex;
+            justify-content: flex-end;
+            gap: var( --nrcl-gutter-space );
+            align-items: center;
+            z-index: 1;
+        }
+    }
 }

@@ -1,7 +1,18 @@
-<div class="station-selection">
-    <station-selection-header></station-selection-header>
-     
-    <station-selection-filters></station-selection-filters>
- 
-    <station-selection-content></station-selection-content>
-</div>
+<datamart-header>
+    <section title>
+        <h1>Select weather stations</h1>
+        <h2>Choose one or more stations to view weather data.</h2>
+    </section>
+
+    <section actions>
+        <nrcl-button primary
+            label="View data"
+            (click)="onViewDataClick()"
+            iconRight="arrow_forward"
+        ></nrcl-button>
+    </section>
+</datamart-header>
+    
+<station-selection-filters></station-selection-filters>
+
+<station-selection-content></station-selection-content>

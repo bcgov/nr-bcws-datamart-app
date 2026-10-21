@@ -1,0 +1,67 @@
+$header-background-color: #f1f8fe;
+
+$border-color: #d8d8d8;
+
+$text-primary-color: #2d2d2d;
+
+$link-color: #255a90;
+$link-hover-color: #1a5a96;
+
+$focus-border-color: #2e5dd7;
+
+$button-background-color: #ffffff;
+$button-hover-background-color: #f2f2f2;
+$button-active-background-color: #e6e6e6;
+
+:host {
+    background: $header-background-color;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    gap: 30px;
+
+    .title {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        ::ng-deep {
+            h1 {
+                margin: 0;
+
+                color: $text-primary-color;
+
+                font-size: 24px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 36px;
+            }
+
+            h2 {
+                margin: 0;
+
+                color: $text-primary-color;
+
+                font-size: 16px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 27px;
+            }
+        }
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+
+        gap: 20px;
+
+        .selected-stations-button {
+            border: 1px solid $border-color;
+            background: $button-background-color;
+        }
+    }
+}
