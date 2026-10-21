@@ -29,13 +29,13 @@ export function emptyFilter(): Filter {
 	}
 }
 
-export function initialFilter(): Filter {
+export function initialFilter( dailyColumns: string[] ): Filter {
     let d = moment().format( DATE_FORMATS.datePickerInput )
 	return {
         startDate: d,
         endDate: d,
         hourlyColumns: [],
-        dailyColumns: [],
+        dailyColumns: dailyColumns,
         metadataColumns: [],
 	}
 }

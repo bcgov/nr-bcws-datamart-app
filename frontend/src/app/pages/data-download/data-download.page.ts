@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { ButtonComponent, GapComponent, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
 import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
 import { DataDownloadFiltersComponent, Filter, initialFilter } from './filters/data-download-filters.component';
@@ -25,13 +25,17 @@ import { CodeDescriptionHeading, CodeTableService } from '../../services/code-ta
         DataDownloadListHourlyComponent
     ]
 })
-export class DataDownloadPage {
+export class DataDownloadPage implements OnInit {
     router = inject(Router)
     codeTableService = inject(CodeTableService)
 
-    filter: Filter = initialFilter()
+    filter: Filter = initialFilter(  [ ...this.codeTableService.DAILY_WEATHER_COLUMNS.items.map( c => c.code ) ] )
     hourlyReportColumns: CodeDescriptionHeading[] = []
     dailyReportColumns: CodeDescriptionHeading[] = []
+
+    ngOnInit(): void {
+        this.onFilterChange( this.filter )
+    }
 
     onFilterChange( filter: Filter ) {
         this.filter = { ...filter }

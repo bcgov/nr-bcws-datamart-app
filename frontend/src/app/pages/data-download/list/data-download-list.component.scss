@@ -8,10 +8,11 @@
     .mat-mdc-table {
         .mat-mdc-header-cell {
             font-weight: 700;
+            align-items: flex-end;
         }
 
-        .mat-column-date {
-            flex-basis: 120px;
+        .mat-mdc-header-cell, .mat-mdc-cell,  {
+            flex-basis: 150px;
             flex-shrink: 0;
             flex-grow: 1;
         }
