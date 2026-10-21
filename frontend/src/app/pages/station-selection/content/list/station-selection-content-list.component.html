@@ -1,3 +1,74 @@
+<div class="description">{{ listDescription }}</div>
+
+<div class="header">
+    <mat-checkbox class="select-all"
+        [checked]="areAllSelected"
+        (change)="onSelectAllClick()"
+    >
+        Select All
+    </mat-checkbox>
+
+    <nrcl-button tertiary
+        [label]="sortButton"
+        [attr.aria-label]="sortLabel"
+        [matMenuTriggerFor]="sortMenu"
+        iconRight="expand_more"
+    ></nrcl-button>
+
+    <mat-menu #sortMenu="matMenu" class="station-sorting-menu">
+        <nrcl-button tertiary        
+            label="Name (A-Z)"
+            (click)="setSort('nameAsc')"
+        ></nrcl-button>
+        
+        <nrcl-button tertiary 
+            label="Name (Z-A)"
+            (click)="setSort('nameDesc')"
+        ></nrcl-button>
+        
+        <nrcl-button tertiary 
+            label="Code (Low-High)"
+            (click)="setSort('codeAsc')"
+        ></nrcl-button>
+        
+        <nrcl-button tertiary 
+            label="Code (High-Low)"
+            (click)="setSort('codeDesc')"
+        ></nrcl-button>
+    </mat-menu>
+</div>
+
+<div class="list">
+    @for ( station of sortedStations; track station.properties.WEATHER_STATION_GUID ) {
+        <div class="station"
+            (click)="onStationSelectClick(station)"
+        >
+            <mat-checkbox
+                [checked]="isSelected(station)"
+            ></mat-checkbox>
+
+            <div class="content">
+                <nrcl-button anchor
+                    [label]="station.properties.STATION_NAME"
+                    [attr.aria-label]="'View details for station ' + station.properties.STATION_NAME"
+                ></nrcl-button>
+
+                <div class="details">
+                    <span>
+                        Station Code: {{ station.properties.STATION_CODE || '-' }}
+                    </span>
+
+                    <span>
+                        Acronym: {{ station.properties.STATION_ACRONYM || '-' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!--
+
 <aside class="station-selection-station-list">
     <div class="station-selection-station-list__count">
         {{ sortedStations.length }} stations
@@ -116,3 +187,5 @@
         (pageSizeChange)="onPageSizeChange($event)">
     </nrcl-row-list-pagination>
 </aside>
+
+-->

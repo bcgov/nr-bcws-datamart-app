@@ -11,15 +11,25 @@
 
     <ng-template mobile-view>
         <section class="station-selection-mobile">
-            <nrcl-tab-group standard>
+            <nrcl-tab-group standard stretched>
                 <nrcl-tab label="Find in List">
-                    <station-selection-content-list>
-                    </station-selection-content-list>
+                    <ng-template nrclTabLabel>
+                        <nrcl-icon>list</nrcl-icon>
+                        Find in List
+                    </ng-template>
+
+                    <station-selection-content-list></station-selection-content-list>
                 </nrcl-tab>
                 
                 <nrcl-tab label="Find in Map">
-                    <station-selection-content-map>
-                    </station-selection-content-map>
+                    <ng-template nrclTabLabel>
+                        <nrcl-icon>location_on</nrcl-icon>
+                        Find in Map
+                    </ng-template>
+
+                    <ng-template nrclTabContent>
+                        <station-selection-content-map></station-selection-content-map>
+                    </ng-template>
                 </nrcl-tab>
             </nrcl-tab-group>
         </section>

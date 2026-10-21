@@ -1,7 +1,7 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DesktopViewDirective, DeviceViewComponent, IconComponent, MobileViewDirective, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
+import { DesktopViewDirective, DeviceViewComponent, IconComponent, MobileViewDirective, TabComponent, TabContentDirective, TabGroupComponent, TabLabelDirective } from '@bcgov/nr-ngx-component-lib';
 import { StationSelectionContentListComponent } from './list/station-selection-content-list.component';
 import { StationSelectionContentMapComponent } from './map/station-selection-content-map.component';
 
@@ -20,6 +20,7 @@ import { StationSelectionContentMapComponent } from './map/station-selection-con
         TabGroupComponent,
         TabComponent,
         TabContentDirective,
+        TabLabelDirective,
     ]
 })
 export class StationSelectionContentComponent {

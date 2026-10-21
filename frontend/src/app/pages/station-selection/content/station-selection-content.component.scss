@@ -7,6 +7,22 @@ $mobile-tab-divider-color: #d8d8d8;
     min-height: 0;
     padding-left: var( --nrcl-gutter-space );
     padding-right: var( --nrcl-gutter-space );
+
+    .nrcl-tab-group {
+        height: 100%;
+
+        ::ng-deep .mat-mdc-tab-group {
+            height: 100%;
+
+            .mat-mdc-tab-body-wrapper {
+                height: 100%;
+
+                .smk-map-frame .smk-viewer {
+                    height: 100%;
+                }
+            }
+        }   
+    }
 }
 
 .station-selection-content {

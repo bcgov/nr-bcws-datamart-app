@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit }
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
-import { IconComponent, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
+import { ButtonComponent, IconComponent, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SelectedStationsService } from '../../../../services/selected-stations.service';
 import { GeoJsonPoint, StationDataService, WeatherStation } from '../../../../services/station-data.service';
@@ -22,6 +22,7 @@ type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
         NgxPaginationModule,
         MatMenuModule,
         IconComponent,
+        ButtonComponent
     ]
 })
 export class StationSelectionContentListComponent implements OnInit {
@@ -29,78 +30,70 @@ export class StationSelectionContentListComponent implements OnInit {
     selectedStationsService = inject( SelectedStationsService )
     changeDetectorRef = inject( ChangeDetectorRef )
 
-    pageNumber = 1;
-    pageSize = 10;
     sortOption: SortOption = 'nameAsc';
     stations: GeoJsonPoint<WeatherStation>[] = [];
 
     ngOnInit(): void {
         this.stationDataService.stations$.subscribe( (stations) => {
             this.stations = stations
-            this.pageNumber = 1
+            // this.pageNumber = 1
         } )
     }
 
-    display(value: unknown): string {
-        return value === null || value === undefined || value === '' ? '–' : String(value);
+    get listDescription() {
+        let t = this.stationDataService.totalCount
+        let f = this.stationDataService.filteredCount
+
+        if ( t == f ) {
+            return `Showing all ${ t } stations`
+        }
+        else {
+            return `Showing ${ f } station${ f == 1 ? '' : 's' } out of a total of ${ t }`
+        }
+    }
+    
+    get sortDescription() {
+        switch (this.sortOption) {
+            case 'nameAsc':     return 'Name, A-Z';
+            case 'nameDesc':    return 'Name, Z-A';
+            case 'codeAsc':     return 'Code, Low-High';
+            case 'codeDesc':    return 'Code, High-Low';
+        }
+    }
+
+    get sortButton() {
+        return 'Sort: ' + this.sortDescription
+    }
+
+    get sortLabel() {
+        return 'Sort stations. Current sort: ' + this.sortDescription
     }
 
     isSelected(station: GeoJsonPoint<WeatherStation>): boolean {
         return this.selectedStationsService.isSelected(station);
     }
 
-    toggleStation(station: GeoJsonPoint<WeatherStation>): void {
+    onStationSelectClick(station: GeoJsonPoint<WeatherStation>): void {
         this.selectedStationsService.isSelected(station)
             ? this.selectedStationsService.removeStation(station)
             : this.selectedStationsService.addStation(station);
     }
 
-    get visibleStations(): GeoJsonPoint<WeatherStation>[] {
-        const start = (this.pageNumber - 1) * this.pageSize;
-
-        return this.sortedStations.slice(start, start + this.pageSize);
+    get areAllSelected(): boolean {
+        return this.stations.every( s => this.selectedStationsService.isSelected( s ) )
     }
 
-    get allVisibleSelected(): boolean {
-        return this.visibleStations.length > 0 &&
-            this.visibleStations.every((station) => this.selectedStationsService.isSelected(station));
-    }
-
-    toggleSelectAll(): void {
-        if (this.allVisibleSelected) {
-            this.visibleStations.forEach((station) => this.selectedStationsService.removeStation(station));
-
-            return;
+    onSelectAllClick(): void {
+        if ( this.areAllSelected ) {
+            this.selectedStationsService.clearStations()
         }
-
-        this.visibleStations.forEach((station) => this.selectedStationsService.addStation(station));
+        else {
+            this.stations.forEach( s => this.selectedStationsService.addStation( s ) )
+        }
     }
 
     setSort(sortOption: SortOption): void {
         this.sortOption = sortOption;
-        this.pageNumber = 1;
-    }
-
-    onPageNumberChange(pageNumber: number): void {
-        this.pageNumber = pageNumber;
-    }
-
-    onPageSizeChange(pageSize: number): void {
-        this.pageSize = pageSize;
-        this.pageNumber = 1;
-    }
-
-    get sortLabel(): string {
-        switch (this.sortOption) {
-            case 'nameAsc':
-                return 'Name, A-Z';
-            case 'nameDesc':
-                return 'Name, Z-A';
-            case 'codeAsc':
-                return 'Code, Low-High';
-            case 'codeDesc':
-                return 'Code, High-Low';
-        }
     }
 
     get sortedStations(): GeoJsonPoint<WeatherStation>[] {
@@ -108,10 +101,10 @@ export class StationSelectionContentListComponent implements OnInit {
 
         switch (this.sortOption) {
             case 'nameAsc':
-                return stations.sort((a, b) => this.display(a.properties.STATION_NAME).localeCompare(this.display(b.properties.STATION_NAME)));
+                return stations.sort((a, b) => a.properties.STATION_NAME.localeCompare(b.properties.STATION_NAME));
 
             case 'nameDesc':
-                return stations.sort((a, b) => this.display(b.properties.STATION_NAME).localeCompare(this.display(a.properties.STATION_NAME)));
+                return stations.sort((a, b) => b.properties.STATION_NAME.localeCompare(a.properties.STATION_NAME));
 
             case 'codeAsc':
                 return stations.sort((a, b) => Number(a.properties.STATION_CODE) - Number(b.properties.STATION_CODE));
@@ -122,15 +115,5 @@ export class StationSelectionContentListComponent implements OnInit {
             default:
                 return stations;
         }
-    }
-
-    get startRow(): number {
-        if (this.stations.length === 0) return 0;
-
-        return (this.pageNumber - 1) * this.pageSize + 1;
-    }
-
-    get endRow(): number {
-        return Math.min(this.pageNumber * this.pageSize, this.stations.length);
     }
 }

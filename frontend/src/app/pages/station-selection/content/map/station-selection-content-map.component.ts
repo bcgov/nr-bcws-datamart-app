@@ -76,7 +76,22 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
             .then( ( smk ) => {
                 this.smk = smk
 
+                this.stationDataService.stations$.subscribe( (stations) => {
+                    this.loadLayer( 'weather-stations', {
+                        "type": "FeatureCollection",
+                        "features": stations
+                    } )
+                    .then( () => {
+                        if ( this.stationWasSelected ) {
+                            this.stationWasSelected.forEach( id => {
+                                this.toggleStationSelected( id, true )
+                            } )
+                        }
+                    } )
+                } )
+
                 this.selectedStationsService.selectedStations$.subscribe((stations) => {
+                    console.log(stations)
                     if ( this.stationWasSelected ) {
                         this.stationWasSelected.forEach( id => {
                             this.toggleStationSelected( id, false )
@@ -104,13 +119,6 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
                     if ( event.layers.length == 0 ) {
                         this.snackbarUtilService.information( 'No stations found in this area', 2000 )
                     }
-                } )
-
-                this.stationDataService.stations$.subscribe( (stations) => {
-                    this.loadLayer( 'weather-stations', {
-                        "type": "FeatureCollection",
-                        "features": stations
-                    } )
                 } )
 
                 this.smk.on( 'SelectLassoListTool', {
