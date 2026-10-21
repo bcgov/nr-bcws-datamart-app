@@ -17,7 +17,7 @@ $color-status-ok: #2d2d2d;
     width: 100%;
     min-width: 280px;
 
-    font-family: 'BC Sans', sans-serif;
+    font-family: var( --nrcl-font-family );
 }
 
 .station-information-panel__title-row {
@@ -31,7 +31,7 @@ $color-status-ok: #2d2d2d;
 .station-information-panel__title {
     color: $color-black;
 
-    font-family: 'BC Sans', sans-serif;
+    font-family: var( --nrcl-font-family );
     font-size: 16px;
     font-style: normal;
     font-weight: 700;
@@ -52,7 +52,7 @@ $color-status-ok: #2d2d2d;
 
     color: $color-text-primary;
 
-    font-family: 'BC Sans', sans-serif;
+    font-family: var( --nrcl-font-family );
     font-size: 18px;
     font-style: normal;
     font-weight: 700;
@@ -82,7 +82,7 @@ $color-status-ok: #2d2d2d;
 .station-information-panel__row-label {
     color: $color-text-secondary;
 
-    font-family: 'BC Sans', sans-serif;
+    font-family: var( --nrcl-font-family );
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -92,7 +92,7 @@ $color-status-ok: #2d2d2d;
 .station-information-panel__row-value {
     color: $color-text-secondary;
 
-    font-family: 'BC Sans', sans-serif;
+    font-family: var( --nrcl-font-family );
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
