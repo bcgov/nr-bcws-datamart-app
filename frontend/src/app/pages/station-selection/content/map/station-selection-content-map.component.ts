@@ -3,7 +3,9 @@ import {
     ApplicationRef,
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
     EnvironmentInjector,
+    ViewChild,
     createComponent,
     inject,
 } from '@angular/core';
@@ -40,6 +42,8 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
     stationLayer: { [key:string]: any } = {}
     activeStationId?: string|null
 
+    @ViewChild( 'map', { read: ElementRef } ) mapElement?: ElementRef
+
     constructor() {
         window.weatherStationPopup = ( feature: any ): string => {
             if ( feature ) {
@@ -64,7 +68,8 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
             } )
             .then( () => {
                 return SMK.INIT({
-                    containerSel: '#station-map',
+                    // containerSel: '#station-map',
+                    containerSel: this.mapElement?.nativeElement,
                     config: ['./assets/smk/station-selection-config.json', '?'],
                 } )
             } )
