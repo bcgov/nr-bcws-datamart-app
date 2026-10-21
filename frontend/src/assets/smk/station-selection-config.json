@@ -153,24 +153,7 @@
         },
         {
             "type": "select",
-            "enabled": true,
-            "showWidget": false,
-            "showPanel": false,
-            "internalLayers": [
-                {
-                    "id": "highlight-point",
-                    "style": {
-                        "strokeColor": "green",
-                        "strokeWidth": 30,
-                        "strokeOpacity": 0.8,
-                        "markerUrl": null,
-                        "markerSize": null,
-                        "markerOffset": null,
-                        "shadowUrl": null,
-                        "shadowSize": null
-                    }
-                }
-            ]
+            "enabled": false
         },
         {
             "type": "geomark",
