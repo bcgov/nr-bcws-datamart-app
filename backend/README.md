@@ -19,17 +19,22 @@ The backend is a [Data API builder](https://learn.microsoft.com/azure/data-api-b
 The `Authentication` keyword in the connection string decides how DAB signs in to Fabric:
 
 ```text
-# Your own identity (DAB CLI on your machine). Opens a browser sign-in window.
-Server=<name>.datawarehouse.fabric.microsoft.com;Database=<warehouse>;Authentication=Active Directory Interactive;Encrypt=True
+# Docker with an Entra ID user name and password (your IDIR email and password)
+Server=<name>.datawarehouse.fabric.microsoft.com;Database=<warehouse>;Authentication=Active Directory Password;User Id=<IDIR email>;Password=<IDIR password>;Encrypt=True;TrustServerCertificate=False;Command Timeout=240;
 
 # Service principal (Docker, or anywhere without a signed-in user)
 Server=<name>.datawarehouse.fabric.microsoft.com;Database=<warehouse>;Authentication=Active Directory Service Principal;User ID=<client-id>;Password=<client-secret>;Encrypt=True
 
 # Managed identity (Azure only)
 Server=<name>.datawarehouse.fabric.microsoft.com;Database=<warehouse>;Authentication=Active Directory Managed Identity;Encrypt=True
+
+# Local DAB CLI: your own sign-in, for example az login or a browser prompt
+Server=<name>.datawarehouse.fabric.microsoft.com;Database=<warehouse>;Authentication=Active Directory Interactive;Encrypt=True
 ```
 
-Whichever identity you use must be a member of the Fabric workspace (Viewer or higher). Service principals also require the Fabric tenant setting "Service principals can use Fabric APIs".
+Whichever identity you use must have access to the Fabric workspace (Viewer or higher). Service principals also require the Fabric tenant setting "Service principals can use Fabric APIs".
+
+`Active Directory Password` works only for accounts that are not required to use multi-factor authentication. If the sign-in fails with an MFA error, use a service principal instead. Keep your IDIR password out of shared files and shell history, and use the value only in the git-ignored `backend/.env`.
 
 ## Endpoints
 
@@ -46,16 +51,39 @@ The frontend proxies `/api` to this service (see `frontend/Caddyfile`), which is
 
 ### Option 1: Docker
 
+Run all commands from the `backend` folder.
+
+1. Go to the `backend` folder:
+
 ```bash
-cp backend/.env.example backend/.env
-# edit backend/.env and set FABRIC_SQL_CONNECTION_STRING (use the service principal format)
-docker build -t datamart-dab ./backend
-docker run --rm -p 5000:5000 --env-file backend/.env datamart-dab
+cd backend
 ```
 
-Do not wrap values in quotes in `backend/.env`, because Docker keeps the quotes as part of the value. Then open <http://localhost:5000/api/weather_stations?$first=2>.
+2. Create your `.env` file from the template:
 
-You can also run it through the root `docker-compose.yml`, which reads `FABRIC_SQL_CONNECTION_STRING` from your shell or a root `.env` file and publishes DAB on port 3001:
+```bash
+cp .env.example .env
+```
+
+3. Edit `.env` and set `FABRIC_SQL_CONNECTION_STRING` (IDIR user and password, or service principal format). Do not wrap values in quotes, because Docker keeps the quotes as part of the value.
+
+4. Build the image:
+
+```bash
+docker build -t datamart-dab .
+```
+
+5. Run the container:
+
+```bash
+docker run --rm -p 5000:5000 --env-file .env datamart-dab
+```
+
+6. Open <http://localhost:5000/api/weather_stations?$first=2>.
+
+Press Ctrl+C to stop the container.
+
+You can also run it through the root `docker-compose.yml`. Run this command from the repository root. Compose reads `FABRIC_SQL_CONNECTION_STRING` from your shell or a root `.env` file, not from `backend/.env`, and publishes DAB on port 3001:
 
 ```bash
 docker compose up --build backend
