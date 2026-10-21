@@ -158,16 +158,6 @@ run_test "Key Vault with complex module path" \
     "module.security[0].module.keyvault.azurerm_key_vault.main" \
     "/subscriptions/sub789/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/my-kv"
 
-# Test 7: PostgreSQL Flexible Server
-run_test "PostgreSQL Flexible Server" \
-'│ Error: a resource with the ID "/subscriptions/abc/resourceGroups/rg/providers/Microsoft.DBforPostgreSQL/flexibleServers/my-pg-server" already exists
-│ 
-│   with module.postgresql.azurerm_postgresql_flexible_server.main,
-│   on modules/postgresql/main.tf line 1' \
-    0 \
-    "module.postgresql.azurerm_postgresql_flexible_server.main" \
-    "/subscriptions/abc/resourceGroups/rg/providers/Microsoft.DBforPostgreSQL/flexibleServers/my-pg-server"
-
 # Test 8: Resource without module prefix
 run_test "Resource without module prefix" \
 '│ Error: a resource with the ID "/subscriptions/def/resourceGroups/rg/providers/Microsoft.Web/serverfarms/my-plan" already exists

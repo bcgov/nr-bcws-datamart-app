@@ -64,19 +64,6 @@ variable "container_memory" {
   nullable    = false
 }
 
-variable "database_name" {
-  description = "Name of the database"
-  type        = string
-  nullable    = false
-}
-
-variable "db_master_password" {
-  description = "PostgreSQL master password"
-  type        = string
-  sensitive   = true
-  nullable    = false
-}
-
 variable "enable_system_assigned_identity" {
   description = "Enable system assigned managed identity"
   type        = bool
@@ -142,30 +129,6 @@ variable "min_replicas" {
   default     = 0 # Allow scale to zero for Consumption workload
   nullable    = false
 }
-variable "migrations_image" {
-  description = "Container image for database migrations (Flyway)"
-  type        = string
-  nullable    = false
-}
-
-variable "postgres_host" {
-  description = "PostgreSQL host endpoint"
-  type        = string
-  nullable    = false
-}
-
-variable "backend_postgres_host" {
-  description = "PostgreSQL host endpoint used by the backend container at runtime."
-  type        = string
-  nullable    = false
-}
-
-variable "postgresql_admin_username" {
-  description = "PostgreSQL admin username"
-  type        = string
-  nullable    = false
-}
-
 variable "private_endpoint_subnet_id" {
   description = "Subnet ID for the private endpoint"
   type        = string
@@ -188,4 +151,10 @@ variable "log_analytics_workspace_key" {
   type        = string
   sensitive   = true
   nullable    = false
+}
+
+variable "fabric_sql_connection_string" {
+  description = "Secret used for connection between API and fabric"
+  type = string
+  sensitive = true
 }
