@@ -133,11 +133,6 @@ resource "azurerm_container_app" "backend" {
   }
 
   secret {
-    name  = "postgres-password"
-    value = var.db_master_password
-  }
-
-  secret {
     name  = "appinsights-connection-string"
     value = var.appinsights_connection_string
   }
@@ -147,40 +142,15 @@ resource "azurerm_container_app" "backend" {
     value = var.appinsights_instrumentation_key
   }
 
+  secret {
+    name = "fabric-sql-connection-string"
+    value = var.fabric_sql_connection_string
+  }
+
   template {
     max_replicas                     = var.max_replicas
     min_replicas                     = var.min_replicas
     termination_grace_period_seconds = 10
-    init_container {
-      name   = "migrations"
-      image  = var.migrations_image
-      cpu    = var.container_cpu
-      memory = var.container_memory
-      env {
-        name  = "FLYWAY_DEFAULT_SCHEMA"
-        value = "app"
-      }
-      env {
-        name  = "FLYWAY_CONNECT_RETRIES"
-        value = "10"
-      }
-      env {
-        name  = "FLYWAY_GROUP"
-        value = "true"
-      }
-      env {
-        name  = "FLYWAY_USER"
-        value = var.postgresql_admin_username
-      }
-      env {
-        name        = "FLYWAY_PASSWORD"
-        secret_name = "postgres-password"
-      }
-      env {
-        name  = "FLYWAY_URL"
-        value = "jdbc:postgresql://${var.postgres_host}:5432/${var.database_name}"
-      }
-    }
     container {
       name   = "backend"
       image  = var.backend_image
@@ -242,25 +212,9 @@ resource "azurerm_container_app" "backend" {
       }
 
       env {
-        name  = "POSTGRES_HOST"
-        value = var.backend_postgres_host
-      }
-
-      env {
-        name  = "POSTGRES_USER"
-        value = var.postgresql_admin_username
-      }
-
-      env {
         name        = "POSTGRES_PASSWORD"
         secret_name = "postgres-password"
       }
-
-      env {
-        name  = "POSTGRES_DATABASE"
-        value = var.database_name
-      }
-
       env {
         name        = "APPLICATIONINSIGHTS_CONNECTION_STRING"
         secret_name = "appinsights-connection-string"
@@ -275,6 +229,11 @@ resource "azurerm_container_app" "backend" {
       env {
         name  = "CORS_ORIGIN"
         value = var.app_service_frontend_url
+      }
+
+      env {
+        name = "FABRIC_SQL_CONNECTION_STRING"
+        secret_name = var.fabric_sql_connection_string
       }
     }
     http_scale_rule {

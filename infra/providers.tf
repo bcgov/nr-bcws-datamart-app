@@ -75,17 +75,6 @@ provider "azurerm" {
     }
 
     #########################################
-    # Azure Database for PostgreSQL - Flexible Server
-    #########################################
-    postgresql_flexible_server {
-      # Some configuration changes require a server restart to take effect. Enabling this allows
-      # Terraform to restart the server automatically when it changes a setting that needs it.
-      #
-      # Operational note: a restart can cause a brief connection interruption, so use with caution
-      restart_server_on_configuration_value_change = false
-    }
-
-    #########################################
     # Azure AI Services / Cognitive Services accounts
     #########################################
     cognitive_account {

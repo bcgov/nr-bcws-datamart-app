@@ -11,7 +11,7 @@ The workflows are defined in `.github/workflows/`.
 
 1. **Build containers**
 	 - Reusable workflow: `.github/workflows/.builds.yml`
-	 - Builds and pushes images for: `backend`, `frontend`, `migrations`
+	 - Builds and pushes images for: `backend`, `frontend`
 
 2. **Terraform plan/apply/destroy**
 	 - Reusable workflow: `.github/workflows/.deployer.yml`
@@ -113,7 +113,6 @@ CI sets:
 CI also sets container image variables (all using GHCR):
 - `TF_VAR_api_image=ghcr.io/<owner>/<repo>/backend:<tag>`
 - `TF_VAR_frontend_image=ghcr.io/<owner>/<repo>/frontend:<tag>`
-- `TF_VAR_flyway_image=ghcr.io/<owner>/<repo>/migrations:<tag>`
 
 ## Auto-import behavior for "already exists" errors
 
