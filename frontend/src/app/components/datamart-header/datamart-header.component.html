@@ -1,0 +1,13 @@
+<div class="title">
+    <ng-content select="section[title]"></ng-content>
+</div>
+
+<div class="actions">
+    <nrcl-button tertiary class="selected-stations-button"
+        [label]="selectedStationsLabel"
+        (click)="onStationsSelectedClick()"
+        iconRight="chevron_right"
+    ></nrcl-button>
+
+    <ng-content select="section[actions]"></ng-content>
+</div>

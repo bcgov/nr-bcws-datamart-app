@@ -3,11 +3,10 @@
     flex-direction: column;
     height: 100%;
     min-height: 0;
-}
+    padding-bottom: var( --nrcl-gutter-space );
+    box-sizing: border-box;
 
-.station-selection {
-    display: flex;
-    flex-direction: column;
-
-    height: calc(100vh - 85px);
+    station-selection-content {
+        flex-grow: 1;
+    }
 }

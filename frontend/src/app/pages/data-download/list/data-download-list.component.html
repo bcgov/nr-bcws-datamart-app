@@ -1,0 +1,60 @@
+<nrcl-row-list-desktop>
+    <mat-table
+        [dataSource]="rows | paginate: paginateState( paginationId! )"
+        matSort
+        [matSortActive]="sortActive"
+        [matSortDirection]="sortDirection"
+        (matSortChange)="onSortChange( $event )"
+    >
+        <ng-container matColumnDef="date">
+            <mat-header-cell *matHeaderCellDef mat-sort-header="date">
+                Date
+            </mat-header-cell>
+
+            <mat-cell *matCellDef="let row">
+                {{ row.date }}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="time">
+            <mat-header-cell *matHeaderCellDef mat-sort-header="time">
+                Time
+            </mat-header-cell>
+
+            <mat-cell *matCellDef="let row">
+                {{ row.time }}
+            </mat-cell>
+        </ng-container>
+
+        @for ( column of reportColumns; track column ) {
+            <ng-container [matColumnDef]="column.code">
+                <mat-header-cell *matHeaderCellDef [mat-sort-header]="column.code">
+                    {{ column.heading }}
+                </mat-header-cell>
+
+                <mat-cell *matCellDef="let row" [class]="column.style">
+                    {{ row[ column.code ] }}
+                </mat-cell>
+            </ng-container>
+        }
+
+        <mat-header-row
+            *matHeaderRowDef="displayedColumns; sticky: true">
+        </mat-header-row>
+
+        <mat-row
+            *matRowDef="let row; columns: displayedColumns;">
+        </mat-row>
+    </mat-table>
+</nrcl-row-list-desktop>
+
+<nrcl-gap/>
+
+<nrcl-row-list-pagination
+    [paginationId]="paginationId!"
+    [pageSize]="pageSize"
+    [pageNumber]="pageNumber"
+    [rowCount]="totalRowCount"
+    (pageNumberChange)="onPageNumberChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)">
+</nrcl-row-list-pagination>

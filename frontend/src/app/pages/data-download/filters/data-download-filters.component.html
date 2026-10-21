@@ -1,0 +1,34 @@
+<nrcl-filters-panel [showClear]="false">
+    <nrcl-filter-date
+        label="Start date"
+        [value]="filter.startDate"
+        (valueChange)="onStartDateChange( $event )"
+    ></nrcl-filter-date>
+
+    <nrcl-filter-date
+        label="End date"
+        [value]="filter.endDate"
+        (valueChange)="onEndDateChange( $event )"
+    ></nrcl-filter-date>
+
+    <nrcl-filter-select
+        label="Daily weather data"
+        [value]="filter.dailyColumns"
+        (valueChange)="onDailyColumnsChange( $event )"
+        [options]="codeTableService.DAILY_WEATHER_COLUMNS.items"
+    ></nrcl-filter-select>
+
+    <nrcl-filter-select
+        label="Hourly weather data"
+        [value]="filter.hourlyColumns"
+        (valueChange)="onHourlyColumnsChange( $event )"
+        [options]="codeTableService.HOURLY_WEATHER_COLUMNS.items"
+    ></nrcl-filter-select>
+
+    <nrcl-filter-select
+        label="Station metadata"
+        [value]="filter.metadataColumns"
+        (valueChange)="onMetadataColumnsChange( $event )"
+        [options]="codeTableService.STATIONS_METADATA_COLUMNS.items"
+    ></nrcl-filter-select>
+</nrcl-filters-panel>

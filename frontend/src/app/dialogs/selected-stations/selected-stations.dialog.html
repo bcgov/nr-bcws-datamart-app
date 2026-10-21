@@ -1,0 +1,38 @@
+<nrcl-dialog
+    title="Selected Stations"
+    [showClose]="true"
+    [showWarning]="false"
+    [saveEnabled]="null"
+    cancelLabel="Close"
+    [cancelEnabled]="true"
+    (cancelClick)="onCancelClick()"
+>
+    @if (selectedCount === 0) {
+        <div class="empty-state">
+            <h3>No Stations Selected</h3>
+
+            <p class="dialog-message">
+                Select stations from the map or station list.
+                Your selections will appear here.
+            </p>
+        </div>
+    } 
+    @else {
+        <div class="header">
+            <h3>
+                {{ selectedCount }}
+                {{ selectedCount === 1 ? 'Station' : 'Stations' }}
+                Selected
+            </h3>
+
+            <nrcl-button class="remove-action"
+                label="Remove All"
+                (click)="onRemoveAllClick(); list.refreshRowList()"
+            ></nrcl-button>
+        </div>
+
+        <nrcl-gap/>
+
+        <selected-stations-list #list></selected-stations-list>
+    }    
+</nrcl-dialog>

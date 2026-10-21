@@ -1,72 +1,71 @@
-<section class="data-download-page">
-    <div class="data-download-page__container">
-        <h1 class="data-download-page__title">
-            Weather Data Download
-        </h1>
+<datamart-header>
+    <section title>
+        <h1>Weather data</h1>
+    </section>
 
-        <p class="data-download-page__subtitle">
-            Pagination and table rendering test page.
-        </p>
+    <section actions>
+        <nrcl-button anchor
+            label="Add more stations"
+            (click)="onAddMoreStationsClick()"
+        ></nrcl-button>
+    </section>
+</datamart-header>
 
-        <nrcl-row-list-desktop>
-            <mat-table
-                [dataSource]="rows | paginate: {
-                    id: 'download-table',
-                    itemsPerPage: pageSize,
-                    currentPage: pageNumber,
-                    totalItems: rows.length
-                }">
+<nrcl-gap/>
 
-                <ng-container matColumnDef="stationName">
-                    <mat-header-cell *matHeaderCellDef>
-                        Station Name
-                    </mat-header-cell>
+<data-download-filters
+    [filter]="filter"
+    (filterChange)="onFilterChange( $event )"
+></data-download-filters>
 
-                    <mat-cell *matCellDef="let row">
-                        {{ row.stationName }}
-                    </mat-cell>
-                </ng-container>
+<nrcl-gap/>
 
-                <ng-container matColumnDef="stationCode">
-                    <mat-header-cell *matHeaderCellDef>
-                        Station Code
-                    </mat-header-cell>
+<div class="tabs-container">
+    <nrcl-tab-group standard>
+        @if ( filter.dailyColumns.length == 0 && filter.hourlyColumns.length == 0 ) {
+            <nrcl-tab label="Please select data columns" disabled>
+            </nrcl-tab>
+        }
 
-                    <mat-cell *matCellDef="let row">
-                        {{ row.stationCode }}
-                    </mat-cell>
-                </ng-container>
+        @if ( filter.dailyColumns.length > 0 ) {
+            <nrcl-tab label="Daily Weather Data">
+                <ng-template nrclTabContent>
+                    <data-download-list-daily
+                        [startDate]="filter.startDate"
+                        [endDate]="filter.endDate"
+                        [reportColumns]="dailyReportColumns"
+                    ></data-download-list-daily>
+                </ng-template>
+            </nrcl-tab>
+        }
 
-                <ng-container matColumnDef="status">
-                    <mat-header-cell *matHeaderCellDef>
-                        Status
-                    </mat-header-cell>
+        @if ( filter.hourlyColumns.length > 0 ) {
+            <nrcl-tab label="Hourly Weather Data">
+                <ng-template nrclTabContent>
+                    <data-download-list-hourly
+                        [startDate]="filter.startDate"
+                        [endDate]="filter.endDate"
+                        [reportColumns]="hourlyReportColumns"
+                    ></data-download-list-hourly>
+                </ng-template>
+            </nrcl-tab>
+        }
+    </nrcl-tab-group>
 
-                    <mat-cell *matCellDef="let row">
-                        {{ row.status }}
-                    </mat-cell>
-                </ng-container>
+    <div class="actions">
+        <nrcl-button primary
+            label="Download"
+            icon="download"
+        ></nrcl-button>
 
-                <mat-header-row
-                    *matHeaderRowDef="columns; sticky: true">
-                </mat-header-row>
+        <nrcl-button 
+            label="Email download link"
+            icon="email"
+        ></nrcl-button>
 
-                <mat-row
-                    *matRowDef="let row; columns: columns;">
-                </mat-row>
-            </mat-table>
-
-        </nrcl-row-list-desktop>
-
-        <nrcl-gap vertical></nrcl-gap>
-
-        <nrcl-row-list-pagination
-            paginationId="download-table"
-            [pageSize]="pageSize"
-            [pageNumber]="pageNumber"
-            [rowCount]="rows.length"
-            (pageNumberChange)="onPageNumberChange($event)"
-            (pageSizeChange)="onPageSizeChange($event)">
-        </nrcl-row-list-pagination>
+        <nrcl-button 
+            label="Copy link"
+            icon="link"
+        ></nrcl-button>
     </div>
-</section>
+</div>

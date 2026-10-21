@@ -9,8 +9,10 @@ $link-color: #255a90;
 
     gap: 16px;
 
-    margin-top: 16px;
-    margin-bottom: 16px;
+    // margin-top: 16px;
+    // margin-bottom: 16px;
+    padding: var( --nrcl-gutter-space );
+    // padding-right: var( --nrcl-gutter-space );
 }
 
 .filter-toolbar {

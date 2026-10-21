@@ -3,6 +3,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ApplicationComponent, ApplicationHeaderComponent, ApplicationMenuComponent, SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 import { filter, Subscription } from 'rxjs';
 import { ROUTE } from './bcws-datamart-app.routes';
+import { DialogService } from './services/dialog.service';
 
 const MENU = {
     HOME: 'home',
@@ -31,6 +32,7 @@ const MENU = {
 export class BcwsDatamartApp implements OnInit, OnDestroy {
     router = inject( Router )
     snackbarUtilService = inject( SnackbarUtilService )
+    dialogService = inject( DialogService )
 
     title = 'Wildfire DataMart';
     logoAriaLabel = 'BC Wildfire Service logo';
@@ -92,6 +94,8 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
             .subscribe( ( event: NavigationEnd ) => {
                 this.onRouteChanged( event.urlAfterRedirects )
             } )
+
+        this.showDisclaimerDialog()
     }
 
     ngOnDestroy() {
@@ -129,6 +133,21 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
 
         // console.log( 'Navigated to:', url, this.currentItemId );
     }
+
+    showDisclaimerDialog() {
+        if ( localStorage.getItem('hideDisclaimer') ) return
+
+        this.dialogService.openDisclaimerDialog({}).afterClosed().toPromise()
+            .then( res => {
+                if ( res == 'hide' ) {
+                    localStorage.setItem('hideDisclaimer', 'hide')
+                }
+                else {
+                    localStorage.setItem('hideDisclaimer', '')
+                }
+            } )
+    }
+
 }
 
 function openExternalLink( url: string ) {
