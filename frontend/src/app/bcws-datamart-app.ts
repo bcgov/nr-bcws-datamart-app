@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, inject, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { ApplicationComponent, ApplicationHeaderComponent, ApplicationMenuComponent, SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
+import { ApplicationComponent, ApplicationHeaderComponent, ApplicationMenuComponent, ConfigurationService, SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 import { filter, Subscription } from 'rxjs';
 import { ROUTE } from './bcws-datamart-app.routes';
 import { DialogService } from './services/dialog.service';
@@ -33,6 +33,7 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
     router = inject( Router )
     snackbarUtilService = inject( SnackbarUtilService )
     dialogService = inject( DialogService )
+    configurationService = inject( ConfigurationService )
 
     title = 'Wildfire DataMart';
     logoAriaLabel = 'BC Wildfire Service logo';
@@ -96,6 +97,7 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
             } )
 
         this.showDisclaimerDialog()
+        this.updateDisplayMode()
     }
 
     ngOnDestroy() {
@@ -148,6 +150,19 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
             } )
     }
 
+    @HostListener("window:resize", [])
+    onResize() {
+        this.updateDisplayMode()
+    }
+
+    updateDisplayMode() {
+        if ( window.innerWidth < 768 || ( window.innerWidth < 900 && window.innerHeight < 450 ) ) {
+            this.configurationService.update( { displayMode: 'mobile' } )
+        } 
+        else {
+            this.configurationService.update( { displayMode: 'desktop' } )
+        }
+    }
 }
 
 function openExternalLink( url: string ) {
