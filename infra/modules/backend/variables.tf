@@ -96,19 +96,25 @@ variable "container_registry_url" {
   default     = "https://ghcr.io"
 }
 
-variable "database_name" {
-  description = "The name of the PostgreSQL database."
+
+variable "dab_runtime_mode" {
+  description = "Data API builder host mode (production or development)."
   type        = string
+  default     = "production"
   nullable    = false
+
+  validation {
+    condition     = contains(["production", "development"], var.dab_runtime_mode)
+    error_message = "dab_runtime_mode must be production or development."
+  }
 }
 
-variable "db_master_password" {
-  description = "The password for the PostgreSQL admin user."
+variable "fabric_sql_connection_string" {
+  description = "Connection string of the Microsoft Fabric SQL analytics endpoint that Data API builder reads from."
   type        = string
   sensitive   = true
   nullable    = false
 }
-
 
 variable "frontend_frontdoor_resource_guid" {
   description = "The resource GUID for the Front Door service associated with the frontend App Service."
@@ -136,57 +142,6 @@ variable "location" {
 
 variable "log_analytics_workspace_id" {
   description = "The resource ID of the Log Analytics workspace for diagnostics."
-  type        = string
-  nullable    = false
-}
-
-variable "log_level" {
-  description = "Backend Winston/Nest log level for structured application logs that can flow to Application Insights."
-  type        = string
-  default     = "info"
-
-  validation {
-    condition     = contains(["error", "warn", "info", "http", "verbose", "debug", "silly"], var.log_level)
-    error_message = "log_level must be one of: error, warn, info, http, verbose, debug, silly."
-  }
-}
-
-variable "http_access_log_mode" {
-  description = "Controls request access logging written to container stdout for LAW ingestion. Supported values: off, failures, all."
-  type        = string
-  default     = "failures"
-
-  validation {
-    condition     = contains(["off", "failures", "all"], var.http_access_log_mode)
-    error_message = "http_access_log_mode must be one of: off, failures, all."
-  }
-}
-
-variable "slow_query_log_threshold_ms" {
-  description = "Emit Prisma slow-query diagnostics to container stdout when query duration meets or exceeds this threshold in milliseconds. Set to -1 to disable."
-  type        = number
-  default     = 1000
-
-  validation {
-    condition     = var.slow_query_log_threshold_ms >= -1
-    error_message = "slow_query_log_threshold_ms must be greater than or equal to -1."
-  }
-}
-
-variable "node_env" {
-  description = "The Node.js environment (e.g., production, development)."
-  type        = string
-  default     = "production"
-}
-
-variable "postgres_host" {
-  description = "The FQDN of the PostgreSQL server."
-  type        = string
-  nullable    = false
-}
-
-variable "postgresql_admin_username" {
-  description = "The admin username for the PostgreSQL server."
   type        = string
   nullable    = false
 }

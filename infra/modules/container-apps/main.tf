@@ -132,149 +132,65 @@ resource "azurerm_container_app" "backend" {
     type = var.enable_system_assigned_identity ? "SystemAssigned" : "None"
   }
 
+  # Connection string of the Fabric SQL analytics endpoint. The Authentication keyword inside the
+  # string decides how DAB signs in (for example "Active Directory Managed Identity" to use the
+  # identity assigned to this container app).
   secret {
-    name  = "postgres-password"
-    value = var.db_master_password
-  }
-
-  secret {
-    name  = "appinsights-connection-string"
-    value = var.appinsights_connection_string
-  }
-
-  secret {
-    name  = "appinsights-instrumentation-key"
-    value = var.appinsights_instrumentation_key
+    name  = "fabric-sql-connection-string"
+    value = var.fabric_sql_connection_string
   }
 
   template {
     max_replicas                     = var.max_replicas
     min_replicas                     = var.min_replicas
     termination_grace_period_seconds = 10
-    init_container {
-      name   = "migrations"
-      image  = var.migrations_image
-      cpu    = var.container_cpu
-      memory = var.container_memory
-      env {
-        name  = "FLYWAY_DEFAULT_SCHEMA"
-        value = "app"
-      }
-      env {
-        name  = "FLYWAY_CONNECT_RETRIES"
-        value = "10"
-      }
-      env {
-        name  = "FLYWAY_GROUP"
-        value = "true"
-      }
-      env {
-        name  = "FLYWAY_USER"
-        value = var.postgresql_admin_username
-      }
-      env {
-        name        = "FLYWAY_PASSWORD"
-        secret_name = "postgres-password"
-      }
-      env {
-        name  = "FLYWAY_URL"
-        value = "jdbc:postgresql://${var.postgres_host}:5432/${var.database_name}"
-      }
-    }
     container {
       name   = "backend"
       image  = var.backend_image
       cpu    = var.container_cpu
       memory = var.container_memory
+
+      # DAB serves a public health response at "/" that does not query the database, so probes
+      # stay healthy while Fabric is slow. The startup probe allows up to ~100s for DAB to load
+      # its metadata from Fabric on a cold start.
       startup_probe {
-        transport = "HTTP"
-        path      = "/api/health"
-        port      = 3000
-        timeout   = 5
+        transport               = "HTTP"
+        path                    = "/"
+        port                    = var.dab_port
+        timeout                 = 5
+        interval_seconds        = 10
+        failure_count_threshold = 10
       }
       readiness_probe {
         transport               = "HTTP"
-        path                    = "/api/health"
-        port                    = 3000
+        path                    = "/"
+        port                    = var.dab_port
         timeout                 = 5
         failure_count_threshold = 3
       }
       liveness_probe {
         transport               = "HTTP"
-        path                    = "/api/health"
-        port                    = 3000
+        path                    = "/"
+        port                    = var.dab_port
         timeout                 = 5
         failure_count_threshold = 3
       }
+
       env {
-        name  = "NODE_ENV"
-        value = "production"
+        name        = "FABRIC_SQL_CONNECTION_STRING"
+        secret_name = "fabric-sql-connection-string"
       }
 
       env {
-        name  = "LOG_LEVEL"
-        value = var.log_level
+        name  = "DAB_RUNTIME_MODE"
+        value = var.dab_runtime_mode
       }
 
+      # Browser origin allowed to call the API. Falls back to "*" (public read-only data) when
+      # no frontend URL is known.
       env {
-        name  = "HTTP_ACCESS_LOG_MODE"
-        value = var.http_access_log_mode
-      }
-
-      env {
-        name  = "DB_SLOW_QUERY_LOG_THRESHOLD_MS"
-        value = tostring(var.slow_query_log_threshold_ms)
-      }
-
-      env {
-        name  = "OTEL_SERVICE_NAME"
-        value = "${var.app_name}-backend"
-      }
-
-      env {
-        name  = "OTEL_RESOURCE_ATTRIBUTES"
-        value = "deployment.environment.name=${var.app_env}"
-      }
-
-      env {
-        name  = "PORT"
-        value = "3000"
-      }
-
-      env {
-        name  = "POSTGRES_HOST"
-        value = var.backend_postgres_host
-      }
-
-      env {
-        name  = "POSTGRES_USER"
-        value = var.postgresql_admin_username
-      }
-
-      env {
-        name        = "POSTGRES_PASSWORD"
-        secret_name = "postgres-password"
-      }
-
-      env {
-        name  = "POSTGRES_DATABASE"
-        value = var.database_name
-      }
-
-      env {
-        name        = "APPLICATIONINSIGHTS_CONNECTION_STRING"
-        secret_name = "appinsights-connection-string"
-      }
-
-      env {
-        name        = "APPINSIGHTS_INSTRUMENTATIONKEY"
-        secret_name = "appinsights-instrumentation-key"
-      }
-
-      # CORS configuration to allow App Service frontend
-      env {
-        name  = "CORS_ORIGIN"
-        value = var.app_service_frontend_url
+        name  = "DAB_CORS_ORIGIN"
+        value = var.app_service_frontend_url != "" ? var.app_service_frontend_url : "*"
       }
     }
     http_scale_rule {
@@ -288,7 +204,7 @@ resource "azurerm_container_app" "backend" {
     ### this only enables other services within the vnet to access the container app.
     ### if this gives error, raise a ticket with platform team , they will enable it.
     external_enabled = true
-    target_port      = 3000
+    target_port      = var.dab_port
     transport        = "http"
 
     traffic_weight {

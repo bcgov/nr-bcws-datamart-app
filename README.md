@@ -11,7 +11,7 @@ A production-ready, secure, and compliant infrastructure template for deploying 
 
 ## 🎯 What This Template Provides
 
-- **Full-stack containerized application**: NestJS backend + React/Vite frontend
+- **Full-stack containerized application**: Data API builder backend (Microsoft Fabric data) + Angular frontend
 - **Secure Azure infrastructure**: Landing Zone compliant with proper network isolation
 - **Database management**: PostgreSQL with Flyway migrations and optional CloudBeaver admin UI
 - **CI/CD pipeline**: GitHub Actions with OIDC authentication
@@ -73,7 +73,7 @@ A production-ready, secure, and compliant infrastructure template for deploying 
 │   └── modules/               # Reusable infrastructure modules
 │       ├── aci/               # Azure Container Instances (optional)
 │       ├── apim/              # API Management (optional)
-│       ├── backend/           # App Service for NestJS API
+│       ├── backend/           # App Service for the Data API builder backend
 │       ├── container-apps/    # Container Apps
 │       ├── flyway/            # Flyway database migrations
 │       ├── frontend/          # App Service for React SPA (with Caddy proxy)
@@ -81,32 +81,10 @@ A production-ready, secure, and compliant infrastructure template for deploying 
 │       ├── monitoring/        # Log Analytics & Application Insights
 │       ├── network/           # VNet, subnets, NSGs
 │       └── postgresql/        # PostgreSQL Flexible Server
-├── backend/                   # NestJS TypeScript API
-│   ├── src/                   # API source code
-│   │   ├── main.ts            # Entry point (initializes telemetry before bootstrap)
-│   │   ├── app.module.ts      # Root NestJS module
-│   │   ├── app.controller.ts  # Default app controller
-│   │   ├── app.service.ts     # Default app service
-│   │   ├── health.controller.ts       # Health check endpoint (/api/health)
-│   │   ├── metrics.controller.ts      # Prometheus metrics (/api/metrics)
-│   │   ├── common/            # Shared utilities & logger config
-│   │   ├── middleware/        # Request/response logging middleware
-│   │   ├── users/             # User management module (example)
-│   │   ├── prisma.module.ts   # Prisma ORM module
-│   │   ├── prisma.service.ts  # Prisma service
-│   │   ├── telemetry.ts       # Azure Monitor telemetry setup
-│   │   └── prom.ts            # Prometheus metrics setup
-│   ├── prisma/                # Prisma ORM configuration
-│   │   └── schema.prisma      # Database schema (ORM only; migrations via Flyway)
-│   ├── test/                  # E2E tests
-│   │   └── app.e2e-spec.ts    # E2E test suite
-│   ├── eslint.config.mjs      # ESLint configuration
-│   ├── nest-cli.json          # NestJS CLI configuration
-│   ├── package.json           # Dependencies & scripts
-│   ├── tsconfig.json          # TypeScript configuration
-│   ├── tsconfig.build.json    # Build-specific TypeScript config
-│   ├── vitest.config.mts      # Vitest unit test configuration
-│   └── Dockerfile             # Container build configuration
+├── backend/                   # Data API builder (DAB) service for Microsoft Fabric data
+│   ├── dab-config.json        # Entities, endpoints and permissions (see backend/README.md)
+│   ├── Dockerfile             # Container build configuration
+│   └── .env.example           # Template for local environment variables
 ├── frontend/                  # React + Vite SPA
 │   ├── src/                   # Frontend source code
 │   │   ├── main.tsx           # React entry point
@@ -330,8 +308,8 @@ docker-compose up -d
 # Run database migrations
 docker-compose exec migrations flyway migrate
 
-# Start backend development server
-cd backend && npm run start:dev
+# Start the backend (Data API builder). Requires FABRIC_SQL_CONNECTION_STRING, see backend/README.md
+docker-compose up --build backend
 
 # Start frontend development server (in new terminal)
 cd frontend && npm run dev
@@ -340,7 +318,7 @@ cd frontend && npm run dev
 Access your local application:
 
 - **Frontend**: <http://localhost:5173>
-- **Backend API**: <http://localhost:3000> (default; see `docker-compose.yml` for overrides)
+- **Backend API**: <http://localhost:3001/api/weather_stations> (Data API builder; see `backend/README.md`)
 - **Database**: localhost:5432 (postgres/default)
 
 ## 🚢 Deployment Process
@@ -353,7 +331,7 @@ The repository includes comprehensive CI/CD workflows:
 
 The CI/CD pipeline builds the following container images:
 
-- **backend**: NestJS API server
+- **backend**: Data API builder (DAB) server for Microsoft Fabric data
 - **migrations**: Flyway database migration runner
 - **frontend**: React SPA with Caddy reverse proxy
 These are built on every commit and tagged for deployment to your chosen environment.
