@@ -7,13 +7,13 @@ import {
     EnvironmentInjector,
     ViewChild,
     createComponent,
-    inject,
+    inject
 } from '@angular/core';
 // import * as L from 'leaflet';
+import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 import { SelectedStationsService } from '../../../../services/selected-stations.service';
 import { StationDataService } from '../../../../services/station-data.service';
 import { StationSelectionContentMapInformationPanelComponent } from './information-panel/station-selection-content-map-information-panel.component';
-import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 
 declare const SMK: any;
 
@@ -25,11 +25,12 @@ declare global {
 
 @Component({
     selector: 'station-selection-content-map',
-    templateUrl: './station-selection-content-map.component.html',
+    template: '',
     styleUrl: './station-selection-content-map.component.scss',
     changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [
-    ]
+    host: {
+        'aria-label': 'Weather station map'
+    }
 })
 export class StationSelectionContentMapComponent implements AfterViewInit {
     appRef = inject( ApplicationRef )
@@ -37,12 +38,11 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
     stationDataService = inject( StationDataService )
     selectedStationsService = inject( SelectedStationsService )
     snackbarUtilService = inject( SnackbarUtilService )
+    elementRef = inject( ElementRef )
 
     smk: any;
     stationLayer: { [key:string]: any } = {}
     activeStationId?: string|null
-
-    @ViewChild( 'map', { read: ElementRef } ) mapElement?: ElementRef
 
     constructor() {
         window.weatherStationPopup = ( feature: any ): string => {
@@ -68,8 +68,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
             } )
             .then( () => {
                 return SMK.INIT({
-                    // containerSel: '#station-map',
-                    containerSel: this.mapElement?.nativeElement,
+                    containerSel: this.elementRef.nativeElement,
                     config: ['./assets/smk/station-selection-config.json', '?'],
                 } )
             } )
