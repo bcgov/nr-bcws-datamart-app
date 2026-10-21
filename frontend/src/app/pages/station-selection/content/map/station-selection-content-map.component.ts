@@ -43,6 +43,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
     smk: any;
     stationLayer: { [key:string]: any } = {}
     activeStationId?: string|null
+    stationWasSelected?: string[] 
 
     constructor() {
         window.weatherStationPopup = ( feature: any ): string => {
@@ -76,37 +77,18 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
                 this.smk = smk
 
                 this.selectedStationsService.selectedStations$.subscribe((stations) => {
-                    this.smk.$viewer.selected.clear()
-                    this.smk.$viewer.selected.add( "weather-stations", stations )
+                    if ( this.stationWasSelected ) {
+                        this.stationWasSelected.forEach( id => {
+                            this.toggleStationSelected( id, false )
+                        } )
+                    }
+
+                    this.stationWasSelected = stations.map( s => s.properties.WEATHER_STATION_GUID )
+
+                    this.stationWasSelected.forEach( id => {
+                        this.toggleStationSelected( id, true )
+                    } )
                 });
-
-                this.smk.$viewer.selected.addedFeatures( ( ev:any ) => {
-                    let ids = Object.keys( this.smk.$viewer.selected.featureSet )
-                    this.smk.$viewer.selected.highlight( ids )
-
-                    ev.features.forEach( ( ft: any ) => {
-                        let stationId = ft.properties[ 'WEATHER_STATION_GUID' ]
-                        this.toggleStationSelected( stationId, true )
-                    } )
-                } )
-
-                this.smk.$viewer.selected.removedFeatures( ( ev:any ) => {
-                    let ids = Object.keys( this.smk.$viewer.selected.featureSet )
-                    this.smk.$viewer.selected.highlight( ids )
-
-                    ev.features.forEach( ( ft: any ) => {
-                        let stationId = ft.properties[ 'WEATHER_STATION_GUID' ]
-                        this.toggleStationSelected( stationId, false )
-                    } )
-                } )
-
-                this.smk.$viewer.selected.clearedFeatures( ( ev:any ) => {
-                    this.smk.$viewer.selected.highlight()
-
-                    Object.keys( this.stationLayer ).forEach( (id:any) => {
-                        this.toggleStationSelected( id, false )
-                    } )
-                } )
 
                 this.smk.$viewer.lassoed.addedFeatures( ( ev:any ) => {
                     this.selectedStationsService.addStations( ev.features )
