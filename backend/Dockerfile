@@ -10,6 +10,9 @@
 ARG DAB_VERSION=2.0.12
 FROM mcr.microsoft.com/azure-databases/data-api-builder:${DAB_VERSION}
 
+# Lets developers remove old local builds of this image without touching other images.
+LABEL app="datamart-dab"
+
 COPY dab-config.json /App/dab-config.json
 
 # "production" hides development-only features. Override with -e DAB_RUNTIME_MODE=development locally.

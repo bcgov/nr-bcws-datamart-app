@@ -67,11 +67,17 @@ cp .env.example .env
 
 3. Edit `.env` and set `FABRIC_SQL_CONNECTION_STRING` (IDIR user and password, or service principal format). Do not wrap values in quotes, because Docker keeps the quotes as part of the value.
 
-4. Build the image:
+4. Build the image, then remove the previous build:
 
 ```bash
 docker build -t datamart-dab .
 ```
+
+```bash
+docker image prune -f --filter "label=app=datamart-dab"
+```
+
+Each build with a changed `dab-config.json` creates a new image and leaves the previous one untagged (`<none>` in Docker Desktop). The second command removes those leftovers. It affects only images of this project, and it skips an image that a running container uses. Images built before the `LABEL` was added to the `Dockerfile` do not carry the label, so remove those once with `docker image prune -f`, which removes every untagged image on your machine.
 
 5. Run the container:
 

@@ -51,27 +51,10 @@
     }
   },
   "entities": {
-    "hourly_weather": {
-      "source": {
-        "object": "HOURLY_WEATHER",
-        "type": "view",
-        "key-fields": [ "HOURLY_WEATHER_MEAS_GUID" ]
-      },
-      "cache": {
-        "enabled": true,
-        "ttl-seconds": 3600
-      },
-      "permissions": [
-        {
-          "actions": [ "read" ],
-          "role": "anonymous"
-        }
-      ]
-    },
     "daily_weather": {
       "source": {
         "object": "DAILY_WEATHER",
-        "type": "view",
+        "type": "table",
         "key-fields": [ "DAILY_WEATHER_MEAS_GUID" ]
       },
       "cache": {
@@ -88,25 +71,8 @@
     "weather_stations": {
       "source": {
         "object": "WEATHER_STATION",
-        "type": "view",
+        "type": "table",
         "key-fields": [ "WEATHER_STATION_GUID" ]
-      },
-      "cache": {
-        "enabled": true,
-        "ttl-seconds": 86400
-      },
-      "permissions": [
-        {
-          "actions": [ "read" ],
-          "role": "anonymous"
-        }
-      ]
-    },
-    "org_units": {
-      "source": {
-        "object": "ORG_UNIT",
-        "type": "view",
-        "key-fields": [ "FIRE_ZONE_ORG_UNIT_IDENTIFIER" ]
       },
       "cache": {
         "enabled": true,
