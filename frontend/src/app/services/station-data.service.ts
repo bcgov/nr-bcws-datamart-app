@@ -64,9 +64,20 @@ export class StationDataService {
   
     private _stationsPromise?: Promise<GeoJsonPoint<WeatherStation>[]>
 
+    private _totalCount = 0
+
+    get totalCount() {
+        return this._totalCount
+    }
+
+    get filteredCount() {
+        return this.stationsSubject.value.length
+    }
+
     initialize() {
         this.loadStations()
             .then( stations => {
+                this._totalCount = stations.length
                 this.stationsSubject.next( stations )
             } )
     }
