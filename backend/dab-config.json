@@ -53,7 +53,7 @@
   "entities": {
     "daily_weather": {
       "source": {
-        "object": "DAILY_WEATHER",
+        "object": "dbo.DAILY_WEATHER",
         "type": "table",
         "key-fields": [ "DAILY_WEATHER_MEAS_GUID" ]
       },
@@ -70,7 +70,7 @@
     },
     "weather_stations": {
       "source": {
-        "object": "WEATHER_STATION",
+        "object": "dbo.WEATHER_STATION",
         "type": "table",
         "key-fields": [ "WEATHER_STATION_GUID" ]
       },
