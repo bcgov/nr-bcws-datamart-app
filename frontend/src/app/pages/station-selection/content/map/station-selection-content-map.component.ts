@@ -3,15 +3,18 @@ import {
     ApplicationRef,
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
     EnvironmentInjector,
+    OnDestroy,
     createComponent,
-    inject,
+    inject
 } from '@angular/core';
 // import * as L from 'leaflet';
+import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
+import { Subscription } from 'rxjs';
 import { SelectedStationsService } from '../../../../services/selected-stations.service';
 import { StationDataService } from '../../../../services/station-data.service';
 import { StationSelectionContentMapInformationPanelComponent } from './information-panel/station-selection-content-map-information-panel.component';
-import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 
 declare const SMK: any;
 
@@ -23,23 +26,27 @@ declare global {
 
 @Component({
     selector: 'station-selection-content-map',
-    templateUrl: './station-selection-content-map.component.html',
+    template: '',
     styleUrl: './station-selection-content-map.component.scss',
     changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [
-    ]
+    host: {
+        'aria-label': 'Weather station map'
+    }
 })
-export class StationSelectionContentMapComponent implements AfterViewInit {
+export class StationSelectionContentMapComponent implements AfterViewInit, OnDestroy {
     appRef = inject( ApplicationRef )
     environmentInjector = inject( EnvironmentInjector )
     stationDataService = inject( StationDataService )
     selectedStationsService = inject( SelectedStationsService )
     snackbarUtilService = inject( SnackbarUtilService )
+    elementRef = inject( ElementRef )
 
     smk: any;
     stationLayer: { [key:string]: any } = {}
     activeStationId?: string|null
     stationWasSelected?: string[] 
+    stationsSubscription?: Subscription
+    selectedStationsSubscription?: Subscription
 
     constructor() {
         window.weatherStationPopup = ( feature: any ): string => {
@@ -65,14 +72,28 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
             } )
             .then( () => {
                 return SMK.INIT({
-                    containerSel: '#station-map',
+                    containerSel: this.elementRef.nativeElement,
                     config: ['./assets/smk/station-selection-config.json', '?'],
                 } )
             } )
             .then( ( smk ) => {
                 this.smk = smk
 
-                this.selectedStationsService.selectedStations$.subscribe((stations) => {
+                this.stationsSubscription = this.stationDataService.stations$.subscribe( (stations) => {
+                    this.loadLayer( 'weather-stations', {
+                        "type": "FeatureCollection",
+                        "features": stations
+                    } )
+                    .then( () => {
+                        if ( this.stationWasSelected ) {
+                            this.stationWasSelected.forEach( id => {
+                                this.toggleStationSelected( id, true )
+                            } )
+                        }
+                    } )
+                } )
+
+                this.selectedStationsSubscription = this.selectedStationsService.selectedStations$.subscribe((stations) => {
                     if ( this.stationWasSelected ) {
                         this.stationWasSelected.forEach( id => {
                             this.toggleStationSelected( id, false )
@@ -102,23 +123,20 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
                     }
                 } )
 
-                this.stationDataService.stations$.subscribe( (stations) => {
-                    this.loadLayer( 'weather-stations', {
-                        "type": "FeatureCollection",
-                        "features": stations
-                    } )
-                } )
-
                 this.smk.on( 'SelectLassoListTool', {
                     'activate': () => {
                         if ( this.smk.$tool.SelectLassoListTool.active ) {
                             this.snackbarUtilService.information( 'Draw an area on the map to select stations', 2000 )
                         }
-                        console.log('activate',this.smk.$tool.SelectLassoListTool.active )
                     }
                 } )
             } )
             .catch( console.warn )
+    }
+
+    ngOnDestroy(): void {
+        if ( this.stationsSubscription ) this.stationsSubscription.unsubscribe
+        if ( this.selectedStationsSubscription ) this.selectedStationsSubscription.unsubscribe
     }
 
     loadLayer( layerId: string, featureCollection: any ): Promise<void> {
@@ -142,11 +160,14 @@ export class StationSelectionContentMapComponent implements AfterViewInit {
 
     toggleStationActive( id: string|null, toggle: boolean ) {
         if ( this.activeStationId ) this.stationLayer[ this.activeStationId ]._icon.classList.toggle( 'active', false )
+
+        if ( id && !this.stationLayer[ id ] ) return
         if ( id ) this.stationLayer[ id ]._icon.classList.toggle( 'active', toggle )
         this.activeStationId = id
     }
 
     toggleStationSelected( id: string, toggle: boolean ) {
+        if ( !this.stationLayer[ id ] ) return
         this.stationLayer[ id ]._icon.classList.toggle( 'selected', toggle )
     }
 
