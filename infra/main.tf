@@ -169,7 +169,8 @@ module "apim" {
 module "container_apps" {
   count  = var.enable_container_apps ? 1 : 0
   source = "./modules/container-apps"
-
+  appinsights_connection_string   = module.monitoring.appinsights_connection_string
+  appinsights_instrumentation_key = module.monitoring.appinsights_instrumentation_key
   app_name                     = var.app_name
   app_env                      = var.app_env
   location                     = var.location
