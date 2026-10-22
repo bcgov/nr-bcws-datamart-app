@@ -13,10 +13,6 @@ resource "azurerm_resource_group" "main" {
   }
 }
 
-locals {
-  effective_application_alert_emails = length(var.application_alert_emails) > 0 ? var.application_alert_emails : ""
-}
-
 # -------------
 # Modules based on Dependency
 # -------------
@@ -208,7 +204,7 @@ module "app_alerting" {
   location                              = var.location
   common_tags                           = var.common_tags
   enable_alerts                         = var.enable_application_alerts
-  alert_emails                          = local.effective_application_alert_emails
+  alert_emails                          = var.application_alert_emails
   application_insights_id               = module.monitoring.appinsights_resource_id
   log_analytics_workspace_id            = module.monitoring.log_analytics_workspace_id
   enable_app_service_backend            = var.enable_app_service_backend
