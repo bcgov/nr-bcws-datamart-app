@@ -1,118 +1,68 @@
-<aside class="station-selection-station-list">
-    <div class="station-selection-station-list__count">
-        {{ sortedStations.length }} stations
-    </div>
+<div class="description">{{ listDescription }}</div>
 
-    <nrcl-row-list-desktop>
-        <mat-table
-            [dataSource]="sortedStations | paginate: {
-                id: 'station-selection-list',
-                itemsPerPage: pageSize,
-                currentPage: pageNumber,
-                totalItems: sortedStations.length
-            }"
+<div class="header">
+    <mat-checkbox class="select-all"
+        [checked]="areAllSelected"
+        (change)="onSelectAllClick()"
+    >
+        Select All
+    </mat-checkbox>
+
+    <nrcl-button tertiary
+        [label]="sortButton"
+        [attr.aria-label]="sortLabel"
+        [matMenuTriggerFor]="sortMenu"
+        iconRight="expand_more"
+    ></nrcl-button>
+
+    <mat-menu #sortMenu="matMenu" class="station-sorting-menu">
+        <nrcl-button tertiary        
+            label="Name (A-Z)"
+            (click)="setSort('nameAsc')"
+        ></nrcl-button>
+        
+        <nrcl-button tertiary 
+            label="Name (Z-A)"
+            (click)="setSort('nameDesc')"
+        ></nrcl-button>
+        
+        <nrcl-button tertiary 
+            label="Code (Low-High)"
+            (click)="setSort('codeAsc')"
+        ></nrcl-button>
+        
+        <nrcl-button tertiary 
+            label="Code (High-Low)"
+            (click)="setSort('codeDesc')"
+        ></nrcl-button>
+    </mat-menu>
+</div>
+
+<div class="list">
+    @for ( station of sortedStations; track station.properties.WEATHER_STATION_GUID ) {
+        <div class="station"
+            (click)="onStationSelectClick(station)"
         >
-            <ng-container matColumnDef="selected">
-                <mat-header-cell *matHeaderCellDef>
-                    <mat-checkbox
-                        [checked]="allVisibleSelected"
-                        (change)="toggleSelectAll()"
-                    ></mat-checkbox>
-                </mat-header-cell>
+            <mat-checkbox
+                [checked]="isSelected(station)"
+            ></mat-checkbox>
 
-                <mat-cell *matCellDef="let station">
-                    <mat-checkbox
-                        [checked]="isSelected(station)"
-                        (change)="toggleStation(station)"
-                    ></mat-checkbox>
-                </mat-cell>
-            </ng-container>
+            <div class="content">
+                <nrcl-button anchor
+                    [label]="station.properties.STATION_NAME"
+                    [attr.aria-label]="'View details for station ' + station.properties.STATION_NAME"
+                ></nrcl-button>
 
-            <ng-container matColumnDef="station">
-                <mat-header-cell *matHeaderCellDef>
-                    <div class="station-selection-station-list__controls">
-                        <div class="station-selection-station-list__select-all">
-                            <span class="station-selection-station-list__select-all-label">
-                                Select All
-                            </span>
-                        </div>
+                <div class="details">
+                    <span>
+                        Station Code: {{ station.properties.STATION_CODE || '-' }}
+                    </span>
 
-                        <button class="station-selection-station-list__sort"
-                            [matMenuTriggerFor]="sortMenu"
-                            [attr.aria-label]="'Sort stations. Current sort: ' + sortLabel"
-                        >
-                            Sort: {{ sortLabel }}
-
-                            <nrcl-icon>expand_more</nrcl-icon>
-                        </button>
-
-                        <mat-menu #sortMenu="matMenu">
-                            <button mat-menu-item (click)="setSort('nameAsc')">
-                                Name (A-Z)
-                            </button>
-
-                            <button mat-menu-item (click)="setSort('nameDesc')">
-                                Name (Z-A)
-                            </button>
-
-                            <button mat-menu-item (click)="setSort('codeAsc')">
-                                Code (Low-High)
-                            </button>
-
-                            <button mat-menu-item (click)="setSort('codeDesc')">
-                                Code (High-Low)
-                            </button>
-                        </mat-menu>
-                    </div>
-                </mat-header-cell>
-
-                <mat-cell *matCellDef="let station">
-                    <div class="station-row"
-                        [class.station-row--selected]="isSelected(station)"
-                    >
-                        <div class="station-row__content">
-                            <button
-                                type="button"
-                                class="station-row__name"
-                                [attr.aria-label]="'View details for station ' + display(station.properties.STATION_NAME)">
-
-                                {{ display(station.properties.STATION_NAME) }}
-                            </button>
-
-                            <div class="station-row__details">
-                                <span>
-                                    Station Code: {{ display(station.properties.STATION_CODE) }}
-                                </span>
-
-                                <span>
-                                    Acronym: {{ display(station.properties.STATION_ACRONYM) }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </mat-cell>
-            </ng-container>
-
-            <mat-header-row *matHeaderRowDef="[ 'selected', 'station' ]; sticky: true"></mat-header-row>
-
-            <mat-row *matRowDef="let row; columns: [ 'selected', 'station' ];"></mat-row>
-        </mat-table>
-    </nrcl-row-list-desktop>
-
-    <div class="station-selection-station-list__showing">
-        Showing:
-        {{ startRow }}-{{ endRow }}
-        of
-        {{ sortedStations.length }}
-        stations
-    </div>
-
-    <nrcl-row-list-pagination
-        paginationId="station-selection-list"
-        [pageSize]="pageSize"
-        [pageNumber]="pageNumber"
-        [rowCount]="sortedStations.length"
-        (pageNumberChange)="onPageNumberChange($event)"
-        (pageSizeChange)="onPageSizeChange($event)">
-    </nrcl-row-list-pagination>
-</aside>
+                    <span>
+                        Acronym: {{ station.properties.STATION_ACRONYM || '-' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
+</div>
