@@ -1,6 +1,4 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DesktopViewDirective, DeviceViewComponent, IconComponent, MobileViewDirective, TabComponent, TabContentDirective, TabGroupComponent, TabLabelDirective } from '@bcgov/nr-ngx-component-lib';
 import { StationSelectionContentListComponent } from './list/station-selection-content-list.component';
 import { StationSelectionContentMapComponent } from './map/station-selection-content-map.component';
@@ -23,23 +21,4 @@ import { StationSelectionContentMapComponent } from './map/station-selection-con
         TabLabelDirective,
     ]
 })
-export class StationSelectionContentComponent {
-    activeMobileTab: 'list' | 'map' = 'list';
-
-    isMobile = false;
-
-    private readonly destroyRef = inject(DestroyRef);
-
-    constructor(
-        private readonly breakpointObserver: BreakpointObserver,
-        private readonly cdr: ChangeDetectorRef,
-    ) {
-        this.breakpointObserver
-            .observe(['(max-width: 992px)'])
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((result) => {
-                this.isMobile = result.matches;
-                this.cdr.markForCheck();
-            });
-    }
-}
+export class StationSelectionContentComponent {}

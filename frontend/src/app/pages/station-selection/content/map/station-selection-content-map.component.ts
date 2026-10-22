@@ -6,16 +6,15 @@ import {
     ElementRef,
     EnvironmentInjector,
     OnDestroy,
-    ViewChild,
     createComponent,
     inject
 } from '@angular/core';
 // import * as L from 'leaflet';
 import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
+import { Subscription } from 'rxjs';
 import { SelectedStationsService } from '../../../../services/selected-stations.service';
 import { StationDataService } from '../../../../services/station-data.service';
 import { StationSelectionContentMapInformationPanelComponent } from './information-panel/station-selection-content-map-information-panel.component';
-import { Subscription } from 'rxjs';
 
 declare const SMK: any;
 

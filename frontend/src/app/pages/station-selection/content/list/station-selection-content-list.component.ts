@@ -2,8 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit }
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
-import { ButtonComponent, IconComponent, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
-import { NgxPaginationModule } from 'ngx-pagination';
+import { ButtonComponent } from '@bcgov/nr-ngx-component-lib';
 import { SelectedStationsService } from '../../../../services/selected-stations.service';
 import { GeoJsonPoint, StationDataService, WeatherStation } from '../../../../services/station-data.service';
 
@@ -15,13 +14,9 @@ type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
     styleUrl: './station-selection-content-list.component.scss',
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
-        RowListDesktopComponent,
         MatTableModule,
         MatCheckboxModule,
-        RowListPaginationComponent,
-        NgxPaginationModule,
         MatMenuModule,
-        IconComponent,
         ButtonComponent
     ]
 })
