@@ -1,18 +1,19 @@
 <section class="station-selection-filters">
     <div class="filter-toolbar">
-        <button
-            type="button"
-            class="filters-toggle-button"
-            (click)="toggleFilters()">
-
-            <span>
-                Filters{{ activeFilterCount ? ' (' + activeFilterCount + ')' : '' }}
-            </span>
-
-            <nrcl-icon>
-                {{ filtersExpanded ? 'expand_less' : 'expand_more' }}
-            </nrcl-icon>
-        </button>
+        @if ( filtersExpanded ) {
+            <nrcl-button tertiary
+                [label]="'Filters ' + (activeFilterCount ? ' (' + activeFilterCount + ')' : '')"            
+                (click)="onFiltersClick()"
+                iconRight="expand_less"
+            ></nrcl-button>
+        }
+        @else {
+            <nrcl-button tertiary
+                [label]="'Filters ' + (activeFilterCount ? ' (' + activeFilterCount + ')' : '')"            
+                (click)="onFiltersClick()"
+                iconRight="expand_more"
+            ></nrcl-button>
+        }
 
         <nrcl-filter-search
             placeholder="Search stations"
@@ -159,7 +160,7 @@
                 <div class="filter-actions">
                     @if (isMobileView) {
                         <nrcl-button primary
-                            (click)="toggleFilters()">
+                            (click)="onFiltersClick()">
                             Apply filters
                         </nrcl-button>
                     }
