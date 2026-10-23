@@ -35,8 +35,6 @@ locals {
       virtual_network_subnet_id = null
       headers = {
         x_azure_fdid      = [var.frontend_frontdoor_resource_guid]
-        x_forwarded_for   = []
-        x_forwarded_host  = []
       }
     }
     ] : [
