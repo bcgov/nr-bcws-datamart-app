@@ -117,6 +117,7 @@ module "backend" {
   backend_subnet_id                       = module.network.app_service_subnet_id
   common_tags                             = var.common_tags
   enable_frontdoor                        = var.enable_frontdoor
+  vivid_cidr                              = var.vivid_cidr
   fabric_sql_connection_string            = var.fabric_sql_connection_string
   frontend_frontdoor_resource_guid        = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
   frontend_possible_outbound_ip_addresses = var.enable_app_service_frontend ? module.frontend[0].possible_outbound_ip_addresses : ""

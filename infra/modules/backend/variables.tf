@@ -195,3 +195,10 @@ variable "fabric_sql_connection_string"  {
   type = string
   default = ""
 }
+
+variable "vivid_cidr" {
+  description = "Vivid CIDR block, used to restrict access to DEV"
+  type = string
+  default = ""
+}
+
