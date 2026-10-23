@@ -48,7 +48,6 @@ locals {
       priority    = 100
       service_tag = "AzureFrontDoor.Backend"
       ip_address  = null
-
       virtual_network_subnet_id = null
       headers = {
         x_azure_fdid      = [var.frontend_frontdoor_resource_guid]
@@ -61,10 +60,10 @@ locals {
       action                    = "Allow"
       name                      = "AllowVivid"
       priority                  = 200
-      ip_address                = var.vivid_cidr
       service_tag               = null
+      ip_address                = var.vivid_cidr
       virtual_network_subnet_id = null
-      headers                   = null
+      headers                   = {}
     }
   ] : [
     {
