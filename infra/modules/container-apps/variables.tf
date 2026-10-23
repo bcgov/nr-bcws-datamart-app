@@ -1,4 +1,4 @@
-# Container Apps Module Variables - Backend Only
+# Container Apps Module Variables - Backend Only (Data API builder)
 
 variable "app_env" {
   description = "Application environment (dev, test, prod)"
@@ -13,27 +13,13 @@ variable "app_name" {
 }
 
 variable "app_service_frontend_url" {
-  description = "URL of the App Service frontend for CORS configuration"
+  description = "URL of the App Service frontend. Used as the CORS origin of the API. Empty allows any origin."
   type        = string
-  nullable    = false
-}
-
-variable "appinsights_connection_string" {
-  description = "Application Insights connection string"
-  type        = string
-  sensitive   = true
-  nullable    = false
-}
-
-variable "appinsights_instrumentation_key" {
-  description = "Application Insights instrumentation key"
-  type        = string
-  sensitive   = true
   nullable    = false
 }
 
 variable "backend_image" {
-  description = "Container image for the backend API"
+  description = "Container image for the backend API (the Data API builder image built from backend/)"
   type        = string
   nullable    = false
 }
@@ -64,17 +50,23 @@ variable "container_memory" {
   nullable    = false
 }
 
-variable "database_name" {
-  description = "Name of the database"
-  type        = string
+variable "dab_port" {
+  description = "Port that Data API builder listens on inside the container."
+  type        = number
+  default     = 5000
   nullable    = false
 }
 
-variable "db_master_password" {
-  description = "PostgreSQL master password"
+variable "dab_runtime_mode" {
+  description = "Data API builder host mode (production or development)."
   type        = string
-  sensitive   = true
+  default     = "production"
   nullable    = false
+
+  validation {
+    condition     = contains(["production", "development"], var.dab_runtime_mode)
+    error_message = "dab_runtime_mode must be production or development."
+  }
 }
 
 variable "enable_system_assigned_identity" {
@@ -84,43 +76,17 @@ variable "enable_system_assigned_identity" {
   nullable    = false
 }
 
+variable "fabric_sql_connection_string" {
+  description = "Connection string of the Microsoft Fabric SQL analytics endpoint that Data API builder reads from."
+  type        = string
+  sensitive   = true
+  nullable    = false
+}
+
 variable "location" {
   description = "Azure region where resources will be deployed"
   type        = string
   nullable    = false
-}
-
-variable "log_level" {
-  description = "Backend Winston/Nest log level for structured application logs that can flow to Application Insights."
-  type        = string
-  default     = "info"
-
-  validation {
-    condition     = contains(["error", "warn", "info", "http", "verbose", "debug", "silly"], var.log_level)
-    error_message = "log_level must be one of: error, warn, info, http, verbose, debug, silly."
-  }
-}
-
-variable "http_access_log_mode" {
-  description = "Controls request access logging written to container stdout for LAW ingestion. Supported values: off, failures, all."
-  type        = string
-  default     = "failures"
-
-  validation {
-    condition     = contains(["off", "failures", "all"], var.http_access_log_mode)
-    error_message = "http_access_log_mode must be one of: off, failures, all."
-  }
-}
-
-variable "slow_query_log_threshold_ms" {
-  description = "Emit Prisma slow-query diagnostics to container stdout when query duration meets or exceeds this threshold in milliseconds. Set to -1 to disable."
-  type        = number
-  default     = 1000
-
-  validation {
-    condition     = var.slow_query_log_threshold_ms >= -1
-    error_message = "slow_query_log_threshold_ms must be greater than or equal to -1."
-  }
 }
 
 variable "log_analytics_workspace_id" {
@@ -140,29 +106,6 @@ variable "min_replicas" {
   description = "Minimum number of replicas for backend"
   type        = number
   default     = 0 # Allow scale to zero for Consumption workload
-  nullable    = false
-}
-variable "migrations_image" {
-  description = "Container image for database migrations (Flyway)"
-  type        = string
-  nullable    = false
-}
-
-variable "postgres_host" {
-  description = "PostgreSQL host endpoint"
-  type        = string
-  nullable    = false
-}
-
-variable "backend_postgres_host" {
-  description = "PostgreSQL host endpoint used by the backend container at runtime."
-  type        = string
-  nullable    = false
-}
-
-variable "postgresql_admin_username" {
-  description = "PostgreSQL admin username"
-  type        = string
   nullable    = false
 }
 

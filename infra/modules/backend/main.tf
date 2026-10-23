@@ -38,7 +38,7 @@ module "backend_site" {
     always_on                               = true
     container_registry_use_managed_identity = local.api_registry_is_acr
     minimum_tls_version                     = "1.3"
-    health_check_path                       = "/api/health"
+    health_check_path                       = "/"
     ftps_state                              = "Disabled"
 
     ip_restriction_default_action = "Allow"
@@ -59,22 +59,16 @@ module "backend_site" {
   }
 
   app_settings = {
-    NODE_ENV                       = var.node_env
-    PORT                           = "80"
-    LOG_LEVEL                      = var.log_level
-    HTTP_ACCESS_LOG_MODE           = var.http_access_log_mode
-    DB_SLOW_QUERY_LOG_THRESHOLD_MS = tostring(var.slow_query_log_threshold_ms)
-    OTEL_SERVICE_NAME              = "${var.app_name}-backend"
-    OTEL_RESOURCE_ATTRIBUTES       = "deployment.environment.name=${var.app_env}"
-    DOCKER_ENABLE_CI               = "true"
+    # Data API builder listens on port 5000 inside the container.
+    WEBSITES_PORT                = "5000"
+    FABRIC_SQL_CONNECTION_STRING = var.fabric_sql_connection_string
+    DAB_RUNTIME_MODE             = var.dab_runtime_mode
+    DAB_CORS_ORIGIN              = "*"
+    DOCKER_ENABLE_CI             = "true"
     # Health check eviction time in minutes; the AVM module has no site_config equivalent.
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES   = "2"
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY        = var.appinsights_instrumentation_key
-    POSTGRES_HOST                         = var.postgres_host
-    POSTGRES_USER                         = var.postgresql_admin_username
-    POSTGRES_PASSWORD                     = var.db_master_password
-    POSTGRES_DATABASE                     = var.database_name
     WEBSITE_SKIP_RUNNING_KUDUAGENT        = "false"
     WEBSITES_ENABLE_APP_SERVICE_STORAGE   = "false"
     WEBSITE_ENABLE_SYNC_UPDATE_SITE       = "1"

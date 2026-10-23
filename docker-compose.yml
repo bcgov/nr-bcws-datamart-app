@@ -48,30 +48,25 @@ services:
         condition: service_completed_successfully
     volumes: ["./output:/output"]
 
+  # Data API builder (DAB) serving Microsoft Fabric data. Set FABRIC_SQL_CONNECTION_STRING in your
+  # shell or in a root .env file. See backend/README.md for the connection string formats.
   backend:
     container_name: backend
-    depends_on:
-      migrations:
-        condition: service_completed_successfully
     environment:
-      <<: *postgres-vars
-      NODE_ENV: development
-      PORT: 3001
-      POSTGRES_SSLMODE: disable
+      FABRIC_SQL_CONNECTION_STRING: ${FABRIC_SQL_CONNECTION_STRING:-}
+      DAB_RUNTIME_MODE: ${DAB_RUNTIME_MODE:-development}
+      DAB_CORS_ORIGIN: ${DAB_CORS_ORIGIN:-*}
     image: ${BACKEND_IMAGE:-backend}
     build:
       context: ./backend
-    ports: ["3001:3001"]
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/api"]
-    working_dir: "/app"
+    ports: ["3001:5000"]
 
   frontend:
     container_name: frontend
     build:
       context: ./frontend
     environment:
-      VITE_BACKEND_URL: http://backend:3001
+      VITE_BACKEND_URL: http://backend:5000
       VITE_PORT: 3000
       NODE_ENV: development
       LOG_LEVEL: debug

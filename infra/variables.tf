@@ -132,6 +132,19 @@ variable "enable_database_migrations_aci" {
   default     = true
 }
 
+variable "fabric_sql_connection_string" {
+  description = <<-EOT
+  Connection string of the Microsoft Fabric SQL analytics endpoint that the backend (Data API builder) reads from.
+
+  The Authentication keyword decides how the backend signs in. To use the managed identity of the backend, use
+  "Authentication=Active Directory Managed Identity" and add the identity (see the backend_managed_identity_principal_id
+  output) to the Fabric workspace. Alternatively use a service principal with "Authentication=Active Directory Service Principal".
+  EOT
+  type        = string
+  sensitive   = true
+  nullable    = false
+}
+
 variable "flyway_image" {
   description = "The image for the Flyway container"
   type        = string
@@ -250,39 +263,6 @@ variable "log_analytics_sku" {
   default     = "PerGB2018"
 }
 
-variable "backend_log_level" {
-  description = "Winston/Nest log level for structured backend application logs that are eligible for AppTraces export."
-  type        = string
-  default     = "info"
-
-  validation {
-    condition     = contains(["error", "warn", "info", "http", "verbose", "debug", "silly"], var.backend_log_level)
-    error_message = "backend_log_level must be one of: error, warn, info, http, verbose, debug, silly."
-  }
-}
-
-variable "backend_http_access_log_mode" {
-  description = "Controls backend request access logs written to container stdout for LAW ingestion. Supported values: off, failures, all."
-  type        = string
-  default     = "failures"
-
-  validation {
-    condition     = contains(["off", "failures", "all"], var.backend_http_access_log_mode)
-    error_message = "backend_http_access_log_mode must be one of: off, failures, all."
-  }
-}
-
-variable "backend_slow_query_log_threshold_ms" {
-  description = "Emit backend Prisma slow-query diagnostics to container stdout when query duration meets or exceeds this threshold in milliseconds. Set to -1 to disable."
-  type        = number
-  default     = 1000
-
-  validation {
-    condition     = var.backend_slow_query_log_threshold_ms >= -1
-    error_message = "backend_slow_query_log_threshold_ms must be greater than or equal to -1."
-  }
-}
-
 variable "enable_application_alerts" {
   description = "Whether application alert resources should be created when alert recipients are configured."
   type        = bool
@@ -315,13 +295,6 @@ variable "application_database_issue_alert_threshold" {
     condition     = var.application_database_issue_alert_threshold >= 1
     error_message = "application_database_issue_alert_threshold must be greater than or equal to 1."
   }
-}
-
-variable "backend_postgres_host_override" {
-  description = "Optional override for the backend application's PostgreSQL host. Use only when intentionally testing startup failures caused by database connectivity issues."
-  type        = string
-  default     = null
-  nullable    = true
 }
 
 variable "app_service_http_5xx_alert_threshold" {

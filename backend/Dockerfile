@@ -1,45 +1,25 @@
-# Build
-FROM node:24.20.0-slim AS build
+# Data API builder (DAB) service that exposes Microsoft Fabric data as REST, GraphQL and MCP endpoints.
+#
+# The image is configured entirely through environment variables, so the same image runs locally
+# and in Azure:
+#   FABRIC_SQL_CONNECTION_STRING  Required. Connection string of the Fabric SQL analytics endpoint.
+#   DAB_RUNTIME_MODE              Optional. "production" (default) or "development".
+#   DAB_CORS_ORIGIN               Optional. Browser origin allowed to call the API. Defaults to "*".
+#
+# Pin DAB_VERSION to a tag listed at https://mcr.microsoft.com/v2/azure-databases/data-api-builder/tags/list
+ARG DAB_VERSION=2.0.12
+FROM mcr.microsoft.com/azure-databases/data-api-builder:${DAB_VERSION}
 
-# Prisma requires OpenSSL/libssl detection during generate/build.
-RUN apt-get update -y \
-	&& apt-get install -y --no-install-recommends openssl libssl3 ca-certificates \
-	&& rm -rf /var/lib/apt/lists/*
+# Lets developers remove old local builds of this image without touching other images.
+LABEL app="datamart-dab"
 
-# Copy, build static files; see .dockerignore for exclusions
-WORKDIR /app
-COPY . ./
-ENV PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x
-RUN npm run deploy
+COPY dab-config.json /App/dab-config.json
 
-# Dependencies
-FROM node:24.20.0-slim AS dependencies
+# "production" hides development-only features. Override with -e DAB_RUNTIME_MODE=development locally.
+ENV DAB_RUNTIME_MODE=production
 
-# Prisma (and some native deps) expect OpenSSL/libssl present.
-RUN apt-get update -y \
-	&& apt-get install -y --no-install-recommends openssl libssl3 ca-certificates \
-	&& rm -rf /var/lib/apt/lists/*
+# The API serves public, read-only data. Terraform narrows this to the frontend URL in Azure.
+ENV DAB_CORS_ORIGIN=*
 
-# Copy, build static files; see .dockerignore for exclusions
-WORKDIR /app
-COPY . ./
-ENV PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x
-RUN npm ci --ignore-scripts --no-update-notifier --omit=dev
-
-# Deploy using minimal Distroless image
-FROM node:24.20.0
-ENV NODE_ENV=production
-
-# Copy app and dependencies
-WORKDIR /app
-COPY --from=dependencies /app/node_modules ./node_modules
-COPY --from=build /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=build /app/node_modules/prisma ./node_modules/prisma
-COPY --from=build /app/dist ./dist
-
-EXPOSE 3001
-HEALTHCHECK --start-period=2s --start-interval=5s --interval=30s --timeout=3s CMD curl -f http://localhost:3001/api
-
-
-CMD ["--require", "/app/dist/instrumentation.js", "--max-old-space-size=250", "/app/dist/main"]
+# DAB listens on port 5000 by default.
+EXPOSE 5000
