@@ -3,12 +3,16 @@
         label="Start date"
         [value]="filter.startDate"
         (valueChange)="onStartDateChange( $event )"
+        [max]="endDateLess1"
+        [clear]="false"
     ></nrcl-filter-date>
 
     <nrcl-filter-date
         label="End date"
         [value]="filter.endDate"
         (valueChange)="onEndDateChange( $event )"
+        [min]="startDatePlus1"
+        [clear]="false" 
     ></nrcl-filter-date>
 
     <nrcl-filter-select
