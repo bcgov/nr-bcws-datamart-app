@@ -16,9 +16,8 @@ public class DownloadController {
     private final DownloadService downloadService;
 
     @PostMapping
-    public ResponseEntity<DownloadResponse> createDownload(
-            @RequestBody DownloadRequest request) {
+    public ResponseEntity<DownloadResponse> createDownload(@RequestBody DownloadRequest request) {
 
-        return ResponseEntity.ok( downloadService.createDownload(request));
+        return ResponseEntity.ok(downloadService.createDownload(request));
     }
 }
