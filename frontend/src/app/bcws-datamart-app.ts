@@ -88,6 +88,9 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
     currentItemId?: string
 
     ngOnInit() {
+        this.configurationService.update( { interfaceStyle: '2026' } )
+        this.updateDisplayMode()
+
         this.routeSubscription = this.router.events
             .pipe(
                 filter( event => event instanceof NavigationEnd )
@@ -97,7 +100,6 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
             } )
 
         this.showDisclaimerDialog()
-        this.updateDisplayMode()
     }
 
     ngOnDestroy() {
