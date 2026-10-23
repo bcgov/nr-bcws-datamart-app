@@ -191,11 +191,6 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "frontend_firewall_policy" {
         type    = "Microsoft_BotManagerRuleSet"
         version = "1.1"
         action  = "Block"
-      },
-      {
-        type    = "BotProtection"
-        version = "preview-0.1"
-        action  = "Block"
       }
     ] : []
     content {

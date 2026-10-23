@@ -96,19 +96,6 @@ variable "container_registry_url" {
   default     = "https://ghcr.io"
 }
 
-variable "database_name" {
-  description = "The name of the PostgreSQL database."
-  type        = string
-  nullable    = false
-}
-
-variable "db_master_password" {
-  description = "The password for the PostgreSQL admin user."
-  type        = string
-  sensitive   = true
-  nullable    = false
-}
-
 
 variable "frontend_frontdoor_resource_guid" {
   description = "The resource GUID for the Front Door service associated with the frontend App Service."
@@ -179,19 +166,6 @@ variable "node_env" {
   default     = "production"
 }
 
-variable "postgres_host" {
-  description = "The FQDN of the PostgreSQL server."
-  type        = string
-  nullable    = false
-}
-
-variable "postgresql_admin_username" {
-  description = "The admin username for the PostgreSQL server."
-  type        = string
-  nullable    = false
-}
-
-
 variable "repo_name" {
   description = "The repository name, used for resource naming."
   type        = string
@@ -215,3 +189,16 @@ variable "enable_telemetry" {
   type        = bool
   default     = false
 }
+
+variable "fabric_sql_connection_string"  {
+  description = "Connection between datamart API and fabric"
+  type = string
+  default = ""
+}
+
+variable "vivid_cidr" {
+  description = "Vivid CIDR block, used to restrict access to DEV"
+  type = string
+  default = ""
+}
+
