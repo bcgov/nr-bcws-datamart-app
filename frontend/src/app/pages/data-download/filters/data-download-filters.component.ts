@@ -30,10 +30,10 @@ export function emptyFilter(): Filter {
 }
 
 export function initialFilter( dailyColumns: string[] ): Filter {
-    let d = moment().format( DATE_FORMATS.datePickerInput )
+    let e = moment(), s = e.clone().subtract( 1, 'day' )
 	return {
-        startDate: d,
-        endDate: d,
+        startDate: s.format( DATE_FORMATS.datePickerInput ),
+        endDate: e.format( DATE_FORMATS.datePickerInput ),
         hourlyColumns: [],
         dailyColumns: dailyColumns,
         metadataColumns: [],
@@ -99,4 +99,12 @@ export class DataDownloadFiltersComponent {
 			this.filterChange.emit({...this.filter})
 		}, 200)
 	}
+
+    get endDateLess1() {
+        return moment( this.filter.endDate ).subtract( 1, 'day' ).format( DATE_FORMATS.datePickerInput )
+    }
+
+    get startDatePlus1() {
+        return moment( this.filter.startDate ).add( 1, 'day' ).format( DATE_FORMATS.datePickerInput )
+    }
 }
