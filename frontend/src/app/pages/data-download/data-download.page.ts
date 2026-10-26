@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { ButtonComponent, GapComponent, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
+import { ButtonComponent, GapComponent, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
 import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
 import { DataDownloadFiltersComponent, Filter, initialFilter } from './filters/data-download-filters.component';
 import { ROUTE } from '../../bcws-datamart-app.routes';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DataDownloadListDailyComponent } from './list/data-download-list-daily.component';
 import { DataDownloadListHourlyComponent } from './list/data-download-list-hourly.component';
 import { CodeDescriptionHeading, CodeTableService } from '../../services/code-table.service';
+import { SelectedStationsService } from '../../services/selected-stations.service';
 
 @Component({
     selector: 'data-download-page',
@@ -28,6 +29,9 @@ import { CodeDescriptionHeading, CodeTableService } from '../../services/code-ta
 export class DataDownloadPage implements OnInit {
     router = inject(Router)
     codeTableService = inject(CodeTableService)
+    activatedRoute = inject(ActivatedRoute)
+    selectedStationsService = inject(SelectedStationsService)
+    snackbarUtilService = inject(SnackbarUtilService)
 
     filter: Filter = initialFilter( {
         dailyColumns: [ ...this.codeTableService.DAILY_WEATHER_OBSERVATIONS_COLUMNS.items.map( c => c.code ) ],
@@ -37,7 +41,15 @@ export class DataDownloadPage implements OnInit {
     dailyReportColumns: CodeDescriptionHeading[] = []
 
     ngOnInit(): void {
+        console.log( this.activatedRoute.snapshot.queryParamMap )
+
         this.onFilterChange( this.filter )
+
+        this.router.navigate([], {
+            relativeTo: this.activatedRoute, // Clears within the current route context
+            queryParams: {},        // Overwrites all parameters with an empty object
+            replaceUrl: true        // Overwrites history state so 'Back' doesn't re-apply parameters
+        });
     }
 
     onFilterChange( filter: Filter ) {
@@ -87,5 +99,23 @@ export class DataDownloadPage implements OnInit {
 
     onAddMoreStationsClick() {
         this.router.navigate( [ ROUTE.STATION_SELECTION ] )       
+    }
+
+    get enableCopyLink() {
+        return this.selectedStationsService.count > 0
+    }
+
+    onCopyLinkClick() {
+         const urlTree = this.router.createUrlTree([], {
+            relativeTo: this.activatedRoute,
+            queryParams: { promo: 'winter2026' },
+            queryParamsHandling: 'merge',
+            
+        });
+        let url = location.origin + this.router.serializeUrl( urlTree )
+        navigator.clipboard.writeText( url )
+            .then( () => {
+                this.snackbarUtilService.successful( `Copied URL to clipboard:\n${ url }`, 2500 )
+            } )
     }
 }

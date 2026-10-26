@@ -66,6 +66,8 @@
         <nrcl-button 
             label="Copy link"
             icon="link"
+            (click)="onCopyLinkClick()"
+            [disabled]="!enableCopyLink"
         ></nrcl-button>
     </div>
 </div>
