@@ -7,6 +7,25 @@ public class DownloadRequest {
     private List<DownloadQuery> queries;
     private String emailAddress;
     private boolean emailDownload;
+    private String startDate;
+    private String endDate;
+
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
 
     public List<DownloadQuery> getQueries() {
         return queries;

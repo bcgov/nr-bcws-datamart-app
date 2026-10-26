@@ -13,10 +13,20 @@ public final class Utils {
     }
 
     public static String generateGuid() {
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString().substring(0, 8);
     }
 
     public static String generateTimestamp() {
         return LocalDateTime.now().format(TIMESTAMP_FORMAT);
+    }
+
+    public static String generateZipFileName(String suffix, String startDate, String endDate) {
+
+        return String.format(
+                "bcws-weather-datamart_%s_%s_%s_%s.zip",
+                suffix,
+                startDate,
+                endDate,
+                generateGuid());
     }
 }
