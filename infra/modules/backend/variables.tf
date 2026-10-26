@@ -9,6 +9,29 @@ variable "api_image" {
   }
 }
 
+variable "download_api_image" {
+  description = "The Docker image for the Download API, including an explicit tag."
+  type        = string
+  nullable    = false
+
+  validation {
+    condition     = can(regex(":[^:/]+$", var.download_api_image))
+    error_message = "download_api_image must include an explicit tag."
+  }
+}
+
+variable "download_sync_threshold" {
+  description = "Maximum synchronous export row count."
+  type        = number
+  default     = 10000
+}
+
+variable "datamart_timeout_seconds" {
+  description = "Timeout in seconds for calls to Datamart API."
+  type        = number
+  default     = 30
+}
+
 variable "app_env" {
   description = "The deployment environment (e.g., dev, test, prod)."
   type        = string

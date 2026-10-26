@@ -118,6 +118,7 @@ module "backend" {
   source = "./modules/backend"
 
   api_image                               = var.api_image
+  download_api_image                      = var.download_api_image
   app_env                                 = var.app_env
   app_name                                = var.app_name
   app_service_sku_name_backend            = var.app_service_sku_name_backend
@@ -137,6 +138,9 @@ module "backend" {
   repo_name                               = var.repo_name
   resource_group_name                     = azurerm_resource_group.main.name
   resource_group_id                       = azurerm_resource_group.main.id
+
+  datamart_timeout_seconds = var.datamart_timeout_seconds
+  download_sync_threshold  = var.download_sync_threshold
 
   depends_on = [module.frontend]
 }

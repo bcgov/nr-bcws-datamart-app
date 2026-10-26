@@ -42,7 +42,7 @@ public class DownloadService {
     private final CsvService csvService;
     private final ZipService zipService;
 
-    private static final int PAGE_SIZE = 100;
+    private static final int PAGE_SIZE = 1000;
     private static final int MAX_SYNC_ROWS = 10000;
 
     public DownloadService(

@@ -7,6 +7,11 @@ variable "api_image" {
   type        = string
 }
 
+variable "download_api_image" {
+  description = "The image for the Download API container"
+  type        = string
+}
+
 variable "app_env" {
   description = "Application environment (dev, test, prod)"
   type        = string
