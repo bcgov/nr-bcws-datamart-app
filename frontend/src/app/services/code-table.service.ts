@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class CodeTableService {
-    DAILY_WEATHER_COLUMNS = new CodeTableHeading([
+    DAILY_WEATHER_OBSERVATIONS_COLUMNS = new CodeTableHeading([
         // weather observations
         { code: "recordType",           description: "Record type" },
         { code: "temperature",          description: "Temperature at noon",                 heading: "Temperature (°C)" },
@@ -12,7 +12,9 @@ export class CodeTableService {
         { code: "windSpeed",            description: "Wind speed at noon",                  heading: "Wind speed (km/h)" },
         { code: "windDirection",        description: "Wind direction at noon",              heading: "Wind direction (degrees)" },
         { code: "precipitation",        description: "Precipitation in previous 24 hours",  heading: "Daily precipitation (mm)" },
+    ])
 
+    DAILY_WEATHER_CALCULATIONS_COLUMNS = new CodeTableHeading([
         // fire weather calculations 
         { code: "dangerForest",         description: "Danger Forest Index (DFI)" },
         { code: "fineFuelMoistureCode", description: "Fine Fuel Moisture Code (FFMC)" },
@@ -25,7 +27,7 @@ export class CodeTableService {
         { code: "dailyRating",          description: "Daily Severity Rating (DSR)" },
     ])
 
-    HOURLY_WEATHER_COLUMNS = new CodeTableHeading([
+    HOURLY_WEATHER_OBSERVATIONS_COLUMNS = new CodeTableHeading([
         // weather observations
         { code: "temperature",              description: "Temperature",                     heading: "Temperature (°C)",                    style: 'numeric' },
         { code: "windSpeed",                description: "Wind speed",                      heading: "Wind speed (km/h)",                   style: 'numeric' },
@@ -33,12 +35,16 @@ export class CodeTableService {
         { code: "windGust",                 description: "Wind gust",                       heading: "Wind gust (km/hr)",                   style: 'numeric' },
         { code: "precipitation",            description: "Precipitation",                   heading: "Precipitation (mm)",                  style: 'numeric' },
         { code: "relativeHumidity",         description: "Relative humidity",               heading: "Relative humidity (%)",               style: 'numeric' },
+    ])
 
+    HOURLY_WEATHER_CALCULATIONS_COLUMNS = new CodeTableHeading([
         // fire weather calculations
         { code: "fineFuelMoistureCode",     description: "Fine Fuel Moisture Code (FFMC)" },
         { code: "initialSpreadIndex",       description: "Initial Spread Index (ISI)" },
         { code: "fireWeatherIndex",         description: "Fire Weather Index (FWI)" },
-
+    ])
+    
+    HOURLY_WEATHER_ADDITIONAL_COLUMNS = new CodeTableHeading([
         // ancillary observations
         { code: "snowDepth",                description: "Snow depth",                                                                      style: 'numeric' },
         { code: "snowDepthQuality",         description: "Snow depth quality" },

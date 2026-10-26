@@ -1,0 +1,11 @@
+<details #details [open]="open">
+    <summary>
+        <ng-content select="header"></ng-content>
+        <nrcl-icon small class="closed">expand_more</nrcl-icon>
+        <nrcl-icon small class="open">expand_less</nrcl-icon>
+    </summary>
+
+    <div class="content">        
+        <ng-content></ng-content>
+    </div>
+</details>

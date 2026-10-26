@@ -29,7 +29,9 @@ export class DataDownloadPage implements OnInit {
     router = inject(Router)
     codeTableService = inject(CodeTableService)
 
-    filter: Filter = initialFilter(  [ ...this.codeTableService.DAILY_WEATHER_COLUMNS.items.map( c => c.code ) ] )
+    filter: Filter = initialFilter( {
+        dailyColumns: [ ...this.codeTableService.DAILY_WEATHER_OBSERVATIONS_COLUMNS.items.map( c => c.code ) ]
+    } )
     hourlyReportColumns: CodeDescriptionHeading[] = []
     dailyReportColumns: CodeDescriptionHeading[] = []
 
@@ -40,24 +42,45 @@ export class DataDownloadPage implements OnInit {
     onFilterChange( filter: Filter ) {
         this.filter = { ...filter }
 
-        if ( this.filter.hourlyColumns.length == 0 ) {
-            this.hourlyReportColumns = []
-        }
-        else {
-            this.hourlyReportColumns = [
-                ...this.filter.hourlyColumns.map( c => this.codeTableService.HOURLY_WEATHER_COLUMNS.forCode( c )! ),
-                ...this.filter.metadataColumns.map( c => this.codeTableService.STATIONS_METADATA_COLUMNS.forCode( c )! )
-            ]
+        this.hourlyReportColumns = []
+        if ( this.filter.hourlyColumns.length > 0 ) {
+            this.codeTableService.HOURLY_WEATHER_OBSERVATIONS_COLUMNS.items.forEach( c => {
+                if ( this.filter.hourlyColumns.includes( c.code ) )
+                    this.hourlyReportColumns.push( c )
+            } )
+
+            this.codeTableService.HOURLY_WEATHER_CALCULATIONS_COLUMNS.items.forEach( c => {
+                if ( this.filter.hourlyColumns.includes( c.code ) )
+                    this.hourlyReportColumns.push( c )
+            } )
+
+            this.codeTableService.HOURLY_WEATHER_ADDITIONAL_COLUMNS.items.forEach( c => {
+                if ( this.filter.hourlyColumns.includes( c.code ) )
+                    this.hourlyReportColumns.push( c )
+            } )
+
+            this.codeTableService.STATIONS_METADATA_COLUMNS.items.forEach( c => {
+                if ( this.filter.metadataColumns.includes( c.code ) )
+                    this.hourlyReportColumns.push( c )
+            } )
         }
 
-        if ( this.filter.dailyColumns.length == 0 ) {
-            this.dailyReportColumns = []
-        }
-        else {
-            this.dailyReportColumns = [
-                ...this.filter.dailyColumns.map( c => this.codeTableService.DAILY_WEATHER_COLUMNS.forCode( c )! ),
-                ...this.filter.metadataColumns.map( c => this.codeTableService.STATIONS_METADATA_COLUMNS.forCode( c )! )
-            ]
+        this.dailyReportColumns = []
+        if ( this.filter.dailyColumns.length > 0 ) {
+            this.codeTableService.DAILY_WEATHER_OBSERVATIONS_COLUMNS.items.forEach( c => {
+                if ( this.filter.dailyColumns.includes( c.code ) )
+                    this.dailyReportColumns.push( c )
+            } )
+
+            this.codeTableService.DAILY_WEATHER_CALCULATIONS_COLUMNS.items.forEach( c => {
+                if ( this.filter.dailyColumns.includes( c.code ) )
+                    this.dailyReportColumns.push( c )
+            } )
+
+            this.codeTableService.STATIONS_METADATA_COLUMNS.items.forEach( c => {
+                if ( this.filter.metadataColumns.includes( c.code ) )
+                    this.dailyReportColumns.push( c )
+            } )
         }
     }
 
