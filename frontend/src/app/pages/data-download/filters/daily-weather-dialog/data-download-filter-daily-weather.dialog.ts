@@ -3,11 +3,10 @@ import {
     Component,
     inject
 } from '@angular/core';
-import { ButtonComponent, DialogBase, DialogComponent, GapComponent } from '@bcgov/nr-ngx-component-lib';
-import { CollapsibleSectionComponent } from '../../../../components/collapsible-section/collapsible-section.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { DataDownloadFilterCheckBoxesComponent } from '../filter-checkboxes/data-download-filter-checkboxes.component';
+import { ButtonComponent, DialogBase, DialogComponent, GapComponent } from '@bcgov/nr-ngx-component-lib';
 import { CodeTableService } from '../../../../services/code-table.service';
+import { DataDownloadFilterCheckBoxesComponent } from '../filter-checkboxes/data-download-filter-checkboxes.component';
 
 export type DataDownloadFilterDailyWeatherDialogConfig = {
     columns: string[]
