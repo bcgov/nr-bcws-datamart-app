@@ -1,8 +1,9 @@
 package ca.bc.gov.bcws.nrs.downloadapi.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -11,40 +12,78 @@ import com.fasterxml.jackson.databind.JsonNode;
 import ca.bc.gov.bcws.nrs.downloadapi.clients.DatamartApiClient;
 import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadQuery;
 import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadRequest;
-import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadResponse;
-import ca.bc.gov.bcws.nrs.downloadapi.models.QueryResult;
+import ca.bc.gov.bcws.nrs.downloadapi.utils.Utils;
+
 
 @Service
 public class DownloadService {
 
     private final DatamartApiClient datamartApiClient;
+    private final CsvService csvService;
+    private final ZipService zipService;
 
-    public DownloadService(DatamartApiClient datamartApiClient) {
+    public DownloadService(
+            DatamartApiClient datamartApiClient,
+            CsvService csvService,
+            ZipService zipService) {
+
         this.datamartApiClient = datamartApiClient;
+        this.csvService = csvService;
+        this.zipService = zipService;
     }
 
-    public DownloadResponse createDownload(DownloadRequest request) {
+    public byte[] createDownload(DownloadRequest request) throws IOException {
 
-        List<QueryResult> results = new ArrayList<>();
+        Map<String, byte[]> csvFiles = new HashMap<>();
+
+        boolean hasDaily = false;
+        boolean hasHourly = false;
 
         for (DownloadQuery downloadQuery : request.getQueries()) {
 
+            String queryName = downloadQuery.getName().toLowerCase();
+
+            if (queryName.contains("daily"))
+                hasDaily = true;
+
+            if (queryName.contains("hourly"))
+                hasHourly = true;
+
             JsonNode response = datamartApiClient.executeQuery(downloadQuery.getQuery());
 
-            QueryResult result = new QueryResult();
+            JsonNode items = response.path("data").elements().next().path("items");
 
-            result.setName(downloadQuery.getName());
-            result.setResponse(response);
+            byte[] csv = csvService.generateCsv(items);
 
-            results.add(result);
+            csvFiles.put(
+                    String.format(
+                            "bcws-weather-datamart-%s.csv",
+                            downloadQuery.getName()),
+                    csv);
         }
 
-        DownloadResponse downloadResponse = new DownloadResponse();
+        String suffix = determineSuffix(hasDaily, hasHourly);
 
-        downloadResponse.setRequestId(UUID.randomUUID());
-        downloadResponse.setStatus("COMPLETE");
-        downloadResponse.setResults(results);
+        String zipFileName = String.format(
+                "bcws-weather-datamart-%s_%s.zip",
+                suffix,
+                Utils.generateGuid());
 
-        return downloadResponse;
+        return zipService.createZip(csvFiles);
+    }
+
+
+    private String determineSuffix(boolean hasDaily, boolean hasHourly) {
+
+        if (hasDaily && hasHourly)
+            return "daily-hourly";
+
+        if (hasDaily)
+            return "daily";
+
+        if (hasHourly)
+            return "hourly";
+
+        return "download";
     }
 }

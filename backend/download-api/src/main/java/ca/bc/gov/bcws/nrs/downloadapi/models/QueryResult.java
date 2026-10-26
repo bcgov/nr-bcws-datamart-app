@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class QueryResult {
 
     private String name;
-    private JsonNode response;
+    private JsonNode items;
 
     public String getName() {
         return name;
@@ -15,11 +15,11 @@ public class QueryResult {
         this.name = name;
     }
 
-    public JsonNode getResponse() {
-        return response;
+    public JsonNode getItems() {
+        return items;
     }
 
-    public void setResponse(JsonNode response) {
-        this.response = response;
+    public void setItems(JsonNode items) {
+        this.items = items;
     }
 }

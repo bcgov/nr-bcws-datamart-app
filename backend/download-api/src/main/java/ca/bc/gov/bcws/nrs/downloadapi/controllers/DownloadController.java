@@ -1,9 +1,14 @@
 package ca.bc.gov.bcws.nrs.downloadapi.controllers;
 
 import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadRequest;
-import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadResponse;
 import ca.bc.gov.bcws.nrs.downloadapi.services.DownloadService;
 import lombok.RequiredArgsConstructor;
+
+import java.io.IOException;
+import java.io.IOException;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +21,15 @@ public class DownloadController {
     private final DownloadService downloadService;
 
     @PostMapping
-    public ResponseEntity<DownloadResponse> createDownload(@RequestBody DownloadRequest request) {
+    public ResponseEntity<byte[]> createDownload(@RequestBody DownloadRequest request)throws IOException {
 
-        return ResponseEntity.ok(downloadService.createDownload(request));
+        byte[] zip = downloadService.createDownload(request);
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"bcws-weather-datamart.zip\"")
+                .contentType(MediaType.parseMediaType("application/zip"))
+                .body(zip);
     }
 }
