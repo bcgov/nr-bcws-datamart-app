@@ -1,3 +1,13 @@
 :host {
     display: block;
+
+    .nrcl-filter-container {
+        label {
+            flex-grow: 1;
+        }
+
+        .nrcl-icon {
+            margin-right: -8px;
+        }
+    }
 }

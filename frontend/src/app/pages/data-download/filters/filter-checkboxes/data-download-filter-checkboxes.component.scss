@@ -1,0 +1,13 @@
+:host {
+    .prelude:not(:empty) {
+        padding: 8px 16px;
+    }
+
+    .fields {
+        display: grid;
+        grid-auto-flow: column;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: repeat( var( --rows ), auto );
+        padding: 0 16px;
+    }
+}

@@ -7,9 +7,10 @@ import {
     Output
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { DATE_FORMATS, FilterDateComponent, FilterSelectComponent, FiltersPanelComponent } from "@bcgov/nr-ngx-component-lib";
+import { DATE_FORMATS, FilterContainerComponent, FilterDateComponent, FilterSelectComponent, FiltersPanelComponent, IconComponent } from "@bcgov/nr-ngx-component-lib";
 import moment from "moment";
 import { CodeTableService } from "../../../services/code-table.service";
+import { DialogService } from "../../../services/dialog.service";
 
 export type Filter = {
 	startDate: string|undefined
@@ -29,14 +30,15 @@ export function emptyFilter(): Filter {
 	}
 }
 
-export function initialFilter( dailyColumns: string[] ): Filter {
+export function initialFilter( init: Partial<Filter> ): Filter {
     let e = moment(), s = e.clone().subtract( 1, 'day' )
 	return {
         startDate: s.format( DATE_FORMATS.datePickerInput ),
         endDate: e.format( DATE_FORMATS.datePickerInput ),
         hourlyColumns: [],
-        dailyColumns: dailyColumns,
+        dailyColumns: [],
         metadataColumns: [],
+        ...init
 	}
 }
 
@@ -47,13 +49,16 @@ export function initialFilter( dailyColumns: string[] ): Filter {
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
         FiltersPanelComponent,
-        FilterSelectComponent,
+        // FilterSelectComponent,
         FilterDateComponent,
+        FilterContainerComponent,
+        IconComponent,
         FormsModule,
     ]
 })
 export class DataDownloadFiltersComponent {
     codeTableService = inject(CodeTableService)
+    dialogService = inject(DialogService)
 
     @Input() filter: Filter = emptyFilter()
     
@@ -106,5 +111,68 @@ export class DataDownloadFiltersComponent {
 
     get startDatePlus1() {
         return moment( this.filter.startDate ).add( 1, 'day' ).format( DATE_FORMATS.datePickerInput )
+    }
+
+    onDailyWeatherClick() {
+        this.dialogService.openDataDownloadFilterDailyWeatherDialog({
+            columns: this.filter.dailyColumns
+        }).afterClosed().toPromise()
+            .then( res => {
+                if ( res == 'cancel' ) return
+
+                this.filter.dailyColumns = res!.columns
+		        this.emitFilterChange()
+            } )
+    }
+
+    get dailyWeatherFieldCount() {
+        if ( this.filter.dailyColumns.length == 1 ) {
+            return '1 field selected'        
+        } 
+        else {
+            return this.filter.dailyColumns.length + ' fields selected'        
+        }
+    }
+
+    onHourlyWeatherClick() {
+        this.dialogService.openDataDownloadFilterHourlyWeatherDialog({
+            columns: this.filter.hourlyColumns
+        }).afterClosed().toPromise()
+            .then( res => {
+                if ( res == 'cancel' ) return
+
+                this.filter.hourlyColumns = res!.columns
+		        this.emitFilterChange()
+            } )
+    }
+
+    get hourlyWeatherFieldCount() {
+        if ( this.filter.hourlyColumns.length == 1 ) {
+            return '1 field selected'        
+        } 
+        else {
+            return this.filter.hourlyColumns.length + ' fields selected'        
+        }
+    }
+
+    onStationMetadataClick() {
+        this.dialogService.openDataDownloadFilterStationMetadataDialog({
+            columns: this.filter.metadataColumns
+        }).afterClosed().toPromise()
+            .then( res => {
+                if ( res == 'cancel' ) return
+
+                this.filter.metadataColumns = res!.columns
+		        this.emitFilterChange()
+            } )
+    }
+
+    get stationMetadataFieldCount() {
+        if ( this.filter.metadataColumns.length == 1 ) {
+            return '1 field selected'        
+        } 
+        else {
+            return this.filter.metadataColumns.length + ' fields selected'        
+        }
     }
 }

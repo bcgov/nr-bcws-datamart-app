@@ -1,0 +1,22 @@
+<collapsible-section>
+    <header>
+        <mat-checkbox
+            [checked]="allHeaderChecked"
+            [indeterminate]="someHeaderChecked"
+            (change)="onHeaderCheckboxChange( $event.checked )"
+        >{{ headerTitle }}</mat-checkbox>
+    </header>
+
+    <div class="prelude">
+        <ng-content></ng-content>
+    </div>
+
+    <div class="fields">
+        @for ( field of fields; track field.code ) {
+            <mat-checkbox 
+                [(ngModel)]="checkbox[ field.code ]"
+                (change)="onCheckboxChange()"
+            >{{ field.description }}</mat-checkbox>
+        }
+    </div>
+</collapsible-section>
