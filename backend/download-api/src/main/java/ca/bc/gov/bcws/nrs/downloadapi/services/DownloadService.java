@@ -67,6 +67,7 @@ public class DownloadService {
 
         boolean hasDaily = false;
         boolean hasHourly = false;
+        int totalRows = 0;
 
         for (DownloadQuery downloadQuery : request.getQueries()) {
 
@@ -81,6 +82,23 @@ public class DownloadService {
             logger.info("Processing download query '{}'", downloadQuery.getName());
 
             JsonNode items = fetchAllItems(downloadQuery.getQuery());
+
+            totalRows += items.size();
+
+            if (totalRows > MAX_SYNC_ROWS) {
+
+                logger.warn(
+                    "Download exceeded synchronous row limit. Total rows processed: {}, limit: {}",
+                    totalRows,
+                    MAX_SYNC_ROWS);
+
+                throw new DownloadLimitExceededException(MAX_SYNC_ROWS);
+            }
+
+            logger.info("Query '{}' returned {} rows (running total: {})",
+                downloadQuery.getName(),
+                items.size(),
+                totalRows);
 
             byte[] csv = csvService.generateCsv(items);
 
@@ -133,9 +151,8 @@ public class DownloadService {
 
         boolean hasNextPage;
 
-        int rowCount = 0;
-
         int pageNumber = 1;
+        int queryRowCount = 0;
 
         do {
 
@@ -164,24 +181,15 @@ public class DownloadService {
             for (JsonNode item : items) {
 
                 allItems.add(item);
+                queryRowCount++;
 
-                rowCount++;
-
-                if (rowCount > MAX_SYNC_ROWS) {
-                    logger.warn( "Download exceeded synchronous row limit. Rows processed: {}, limit: {}",
-                        rowCount,
-                        MAX_SYNC_ROWS);
-
-                    throw new DownloadLimitExceededException(MAX_SYNC_ROWS);
-                }
                     
             }
 
-            logger.info(
-                    "Page {} returned {} rows (total processed: {})",
-                    pageNumber,
-                    items.size(),
-                    rowCount);
+            logger.info("Page {} returned {} rows (query total: {})",
+                pageNumber,
+                items.size(),
+                queryRowCount);
 
             hasNextPage = connection.path("hasNextPage").asBoolean();
 
@@ -192,7 +200,7 @@ public class DownloadService {
 
         } while (hasNextPage);
 
-        logger.info("Completed download query. Total rows fetched: {}", rowCount);
+        logger.info("Completed download query. Total rows fetched: {}",queryRowCount);
 
         return allItems;
     }
