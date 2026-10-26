@@ -146,6 +146,8 @@ jobs:
           echo "TF_VAR_api_image=ghcr.io/${{ github.repository }}/backend:${{ inputs.tag }}" >> "$GITHUB_ENV"
           echo "TF_VAR_frontend_image=ghcr.io/${{ github.repository }}/frontend:${{ inputs.tag }}" >> "$GITHUB_ENV"
           echo "TF_VAR_fabric_sql_connection_string=${{ secrets.FABRIC_SQL_CONNECTION_STRING }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_user_assigned_managed_identity_id=${{ secrets.USER_ASSIGNED_MANAGED_IDENTITY_ID }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_user_assigned_managed_identity_client_id=${{ secrets.USER_ASSIGNED_MANAGED_IDENTITY_CLIENT_ID }}" >> "$GITHUB_ENV"
 
           echo "TF_VAR_stack_prefix=${{ inputs.stack_prefix }}" >> "$GITHUB_ENV"
           echo "TF_VAR_app_env=${{ inputs.app_env }}" >> "$GITHUB_ENV"
