@@ -15,24 +15,27 @@
         [clear]="false" 
     ></nrcl-filter-date>
 
-    <nrcl-filter-select
+    <nrcl-filter-container
         label="Daily weather data"
-        [value]="filter.dailyColumns"
-        (valueChange)="onDailyColumnsChange( $event )"
-        [options]="codeTableService.DAILY_WEATHER_COLUMNS.items"
-    ></nrcl-filter-select>
+        (click)="onDailyWeatherClick()"
+    >
+        <label>{{ dailyWeatherFieldCount }}</label>
+        <nrcl-icon>chevron_right</nrcl-icon>
+    </nrcl-filter-container>
 
-    <nrcl-filter-select
+    <nrcl-filter-container
         label="Hourly weather data"
-        [value]="filter.hourlyColumns"
-        (valueChange)="onHourlyColumnsChange( $event )"
-        [options]="codeTableService.HOURLY_WEATHER_COLUMNS.items"
-    ></nrcl-filter-select>
+        (click)="onHourlyWeatherClick()"
+    >
+        <label>{{ hourlyWeatherFieldCount }}</label>
+        <nrcl-icon>chevron_right</nrcl-icon>
+    </nrcl-filter-container>
 
-    <nrcl-filter-select
+    <nrcl-filter-container
         label="Station metadata"
-        [value]="filter.metadataColumns"
-        (valueChange)="onMetadataColumnsChange( $event )"
-        [options]="codeTableService.STATIONS_METADATA_COLUMNS.items"
-    ></nrcl-filter-select>
+        (click)="onStationMetadataClick()"
+    >
+        <label>{{ stationMetadataFieldCount }}</label>
+        <nrcl-icon>chevron_right</nrcl-icon>
+    </nrcl-filter-container>
 </nrcl-filters-panel>

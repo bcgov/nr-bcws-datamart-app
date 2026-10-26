@@ -82,17 +82,6 @@ $color-hover-background-color: #d7d7d7;
             }
         }
     }
-
-    ::ng-deep {
-        .mat-mdc-checkbox-checked .mdc-checkbox__background {
-            background-color: #013366 !important;
-            border-color: #013366 !important;
-        }
-
-        .mat-mdc-checkbox-checked .mdc-checkbox__checkmark {
-            color: #ffffff !important;
-        }
-    }
 }
 
 ::ng-deep .cdk-overlay-container {

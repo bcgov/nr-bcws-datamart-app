@@ -1,0 +1,20 @@
+:host {
+    details:open > summary {
+        .open { display: block; }
+        .closed { display: none; }
+    }
+
+    summary {
+        display: flex;
+        width: 100%;
+        align-items: center;
+
+        .open { display: none; }
+
+        ::ng-deep header {
+            flex-grow: 1;
+        }
+
+        border-bottom: 1px solid var(--nrcl-dialog-border-color);
+    }
+}
