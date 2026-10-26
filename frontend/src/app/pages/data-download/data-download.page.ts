@@ -30,7 +30,8 @@ export class DataDownloadPage implements OnInit {
     codeTableService = inject(CodeTableService)
 
     filter: Filter = initialFilter( {
-        dailyColumns: [ ...this.codeTableService.DAILY_WEATHER_OBSERVATIONS_COLUMNS.items.map( c => c.code ) ]
+        dailyColumns: [ ...this.codeTableService.DAILY_WEATHER_OBSERVATIONS_COLUMNS.items.map( c => c.code ) ],
+        metadataColumns: [ 'stationName', 'stationCode' ]
     } )
     hourlyReportColumns: CodeDescriptionHeading[] = []
     dailyReportColumns: CodeDescriptionHeading[] = []
