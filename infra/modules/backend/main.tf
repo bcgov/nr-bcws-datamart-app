@@ -31,10 +31,10 @@ module "backend_site" {
   https_only                = true
   virtual_network_subnet_id = var.backend_subnet_id
 
-  managed_identities = {
-    system_assigned            = true
-    user_assigned_resource_ids = var.user_assigned_identity_id != "" ? [var.user_assigned_identity_id] : []
-  }
+managed_identities = {
+  system_assigned            = true
+  user_assigned_resource_ids = []
+}
 
   site_config = {
     always_on                               = true
@@ -122,10 +122,10 @@ module "download_api_site" {
   https_only                = true
   virtual_network_subnet_id = var.backend_subnet_id
 
-  managed_identities = {
-    system_assigned            = true
-    user_assigned_resource_ids = var.user_assigned_identity_id != "" ? [var.user_assigned_identity_id] : []
-  }
+managed_identities = {
+  system_assigned            = true
+  user_assigned_resource_ids = []
+}
 
   site_config = {
     always_on                               = true
