@@ -1,5 +1,6 @@
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     inject,
@@ -50,7 +51,6 @@ export function initialFilter(): Filter {
     styleUrl: './station-selection-filters.component.scss',
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
-        IconComponent,
         FilterSearchComponent,
         FiltersPanelComponent,
         FilterSelectComponent,
@@ -130,7 +130,7 @@ export class StationSelectionFiltersComponent {
         this.stationDataService.filterStations( this.filter )
 	}
 
-    toggleFilters(): void {
+    onFiltersClick(): void {
         this.filtersExpanded = !this.filtersExpanded;
     }
 
