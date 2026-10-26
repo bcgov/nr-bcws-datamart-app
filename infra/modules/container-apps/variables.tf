@@ -155,6 +155,23 @@ variable "log_analytics_workspace_key" {
 
 variable "fabric_sql_connection_string" {
   description = "Secret used for connection between API and fabric"
-  type = string
-  sensitive = true
+  type        = string
+  sensitive   = true
+}
+
+variable "dab_port" {
+  description = "Port that Data API builder listens on inside the container."
+  type        = number
+  default     = 5000
+}
+
+variable "dab_runtime_mode" {
+  description = "Data API builder runtime mode (production or development). Substituted into dab-config.json through DAB_RUNTIME_MODE."
+  type        = string
+  default     = "production"
+
+  validation {
+    condition     = contains(["production", "development"], var.dab_runtime_mode)
+    error_message = "dab_runtime_mode must be production or development."
+  }
 }

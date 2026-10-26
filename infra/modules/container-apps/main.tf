@@ -143,7 +143,7 @@ resource "azurerm_container_app" "backend" {
   }
 
   secret {
-    name = "fabric-sql-connection-string"
+    name  = "fabric-sql-connection-string"
     value = var.fabric_sql_connection_string
   }
 
@@ -158,63 +158,41 @@ resource "azurerm_container_app" "backend" {
       memory = var.container_memory
       startup_probe {
         transport = "HTTP"
-        path      = "/api/health"
-        port      = 3000
+        path      = "/"
+        port      = var.dab_port
         timeout   = 5
       }
       readiness_probe {
         transport               = "HTTP"
-        path                    = "/api/health"
-        port                    = 3000
+        path                    = "/"
+        port                    = var.dab_port
         timeout                 = 5
         failure_count_threshold = 3
       }
       liveness_probe {
         transport               = "HTTP"
-        path                    = "/api/health"
-        port                    = 3000
+        path                    = "/"
+        port                    = var.dab_port
         timeout                 = 5
         failure_count_threshold = 3
       }
+
       env {
-        name  = "NODE_ENV"
-        value = "production"
+        name        = "FABRIC_SQL_CONNECTION_STRING"
+        secret_name = "fabric-sql-connection-string"
       }
 
       env {
-        name  = "LOG_LEVEL"
-        value = var.log_level
+        name  = "DAB_RUNTIME_MODE"
+        value = var.dab_runtime_mode
       }
 
+      # CORS configuration to allow App Service frontend
       env {
-        name  = "HTTP_ACCESS_LOG_MODE"
-        value = var.http_access_log_mode
+        name  = "DAB_CORS_ORIGIN"
+        value = var.app_service_frontend_url != "" ? var.app_service_frontend_url : "*"
       }
 
-      env {
-        name  = "DB_SLOW_QUERY_LOG_THRESHOLD_MS"
-        value = tostring(var.slow_query_log_threshold_ms)
-      }
-
-      env {
-        name  = "OTEL_SERVICE_NAME"
-        value = "${var.app_name}-backend"
-      }
-
-      env {
-        name  = "OTEL_RESOURCE_ATTRIBUTES"
-        value = "deployment.environment.name=${var.app_env}"
-      }
-
-      env {
-        name  = "PORT"
-        value = "3000"
-      }
-
-      env {
-        name        = "POSTGRES_PASSWORD"
-        secret_name = "postgres-password"
-      }
       env {
         name        = "APPLICATIONINSIGHTS_CONNECTION_STRING"
         secret_name = "appinsights-connection-string"
@@ -223,17 +201,6 @@ resource "azurerm_container_app" "backend" {
       env {
         name        = "APPINSIGHTS_INSTRUMENTATIONKEY"
         secret_name = "appinsights-instrumentation-key"
-      }
-
-      # CORS configuration to allow App Service frontend
-      env {
-        name  = "CORS_ORIGIN"
-        value = var.app_service_frontend_url
-      }
-
-      env {
-        name = "FABRIC_SQL_CONNECTION_STRING"
-        secret_name = var.fabric_sql_connection_string
       }
     }
     http_scale_rule {
@@ -247,7 +214,7 @@ resource "azurerm_container_app" "backend" {
     ### this only enables other services within the vnet to access the container app.
     ### if this gives error, raise a ticket with platform team , they will enable it.
     external_enabled = true
-    target_port      = 3000
+    target_port      = var.dab_port
     transport        = "http"
 
     traffic_weight {
