@@ -31,7 +31,8 @@ module "backend_site" {
   virtual_network_subnet_id = var.backend_subnet_id
 
   managed_identities = {
-    system_assigned = true
+    system_assigned            = true
+    user_assigned_resource_ids = var.user_assigned_identity_id != "" ? [var.user_assigned_identity_id] : []
   }
 
   site_config = {

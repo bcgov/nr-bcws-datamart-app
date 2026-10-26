@@ -126,6 +126,12 @@ variable "fabric_sql_connection_string" {
   sensitive   = true
 }
 
+variable "user_assigned_identity_id" {
+  description = "Resource ID of a user-assigned managed identity to attach to the container app. Empty means none."
+  type        = string
+  default     = ""
+}
+
 variable "dab_port" {
   description = "Port that Data API builder listens on inside the container."
   type        = number

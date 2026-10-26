@@ -129,7 +129,12 @@ resource "azurerm_container_app" "backend" {
   workload_profile_name        = "Consumption" # Use Consumption workload profile
 
   identity {
-    type = var.enable_system_assigned_identity ? "SystemAssigned" : "None"
+    type = (
+      var.enable_system_assigned_identity && var.user_assigned_identity_id != "" ? "SystemAssigned, UserAssigned" :
+      var.user_assigned_identity_id != "" ? "UserAssigned" :
+      var.enable_system_assigned_identity ? "SystemAssigned" : "None"
+    )
+    identity_ids = var.user_assigned_identity_id != "" ? [var.user_assigned_identity_id] : null
   }
 
   secret {

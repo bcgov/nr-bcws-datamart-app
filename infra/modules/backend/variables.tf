@@ -157,6 +157,12 @@ variable "fabric_sql_connection_string"  {
   default = ""
 }
 
+variable "user_assigned_identity_id" {
+  description = "Resource ID of a user-assigned managed identity to attach to the App Service. Empty means none."
+  type        = string
+  default     = ""
+}
+
 variable "dab_runtime_mode" {
   description = "Data API builder runtime mode (production or development). Substituted into dab-config.json through DAB_RUNTIME_MODE."
   type        = string
