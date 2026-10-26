@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.client.HttpClientErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,7 @@ import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadQuery;
 import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadRequest;
 import ca.bc.gov.bcws.nrs.downloadapi.utils.Utils;
 import ca.bc.gov.bcws.nrs.downloadapi.exceptions.DownloadLimitExceededException;
-
+import ca.bc.gov.bcws.nrs.downloadapi.exceptions.InvalidQueryException;
 import graphql.language.Argument;
 import graphql.language.Selection;
 import graphql.language.Document;
@@ -141,7 +141,21 @@ public class DownloadService {
 
             String pagedQuery = applyPaging(query, cursor);
 
-            JsonNode response = datamartApiClient.executeQuery(pagedQuery);
+            JsonNode response;
+
+            try {
+
+                response = datamartApiClient.executeQuery(pagedQuery);
+
+            } catch (HttpClientErrorException.BadRequest ex) {
+
+                String message = extractGraphQlError(ex.getResponseBodyAsString());
+
+                logger.warn("GraphQL query failed: {}", message);
+
+                throw new InvalidQueryException(message);
+            }
+
 
             JsonNode connection = response.path("data").elements().next();
 
@@ -185,7 +199,17 @@ public class DownloadService {
 
     private String applyPaging(String query, String cursor) {
 
-        Document document = Parser.parse(query);
+        Document document;
+
+        try {
+            document = Parser.parse(query);
+        } catch (Exception e) {
+
+            logger.warn("Invalid GraphQL query provided", e);
+
+            throw new InvalidQueryException(
+                    "Invalid GraphQL query.");
+        }
 
         OperationDefinition operation = (OperationDefinition) document.getDefinitions().get(0);
 
@@ -249,5 +273,27 @@ public class DownloadService {
         if (cursor == null) logger.info("Paged GraphQL query: {}", updatedQuery);
 
         return updatedQuery;
+    }
+
+    private String extractGraphQlError(String responseBody) {
+
+        try {
+
+            JsonNode response =
+                    new ObjectMapper().readTree(responseBody);
+
+            JsonNode errors = response.path("errors");
+
+            if (errors.isArray() && !errors.isEmpty()) {
+
+                return errors.get(0)
+                        .path("message")
+                        .asText("Invalid GraphQL query.");
+            }
+
+        } catch (Exception ignored) {
+        }
+
+        return "Invalid GraphQL query.";
     }
 }

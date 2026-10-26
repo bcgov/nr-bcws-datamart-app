@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import ca.bc.gov.bcws.nrs.downloadapi.exceptions.DownloadLimitExceededException;
+import ca.bc.gov.bcws.nrs.downloadapi.exceptions.InvalidQueryException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -21,4 +22,15 @@ public class GlobalExceptionHandler {
                 "message",
                 ex.getMessage());
     }
+
+    @ExceptionHandler(InvalidQueryException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleInvalidQuery(
+            InvalidQueryException ex) {
+
+        return Map.of(
+                "message",
+                ex.getMessage());
+    }
+
 }
