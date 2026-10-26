@@ -39,6 +39,11 @@
       "max-page-size": 10000,
       "default-page-size": 100
     },
+    "telemetry": {
+      "log-level": {
+        "default": "debug"
+      }
+    },
     "host": {
       "cors": {
         "origins": [ "@env('DAB_CORS_ORIGIN')" ],

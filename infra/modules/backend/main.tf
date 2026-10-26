@@ -81,7 +81,8 @@ module "backend_site" {
       application_logs = {
         default = {
           file_system = {
-            level = "Off"
+            # "Off" hides container stdout and stderr from the portal Log stream, which is where Data API builder writes its logs.
+            level = "Verbose"
           }
         }
       }
