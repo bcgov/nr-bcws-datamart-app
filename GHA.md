@@ -11,7 +11,7 @@ The workflows are defined in `.github/workflows/`.
 
 1. **Build containers**
 	 - Reusable workflow: `.github/workflows/.builds.yml`
-	 - Builds and pushes images for: `backend`, `frontend`, `migrations`
+	 - Builds and pushes images for: `backend`, `frontend`
 
 2. **Terraform plan/apply/destroy**
 	 - Reusable workflow: `.github/workflows/.deployer.yml`
@@ -113,7 +113,6 @@ CI sets:
 CI also sets container image variables (all using GHCR):
 - `TF_VAR_api_image=ghcr.io/<owner>/<repo>/backend:<tag>`
 - `TF_VAR_frontend_image=ghcr.io/<owner>/<repo>/frontend:<tag>`
-- `TF_VAR_flyway_image=ghcr.io/<owner>/<repo>/migrations:<tag>`
 
 CI also passes the connection string of the Microsoft Fabric SQL analytics endpoint, which the backend (Data API builder) reads from:
 - `TF_VAR_fabric_sql_connection_string=${{ secrets.FABRIC_SQL_CONNECTION_STRING }}` (create the `FABRIC_SQL_CONNECTION_STRING` secret in each GitHub environment)

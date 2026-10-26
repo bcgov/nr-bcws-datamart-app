@@ -11,9 +11,8 @@ A production-ready, secure, and compliant infrastructure template for deploying 
 
 ## 🎯 What This Template Provides
 
-- **Full-stack containerized application**: Data API builder backend (Microsoft Fabric data) + Angular frontend
+- **Full-stack containerized application**: NestJS backend + React/Vite frontend
 - **Secure Azure infrastructure**: Landing Zone compliant with proper network isolation
-- **Database management**: PostgreSQL with Flyway migrations and optional CloudBeaver admin UI
 - **CI/CD pipeline**: GitHub Actions with OIDC authentication
 - **Infrastructure as Code**: Terraform with environment-specific `.tfvars` and a CI-friendly wrapper script
 - **Monitoring & observability**: Azure Monitor, Application Insights, and comprehensive logging
@@ -73,18 +72,34 @@ A production-ready, secure, and compliant infrastructure template for deploying 
 │   └── modules/               # Reusable infrastructure modules
 │       ├── aci/               # Azure Container Instances (optional)
 │       ├── apim/              # API Management (optional)
-│       ├── backend/           # App Service for the Data API builder backend
+│       ├── backend/           # App Service for NestJS API
 │       ├── container-apps/    # Container Apps
-│       ├── flyway/            # Flyway database migrations
 │       ├── frontend/          # App Service for React SPA (with Caddy proxy)
 │       ├── frontdoor/         # Azure Front Door
 │       ├── monitoring/        # Log Analytics & Application Insights
 │       ├── network/           # VNet, subnets, NSGs
-│       └── postgresql/        # PostgreSQL Flexible Server
-├── backend/                   # Data API builder (DAB) service for Microsoft Fabric data
-│   ├── dab-config.json        # Entities, endpoints and permissions (see backend/README.md)
-│   ├── Dockerfile             # Container build configuration
-│   └── .env.example           # Template for local environment variables
+├── backend/                   # NestJS TypeScript API
+│   ├── src/                   # API source code
+│   │   ├── main.ts            # Entry point (initializes telemetry before bootstrap)
+│   │   ├── app.module.ts      # Root NestJS module
+│   │   ├── app.controller.ts  # Default app controller
+│   │   ├── app.service.ts     # Default app service
+│   │   ├── health.controller.ts       # Health check endpoint (/api/health)
+│   │   ├── metrics.controller.ts      # Prometheus metrics (/api/metrics)
+│   │   ├── common/            # Shared utilities & logger config
+│   │   ├── middleware/        # Request/response logging middleware
+│   │   ├── users/             # User management module (example)
+│   │   ├── telemetry.ts       # Azure Monitor telemetry setup
+│   │   └── prom.ts            # Prometheus metrics setup
+│   ├── test/                  # E2E tests
+│   │   └── app.e2e-spec.ts    # E2E test suite
+│   ├── eslint.config.mjs      # ESLint configuration
+│   ├── nest-cli.json          # NestJS CLI configuration
+│   ├── package.json           # Dependencies & scripts
+│   ├── tsconfig.json          # TypeScript configuration
+│   ├── tsconfig.build.json    # Build-specific TypeScript config
+│   ├── vitest.config.mts      # Vitest unit test configuration
+│   └── Dockerfile             # Container build configuration
 ├── frontend/                  # React + Vite SPA
 │   ├── src/                   # Frontend source code
 │   │   ├── main.tsx           # React entry point
@@ -114,10 +129,6 @@ A production-ready, secure, and compliant infrastructure template for deploying 
 │   ├── Caddyfile              # Caddy reverse proxy config (production)
 │   ├── index.html             # HTML entry point
 │   └── Dockerfile             # Container build configuration
-├── migrations/                # Flyway database migrations
-│   ├── sql/                   # SQL migration scripts (V*.sql format)
-│   ├── Dockerfile             # Migration runner container
-│   └── entrypoint.sh          # Migration execution script
 ├── .diagrams/                 # Architecture diagrams (if applicable)
 ├── docs/                      # Additional documentation (currently empty)
 ├── logs/                      # Log output directory
@@ -305,11 +316,8 @@ npm install
 # Start local development environment
 docker-compose up -d
 
-# Run database migrations
-docker-compose exec migrations flyway migrate
-
-# Start the backend (Data API builder). Requires FABRIC_SQL_CONNECTION_STRING, see backend/README.md
-docker-compose up --build backend
+# Start backend development server
+cd backend && npm run start:dev
 
 # Start frontend development server (in new terminal)
 cd frontend && npm run dev
@@ -318,8 +326,7 @@ cd frontend && npm run dev
 Access your local application:
 
 - **Frontend**: <http://localhost:5173>
-- **Backend API**: <http://localhost:3001/api/weather_stations> (Data API builder; see `backend/README.md`)
-- **Database**: localhost:5432 (postgres/default)
+- **Backend API**: <http://localhost:3000> (default; see `docker-compose.yml` for overrides)
 
 ## 🚢 Deployment Process
 
@@ -331,8 +338,7 @@ The repository includes comprehensive CI/CD workflows:
 
 The CI/CD pipeline builds the following container images:
 
-- **backend**: Data API builder (DAB) server for Microsoft Fabric data
-- **migrations**: Flyway database migration runner
+- **backend**: NestJS API server
 - **frontend**: React SPA with Caddy reverse proxy
 These are built on every commit and tagged for deployment to your chosen environment.
 
@@ -363,49 +369,6 @@ Deployment topology:
 
 - Preferred: App Service frontend (Caddy) + Container Apps backend (runtime reverse proxy via `VITE_BACKEND_URL`).
 - Alternative: App Service frontend + App Service backend for low-scale use cases (disable Container Apps).
-
-## 🗄️ Database Management
-
-### Schema Migrations with Flyway
-
-The template uses Flyway for database schema management:
-
-#### Migration Files (`migrations/sql/`)
-
-```sql
--- V1.0.0__init.sql
-CREATE SCHEMA IF NOT EXISTS app;
-
-CREATE TABLE app.users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-#### Running Migrations
-
-```bash
-# Local development
-docker-compose exec migrations flyway migrate
-
-# Production (via container)
-docker run --rm \
-  -v $(pwd)/migrations/sql:/flyway/sql:ro \
-  -e FLYWAY_URL=jdbc:postgresql://your-db:5432/app \
-  -e FLYWAY_USER=your-user \
-  -e FLYWAY_PASSWORD=your-password \
-  flyway/flyway:11-alpine migrate
-```
-
-### Database Administration with CloudBeaver
-
-Optional CloudBeaver container provides web-based database management:
-
-- **Access**: `https://your-app-cloudbeaver.azurewebsites.net`
-- **Features**: Query editor, schema browser, data export/import
-- **Auto-Configuration**: Database connection details are automatically configured from environment variables on startup, eliminating the need for manual connection setup. The connection persists across container restarts.
-- **Security Note**: Credentials are stored in the CloudBeaver configuration for convenience. This is suitable for development and administrative use cases where the container is already secured through Azure's network isolation, private endpoints, and access controls.
 
 ## 🔐 Security Features
 
@@ -519,102 +482,12 @@ Scheduled query alert cadence:
 Key Terraform variables:
 
 - `enable_application_alerts`: master switch for application alert resources.
-- `application_alert_emails`: email recipients for application alerts. If empty, Terraform reuses `postgres_alert_emails` when available.
+- `application_alert_emails`: email recipients for application alerts.
 - `backend_http_5xx_alert_threshold`: Container Apps 5xx total in five minutes before the backend HTTP 5xx log alert fires.
 - `application_runtime_issue_alert_threshold`: count threshold for runtime/startup failure log matches.
 - `application_database_issue_alert_threshold`: count threshold for database connectivity failures.
 - `app_service_http_5xx_alert_threshold`: 5xx total in five minutes before the App Service platform metric backstop alert fires.
 - `container_app_restart_alert_threshold`: restart total in fifteen minutes before the Container Apps alert fires.
-
-### PostgreSQL Backups & Point-In-Time Recovery (PITR)
-
-Azure PostgreSQL Flexible Server automatically supports point-in-time restore (PITR) to any moment within the configured backup retention window (`postgres_backup_retention_period`).
-
-Key points:
-
-- PITR window = retention days (7–35) you set in Terraform.
-- Geo-redundant backup (`postgres_geo_redundant_backup_enabled = true`) improves DR but adds cost.
-- Restores create a new server; you then repoint apps / rotate connection strings.
-
-Restore example (CLI):
-
-```bash
-az postgres flexible-server restore \
-  --resource-group <rg> \
-  --name <new-server-name> \
-  --source-server <current-server-name> \
-  --restore-time "2025-08-12T15:04:05Z"
-```
-
-### PostgreSQL Logging & Cost Tuning
-
-Variables controlling verbosity:
-
-- `postgres_enable_server_logs`: Master toggle for connection / duration logging.
-- `postgres_log_statement_mode`: none | ddl | mod | all (default ddl). Avoid `all` in production unless debugging.
-- `postgres_log_min_duration_statement_ms`: Slow query threshold (default 500 ms). Lower value = more logs & cost.
-- `postgres_track_io_timing`: Enables IO timing (slight overhead, useful for perf diagnostics).
-- `postgres_pg_stat_statements_max`: Controls number of statements tracked; higher values consume more memory.
-
-Recommendations:
-
-| Scenario | log_statement | log_min_duration_statement_ms | Notes |
-| ---------- | --------------- | -------------------------------- | ------- |
-| Prod steady state | ddl | 500–1000 | Focus on schema changes + slow queries |
-| Perf investigation | mod or all | 100–250 | Temporarily increase verbosity |
-| Heavy cost pressure | none | 1000–2000 | Minimize ingestion volume |
-
-If you disable full statement logging (`none`/`ddl`) ensure slow query threshold captures problematic queries (set <= 1000 ms initially).
-
-### Metric Alert Customization
-
-Metric alerts are enabled when `postgres_alerts_enabled = true`. Customize or add alerts via `postgres_metric_alerts` map. Default keys: `cpu_percent`, `storage_used`, `active_connections`.
-
-Example override in `terraform.tfvars`:
-
-```hcl
-postgres_alerts_enabled = true
-postgres_alert_emails   = ["dba-team@example.com", "oncall@example.com"]
-postgres_metric_alerts = {
-  cpu_percent = {
-    metric_name = "cpu_percent"
-    operator    = "GreaterThan"
-    threshold   = 75
-    aggregation = "Average"
-    description = "CPU > 75% (tuned)"
-  }
-  failed_connections = {
-    metric_name = "connections_failed"
-    operator    = "GreaterThan"
-    threshold   = 5
-    aggregation = "Total"
-    description = "Failed connections spike"
-  }
-}
-```
-
-Supported metric names (common): `cpu_percent`, `storage_used`, `active_connections`, `connections_failed`, `deadlocks`, `serverlog_storage_percent`.
-
-Action Group:
-
-- Created only if `postgres_alert_emails` is non-empty.
-- Add/remove emails without recreating alerts (resource uses dynamic receivers).
-
-### High Availability SKU Validation
-
-If `postgres_ha_enabled = true`, Terraform validates that `postgres_sku_name` starts with `GP_` or `MO_` (General Purpose / Memory Optimized). Adjust SKU before enabling HA to avoid apply failure.
-
-#### Log Analytics Workspace
-
-```hcl
-resource "azurerm_log_analytics_workspace" "main" {
-  name                = "${var.app_name}-log-analytics"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  sku                 = var.log_analytics_sku
-  retention_in_days   = var.log_analytics_retention_days
-}
-```
 
 ### Monitoring Dashboards
 
@@ -720,21 +593,6 @@ Error: Failed to pull image: unauthorized
 - Check container registry URL in app settings
 - Ensure container image exists and is accessible
 
-#### 4. Database Connection Issues
-
-**Issue**: Backend cannot connect to PostgreSQL
-
-```text
-Error: getaddrinfo ENOTFOUND your-postgres-server
-```
-
-**Solution**:
-
-- Verify VNet integration and private endpoint configuration
-- Check PostgreSQL firewall rules
-- Ensure connection string environment variables are correct
-- if you are using pgpool make sure you have this line `ssl: process.env.PGSSLMODE === 'require' ? { rejectUnauthorized: false } : false,`
-
 ### Debugging Tools
 
 #### 1. Azure CLI Debugging
@@ -757,7 +615,6 @@ az webapp log tail --name your-app --resource-group your-rg
 - [Terraform Azure Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
 - [NestJS Documentation](https://docs.nestjs.com/)
 - [React + Vite Documentation](https://vitejs.dev/guide/)
-- [Prisma Documentation](https://www.prisma.io/docs/)
 
 ## 🤝 Contributing
 

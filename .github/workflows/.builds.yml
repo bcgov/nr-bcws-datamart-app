@@ -22,7 +22,6 @@ jobs:
         package:
           [
             backend,
-            migrations,
             frontend,
           ]
     timeout-minutes: 10

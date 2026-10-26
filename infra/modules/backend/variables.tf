@@ -97,25 +97,6 @@ variable "container_registry_url" {
 }
 
 
-variable "dab_runtime_mode" {
-  description = "Data API builder host mode (production or development)."
-  type        = string
-  default     = "production"
-  nullable    = false
-
-  validation {
-    condition     = contains(["production", "development"], var.dab_runtime_mode)
-    error_message = "dab_runtime_mode must be production or development."
-  }
-}
-
-variable "fabric_sql_connection_string" {
-  description = "Connection string of the Microsoft Fabric SQL analytics endpoint that Data API builder reads from."
-  type        = string
-  sensitive   = true
-  nullable    = false
-}
-
 variable "frontend_frontdoor_resource_guid" {
   description = "The resource GUID for the Front Door service associated with the frontend App Service."
   type        = string
@@ -146,6 +127,44 @@ variable "log_analytics_workspace_id" {
   nullable    = false
 }
 
+variable "log_level" {
+  description = "Backend Winston/Nest log level for structured application logs that can flow to Application Insights."
+  type        = string
+  default     = "info"
+
+  validation {
+    condition     = contains(["error", "warn", "info", "http", "verbose", "debug", "silly"], var.log_level)
+    error_message = "log_level must be one of: error, warn, info, http, verbose, debug, silly."
+  }
+}
+
+variable "http_access_log_mode" {
+  description = "Controls request access logging written to container stdout for LAW ingestion. Supported values: off, failures, all."
+  type        = string
+  default     = "failures"
+
+  validation {
+    condition     = contains(["off", "failures", "all"], var.http_access_log_mode)
+    error_message = "http_access_log_mode must be one of: off, failures, all."
+  }
+}
+
+variable "slow_query_log_threshold_ms" {
+  description = "Emit Prisma slow-query diagnostics to container stdout when query duration meets or exceeds this threshold in milliseconds. Set to -1 to disable."
+  type        = number
+  default     = 1000
+
+  validation {
+    condition     = var.slow_query_log_threshold_ms >= -1
+    error_message = "slow_query_log_threshold_ms must be greater than or equal to -1."
+  }
+}
+
+variable "node_env" {
+  description = "The Node.js environment (e.g., production, development)."
+  type        = string
+  default     = "production"
+}
 
 variable "repo_name" {
   description = "The repository name, used for resource naming."
@@ -170,3 +189,16 @@ variable "enable_telemetry" {
   type        = bool
   default     = false
 }
+
+variable "fabric_sql_connection_string"  {
+  description = "Connection between datamart API and fabric"
+  type = string
+  default = ""
+}
+
+variable "vivid_cidr" {
+  description = "Vivid CIDR block, used to restrict access to DEV"
+  type = string
+  default = ""
+}
+

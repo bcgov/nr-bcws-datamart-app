@@ -126,30 +126,6 @@ variable "enable_app_service_backend" {
     error_message = "At least one of App Service Backend or Container Apps must be enabled."
   }
 }
-variable "enable_database_migrations_aci" {
-  description = "Whether to enable the ACI for database migrations using Flyway"
-  type        = bool
-  default     = true
-}
-
-variable "fabric_sql_connection_string" {
-  description = <<-EOT
-  Connection string of the Microsoft Fabric SQL analytics endpoint that the backend (Data API builder) reads from.
-
-  The Authentication keyword decides how the backend signs in. To use the managed identity of the backend, use
-  "Authentication=Active Directory Managed Identity" and add the identity (see the backend_managed_identity_principal_id
-  output) to the Fabric workspace. Alternatively use a service principal with "Authentication=Active Directory Service Principal".
-  EOT
-  type        = string
-  sensitive   = true
-  nullable    = false
-}
-
-variable "flyway_image" {
-  description = "The image for the Flyway container"
-  type        = string
-}
-
 variable "frontend_image" {
   description = "The image for the Frontend container"
   type        = string
@@ -263,6 +239,44 @@ variable "log_analytics_sku" {
   default     = "PerGB2018"
 }
 
+variable "backend_log_level" {
+  description = "Winston/Nest log level for structured backend application logs that are eligible for AppTraces export."
+  type        = string
+  default     = "info"
+
+  validation {
+    condition     = contains(["error", "warn", "info", "http", "verbose", "debug", "silly"], var.backend_log_level)
+    error_message = "backend_log_level must be one of: error, warn, info, http, verbose, debug, silly."
+  }
+}
+
+variable "backend_http_access_log_mode" {
+  description = "Controls backend request access logs written to container stdout for LAW ingestion. Supported values: off, failures, all."
+  type        = string
+  default     = "failures"
+
+  validation {
+    condition     = contains(["off", "failures", "all"], var.backend_http_access_log_mode)
+    error_message = "backend_http_access_log_mode must be one of: off, failures, all."
+  }
+}
+
+variable "backend_slow_query_log_threshold_ms" {
+  description = "Emit backend Prisma slow-query diagnostics to container stdout when query duration meets or exceeds this threshold in milliseconds. Set to -1 to disable."
+  type        = number
+  default     = 1000
+
+  validation {
+    condition     = var.backend_slow_query_log_threshold_ms >= -1
+    error_message = "backend_slow_query_log_threshold_ms must be greater than or equal to -1."
+  }
+}
+
+variable "fabric_sql_connection_string"  {
+  description = "Connection between datamart API and fabric"
+  type = string
+  default = ""
+}
 variable "enable_application_alerts" {
   description = "Whether application alert resources should be created when alert recipients are configured."
   type        = bool
@@ -328,226 +342,6 @@ variable "container_app_restart_alert_threshold" {
     condition     = var.container_app_restart_alert_threshold >= 1
     error_message = "container_app_restart_alert_threshold must be greater than or equal to 1."
   }
-}
-
-variable "postgres_alert_emails" {
-  description = "List of email addresses to receive PostgreSQL alerts"
-  type        = list(string)
-  default     = []
-}
-
-variable "enable_postgres_alerts" {
-  description = "Enable creation of PostgreSQL metric alerts and action group"
-  type        = bool
-  default     = false
-}
-
-variable "enable_postgres_auto_grow" {
-  description = "Enable auto-grow for PostgreSQL Flexible Server storage"
-  type        = bool
-  default     = true
-}
-
-variable "postgres_backup_retention_period" {
-  description = "Backup retention period in days for PostgreSQL Flexible Server"
-  type        = number
-  default     = 7
-  validation {
-    condition     = var.postgres_backup_retention_period >= 7 && var.postgres_backup_retention_period <= 35
-    error_message = "postgres_backup_retention_period must be between 7 and 35 days (Azure Flexible Server limits)."
-  }
-}
-
-variable "postgres_diagnostic_log_categories" {
-  description = "List of PostgreSQL diagnostic log categories to enable"
-  type        = list(string)
-  default     = ["PostgreSQLLogs"]
-}
-
-variable "postgres_diagnostic_metric_categories" {
-  description = "List of PostgreSQL diagnostic metric categories to enable"
-  type        = list(string)
-  default     = ["AllMetrics"]
-}
-
-variable "postgres_enable_diagnostic_insights" {
-  description = "Enable Azure Monitor diagnostic settings for PostgreSQL server"
-  type        = bool
-  default     = true
-}
-
-variable "postgres_enable_server_logs" {
-  description = "Enable detailed PostgreSQL server logs (connections, disconnections, duration, statements)"
-  type        = bool
-  default     = true
-}
-
-variable "enable_postgres_geo_redundant_backup" {
-  description = "Enable geo-redundant backup for PostgreSQL Flexible Server"
-  type        = bool
-  default     = false
-}
-
-variable "enable_postgres_ha" {
-  description = "Enable high availability for PostgreSQL Flexible Server"
-  type        = bool
-  default     = false
-}
-
-variable "enable_postgres_is_postgis" {
-  description = "Enable PostGIS extension for PostgreSQL Flexible Server"
-  type        = bool
-  default     = false
-}
-
-variable "postgres_log_min_duration_statement_ms" {
-  description = "Sets log_min_duration_statement in ms (-1 disables; 0 logs all statements)."
-  type        = number
-  default     = 500
-  validation {
-    condition     = var.postgres_log_min_duration_statement_ms >= -1
-    error_message = "postgres_log_min_duration_statement_ms must be >= -1."
-  }
-}
-
-variable "postgres_log_statement_mode" {
-  description = "Value for log_statement (none | ddl | mod | all). If postgres_enable_server_logs=false this is overridden to none."
-  type        = string
-  default     = "ddl"
-  validation {
-    condition     = contains(["none", "ddl", "mod", "all"], var.postgres_log_statement_mode)
-    error_message = "postgres_log_statement_mode must be one of: none, ddl, mod, all"
-  }
-}
-
-variable "postgres_maintenance_day_of_week" {
-  description = "Maintenance window day of week (0=Monday .. 6=Sunday)"
-  type        = number
-  default     = 6
-  validation {
-    condition     = var.postgres_maintenance_day_of_week >= 0 && var.postgres_maintenance_day_of_week <= 6
-    error_message = "postgres_maintenance_day_of_week must be between 0 and 6."
-  }
-}
-
-variable "postgres_maintenance_start_hour" {
-  description = "Maintenance window start hour (0-23 UTC)"
-  type        = number
-  default     = 3
-  validation {
-    condition     = var.postgres_maintenance_start_hour >= 0 && var.postgres_maintenance_start_hour <= 23
-    error_message = "postgres_maintenance_start_hour must be 0-23."
-  }
-}
-
-variable "postgres_maintenance_start_minute" {
-  description = "Maintenance window start minute (0-59)"
-  type        = number
-  default     = 0
-  validation {
-    condition     = var.postgres_maintenance_start_minute >= 0 && var.postgres_maintenance_start_minute <= 59
-    error_message = "postgres_maintenance_start_minute must be 0-59."
-  }
-}
-
-variable "enable_postgres_maintenance_window" {
-  description = "Enable a fixed maintenance window for PostgreSQL Flexible Server (controls patching & potentially backup scheduling stability)."
-  type        = bool
-  default     = false
-}
-
-variable "postgres_metric_alerts" {
-  description = "Map defining PostgreSQL metric alerts (metric_name, operator, threshold, aggregation, description)"
-  type = map(object({
-    metric_name = string
-    operator    = string
-    threshold   = number
-    aggregation = string
-    description = string
-  }))
-  default = {
-    cpu_percent = {
-      metric_name = "cpu_percent"
-      operator    = "GreaterThan"
-      threshold   = 80
-      aggregation = "Average"
-      description = "CPU > 80%"
-    }
-    storage_used = {
-      metric_name = "storage_used"
-      operator    = "GreaterThan"
-      threshold   = 85
-      aggregation = "Average"
-      description = "Storage used > 85%"
-    }
-    active_connections = {
-      metric_name = "active_connections"
-      operator    = "GreaterThan"
-      threshold   = 100
-      aggregation = "Average"
-      description = "Active connections > 100"
-    }
-  }
-}
-
-variable "postgres_pg_stat_statements_max" {
-  description = "Value for pg_stat_statements.max (number of statements tracked)."
-  type        = number
-  default     = 5000
-  validation {
-    condition     = var.postgres_pg_stat_statements_max >= 100
-    error_message = "postgres_pg_stat_statements_max must be >= 100."
-  }
-}
-
-variable "postgres_sku_name" {
-  description = "SKU name for PostgreSQL Flexible Server"
-  type        = string
-  default     = "B_Standard_B1ms"
-  validation {
-    condition     = !var.enable_postgres_ha || can(regex("^(GP_|MO_)", var.postgres_sku_name))
-    error_message = "High availability requires a General Purpose (GP_) or Memory Optimized (MO_) SKU. Change postgres_sku_name or disable enable_postgres_ha."
-  }
-}
-
-variable "postgres_standby_availability_zone" {
-  description = "Availability zone for standby replica of PostgreSQL Flexible Server"
-  type        = string
-  default     = "1"
-}
-
-variable "postgres_storage_mb" {
-  description = "Storage in MB for PostgreSQL Flexible Server"
-  type        = number
-  default     = 32768
-  validation {
-    condition     = var.postgres_storage_mb >= 32768 && var.postgres_storage_mb % 1024 == 0
-    error_message = "postgres_storage_mb must be >= 32768 and a multiple of 1024."
-  }
-}
-
-variable "postgres_track_io_timing" {
-  description = "Enable track_io_timing (true/false). Minor overhead; useful for performance diagnostics."
-  type        = bool
-  default     = true
-}
-
-variable "postgres_version" {
-  description = "Version of PostgreSQL Flexible Server"
-  type        = string
-  default     = "18"
-}
-
-variable "postgres_zone" {
-  description = "Availability zone for PostgreSQL server"
-  type        = string
-  default     = "1"
-}
-
-variable "postgresql_admin_username" {
-  description = "Administrator username for PostgreSQL server"
-  type        = string
-  default     = "pgadmin"
 }
 
 variable "repo_name" {

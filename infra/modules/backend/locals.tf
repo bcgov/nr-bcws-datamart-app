@@ -48,16 +48,31 @@ locals {
       priority    = 100
       service_tag = "AzureFrontDoor.Backend"
       ip_address  = null
-
       virtual_network_subnet_id = null
       headers = {
         x_azure_fdid      = [var.frontend_frontdoor_resource_guid]
-        x_fd_health_probe = []
-        x_forwarded_for   = []
-        x_forwarded_host  = []
       }
+    },
+    {
+      action                    = "Allow"
+      name                      = "AllowVivid"
+      priority                  = 200
+      service_tag               = null
+      ip_address                = var.vivid_cidr
+      virtual_network_subnet_id = null
+      headers                   = {}
     }
-  ] : []
+  ] : [
+    {
+      action                    = "Allow"
+      name                      = "AllowVivid"
+      priority                  = 200
+      ip_address                = var.vivid_cidr
+      service_tag               = null
+      virtual_network_subnet_id = null
+      headers                   = null
+    }
+  ]
 
   # "Deny all other traffic" — lowest-priority catch-all once Front Door is enabled.
   deny_all = var.enable_frontdoor ? [
