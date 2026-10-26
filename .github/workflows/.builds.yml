@@ -19,16 +19,19 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        package:
-          [
-            backend,
-            frontend,
-          ]
+        include:
+          # The backend contains one folder per API. Only datamart-api is built into the backend image.
+          - package: backend
+            build_context: backend/datamart-api
+            build_file: backend/datamart-api/Dockerfile
+          - package: frontend
     timeout-minutes: 10
     steps:
       - uses: bcgov/action-builder-ghcr@v4.4.1
         with:
           package: ${{ matrix.package }}
+          build_context: ${{ matrix.build_context }}
+          build_file: ${{ matrix.build_file }}
           tags: ${{ inputs.tags }}
           triggers: ('${{ matrix.package }}/' '.github/workflows/.builds.yml')
           tag_fallback: latest

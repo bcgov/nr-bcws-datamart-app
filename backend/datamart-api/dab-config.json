@@ -1,0 +1,94 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/download/v2.0.12/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "dwsql",
+    "connection-string": "@env('FABRIC_SQL_CONNECTION_STRING')",
+    "options": {
+      "set-session-context": false
+    }
+  },
+  "runtime": {
+    "cache": {
+      "enabled": true,
+      "ttl-seconds": 3600
+    },
+    "rest": {
+      "enabled": true,
+      "path": "/api",
+      "request-body-strict": true
+    },
+    "graphql": {
+      "enabled": true,
+      "path": "/graphql",
+      "allow-introspection": true
+    },
+    "mcp": {
+      "enabled": true,
+      "path": "/mcp",
+      "dml-tools": {
+        "describe-entities": true,
+        "create-record": false,
+        "read-records": true,
+        "update-record": false,
+        "delete-record": false,
+        "execute-entity": true,
+        "aggregate-records": true
+      }
+    },
+    "pagination": {
+      "max-page-size": 10000,
+      "default-page-size": 100
+    },
+    "telemetry": {
+      "log-level": {
+        "default": "debug"
+      }
+    },
+    "host": {
+      "cors": {
+        "origins": [ "@env('DAB_CORS_ORIGIN')" ],
+        "allow-credentials": false
+      },
+      "authentication": {
+        "provider": "Unauthenticated"
+      },
+      "mode": "@env('DAB_RUNTIME_MODE')"
+    }
+  },
+  "entities": {
+    "daily_weather": {
+      "source": {
+        "object": "dbo.DAILY_WEATHER",
+        "type": "table",
+        "key-fields": [ "DAILY_WEATHER_MEAS_GUID" ]
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 3600
+      },
+      "permissions": [
+        {
+          "actions": [ "read" ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "weather_stations": {
+      "source": {
+        "object": "dbo.WEATHER_STATION",
+        "type": "table",
+        "key-fields": [ "WEATHER_STATION_GUID" ]
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [ "read" ],
+          "role": "anonymous"
+        }
+      ]
+    }
+  }
+}

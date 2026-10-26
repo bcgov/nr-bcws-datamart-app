@@ -45,14 +45,6 @@ variable "common_tags" {
   type        = map(string)
 }
 
-variable "database_name" {
-  description = "Name of the database to create"
-  type        = string
-  default     = "app"
-}
-
-
-
 variable "enable_acr" {
   description = "Whether to create an Azure Container Registry (ACR) using the AVM module."
   type        = bool
@@ -237,39 +229,6 @@ variable "log_analytics_sku" {
   description = "SKU for Log Analytics Workspace"
   type        = string
   default     = "PerGB2018"
-}
-
-variable "backend_log_level" {
-  description = "Winston/Nest log level for structured backend application logs that are eligible for AppTraces export."
-  type        = string
-  default     = "info"
-
-  validation {
-    condition     = contains(["error", "warn", "info", "http", "verbose", "debug", "silly"], var.backend_log_level)
-    error_message = "backend_log_level must be one of: error, warn, info, http, verbose, debug, silly."
-  }
-}
-
-variable "backend_http_access_log_mode" {
-  description = "Controls backend request access logs written to container stdout for LAW ingestion. Supported values: off, failures, all."
-  type        = string
-  default     = "failures"
-
-  validation {
-    condition     = contains(["off", "failures", "all"], var.backend_http_access_log_mode)
-    error_message = "backend_http_access_log_mode must be one of: off, failures, all."
-  }
-}
-
-variable "backend_slow_query_log_threshold_ms" {
-  description = "Emit backend Prisma slow-query diagnostics to container stdout when query duration meets or exceeds this threshold in milliseconds. Set to -1 to disable."
-  type        = number
-  default     = 1000
-
-  validation {
-    condition     = var.backend_slow_query_log_threshold_ms >= -1
-    error_message = "backend_slow_query_log_threshold_ms must be greater than or equal to -1."
-  }
 }
 
 variable "fabric_sql_connection_string"  {
