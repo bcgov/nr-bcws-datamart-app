@@ -70,7 +70,6 @@ export class DataDownloadPage implements OnInit {
                     } )
             } )
             .then( ( param ) => {
-                console.log(this.filter)
                 this.onFilterChange( this.filter )
 
                 this.router.navigate([], {
@@ -116,7 +115,8 @@ export class DataDownloadPage implements OnInit {
     }
 
     get enableCopyLink() {
-        return this.selectedStationsService.count > 0
+        return this.selectedStationsService.count > 0 &&
+            ( this.dailyReportColumns.length > 0 || this.hourlyReportColumns.length > 0 )
     }
 
     onCopyLinkClick() {
