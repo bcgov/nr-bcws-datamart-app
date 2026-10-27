@@ -100,10 +100,11 @@ export class StationDataService {
 
         this._stationsPromise = fetchPage( WEATHER_STATIONS_API, [], 2 )
             .then( stations => {
-                return stations.map( s => {
+                return stations.map( (s,i) => {
                     // remove when API is fixed
                     [ s.LONGITUDE, s.LATITUDE ] = randomPoint()
                     s.WEATHER_STATION_GUID = crypto.randomUUID()
+                    s.STATION_CODE = i
 
                     return {
                         type: 'Feature',
