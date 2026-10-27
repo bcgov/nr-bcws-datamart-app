@@ -61,11 +61,12 @@ module "backend_site" {
 
   app_settings = {
     # Data API builder listens on port 5000 inside the container.
-    WEBSITES_PORT                = "5000"
-    FABRIC_SQL_CONNECTION_STRING = var.fabric_sql_connection_string
-    DAB_RUNTIME_MODE             = var.dab_runtime_mode
-    DAB_CORS_ORIGIN              = "*"
-    DOCKER_ENABLE_CI             = "true"
+    WEBSITES_PORT                  = "5000"
+    FABRIC_SQL_CONNECTION_STRING   = var.fabric_sql_connection_string
+    FABRIC_SQL_CONNECTION_STRING_2 = var.fabric_sql_connection_string_2
+    DAB_RUNTIME_MODE               = var.dab_runtime_mode
+    DAB_CORS_ORIGIN                = "*"
+    DOCKER_ENABLE_CI               = "true"
     # Health check eviction time in minutes; the AVM module has no site_config equivalent.
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES   = "2"
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string

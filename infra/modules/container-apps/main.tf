@@ -152,6 +152,11 @@ resource "azurerm_container_app" "backend" {
     value = var.fabric_sql_connection_string
   }
 
+  secret {
+    name  = "fabric-sql-connection-string-2"
+    value = var.fabric_sql_connection_string_2
+  }
+
   template {
     max_replicas                     = var.max_replicas
     min_replicas                     = var.min_replicas
@@ -185,6 +190,11 @@ resource "azurerm_container_app" "backend" {
       env {
         name        = "FABRIC_SQL_CONNECTION_STRING"
         secret_name = "fabric-sql-connection-string"
+      }
+
+      env {
+        name        = "FABRIC_SQL_CONNECTION_STRING_2"
+        secret_name = "fabric-sql-connection-string-2"
       }
 
       env {

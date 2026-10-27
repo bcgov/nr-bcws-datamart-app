@@ -16,10 +16,18 @@ resource "azurerm_resource_group" "main" {
 locals {
   # A user-assigned managed identity needs User Id=<client id> in the connection string so that the
   # SQL client selects it instead of the system-assigned identity.
+  append_user_id = var.user_assigned_managed_identity_client_id != ""
+
   fabric_sql_connection_string = (
-    var.user_assigned_managed_identity_client_id != "" && !can(regex("(?i)user id\\s*=", var.fabric_sql_connection_string))
+    local.append_user_id && !can(regex("(?i)user id *=", var.fabric_sql_connection_string))
     ? "${trimsuffix(trimspace(var.fabric_sql_connection_string), ";")};User Id=${var.user_assigned_managed_identity_client_id}"
     : var.fabric_sql_connection_string
+  )
+
+  fabric_sql_connection_string_2 = (
+    local.append_user_id && var.fabric_sql_connection_string_2 != "" && !can(regex("(?i)user id *=", var.fabric_sql_connection_string_2))
+    ? "${trimsuffix(trimspace(var.fabric_sql_connection_string_2), ";")};User Id=${var.user_assigned_managed_identity_client_id}"
+    : var.fabric_sql_connection_string_2
   )
 }
 
@@ -129,6 +137,7 @@ module "backend" {
   enable_frontdoor                        = var.enable_frontdoor
   vivid_cidr                              = var.vivid_cidr
   fabric_sql_connection_string            = local.fabric_sql_connection_string
+  fabric_sql_connection_string_2          = local.fabric_sql_connection_string_2
   user_assigned_identity_id               = var.user_assigned_managed_identity_id
   frontend_frontdoor_resource_guid        = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
   frontend_possible_outbound_ip_addresses = var.enable_app_service_frontend ? module.frontend[0].possible_outbound_ip_addresses : ""

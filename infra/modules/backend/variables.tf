@@ -151,10 +151,16 @@ variable "enable_telemetry" {
   default     = false
 }
 
-variable "fabric_sql_connection_string"  {
+variable "fabric_sql_connection_string" {
   description = "Connection between datamart API and fabric"
-  type = string
-  default = ""
+  type        = string
+  default     = ""
+}
+
+variable "fabric_sql_connection_string_2" {
+  description = "Connection between datamart API and the second Fabric database"
+  type        = string
+  default     = ""
 }
 
 variable "user_assigned_identity_id" {
@@ -176,7 +182,7 @@ variable "dab_runtime_mode" {
 
 variable "vivid_cidr" {
   description = "Vivid CIDR block, used to restrict access to DEV"
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
 

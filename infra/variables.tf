@@ -237,6 +237,12 @@ variable "fabric_sql_connection_string" {
   default     = ""
 }
 
+variable "fabric_sql_connection_string_2" {
+  description = "Connection between datamart API and the second Fabric database"
+  type        = string
+  default     = ""
+}
+
 variable "user_assigned_managed_identity_id" {
   description = "Resource ID of an existing user-assigned managed identity to attach to the datamart API host. It must have access to the Fabric workspace. Leave empty to use only the system-assigned identity."
   type        = string

@@ -126,6 +126,13 @@ variable "fabric_sql_connection_string" {
   sensitive   = true
 }
 
+variable "fabric_sql_connection_string_2" {
+  description = "Secret used for connection between API and the second Fabric database"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 variable "user_assigned_identity_id" {
   description = "Resource ID of a user-assigned managed identity to attach to the container app. Empty means none."
   type        = string
