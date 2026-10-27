@@ -1,0 +1,52 @@
+<nrcl-dialog
+    title="Hourly Weather Data"
+    [showClose]="true"
+    [showWarning]="false"
+    saveLabel="Apply changes"
+    [saveEnabled]="true"
+    (saveClick)="onSaveClick()"
+    cancelLabel="Cancel"
+    [cancelEnabled]="true"
+    (cancelClick)="onCancelClick()"
+>
+    <p>
+        Data availability varies by station and time period.
+        <nrcl-button anchor
+            label="Learn more about weather data types"
+            iconRight="open_in_new"
+        ></nrcl-button>
+    </p>
+
+    <data-download-filter-checkboxes
+        headerTitle="Hourly weather observations"
+        [fields]="codeTableService.HOURLY_WEATHER_OBSERVATIONS_COLUMNS.items"
+        [value]="observations"
+        (valueChange)="onObservationsChange( $event )"
+    ></data-download-filter-checkboxes>
+
+    <nrcl-gap/>
+    
+    <data-download-filter-checkboxes
+        headerTitle="Hourly fire weather calculations"
+        [fields]="codeTableService.HOURLY_WEATHER_CALCULATIONS_COLUMNS.items"
+        [value]="calculations"
+        (valueChange)="onCalculationsChange( $event )"
+    >
+        Available from approximately April to October. 
+        Availability depends on seasonal conditions.
+    </data-download-filter-checkboxes>
+
+    <nrcl-gap/>
+
+    <data-download-filter-checkboxes
+        headerTitle="Additional hourly observations"
+        [fields]="codeTableService.HOURLY_WEATHER_ADDITIONAL_COLUMNS.items"
+        [value]="additionals"
+        (valueChange)="onAdditionalsChange( $event )"
+    >
+        Additional sensor data such as snow depth, precipitation sensor readings and solar radiation. 
+        Available only at some stations.
+    </data-download-filter-checkboxes>
+
+    <nrcl-gap/>
+</nrcl-dialog>

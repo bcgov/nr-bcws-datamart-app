@@ -42,3 +42,24 @@ body {
 .smk-command-button.smk-zoom {
     display: none !important;
 }
+
+.mat-mdc-checkbox {    
+    --mat-checkbox-label-text-font: var( --nrcl-font-family );
+    --mat-checkbox-label-text-size: var( --nrcl-font-size );
+    --mat-checkbox-label-text-weight: 500;
+    --mat-checkbox-label-text-color: #000;
+
+    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, 
+    .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+        background-color: #013366 !important;
+        border-color: #013366 !important;
+
+        .mdc-checkbox__checkmark {
+            color: #ffffff !important;
+        }
+
+        .mdc-checkbox__mixedmark {
+            border-color: #ffffff !important;
+        }
+    }
+}

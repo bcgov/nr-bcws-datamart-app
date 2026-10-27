@@ -1,0 +1,39 @@
+<nrcl-dialog
+    title="Daily Weather Data"
+    [showClose]="true"
+    [showWarning]="false"
+    saveLabel="Apply changes"
+    [saveEnabled]="true"
+    (saveClick)="onSaveClick()"
+    cancelLabel="Cancel"
+    [cancelEnabled]="true"
+    (cancelClick)="onCancelClick()"
+>
+    <p>
+        Data availability varies by station and time period.
+        <nrcl-button anchor
+            label="Learn more about weather data types"
+            iconRight="open_in_new"
+        ></nrcl-button>
+    </p>
+
+    <data-download-filter-checkboxes
+        headerTitle="Daily weather observations"
+        [fields]="codeTableService.DAILY_WEATHER_OBSERVATIONS_COLUMNS.items"
+        [value]="observations"
+        (valueChange)="onObservationsChange( $event )"
+    ></data-download-filter-checkboxes>
+
+    <nrcl-gap/>
+    
+    <data-download-filter-checkboxes
+        headerTitle="Daily weather calculations and ratings"
+        [fields]="codeTableService.DAILY_WEATHER_CALCULATIONS_COLUMNS.items"
+        [value]="calculations"
+        (valueChange)="onCalculationsChange( $event )"
+    >
+        Available from approximately April to October. Availability depends on seasonal conditions.
+    </data-download-filter-checkboxes>
+
+    <nrcl-gap/>
+</nrcl-dialog>
