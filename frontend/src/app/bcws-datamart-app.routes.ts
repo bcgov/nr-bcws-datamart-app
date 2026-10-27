@@ -5,6 +5,7 @@ import { StationSelectionPage } from './pages/station-selection/station-selectio
 import { AboutWeatherStationsPage } from './pages/about-weather-stations/about-weather-stations.page';
 import { AboutWeatherDataPage } from './pages/about-weather-data/about-weather-data.page';
 import { AboutGraphqlPage } from './pages/about-graphql/about-graphql.page';
+import { AboutMcpPage } from './pages/about-mcp/about-mcp.page';
 
 export const ROUTE = {
     HOME: '',
@@ -13,6 +14,7 @@ export const ROUTE = {
     ABOUT_WEATHER_STATIONS: 'about-weather-stations',
     ABOUT_WEATHER_DATA: 'about-weather-data',
     ABOUT_GRAPHQL: 'about-graphql',
+    ABOUT_MCP: 'about-mcp',
 } 
 
 export const bcwsDatamartAppRoutes: Routes = [
@@ -39,6 +41,10 @@ export const bcwsDatamartAppRoutes: Routes = [
     {
         path: ROUTE.ABOUT_GRAPHQL,
         component: AboutGraphqlPage
+    },
+    {
+        path: ROUTE.ABOUT_MCP,
+        component: AboutMcpPage
     },
     {
         path: '**',

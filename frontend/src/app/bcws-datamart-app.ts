@@ -119,6 +119,7 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
             case MENU.HOME: this.router.navigate( [ ROUTE.HOME ] ); break
             case MENU.STATION_SELECTION: this.router.navigate( [ ROUTE.STATION_SELECTION ] ); break
             case MENU.GRAPH: this.router.navigate( [ ROUTE.ABOUT_GRAPHQL ] ); break
+            case MENU.SERVER: this.router.navigate( [ ROUTE.ABOUT_MCP ] ); break
 
             case MENU.DISCLAIMER: openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=79F93E018712422FBC8E674A67A70535' ); break
             case MENU.PRIVACY: openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=9E890E16955E4FF4BF3B0E07B4722932' ); break
