@@ -29,7 +29,7 @@
         @for ( column of reportColumns; track column ) {
             <ng-container [matColumnDef]="column.code">
                 <mat-header-cell *matHeaderCellDef [mat-sort-header]="column.code">
-                    {{ column.heading }}
+                    {{ column.description }}
                 </mat-header-cell>
 
                 <mat-cell *matCellDef="let row" [class]="column.style">

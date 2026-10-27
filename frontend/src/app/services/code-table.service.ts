@@ -4,76 +4,93 @@ import { Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class CodeTableService {
+    // *********************************************************************************************************************
+    // Do not re-assign or re-use abbreviations if you want to maintain compatibility with filter state URLs past & future.
+    // *********************************************************************************************************************
+
+    // weather observations
     DAILY_WEATHER_OBSERVATIONS_COLUMNS = new CodeTableHeading([
-        // weather observations
-        { code: "recordType",           description: "Record type" },
-        { code: "temperature",          description: "Temperature at noon (°C)",                 heading: "Temperature (°C)" },
-        { code: "relativeHumidity",     description: "Relative humidity at noon (%)",           heading: "Relative humidity (%)" },
-        { code: "windSpeed",            description: "Wind speed at noon (km/h)",                  heading: "Wind speed (km/h)" },
-        { code: "windDirection",        description: "Wind direction at noon (degrees)",              heading: "Wind direction (degrees)" },
-        { code: "precipitation",        description: "Precipitation in previous 24 hours (mm)",  heading: "Daily precipitation (mm)" },
+        { code: "recordType",           description: "Record type",                             abbrev: 'rt' },
+        { code: "temperature",          description: "Temperature at noon (°C)",                abbrev: 't' },
+        { code: "relativeHumidity",     description: "Relative humidity at noon (%)",           abbrev: 'rh' },
+        { code: "windSpeed",            description: "Wind speed at noon (km/h)",               abbrev: 'ws' },
+        { code: "windDirection",        description: "Wind direction at noon (degrees)",        abbrev: 'wd' },
+        { code: "precipitation",        description: "Precipitation in previous 24 hours (mm)", abbrev: 'p' },
     ])
 
+    // fire weather calculations 
     DAILY_WEATHER_CALCULATIONS_COLUMNS = new CodeTableHeading([
-        // fire weather calculations 
-        { code: "dangerForest",         description: "Danger Forest Index (DFI)" },
-        { code: "fineFuelMoistureCode", description: "Fine Fuel Moisture Code (FFMC)" },
-        { code: "duffMoistureCode",     description: "Duff Moisture Code (DMC)" },
-        { code: "droughtCode",          description: "Drought Code (DC)" },
-        { code: "initialSpreadIndex",   description: "Initial Spread Index (ISI)" },
-        { code: "buildUpIndex",         description: "Buildup Index (BUI)" },
-        { code: "fireWeatherIndex",     description: "Fire Weather Index (FWI)" },
-        { code: "grasslandCuring",      description: "Grassland Curing" },
-        { code: "dailyRating",          description: "Daily Severity Rating (DSR)" },
+        { code: "dangerForest",         description: "Danger Forest Index (DFI)",               abbrev: 'dfi' },
+        { code: "fineFuelMoistureCode", description: "Fine Fuel Moisture Code (FFMC)",          abbrev: 'ffmc' },
+        { code: "duffMoistureCode",     description: "Duff Moisture Code (DMC)",                abbrev: 'dmc' },
+        { code: "droughtCode",          description: "Drought Code (DC)",                       abbrev: 'dc' },
+        { code: "initialSpreadIndex",   description: "Initial Spread Index (ISI)",              abbrev: 'isi' },
+        { code: "buildUpIndex",         description: "Buildup Index (BUI)",                     abbrev: 'bui' },
+        { code: "fireWeatherIndex",     description: "Fire Weather Index (FWI)",                abbrev: 'fwi' },
+        { code: "grasslandCuring",      description: "Grassland Curing",                        abbrev: 'gc' },
+        { code: "dailyRating",          description: "Daily Severity Rating (DSR)",             abbrev: 'dsr' },
     ])
 
+    DAILY_WEATHER_COLUMNS = new CodeTableHeading( [ 
+        ...this.DAILY_WEATHER_OBSERVATIONS_COLUMNS.items, 
+        ...this.DAILY_WEATHER_CALCULATIONS_COLUMNS.items 
+    ] )
+
+
+    // weather observations
     HOURLY_WEATHER_OBSERVATIONS_COLUMNS = new CodeTableHeading([
-        // weather observations
-        { code: "temperature",              description: "Temperature (°C)",                     heading: "Temperature (°C)",                    style: 'numeric' },
-        { code: "windSpeed",                description: "Wind speed (km/h)",                      heading: "Wind speed (km/h)",                   style: 'numeric' },
-        { code: "windDirection",            description: "Wind direction (degrees)",                  heading: "Wind direction (degrees)",            style: 'numeric' },
-        { code: "windGust",                 description: "Wind gust (km/h)",                       heading: "Wind gust (km/h)",                   style: 'numeric' },
-        { code: "precipitation",            description: "Precipitation (mm)",                   heading: "Precipitation (mm)",                  style: 'numeric' },
-        { code: "relativeHumidity",         description: "Relative humidity (%)",               heading: "Relative humidity (%)",               style: 'numeric' },
+        { code: "temperature",              description: "Temperature (°C)",                    abbrev: 't',    style: 'numeric' },
+        { code: "windSpeed",                description: "Wind speed (km/h)",                   abbrev: 'ws',   style: 'numeric' },
+        { code: "windDirection",            description: "Wind direction (degrees)",            abbrev: 'wd',   style: 'numeric' },
+        { code: "windGust",                 description: "Wind gust (km/h)",                    abbrev: 'wg',   style: 'numeric' },
+        { code: "precipitation",            description: "Precipitation (mm)",                  abbrev: 'p',    style: 'numeric' },
+        { code: "relativeHumidity",         description: "Relative humidity (%)",               abbrev: 'rh',   style: 'numeric' },
     ])
 
+    // fire weather calculations
     HOURLY_WEATHER_CALCULATIONS_COLUMNS = new CodeTableHeading([
-        // fire weather calculations
-        { code: "fineFuelMoistureCode",     description: "Fine Fuel Moisture Code (FFMC)" },
-        { code: "initialSpreadIndex",       description: "Initial Spread Index (ISI)" },
-        { code: "fireWeatherIndex",         description: "Fire Weather Index (FWI)" },
+        { code: "fineFuelMoistureCode",     description: "Fine Fuel Moisture Code (FFMC)",      abbrev: 'ffmc' },
+        { code: "initialSpreadIndex",       description: "Initial Spread Index (ISI)",          abbrev: 'isi' },
+        { code: "fireWeatherIndex",         description: "Fire Weather Index (FWI)",            abbrev: 'fwi' },
     ])
     
+    // ancillary observations
     HOURLY_WEATHER_ADDITIONAL_COLUMNS = new CodeTableHeading([
-        // ancillary observations
-        { code: "snowDepth",                description: "Snow depth",                                                                      style: 'numeric' },
-        { code: "snowDepthQuality",         description: "Snow depth quality" },
-        { code: "rn1Pluvio1",               description: "Pluvio 1 RN" },
-        { code: "precipPluvio1Status",      description: "Pluvio 1 precipitation status" },
-        { code: "precipPluvio1Total",       description: "Pluvio 1 precipitation total (mm)",    heading: "Pluvio 1 precipitation total (mm)",   style: 'numeric' },
-        { code: "rn1Pluviop2",              description: "Pluvio 2 RN" },
-        { code: "precipPluvio2Status",      description: "Pluvio 2 precipitation status" },
-        { code: "precipPluvio2Total",       description: "Pluvio 2 precipitation total (mm)",    heading: "Pluvio 2 precipitation total (mm)",   style: 'numeric' },
-        { code: "rn1RitPrecipRitStatus",    description: "RIT precipitation status" },
-        { code: "precipRitTotalPrecipRGT",  description: "RIT precipitation total",                                                         style: 'numeric' },
-        { code: "solarRadiationLicor",      description: "Solar Radiation Licor" },
-        { code: "solarRadiationCM3",        description: "Solar Radiation CM3" },
+        { code: "snowDepth",                description: "Snow depth",                          abbrev: 'sd',   style: 'numeric' },
+        { code: "snowDepthQuality",         description: "Snow depth quality",                  abbrev: 'sdq' },
+        { code: "rn1Pluvio1",               description: "Pluvio 1 RN",                         abbrev: 'p1' },
+        { code: "precipPluvio1Status",      description: "Pluvio 1 precipitation status",       abbrev: 'p1s' },
+        { code: "precipPluvio1Total",       description: "Pluvio 1 precipitation total (mm)",   abbrev: 'p1t',  style: 'numeric' },
+        { code: "rn1Pluviop2",              description: "Pluvio 2 RN",                         abbrev: 'p2' },
+        { code: "precipPluvio2Status",      description: "Pluvio 2 precipitation status",       abbrev: 'p2s' },
+        { code: "precipPluvio2Total",       description: "Pluvio 2 precipitation total (mm)",   abbrev: 'p2t',  style: 'numeric' },
+        { code: "rn1RitPrecipRitStatus",    description: "RIT precipitation status",            abbrev: 'rps' },
+        { code: "precipRitTotalPrecipRGT",  description: "RIT precipitation total",             abbrev: 'rpt',  style: 'numeric' },
+        { code: "solarRadiationLicor",      description: "Solar Radiation Licor",               abbrev: 'srl' },
+        { code: "solarRadiationCM3",        description: "Solar Radiation CM3",                 abbrev: 'src' },
     ])
 
+    HOURLY_WEATHER_COLUMNS = new CodeTableHeading( [ 
+        ...this.HOURLY_WEATHER_OBSERVATIONS_COLUMNS.items, 
+        ...this.HOURLY_WEATHER_CALCULATIONS_COLUMNS.items, 
+        ...this.HOURLY_WEATHER_ADDITIONAL_COLUMNS.items 
+    ] )
+
+
     STATIONS_METADATA_COLUMNS = new CodeTableHeading([
-        { code: "stationName",              description: "Station name" },
-        { code: "stationCode",              description: "Station code" },
-        { code: "stationAcronym",           description: "Station acronym" },
-        { code: "fireCentre",               description: "Fire centre" },
-        { code: "fireZone",                 description: "Fire zone" },
-        { code: "elevation",                description: "Elevation (m)",                       heading: "Elevation (m)",                       style: 'numeric' },
-        { code: "slope",                    description: "Slope",                                                                           style: 'numeric' },
-        { code: "geometry",                 description: "Geometry" },
-        { code: "aspect",                   description: "Aspect",                                                                          style: 'numeric' },
-        { code: "pluvioSnowGaugeInd",       description: "Has Pluvio Snow Gauge" },
-        { code: "overwinterPrecipInd",      description: "Has Over Winter Precipitation Adjustment" },
-        { code: "latitude",                 description: "Latitude",                                                                        style: 'numeric' },
-        { code: "longitude",                description: "Longitude",                                                                       style: 'numeric' },
+        { code: "stationName",              description: "Station name",                        abbrev: 'sn' },
+        { code: "stationCode",              description: "Station code",                        abbrev: 'sc' },
+        { code: "stationAcronym",           description: "Station acronym",                     abbrev: 'sa' },
+        { code: "fireCentre",               description: "Fire centre",                         abbrev: 'fc' },
+        { code: "fireZone",                 description: "Fire zone",                           abbrev: 'fz' },
+        { code: "elevation",                description: "Elevation (m)",                       abbrev: 'e',    style: 'numeric' },
+        { code: "slope",                    description: "Slope",                               abbrev: 's',    style: 'numeric' },
+        { code: "geometry",                 description: "Geometry",                            abbrev: 'g' },
+        { code: "aspect",                   description: "Aspect",                              abbrev: 'a',    style: 'numeric' },
+        { code: "pluvioSnowGaugeInd",       description: "Has Pluvio Snow Gauge",               abbrev: 'psg' },
+        { code: "overwinterPrecipInd",      description: "Has Over Winter Precipitation Adjustment",    abbrev: 'owpa' },
+        { code: "latitude",                 description: "Latitude",                            abbrev: 'lat',  style: 'numeric' },
+        { code: "longitude",                description: "Longitude",                           abbrev: 'long', style: 'numeric' },
     ])
 }
 
@@ -108,18 +125,33 @@ export class CodeTable {
 }
 
 
-export type CodeDescriptionHeading = CodeDescription & { heading?: string, style?: string }
+export type CodeDescriptionHeading = CodeDescription & { 
+    abbrev: string, 
+    style?: string 
+}
 
 class CodeTableHeading extends CodeTable {
     constructor( _items: CodeDescriptionHeading[], _reload?: () => Promise<CodeDescriptionHeading[]> ) {
-        _items.forEach( i => {
-            if ( i.heading === undefined ) i.heading = i.description
-        } )
-
         super( _items, _reload )
+
+        let a: { [ key: string ]: CodeDescriptionHeading } = {}
+
+        this.items.forEach( c => {
+            if ( a[ c.abbrev ] ) throw Error( `${ c.code } and ${ a[ c.abbrev ].code } have same abbrev '${ c.abbrev }'` )
+           
+            a[ c.abbrev ] = c
+        } )
+    }
+
+    override get items(): CodeDescriptionHeading[] {
+        return this._items as CodeDescriptionHeading[]
     }
 
     override forCode( code: string ): CodeDescriptionHeading|undefined {
-        return this._items.find( o => o.code == code )
+        return this.items.find( o => o.code == code )
+    }
+
+    forAbbrev( abbrev: string ): CodeDescriptionHeading|undefined {
+        return this.items.find( o => o.abbrev == abbrev )
     }
 }
