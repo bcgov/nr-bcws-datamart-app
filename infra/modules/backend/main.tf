@@ -158,6 +158,7 @@ managed_identities = {
 
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
     WEBSITE_ENABLE_SYNC_UPDATE_SITE     = "1"
+    WEBSITES_CONTAINER_START_TIME_LIMIT = "180"
   }
 
   logs = {
