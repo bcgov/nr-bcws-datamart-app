@@ -43,8 +43,10 @@ export class DataDownloadPage implements OnInit {
     dailyReportColumns: CodeDescriptionHeading[] = []
 
     ngOnInit(): void {
-        Promise.resolve( this.activatedRoute.snapshot.queryParamMap )
-            .then( ( param ) => {
+        Promise.resolve(  )
+            .then( () => {
+                let param = this.activatedRoute.snapshot.queryParamMap
+                
                 if ( param.has( 'start' ) ) 
                     this.filter.startDate = param.get( 'start' ) || undefined
 
@@ -69,7 +71,7 @@ export class DataDownloadPage implements OnInit {
                         this.selectedStationsService.addStations( stations )
                     } )
             } )
-            .then( ( param ) => {
+            .then( () => {
                 this.onFilterChange( this.filter )
 
                 this.router.navigate([], {
