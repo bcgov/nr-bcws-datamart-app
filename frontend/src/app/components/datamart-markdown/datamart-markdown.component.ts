@@ -32,5 +32,12 @@ export class DataMartMarkdownComponent implements OnInit {
 
             return `<h${ depth } id="${ slugId }">${ text }</h${ depth }>\n`
         };
+
+        this.markdownService.renderer.tablerow = function ( tokens ) {
+            if ( /@@@/.test( tokens.text ) )
+                return ''
+            
+            return '<tr>' + tokens.text + '</tr>\n'
+        }
     }
 }
