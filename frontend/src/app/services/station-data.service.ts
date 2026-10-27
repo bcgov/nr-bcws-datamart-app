@@ -136,6 +136,13 @@ export class StationDataService {
             } )
     }
 
+    getStationsByCode( codes: number[] ): Promise<GeoJsonPoint<WeatherStation>[]> {
+        return this.loadStations()
+            .then( stations => {
+                return stations.filter( s => codes.includes( s.properties.STATION_CODE ) )
+            } )
+    }
+
     fetchWithRetry( url: string, description: string, retries = 3, delay = 1000 ): Promise<Response> {
         return fetch( url )
             .then( res => {

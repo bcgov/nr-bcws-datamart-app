@@ -8,6 +8,7 @@ import { DataDownloadListDailyComponent } from './list/data-download-list-daily.
 import { DataDownloadListHourlyComponent } from './list/data-download-list-hourly.component';
 import { CodeDescriptionHeading, CodeTableService } from '../../services/code-table.service';
 import { SelectedStationsService } from '../../services/selected-stations.service';
+import { StationDataService } from '../../services/station-data.service';
 
 @Component({
     selector: 'data-download-page',
@@ -32,6 +33,7 @@ export class DataDownloadPage implements OnInit {
     activatedRoute = inject(ActivatedRoute)
     selectedStationsService = inject(SelectedStationsService)
     snackbarUtilService = inject(SnackbarUtilService)
+    stationDataService = inject(StationDataService)
 
     filter: Filter = initialFilter( {
         dailyColumns: [ ...this.codeTableService.DAILY_WEATHER_OBSERVATIONS_COLUMNS.items.map( c => c.code ) ],
@@ -41,15 +43,42 @@ export class DataDownloadPage implements OnInit {
     dailyReportColumns: CodeDescriptionHeading[] = []
 
     ngOnInit(): void {
-        console.log( this.activatedRoute.snapshot.queryParamMap )
+        Promise.resolve( this.activatedRoute.snapshot.queryParamMap )
+            .then( ( param ) => {
+                if ( param.has( 'start' ) ) 
+                    this.filter.startDate = param.get( 'start' ) || undefined
 
-        this.onFilterChange( this.filter )
+                if ( param.has( 'end' ) ) 
+                    this.filter.endDate = param.get( 'end' ) || undefined
 
-        this.router.navigate([], {
-            relativeTo: this.activatedRoute, // Clears within the current route context
-            queryParams: {},        // Overwrites all parameters with an empty object
-            replaceUrl: true        // Overwrites history state so 'Back' doesn't re-apply parameters
-        });
+                if ( param.has( 'dailyFields' ) ) 
+                    this.filter.dailyColumns = param.get( 'dailyFields' )!.split( ',' ).map( a => this.codeTableService.DAILY_WEATHER_COLUMNS.forAbbrev( a )!.code )
+
+                if ( param.has( 'hourlyFields' ) ) 
+                    this.filter.hourlyColumns = param.get( 'hourlyFields' )!.split( ',' ).map( a => this.codeTableService.HOURLY_WEATHER_COLUMNS.forAbbrev( a )!.code )
+
+                if ( param.has( 'metadataFields' ) ) 
+                    this.filter.metadataColumns = param.get( 'metadataFields' )!.split( ',' ).map( a => this.codeTableService.STATIONS_METADATA_COLUMNS.forAbbrev( a )!.code )
+                
+                if ( !param.has( 'stations' ) ) return
+
+                let stationCodes = param.get( 'stations' )!.split( ',' ).map( v => Number( v) )
+                return this.stationDataService.getStationsByCode( stationCodes )
+                    .then( ( stations ) => {
+                        this.selectedStationsService.clearStations()
+                        this.selectedStationsService.addStations( stations )
+                    } )
+            } )
+            .then( ( param ) => {
+                console.log(this.filter)
+                this.onFilterChange( this.filter )
+
+                this.router.navigate([], {
+                    relativeTo: this.activatedRoute, // Clears within the current route context
+                    queryParams: {},        // Overwrites all parameters with an empty object
+                    replaceUrl: true        // Overwrites history state so 'Back' doesn't re-apply parameters
+                });
+            } )
     }
 
     onFilterChange( filter: Filter ) {
@@ -98,6 +127,8 @@ export class DataDownloadPage implements OnInit {
         const urlTree = this.router.createUrlTree([], {
             relativeTo: this.activatedRoute,
             queryParams: {
+                start: this.filter.startDate,
+                end: this.filter.endDate,
                 stations: this.selectedStationsService.selectedStations.map( s => s.properties.STATION_CODE ).join(','),
                 dailyFields: dailyFields.join(','),
                 hourlyFields: hourlyFields.join(','),
