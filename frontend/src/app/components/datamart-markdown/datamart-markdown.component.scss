@@ -1,0 +1,37 @@
+:host {
+    display: flex;
+    justify-content: center;
+
+    markdown {
+        max-width: 800px;
+
+        ::ng-deep {
+            table {
+                border-spacing: 0;
+
+                thead {
+                    display: none;
+                }
+
+                tr {
+                    td:first-child {
+                        font-weight: bold;
+                        width: 250px;
+                        vertical-align: top;
+                    }
+
+                    td {
+                        border-bottom: 1px solid #c6c8cb;
+                        padding: 4px 0;
+                    }
+                }
+
+                tr:first-child {
+                    td {
+                        border-top: 1px solid #c6c8cb;
+                    }
+                }
+            }
+        }
+    }
+}
