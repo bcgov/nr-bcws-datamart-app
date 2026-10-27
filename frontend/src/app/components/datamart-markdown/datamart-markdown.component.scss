@@ -11,23 +11,45 @@
                 width: 100%;
 
                 thead {
+                    th:nth-child(1) {
+                        width: var( --col1-width );
+                    }                  
+
+                    th:nth-child(2) {
+                        width: var( --col2-width );
+                    }                  
+
+                    th:nth-child(3) {
+                        width: var( --col3-width );
+                    }                   
+
                     th {
                         text-align: left;
                         padding-bottom: 8px;
+                        padding-right: 8px;
                     }
                 }
 
                 tr {
-                    td:first-child {
+                    td:nth-child(1) {
                         font-weight: bold;
-                        min-width: 250px;
-                        vertical-align: top;
-                        padding-right: 8px;
-                    }
+                        width: var( --col1-width );
+                    }                 
+
+                    td:nth-child(2) {
+                        width: var( --col2-width );
+                    }               
+
+                    td:nth-child(3) {
+                        width: var( --col3-width );
+                    }                   
 
                     td {
+                        vertical-align: top;
                         border-bottom: 1px solid #c6c8cb;
-                        padding: 8px 0;
+                        padding-top: 8px;
+                        padding-right: 8px;
+                        padding-bottom: 8px;
                     }
                 }
 
@@ -36,6 +58,22 @@
                         border-top: 1px solid #c6c8cb;
                     }
                 }
+            }
+
+            code {
+                background-color: #e4e7eb;
+                padding: 4px;
+                border-radius: 4px;
+                font-size: 16px;
+            }
+
+            pre {
+                display: block;
+                width: 100%;
+                background-color: #e4e7eb;
+                padding: 16px;
+                border-radius: 16px;
+                box-sizing: border-box;
             }
         }
     }
