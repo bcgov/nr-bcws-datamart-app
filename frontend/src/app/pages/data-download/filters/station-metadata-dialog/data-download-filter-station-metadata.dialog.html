@@ -10,7 +10,8 @@
     (cancelClick)="onCancelClick()"
 >
     <p>
-        <nrcl-button anchor
+        <nrcl-button 
+            [anchor]="{ href: 'about-weather-stations', target: 'about-weather-stations' }"
             label="Learn more about station metadata"
             iconRight="open_in_new"
         ></nrcl-button>
