@@ -149,7 +149,7 @@ managed_identities = {
   app_settings = {
     WEBSITES_PORT = "8080"
 
-    DATAMART_GRAPHQL_URL = "${module.backend_site.resource_uri}/graphql"
+    DATAMART_GRAPHQL_URL = "https://${module.backend_site.resource_uri}/graphql"
     DATAMART_TIMEOUT_SECONDS = tostring(var.datamart_timeout_seconds)
     DOWNLOAD_SYNC_THRESHOLD  = tostring(var.download_sync_threshold)
 
