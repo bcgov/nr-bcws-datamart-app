@@ -4,7 +4,7 @@ This API lives in `backend/datamart-api`. Each API of the backend has its own fo
 
 | File | Purpose |
 | --- | --- |
-| `dab-config.json` | Runtime settings (REST, GraphQL, MCP, CORS, authentication, log level) and the list of database files in `data-source-files`. Reads its settings from environment variables. |
+| `dab-config.json` | Runtime settings (REST, GraphQL, MCP, CORS, authentication, log level), a default data source and the list of database files in `data-source-files`. It has no entities. Reads its settings from environment variables. |
 | `dab-config.db1.json` | Data source and entities of the first database. |
 | `dab-config.db2.json` | Data source and entities of the second database. |
 | `Dockerfile` | Builds the image: the official DAB image plus the `dab-config*.json` files. |
@@ -41,7 +41,7 @@ Whichever identity you use must have access to the Fabric workspace (Viewer or h
 
 ## Several databases
 
-DAB supports one data source per configuration file. `dab-config.json` contains only the shared runtime settings and lists the database files in `data-source-files`. Each database file (`dab-config.db1.json`, `dab-config.db2.json`) has its own `data-source` and `entities`. Entity names must be unique across all files. The runtime settings come only from `dab-config.json`. To expose a table, add it to `entities` of the file of its database. `dab-config.db2.json` ships with no entities. To add a third database, create `dab-config.db3.json`, list it in `data-source-files`, copy it in the `Dockerfile`, and add a connection string variable. DAB reads the schema of every entity when it starts, so a wrong table name stops the service.
+DAB supports one data source per configuration file. `dab-config.json` contains the shared runtime settings and lists the database files in `data-source-files`. It must also declare a `data-source` (it reuses `FABRIC_SQL_CONNECTION_STRING`) and an empty `entities` object. Data API builder 2.0.12 answers every REST request with `Invalid Entity path` when the top-level file has no `data-source`, even though the child files load. Each database file (`dab-config.db1.json`, `dab-config.db2.json`) has its own `data-source` and `entities`. Entity names must be unique across all files. The runtime settings come only from `dab-config.json`. To expose a table, add it to `entities` of the file of its database. `dab-config.db2.json` ships with no entities. To add a third database, create `dab-config.db3.json`, list it in `data-source-files`, copy it in the `Dockerfile`, and add a connection string variable. DAB reads the schema of every entity when it starts, so a wrong table name stops the service.
 
 ## Endpoints
 

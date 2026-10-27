@@ -1,5 +1,12 @@
 {
   "$schema": "https://github.com/Azure/data-api-builder/releases/download/v2.0.12/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "dwsql",
+    "connection-string": "@env('FABRIC_SQL_CONNECTION_STRING')",
+    "options": {
+      "set-session-context": false
+    }
+  },
   "data-source-files": [
     "dab-config.db1.json",
     "dab-config.db2.json"
@@ -53,5 +60,6 @@
       },
       "mode": "@env('DAB_RUNTIME_MODE')"
     }
-  }
+  },
+  "entities": {}
 }
