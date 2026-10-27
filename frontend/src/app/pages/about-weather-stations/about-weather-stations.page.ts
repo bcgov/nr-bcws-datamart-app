@@ -8,7 +8,6 @@ import { DataMartMarkdownComponent } from '../../components/datamart-markdown/da
     styleUrl: './about-weather-stations.page.scss',
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
-        AppFooterComponent,
         DataMartMarkdownComponent
     ]
 } )
