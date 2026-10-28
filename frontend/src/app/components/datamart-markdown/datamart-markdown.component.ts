@@ -21,16 +21,19 @@ export class DataMartMarkdownComponent implements OnInit {
 
     ngOnInit(): void {
         this.markdownService.renderer.heading = ( { tokens, depth } ) => {
-            const text = Parser.parseInline( tokens );
+            // console.log(tokens)
+            const parsed = Parser.parseInline( tokens );
 
+            let text = (tokens[0] as any).text
             // Create a clean slug ID (lowercase, replace non-alphanumeric with dashes)
-            const slugId = text
+            const slug = text
                 .toLowerCase()
                 .trim()
-                .replace( /[^\w\s\-]/g, '' ) // Remove special characters
-                .replace( /\s+/g, '-' );     // Replace spaces with dashes
+                .replace( /[^a-z0-9\-]/g, '-' )
+                .replace( /[-]+/g, '-' )
+                .replace( /^[-]|[-]$/g, '' )
 
-            return `<h${ depth } id="${ slugId }">${ text }</h${ depth }>\n`
+            return `<h${ depth } id="${ slug }">${ parsed }</h${ depth }>\n`
         };
 
         let tableInner = this.markdownService.renderer.table
@@ -48,7 +51,7 @@ export class DataMartMarkdownComponent implements OnInit {
         this.markdownService.renderer.tablerow = function ( tokens ) {
             if ( /@@@/.test( tokens.text ) )
                 return ''
-            
+
             return '<tr>' + tokens.text + '</tr>\n'
         }
     }
