@@ -18,7 +18,22 @@
     (filterChange)="onFilterChange( $event )"
 ></data-download-filters>
 
-<nrcl-gap/>
+@if ( showDownloadWarning ) {
+    <div class="download-warning">
+        <nrcl-icon>{{' info;{"fill":false} '}}</nrcl-icon>
+        <span>
+            Direct download limit is {{ threshold }} rows. 
+            You can select fewer stations or shorten the date range to minimize the rows or email yourself a download link for the full dataset.
+        </span>
+        <nrcl-button tertiary
+            icon="close"
+            (click)="onCloseWarningClick()"
+        ></nrcl-button>
+    </div>
+}
+@else {
+    <nrcl-gap/>
+}
 
 <div class="tabs-container">
     <nrcl-tab-group standard>

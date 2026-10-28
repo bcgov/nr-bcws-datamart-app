@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { ButtonComponent, GapComponent, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
+import { ButtonComponent, GapComponent, IconComponent, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
 import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
 import { DataDownloadFiltersComponent, Filter, initialFilter } from './filters/data-download-filters.component';
 import { ROUTE } from '../../bcws-datamart-app.routes';
@@ -24,7 +24,8 @@ import { StationDataService } from '../../services/station-data.service';
         ButtonComponent,
         DataDownloadFiltersComponent,
         DataDownloadListDailyComponent,
-        DataDownloadListHourlyComponent
+        DataDownloadListHourlyComponent,
+        IconComponent
     ]
 })
 export class DataDownloadPage implements OnInit {
@@ -41,6 +42,9 @@ export class DataDownloadPage implements OnInit {
     } )
     hourlyReportColumns: CodeDescriptionHeading[] = []
     dailyReportColumns: CodeDescriptionHeading[] = []
+
+    readonly threshold: number = 10
+    showDownloadWarning = true
 
     ngOnInit(): void {
         Promise.resolve(  )
@@ -145,5 +149,9 @@ export class DataDownloadPage implements OnInit {
             .then( () => {
                 this.snackbarUtilService.successful( `Copied URL to clipboard:\n${ url }`, 2500 )
             } )
+    }
+
+    onCloseWarningClick() {
+        this.showDownloadWarning = false
     }
 }
