@@ -118,7 +118,7 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
         switch ( menuId ) {
             case MENU.HOME: this.router.navigate( [ ROUTE.HOME ] ); break
             case MENU.STATION_SELECTION: this.router.navigate( [ ROUTE.STATION_SELECTION ] ); break
-            case MENU.GRAPH: this.router.navigate( [ ROUTE.ABOUT_GRAPHQL ] ); break
+            case MENU.GRAPH: this.router.navigate( [ ROUTE.GRAPHQL_EXPLORER ] ); break
             case MENU.SERVER: this.router.navigate( [ ROUTE.ABOUT_MCP ] ); break
             case MENU.DATA: this.router.navigate( [ ROUTE.ABOUT_REST ] ); break
 
