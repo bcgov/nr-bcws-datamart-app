@@ -35,6 +35,10 @@ module "backend_site" {
     user_assigned_resource_ids = var.user_assigned_identity_id != "" ? [var.user_assigned_identity_id] : []
   }
 
+  # Enabled so that the access restrictions below decide who can call the API. When this is disabled,
+  # Azure rejects all public traffic and ignores the IP rules.
+  public_network_access_enabled = true
+
   site_config = {
     always_on                               = true
     container_registry_use_managed_identity = local.api_registry_is_acr
