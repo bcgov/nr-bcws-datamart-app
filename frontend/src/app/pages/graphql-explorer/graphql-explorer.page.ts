@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ButtonComponent, GapComponent } from '@bcgov/nr-ngx-component-lib';
+import { MatMenuModule } from '@angular/material/menu';
+import { ButtonComponent, DesktopViewDirective, DeviceViewComponent, GapComponent, MobileViewDirective } from '@bcgov/nr-ngx-component-lib';
 
 type Example = {
     label: string
@@ -19,10 +20,15 @@ type Example = {
         MatFormFieldModule,
         MatInputModule,
         GapComponent,
-        FormsModule
-    ]
+        FormsModule,
+        MatMenuModule,
+    ],
+    host: {
+        '[class.wide]': 'wide',
+        '[class.narrow]': '!wide'
+    }
 } )
-export class GraphqlExplorerPage {
+export class GraphqlExplorerPage implements OnInit {
     examples: Example[] = [
         {
             label: 'Daily Weather, first 5',
@@ -128,9 +134,14 @@ export class GraphqlExplorerPage {
 
     query = ''
     result = ''
+    wide = true
+
+    ngOnInit(): void {
+        this.onResize()
+    }
 
     onExampleClick( ex: Example ) {
-        this.query = format( ex.query )
+        this.query = '# ' + ex.label + '\n\n' + format( ex.query )
     }
 
     onRunQueryClick() {
@@ -141,6 +152,16 @@ export class GraphqlExplorerPage {
         this.query = ''
         this.result = ''
     }
+
+    @HostListener("window:resize", [])
+    onResize() {
+        let width = window.innerWidth 
+        let height = window.innerHeight
+
+        this.wide = width > height
+    }
+
+
 }
 
 function format( text: string ): string {

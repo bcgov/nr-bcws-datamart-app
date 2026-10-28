@@ -63,3 +63,16 @@ body {
         }
     }
 }
+
+.cdk-overlay-container {
+    .nrcl-menu {
+        .nrcl-button {
+            --nrcl-button-width: 100%;
+            width: 100%;
+
+            button {
+                text-align: left;
+            }
+        }
+    }
+}

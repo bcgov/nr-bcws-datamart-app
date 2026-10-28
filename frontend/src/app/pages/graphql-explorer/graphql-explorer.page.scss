@@ -18,51 +18,88 @@
         padding-top: 16px;
     }
 
-    .examples {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 16px;
-        border-radius: 16px;
-        background-color: #eee;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-
-        .nrcl-button {
-            --nrcl-button-width: 300px;
-            --nrcl-button-tertiary-background-color: #fff;
-
-            ::ng-deep .label {
-                // text-decoration: underline;
-            }
-        }
-    }
-
     .query {
-        flex-grow: 1;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
+        ::ng-deep .mat-mdc-form-field-flex {
+            height: 100%;
+            align-items: stretch;
+        }
+
+        ::ng-deep .mat-form-field-infix {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
 
         textarea {
+            flex-grow: 1;
+            height: 100%;
+            resize: none;
+            box-sizing: border-box;
             font-family: monospace;
-        }
+        }        
+    }
 
-        .result {
-            font-family: monospace;
-            background-color: #eee;
-            padding: 8px;
-            border-radius: 8px;
+    .result {
+        font-family: monospace;
+        background-color: #eee;
+        padding: 8px;
+        border-radius: 8px;
 
-            &.empty {
-                color: #666;
-            }
+        &.empty {
+            color: #666;
         }
     }
 
     .actions {
         display: flex;
         gap: 16px;
-        padding-top: 16px;
+        justify-content: space-between;
+    }
+
+    &.wide {
+        .content {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 16px;
+
+            .actions {
+                grid-row: 1;
+                grid-column: 1;
+            }
+
+            .query {
+                grid-row: 2;
+                grid-column: 1;                
+            }
+
+            .result {
+                grid-row: 1 / span 2;
+                grid-column: 2;
+            }
+        }
+    }
+
+    &.narrow {
+        .content {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr auto 1fr;
+            gap: 8px;
+
+            .actions {
+                grid-row: 2;
+            }
+
+            .query {
+                grid-row: 1;
+            }
+
+            .result {
+                grid-row: 3;
+            }
+        }
     }
 }
