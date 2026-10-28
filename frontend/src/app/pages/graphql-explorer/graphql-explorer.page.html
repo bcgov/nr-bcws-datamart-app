@@ -1,0 +1,68 @@
+<h1>GraphQL Explorer</h1>
+
+<p>
+    Build and run queries against the Weather DataMart GraphQL API. 
+    Start with an example query below or write your own.
+</p>
+
+<h3>New to the GraphQL API?</h3>
+
+<p>
+    View the 
+    <nrcl-button 
+        [anchor]="{ href: 'about-graphql', target: 'about-graphql' }"
+        label="GraphQL API documentation"
+        iconRight="open_in_new"
+    ></nrcl-button>
+</p>
+
+<h3>Example Queries</h3>
+
+<p>
+    Select an example to load it into the query editor.
+</p>
+
+<div class="examples">
+    @for ( example of examples; track example ) {
+        <nrcl-button tertiary
+            [label]="example.label"
+            (click)="onExampleClick( example )"
+            iconRight="search"
+            [small]="false"
+        ></nrcl-button>
+    }
+</div>
+
+<nrcl-gap/>
+
+<div class="query">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic"> 
+        <mat-label>GraphQL Query</mat-label>
+
+        <textarea matInput cdkTextareaAutosize
+            [(ngModel)]="query"
+            #queryField="ngModel"        
+        ></textarea>
+
+        @if (queryField.invalid && (queryField.dirty || queryField.touched)) {
+            @if (queryField.hasError('query')) {
+                <mat-error>Query has an error</mat-error>
+            }
+        }
+    </mat-form-field>
+
+    <div class="result" [class.empty]="!result">{{ result || 'Query result appears here' }}</div>
+</div>
+
+<div class="actions">
+    <nrcl-button primary
+        label="Run Query"
+        (click)="onRunQueryClick()"
+        [disabled]="queryField.invalid"
+    ></nrcl-button>
+
+    <nrcl-button tertiary
+        label="Clear Query"
+        (click)="onClearQueryClick()"
+    ></nrcl-button>
+</div>
