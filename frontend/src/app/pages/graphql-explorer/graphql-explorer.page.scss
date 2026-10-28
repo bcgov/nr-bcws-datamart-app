@@ -1,0 +1,68 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    padding-left: var( --nrcl-gutter-space );
+    padding-right: var( --nrcl-gutter-space );
+    padding-bottom: var( --nrcl-gutter-space );
+    box-sizing: border-box;
+
+    h1, h3, p {
+        margin: 0;
+        padding: 0;
+        padding-bottom: 8px;
+    }
+
+    h1, h3 {
+        padding-top: 16px;
+    }
+
+    .examples {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 16px;
+        border-radius: 16px;
+        background-color: #eee;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+
+        .nrcl-button {
+            --nrcl-button-width: 300px;
+            --nrcl-button-tertiary-background-color: #fff;
+
+            ::ng-deep .label {
+                // text-decoration: underline;
+            }
+        }
+    }
+
+    .query {
+        flex-grow: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+
+        textarea {
+            font-family: monospace;
+        }
+
+        .result {
+            font-family: monospace;
+            background-color: #eee;
+            padding: 8px;
+            border-radius: 8px;
+
+            &.empty {
+                color: #666;
+            }
+        }
+    }
+
+    .actions {
+        display: flex;
+        gap: 16px;
+        padding-top: 16px;
+    }
+}
