@@ -23,7 +23,7 @@ The `Authentication` keyword in the connection string decides how DAB signs in t
 
 ```text
 # Docker with an Entra ID user name and password (your IDIR email and password)
-Server=<name>.datawarehouse.fabric.microsoft.com;Database=<warehouse>;Authentication=Active Directory Password;User Id=<IDIR email>;Password=<IDIR password>;Encrypt=True;TrustServerCertificate=False;Command Timeout=240;
+Server=<name>.datawarehouse.fabric.microsoft.com;Database=<warehouse>;Authentication=Active Directory Password;User Id=<IDIR email>;Password=<IDIR password>;Encrypt=True;TrustServerCertificate=False;Command Timeout=240;Connect Timeout=60;
 
 # Service principal (Docker, or anywhere without a signed-in user)
 Server=<name>.datawarehouse.fabric.microsoft.com;Database=<warehouse>;Authentication=Active Directory Service Principal;User ID=<client-id>;Password=<client-secret>;Encrypt=True
