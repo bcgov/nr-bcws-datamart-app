@@ -1,0 +1,110 @@
+<datamart-markdown ngPreserveWhitespaces>
+
+# About weather stations
+
+BC Wildfire Service (BCWS) operates a network of automated weather stations across British Columbia.
+These stations collect weather observations, including temperature, relative humidity, precipitation and wind, to support wildfire preparedness, response and fire weather monitoring.
+
+The Weather DataMart provides information about BCWS-managed weather stations, including their location, elevation, operational status and site characteristics.
+It does not include all weather stations operating in British Columbia.
+
+## On this page
+
+- [Station status](about-weather-stations#station-status)
+- [Quick Deploy weather stations](about-weather-stations#quick-deploy-weather-stations)
+- [Weather station information](about-weather-stations#weather-station-information)
+- [Data availability](about-weather-stations#data-availability)
+- [Interpreting station data](about-weather-stations#interpreting-station-data)
+
+## Station status
+
+@@@ | @@@
+--- | ---
+Active | A station's status indicates its current operational state in the Weather DataMart.
+Test | The station is active and available for operational use.
+Disabled | The station is being used for testing. Data from a test station may not be intended for operational use.
+Archived | The station has been disabled and is not currently operating as an active station. The station is no longer active but is retained so its historical station information and weather data can be accessed.
+
+## Quick Deploy weather stations
+
+Unlike permanent weather stations, Quick Deploy stations may move one or more times during a fire season. 
+Use caution when working with historical data from a Quick Deploy station, as its current location may not represent the location where older observations were recorded.
+
+Quick Deploy stations are **identified by "QD" in the station name**.
+
+## Weather station information
+
+Each weather station has information that identifies the station, describes its location and provides details about the site and its equipment.
+
+### Station identification
+
+@@@ | @@@
+--- | ---
+Station name | The common name given to the weather station.
+Station code | A unique code that identifies the weather station. The station code can also be used to relate the station to its weather observations.
+Station acronym | A weather station may have an acronym.
+
+### Fire Centre and Fire Zone
+
+@@@ | @@@
+--- | ---
+Fire Centre | The BC Wildfire Service Fire Centre in which the weather station is located.
+Fire Zone | The BC Wildfire Service Fire Zone in which the weather station is located.
+
+### Location and terrain
+
+@@@ | @@@
+--- | ---
+Latitude | The geographic latitude of the weather station, expressed in decimal degrees.
+Longitude | The geographic longitude of the weather station, expressed in decimal degrees.
+Elevation | The elevation of the weather station in metres above sea level.
+Slope | The average slope of the terrain where the weather station is located, expressed in degrees.
+Aspect | The general direction the weather station site faces.
+
+### Wind measurement information
+
+@@@ | @@@
+--- | ---
+Wind speed height | The height of the mast where the anemometer is mounted for measuring wind speed.
+Adjusted roughness | The roughness factor applied to wind speed readings.
+
+### Precipitation equipment
+
+@@@ | @@@
+--- | ---
+Pluvio snow gauge | Indicates whether the weather station has a Pluvio weighing precipitation gauge.
+Overwinter precipitation gauge | Indicates whether the weather station has a standpipe pressure transducer precipitation gauge.
+
+## Data availability
+
+The information and weather data available varies by station. 
+Some information may not be available because it is optional or does not apply to the station. 
+Some weather observations also require specific sensors or equipment that are not installed at every station.
+
+### Seasonal stations
+
+Not all BCWS weather stations operate year-round. 
+Some stations may stop reporting during the winter, so a station without recent observations is not necessarily experiencing a technical problem.
+
+## Interpreting station data
+
+Weather conditions can vary over short distances because of elevation, terrain, vegetation and other local factors.
+
+Do not assume that weather observations from a station represent conditions across an entire community, region or wildfire area.
+
+Consider the station's location, elevation, terrain and other local conditions when selecting stations and interpreting weather observations.
+
+## Ready to find weather data?
+
+Search, filter and select weather stations, then choose the weather information and time period you want to view or download.
+
+[Find weather stations](station-selection)
+
+## Related information
+
+- [About weather data](about-weather-data)
+- [REST API documentation]()
+- [GraphQL API documentation]()
+- [Use the MCP server]()
+
+</datamart-markdown>

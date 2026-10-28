@@ -1,0 +1,159 @@
+<datamart-markdown ngPreserveWhitespaces>
+
+# About weather data 
+
+BC Wildfire Service (BCWS) weather stations collect weather observations used to support wildfire preparedness, response and fire weather monitoring. 
+
+The Weather DataMart provides hourly and daily weather observations, fire weather indices and additional measurements from select weather stations. 
+
+## On this page 
+
+- [Before using the data](about-weather-data#before-using-the-data)
+- [Hourly weather observations](about-weather-data#hourly-weather-observations)
+- [Daily weather data](about-weather-data#daily-weather-data)
+- [Fire weather indices](about-weather-data#fire-weather-indices)
+- [Additional sensor data](about-weather-data#additional-sensor-data)
+- [Data availability and quality](about-weather-data#data-availability-and-quality)
+- [Date and time](about-weather-data#date-and-time)
+
+## Before using the data 
+
+Consider these factors when selecting and interpreting BCWS weather data: 
+
+- **Station availability varies.** 
+Some weather stations operate seasonally and may stop reporting during winter. 
+
+- **Station locations can change.** 
+Quick Deploy stations are portable, so their current location may not represent where historical observations were collected. 
+
+- **Sensor coverage varies.** 
+Not all stations collect every type of weather data. 
+
+- **Fire weather indices are seasonal.** 
+Values may not be available outside the period when fire weather indices are actively calculated. 
+
+- **Winter precipitation requires caution.** 
+Precipitation recorded by rain gauges during winter should not be interpreted as snow-water equivalent or total overwinter precipitation. 
+
+- **Time conventions affect interpretation.** 
+Daily records are based on the noon PST observation, and timestamps use PST year-round without adjusting for daylight saving time. 
+
+Learn more about weather stations, data availability and quality, and date and time. 
+
+## Hourly weather observations 
+
+Hourly weather observations provide measurements collected at BCWS weather stations. The data available varies by station. 
+
+Weather data | Description | Units 
+--- | --- | ---
+Temperature | Air temperature measured at the weather station. | °C 
+Relative humidity | Relative humidity measured at the weather station. | % 
+Precipitation | Liquid precipitation accumulated over the previous hour. | mm 
+Wind speed | Wind speed measured at the weather station. | km/h 
+Wind direction | The direction the wind is coming from, expressed in degrees. | degrees 
+Wind gust | The highest recorded wind speed over the previous hour. | km/h 
+
+### Precipitation during winter 
+
+Use caution when interpreting precipitation measurements during winter. Precipitation recorded during winter may result from snow melting through the rain gauge. It should not be used as a measure of snow-water equivalent or total overwinter precipitation. 
+
+## Daily weather data 
+
+Daily weather data includes weather measurements and fire weather indices for a 24-hour period. 
+Daily precipitation represents liquid precipitation accumulated over the previous 24 hours. 
+Daily data may also include fire weather indices. Learn more about these measurements in the Fire weather indices section below. 
+
+Weather data | Description | Units 
+--- | --- | ---
+Precipitation | Liquid precipitation accumulated over the previous 24 hours. | mm 
+
+TBD if I list all the hourly ones also provided again....this page is more about the types of content than a literal translation of api items. 
+
+## Fire weather indices 
+
+The Canadian Forest Fire Weather Index (FWI) System uses weather observations to estimate fuel moisture and provide indicators of potential fire behaviour. 
+The system includes three fuel moisture codes and three fire behaviour indices. 
+Learn more about the Fire Weather Index System and how its components are calculated and interpreted. 
+
+**Fire weather indices are seasonal.** 
+They are generally calculated from April to October and may be unavailable during winter shutdowns or until stations are snow-free.  
+
+Fire weather index | Description 
+--- | ---
+Fine Fuel Moisture Code (FFMC) | A measure of the moisture content of litter and other cured fine fuels. FFMC indicates the relative ease of ignition and flammability of fine fuels. 
+Duff Moisture Code (DMC) | A measure of the moisture content of loosely compacted organic layers of moderate depth. DMC indicates fuel consumption in moderate duff layers and medium-sized woody material. 
+Drought Code (DC) | A measure of the moisture content of deep, compact organic layers. DC indicates seasonal drought effects on forest fuels and the potential for deep, persistent burning. 
+Initial Spread Index (ISI) | An indicator of the expected rate of fire spread. ISI combines wind speed and FFMC. It does not account for fuel type, so actual spread rates can vary between fuel types at the same ISI. 
+Buildup Index (BUI) | An indicator of the total amount of fuel available for combustion. BUI combines the DMC and DC. 
+Fire Weather Index (FWI) | An indicator of potential fire intensity. FWI combines the ISI and BUI and provides a general indicator of fire danger. 
+Daily Severity Rating (DSR) | An indicator derived from the FWI that reflects the expected difficulty of fire suppression. 
+
+## Additional sensor data 
+
+Some weather stations have additional sensors that collect measurements beyond the core weather observations. 
+Additional sensor data is only available from stations equipped with the required sensors. 
+
+Weather data | Description 
+--- | ---
+Snow depth | Precipitation measured using a high-precision weighing gauge.  
+Snow depth quality | An indication of the quality of the snow depth sensor reading. 
+Pluvio precipitation | Precipitation measured using a Pluvio weighing gauge. 
+PC2/RIT precipitation | Precipitation measured using a pressure transducer sensor in mm units.  
+Rain gauge precipitation | Precipitation measured using a standard rain gauge. 
+Solar radiation | Pyranometer (Solar Radiation) sensor measuring in Watts per square meter (W/m^2) daylight spectrum (400-1100nm).  
+
+## Data availability and quality 
+
+### Data availability 
+
+Weather data availability varies by station and time of year. 
+Data may be unavailable because a station does not have the required sensor, operates seasonally or did not record a measurement. 
+Fire weather indices may not be calculated for that station at that time of year. 
+Additional sensor data is only available from stations equipped with the required sensors. 
+
+### Record types 
+
+Weather observations include a record type that indicates how the observation was collected. 
+It distinguishes observations collected automatically by a weather station from observations entered manually. 
+
+Record type | Description 
+--- | ---
+Actual | An observation collected from a weather station. 
+Manual | An observation entered manually. 
+
+### Data quality 
+
+The data is used by BCWS to support operational decisions. 
+
+When using the data, consider the following: 
+
+- The data reflects the operational data available to BCWS 
+
+- Sensor coverage varies by station 
+
+- Some values may be missing, delayed, sparse or seasonally unavailable 
+
+- Additional sensor data may not be monitored as closely as core weather observations 
+
+Users should apply appropriate quality assurance processes when using the data for purposes such as modelling, climatology, research, regulatory work or automated decision support. 
+
+## Date and time 
+
+Weather observations are recorded using UTC with a -8 offset, throughout the year. 
+
+Daily weather data is associated with the noon PCT observation. 
+
+## Ready to find weather data? 
+
+Search, filter and select weather stations, then choose the weather information and time period you want to view or download. 
+
+[Find weather stations](station-selection)
+
+## Related information 
+
+- [About weather stations](about-weather-stations)
+- [REST API documentation]()
+- [GraphQL API documentation]()
+- [Use the MCP server]()
+
+</datamart-markdown>
