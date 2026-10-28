@@ -1,0 +1,551 @@
+<datamart-markdown ngPreserveWhitespaces>
+
+# REST API
+
+Use the REST API to retrieve BC Wildfire Service weather station information and weather data programmatically.
+
+## On this page
+
+- [Overview](about-rest#overview)
+- [Getting started](about-rest#getting-started)
+- [Available endpoints](about-rest#available-endpoints)
+    - [`/dailies`](about-rest#dailies)
+    - [`/hourlies`](about-rest#hourlies)
+    - [`/stations`](about-rest#stations)
+    - [`/stations/[station-code]`](about-rest#stations-station-code)
+    - [`/danger-summaries`](about-rest#danger-summaries)
+- [Pagination and sorting](about-rest#pagination-and-sorting)
+- [Searching and filtering](about-rest#searching-and-filtering)
+- [Spatial queries](about-rest#spatial-queries)
+- [Date and time](about-rest#date-and-time)
+- [Response codes](about-rest#response-codes)
+- [OpenAPI specification](about-rest#openapi-specification)
+
+## Overview
+
+The Weather DataMart REST API provides public access to BC Wildfire Service weather station information and weather data.
+
+Use the REST API to retrieve:
+
+- Daily weather data
+- Hourly weather observations
+- Weather station information
+- Danger summaries
+
+## Getting started
+
+### Base URL
+
+`https://bcwsapi.nrs.gov.bc.ca/wfwx-datamart-api/v1`
+
+### Authentication
+
+The Weather DataMart REST API is publicly accessible and does not require authentication. 
+No API key or access token is required.
+
+##W API version
+
+The REST API uses version 1 (v1).
+
+### Request methods
+
+The API supports GET requests. It does not provide endpoints for other request methods.
+
+### Supported formats
+
+Endpoints accept and return:
+
+- `application/json`
+- `application/xml`
+
+## Available endpoints
+
+
+Endpoint | Description
+- | --
+`/dailies` | Retrieve daily weather data and fire weather indices.
+`/hourlies` | Retrieve hourly weather observations.
+`/stations` | Retrieve weather station information.
+`/stations/[station-code]` | Retrieve information for a specific weather station.
+`/danger-summaries` | Retrieve danger summary information.
+
+All requests are **`GET`** 
+
+
+
+## `/dailies` 
+
+Returns daily weather data derived from the noon hourly observation. 
+Daily data includes weather measurements, precipitation accumulated over the previous 24 hours, fire weather indices when available and danger class.
+
+### Request
+
+    GET /dailies
+
+### Response attributes
+
+Each object in the response contains the following attributes.
+
+Attribute | Type | Description
+-- | - | ----
+`recordType` | Text | Indicates whether the observation is actual or manually entered.
+`stationName` | Text | Common name of the weather station.
+`stationCode` | Text | Unique station code.
+`fireCentre` | Text | Fire Centre associated with the station.
+`stationAcronym` | Text | Station acronym, if available.
+`weatherTimestamp` | Number | Date and time associated with the observation.
+`temperature` | Number | Air temperature.
+`relativeHumidity` | Number | Relative humidity.
+`windSpeed` | Number | Wind speed.
+`windDirection` | Number | Wind direction in degrees.
+`precipitation` | Number | Precipitation.
+`dangerForest` | Number | Danger Forest Index associated with the observation.
+`fineFuelMoistureCode` | Number | Fine Fuel Moisture Code (FFMC).
+`duffMoistureCode` | Number | Duff Moisture Code (DMC).
+`droughtCode` | Number | Drought Code (DC).
+`initialSpreadIndex` | Number | Initial Spread Index (ISI).
+`buildUpIndex` | Number | Buildup Index (BUI).
+`fireWeatherIndex` | Number | Fire Weather Index (FWI).
+`grasslandCuring` | Number | Grassland curing value.
+`elevation` | Number | Elevation in metres above sea level.
+`geometry` | GeoJSON | Geographic location.
+
+For definitions of the measurements and fire weather indices returned by this endpoint, see [About weather data](about-weather-data).
+
+### Query parameters
+
+Parameter | Type | Description
+-- | - | ----
+`pageNumber` | Integer | Page to retrieve. Pages are zero-indexed.
+`pageRowCount` | Integer | Number of records to return on each page.
+`orderBy` | String | Attribute and direction to sort by.
+`query` | String | Advanced query used to filter results.
+`from` | Date | Start of requested date range, yyyyMMddHH.
+`to` | Date | End of requested date range, yyyyMMddHH. Maximum range is 31 days.
+`fireCentre` | String | Filter by Fire Centre.
+`stationCode` | String | Filter by station code.
+`stationName` | String | Filter by station name.
+`stationAcronym` | String | Filter by station acronym.
+`boundingBox` | String | Limit results to a geographic bounding box.
+`point` | String | Geographic point used with distance.
+`distance` | String | Radius around point, in kilometres.
+
+### Example request
+
+Retrieve daily weather data for a station within a specified date range.
+
+    GET /dailies?stationCode=790&from=2022080100&to=2022083023
+
+### Example response
+
+Retrieve daily weather data for a station within a specified date range.
+
+{{'
+    { ... }
+'}}
+
+
+
+## `/hourlies`
+
+Returns hourly weather observations for BC Wildfire Service weather stations.
+
+### Request
+
+    GET /hourlies
+
+### Response attributes
+
+Each object in the response contains the following attributes.
+
+Attribute | Type | Description
+-- | - | ----
+`recordType` | Text | Indicates whether the observation is actual or manually entered.
+`stationName` | Text | Common name of the weather station.
+`stationCode` | Text | Unique station code.
+`fireCentre` | Text | Fire Centre associated with the station.
+`stationAcronym` | Text | Station acronym, if available.
+`weatherTimestamp` | Number | Date and time associated with the observation.
+`temperature` | Number | Air temperature.
+`relativeHumidity` | Number | Relative humidity.
+`windSpeed` | Number | Wind speed.
+`windDirection` | Number | Wind direction in degrees.
+`windGust` | Number | Maximum wind gust during the previous hour.
+`precipitation` | Number | Precipitation accumulated over the previous hour.
+`fineFuelMoistureCode` | Number | Fine Fuel Moisture Code (FFMC).
+`initialSpreadIndex` | Number | Initial Spread Index (ISI).
+`fireWeatherIndex` | Number | Fire Weather Index (FWI).
+`elevation` | Number | Elevation in metres above sea level.
+`geometry` | GeoJSON | Geographic location.
+
+For definitions of the measurements and fire weather indices returned by this endpoint, see [About weather data](about-weather-data).
+
+### Query parameters
+
+Parameter | Type | Description
+-- | - | ----
+`pageNumber` | Integer | Page to retrieve. Pages are zero-indexed.
+`pageRowCount` | Integer | Number of records to return on each page.
+`orderBy` | String | Attribute and direction to sort by.
+`query` | String | Advanced query used to filter results.
+`from` | Date | Start of requested date range, yyyyMMddHH.
+`to` | Date | End of requested date range, yyyyMMddHH. Maximum range is 31 days.
+`fireCentre` | String | Filter by Fire Centre.
+`stationCode` | String | Filter by station code.
+`stationName` | String | Filter by station name.
+`stationAcronym` | String | Filter by station acronym.
+`boundingBox` | String | Limit results to a geographic bounding box.
+`point` | String | Geographic point used with distance.
+`distance` | String | Radius around point, in kilometres.
+
+### Example request
+
+Retrieve hourly weather data for a station within a specified date range.
+
+    GET /hourlies?stationCode=790&from=2022080100&to=2022080123
+
+### Example response
+
+Retrieve hourly weather data for a station within a specified date range.
+
+{{'
+    { ... }
+'}}
+
+
+
+## `/stations`
+
+Returns information about BC Wildfire Service weather stations.
+
+### Request
+
+    GET /stations
+
+### Response attributes
+
+Attribute | Type | Description
+-- | - | ----
+`stationCode` | Text | Unique station code.
+`stationName` | Text | Common name of the weather station.
+`fireCentre` | Text | Fire Centre associated with the station.
+`fireZone` | Text | Fire Zone associated with the station.
+`stationAcronym` | Text | Station acronym, if available.
+`elevation` | Number | Elevation in metres above sea level.
+`slope` | Number | Average slope of the terrain.
+`aspect` | Number | General direction the station site faces.
+`windspeedHeight` | Number | Height of the mast where the wind speed instrument is mounted.
+`adjustedRoughness` | Number | Roughness factor applied to wind speed readings.
+`isSnowGauge` | Boolean | Indicates whether the station has a snow gauge.
+`isPrecip` | Boolean | Indicates whether the station reports overwinter precipitation.
+`geometry` | GeoJSON | Geographic location.
+
+For definitions of the information about weather stations returned by this endpoint, see About weather stations.
+
+### Query parameters
+
+Parameter | Type | Description
+-- | - | ----
+`pageNumber` | Integer | Page to retrieve. Pages are zero-indexed.
+`pageRowCount` | Integer | Number of records to return on each page.
+`orderBy` | String | Attribute and direction to sort by.
+`query` | String | Advanced query used to filter results.
+`fireCentre` | String | Filter by Fire Centre.
+`fireZone` | String | Filter by Fire Zone.
+`stationCode` | String | Filter by station code.
+`stationName` | String | Filter by station name.
+`stationAcronym` | String | Filter by station acronym.
+`boundingBox` | String | Limit results to a geographic bounding box.
+`point` | String | Geographic point used with distance.
+`distance` | String | Radius around point, in kilometres.
+
+### Example request
+
+Retrieve station information for stations within a fire centre.
+
+    GET /stations?fireCentre=6
+
+### Example response
+
+Retrieve station information for stations within a fire centre.
+
+{{'
+    { ... }
+'}}
+
+
+
+## `/stations/[station-code]`
+
+Returns information about a specific BC Wildfire Service weather station.
+
+### Path parameter
+
+Parameter | Type | Description
+-- | - | ----
+`station-code` | String | The unique code identifying the weather station.
+
+### Response attributes
+
+The response contains the weather station attributes described in the [`/stations`](about-rest#stations) endpoint.
+
+### Example request
+
+Retrieve information about a specific weather station.
+
+    GET /stations/[station-code]
+
+For example:
+
+    GET /stations/790
+
+### Example response
+
+{{'
+    { ... }
+'}}
+
+
+## `/danger-summaries`
+
+Returns danger summary information for BC Wildfire Service weather stations.
+
+### Request
+
+    GET /danger-summaries
+
+### Response attributes
+
+Each object in the response contains the following attributes.
+
+Attribute | Type | Description
+-- | - | ----
+`stationCode` | Text | Unique station code.
+`stationName` | Text | Common name of the weather station.
+`stationAcronym` | Text | Station acronym, if available.
+`fireCentre` | Text | Fire Centre associated with the station.
+`fireZone` | Text | Fire Zone associated with the station.
+`dangerDate` | Date | Date associated with the danger summary.
+`dangerClass` | Number | Fire danger class associated with the station.
+`dangerRating` | Number | Daily Severity Rating associated with the station.
+`fineFuelMoistureCode` | Number | Fine Fuel Moisture Code (FFMC).
+`duffMoistureCode` | Number | Duff Moisture Code (DMC).
+`droughtCode` | Number | Drought Code (DC).
+`initialSpreadIndex` | Number | Initial Spread Index (ISI).
+`buildUpIndex` | Number | Buildup Index (BUI).
+`fireWeatherIndex` | Number | Fire Weather Index (FWI).
+
+### Query parameters
+
+Parameter | Type | Description
+-- | - | ----
+`pageNumber` | Integer | Page to retrieve. Pages are zero-indexed.
+`pageRowCount` | Integer | Number of records to return on each page.
+`orderBy` | String | Attribute and direction to sort by.
+`query` | String | Advanced query used to filter results.
+`date` | Date | Date used to retrieve danger summary records.
+`fireCentre` | String | Filter by Fire Centre.
+`fireZone` | String | Filter by Fire Zone.
+`stationCode` | String | Filter by station code.
+`stationName` | String | Filter by station name.
+`stationAcronym` | String | Filter by station acronym.
+`boundingBox` | String | Limit results to a geographic bounding box.
+`point` | String | Geographic point used with distance.
+`distance` | String | Radius around point, in kilometres.
+
+For definitions of the measurements and fire weather indices returned by this endpoint, see [About weather data](about-weather-data).
+
+### Example request
+
+Retrieve danger summary information for a specific date.
+
+    GET /danger-summaries?date=[date]
+
+### Example response
+
+Retrieve danger summary information for a specific date.
+
+{{'
+    { ... }
+'}}
+
+
+
+## Pagination and sorting
+
+The REST API uses pagination for endpoints that return large collections.
+
+Paginated responses include:
+
+Property | Description
+- | --
+`pageNumber` | Current page of results.
+`pageRowCount` | Maximum number of records on each page.
+`totalRowCount` | Total number of matching records.
+`totalPageCount` | Total number of pages.
+
+Pages are zero-indexed. The first page is page 0.
+
+Use `pageNumber` and `pageRowCount` to control which results are returned.
+
+
+
+## Navigation links
+
+Paginated responses include links to help navigate through the result set:
+
+Link | Description
+- | --
+`self` | The current page of results.
+`next` | The next page of results, when available.
+`prev` | The previous page of results, when available.
+
+For example, if you request page 2 of a result set that contains additional pages, the response includes links to the current, previous and next pages.
+
+
+
+## Sorting
+
+Use `orderBy` to specify the attribute and sort direction.
+
+For example:
+
+    ?orderBy=stationCode,desc
+
+### Sorting directions:
+
+- `asc` - ascending
+- `desc` - descending
+
+
+
+## Searching and filtering
+
+The `/dailies`, `/hourlies` and `/stations` endpoints support advanced filtering using the query parameter.
+
+The query parameter uses RSQL syntax.
+
+### Comparison operators
+
+Operator | Description
+- | ---
+`==` | Equal to
+`!=` | Not equal to
+`=lt=` or `<` | Less than
+`=le=` or `<=` | Less than or equal
+`=gt=` or `>` | Greater than
+`=ge=` or `>=` | Greater than or equal
+`=in=` | In
+`=out=` | Not in
+
+### Combining conditions
+
+Use:
+- `;` for AND
+- `,` for OR
+
+AND is evaluated before OR. 
+Use parentheses to change the order in which expressions are evaluated.
+
+### Multiple values
+
+Some operators accept multiple values. 
+Separate values with commas and enclose them in parentheses.
+
+### For example:
+
+    stationCode=in=(790,391)
+
+### Quoted values
+
+Values containing whitespace or reserved characters must be enclosed in single or double quotation marks.
+
+Use a backslash (`\`) to escape quotation marks within a quoted value. 
+To include a literal backslash, use two backslashes (`\\`).
+
+### Wildcards
+
+When comparing text using equal (`==`) or not equal (`!=`), you can use wildcards:
+
+- `*` matches any number of characters
+- `_` matches a single character
+
+### Examples
+
+Retrieve stations with an elevation greater than 100 metres
+
+    GET /stations?query=elevation=gt=100
+
+Retrieve daily data for stations 790 and 391 where the Buildup Index is between 100 and 150
+
+    GET /dailies?query=stationCode=in=(790,391);buildUpIndex=gt=100;buildUpIndex=lt=150&from=2022080100&to=2022083023
+
+
+
+## Spatial queries
+
+The REST API supports geographic filtering using boundingBox, point and distance.
+
+### Bounding box
+
+Use `boundingBox` to return records within a geographic area.
+
+### Example:
+
+    ?boundingBox=[min-longitude],[min-latitude],[max-longitude],[max-latitude]
+
+
+### Point and distance
+
+Use `point` and `distance` together to return records within a radius of a geographic point.
+
+The `point` parameter uses **longitude,latitude**.
+
+The `distance` parameter is measured in kilometres.
+
+### Example:
+
+    /hourlies?point=-123.703035,48.513648&distance=100
+
+
+
+## Date and time
+
+Date and time values use the following format: `yyyyMMddHH`
+
+### For example:
+
+    2022123123
+
+This represents **December 31, 2022 at 23:00**
+
+Weather timestamps use Pacific Standard Time (PST), GMT−8, throughout the year and do not adjust for daylight saving time.
+
+Daily weather data is associated with the noon PST observation.
+
+For more information about date and time conventions, see [About weather data](about-weather-data).
+
+
+## Response codes
+
+Code | Description
+- | --
+`200` | Request successful.
+`400` | Bad request.
+
+## OpenAPI specification
+
+An OpenAPI specification is available for developers:
+
+https://bcwsapi.nrs.gov.bc.ca/wfwx-datamart-api/v1/openapi.json
+
+
+
+## Related information
+
+- [About weather stations](about-weather-stations)
+- [About weather data](about-weather-data)
+- [GraphQL API documentation](about-graphql)
+- [Use the MCP server](about-mcp)
+
+</datamart-markdown>
