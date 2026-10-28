@@ -1,0 +1,297 @@
+<datamart-markdown ngPreserveWhitespaces>
+
+# GraphQL API documentation
+
+Use the GraphQL API to retrieve BC Wildfire Service weather station information and weather data programmatically.
+
+GraphQL lets you specify the information you want returned in each request.
+
+For definitions of weather station information and weather measurements, see [About weather stations](about-weather-stations) and [About weather data](about-weather-data).
+
+On this page
+
+- [Getting started](about-graphql#getting-started)
+- [GraphQL endpoint](about-graphql#graphql-endpoint)
+- [Available queries](about-graphql#available-queries)
+- [Query arguments](about-graphql#query-arguments)
+- [Filtering](about-graphql#filtering)
+- [Sorting](about-graphql#sorting)
+- [Pagination](about-graphql#pagination)
+- [Explore and test queries](about-graphql#explore-and-test-queries)
+- [Date and Time Format](about-graphql#date-and-time-format)
+- [Errors](about-graphql#errors)
+- [GraphQL schema](about-graphql#graphql-schema)
+- [Learn more about GraphQL](about-graphql#learn-more-about-graphql)
+
+## Getting started
+
+The Weather DataMart GraphQL API provides programmatic access to weather observations, fire weather indices, weather station information and organization unit information.
+
+Unlike the REST API, where each endpoint returns a predefined response structure, GraphQL lets you specify the fields you want returned.
+
+@@@ | @@@
+--- | ---
+Authentication | No authentication required.
+Response format | JSON
+
+The following example retrieves five hourly weather observations and returns only the timestamp, temperature, relative humidity, precipitation and wind speed.
+
+{{'
+    {
+        hourly_weathers(first: 5) {
+            items {
+                WEATHER_TIMESTAMP_MSEC
+                TEMPERATURE
+                RELATIVE_HUMIDITY
+                PRECIPITATION
+                WIND_SPEED
+            }
+        }
+    }
+'}}
+
+Use the GraphQL explorer to build and test queries.
+
+[Open GraphQL explorer]()
+
+## GraphQL endpoint
+
+Send GraphQL queries to:
+
+    [GraphQL endpoint URL]
+
+GraphQL uses a single endpoint. 
+The query determines the information retrieved and the fields returned.
+
+## Available queries
+
+The GraphQL API provides queries for retrieving hourly and daily weather data, weather station information and organization unit information.
+
+Query | Description
+- | ---
+`hourly_weathers` | Retrieve hourly weather observations, fire weather indices and additional sensor measurements.
+`hourly_weather_by_pk` | Retrieve a specific hourly weather record by its unique identifier.
+`daily_weathers` | Retrieve daily weather measurements and fire weather indices.
+`daily_weather_by_pk` | Retrieve a specific daily weather record by its unique identifier.
+`weather_stations` | Retrieve weather station information, including station status, location and site information.
+`weather_stations_by_pk` | Retrieve a specific weather station by its unique identifier.
+`org_units` | Retrieve Fire Centre and Fire Zone organization information.
+`org_units_by_pk` | Retrieve a specific organization unit by its unique identifier.
+
+Use the GraphQL schema to see the fields available for each query.
+
+For definitions of weather station information, see [About weather stations](about-weather-stations).
+
+For definitions of weather measurements, see [About weather data](about-weather-data).
+
+## Query arguments
+
+List queries support arguments that control which records are returned and how results are filtered, sorted and paginated.
+
+Argument | Type | Description
+-- | - | ---
+`first` | Int | Number of records to return.
+`after` | String | Pagination token used to continue through a paginated list.
+`filter` | Object | Filters the records returned by the query.
+`orderBy` | Object | Controls how records are sorted.
+
+Available filter and sorting fields depend on the query.
+
+Queries ending in _by_pk retrieve an individual record using its unique identifier.
+
+Query | Type | Argument
+-- | - | ---
+`hourly_weather_by_pk` | String | `HOURLY_WEATHER_MEAS_GUID`
+`daily_weather_by_pk` | String | `DAILY_WEATHER_MEAS_GUID`
+`weather_stations_by_pk` | String | `WEATHER_STATION_GUID`
+`org_units_by_pk` | Int | `FIRE_ZONE_ORG_UNIT_IDENTIFIER`
+
+## Filtering
+
+Use the filter argument to return records that meet specified conditions. 
+Available filter fields depend on the query.
+
+For example, the following query returns up to 10 daily weather records where the temperature is greater than 20:
+
+{{'
+    {
+        daily_weathers(
+            filter: { TEMPERATURE: { gt: 20 } }
+            first: 10
+        ) {
+            items {
+                WEATHER_STATION_GUID
+                WEATHER_TIMESTAMP_MSEC
+                TEMPERATURE
+                PRECIPITATION
+                FIRE_WEATHER_INDEX
+            }
+        }
+    }
+'}}
+
+The operators available depend on the type of field being filtered.
+
+Operator | Description
+- | ----
+`eq` | Equals
+`neq` | Does not equal
+`gt` | Greater than
+`gte` | Greater than or equal to
+`lt` | Less than
+`lte` | Less than or equal to
+`contains` | Contains
+`notContains` | Does not contain
+`startsWith` | Starts with
+`endsWith` | Ends with
+`in` | Matches a value in a specified list
+`isNull` | Tests whether a value is null.
+
+The text operators `contains`, `notContains`, `startsWith` and `endsWith` are available for string fields. 
+Numeric fields support comparison operators such as `gt`, `gte`, `lt` and `lte`.
+
+Multiple filter conditions can be combined using `and` and `or`. 
+The filter inputs support these two options.
+
+For example:
+
+{{'
+    {
+        daily_weathers(
+            filter: {
+                and: [
+                    { TEMPERATURE: { gte: 20 } }
+                    { TEMPERATURE: { lte: 30 } }
+                ]
+            }
+            first: 10
+        ) {
+            items {
+                WEATHER_STATION_GUID
+                WEATHER_TIMESTAMP_MSEC
+                TEMPERATURE
+            }
+        }
+    }
+'}}
+
+Use the GraphQL schema to see the fields and filter operators available for a query.
+
+## Sorting
+
+Use the `orderBy` argument to control the order in which records are returned.
+
+Use `ASC` to sort in ascending order or `DESC` to sort in descending order. 
+Available sorting fields depend on the query.
+
+For example:
+
+{{'
+    {
+        daily_weathers(
+            first: 10
+            orderBy: { TEMPERATURE: DESC }
+        ) {
+            items {
+                WEATHER_STATION_GUID
+                WEATHER_TIMESTAMP_MSEC
+                TEMPERATURE
+                PRECIPITATION
+            }
+        }
+    }
+'}}
+
+Use the GraphQL schema to see the fields available for sorting.
+
+## Pagination
+
+List queries use cursor-based pagination.
+
+Use first to specify the number of records to return. 
+The response can include `hasNextPage` to indicate whether more records are available and `endCursor` to provide the pagination token for the next set of results.
+
+For example:
+
+{{'
+    {
+        daily_weathers(first: 10) {
+            items {
+                WEATHER_STATION_GUID
+                WEATHER_TIMESTAMP_MSEC
+                TEMPERATURE
+            }
+            endCursor
+            hasNextPage
+        }
+    }
+'}}
+
+If `hasNextPage` is true, use the returned `endCursor` value as the after argument in the next query.
+
+{{'
+    {
+        daily_weathers(
+            first: 10
+            after: "[endCursor value]"
+        ) {
+            items {
+                WEATHER_STATION_GUID
+                WEATHER_TIMESTAMP_MSEC
+                TEMPERATURE
+            }
+            endCursor
+            hasNextPage
+        }
+    }
+'}}
+
+Continue using the returned `endCursor` until `hasNextPage` is false.
+
+## Explore and test queries
+
+### GraphQL explorer
+
+Use the GraphQL explorer to build and run queries directly against the Weather DataMart GraphQL API. 
+Start with an example query or write your own.
+
+[Open GraphQL explorer]()
+
+## Date and Time Format
+
+Weather data returned by the GraphQL API includes weather timestamps.
+
+The current schema returns `WEATHER_TIMESTAMP_MSEC` as a Decimal for daily and hourly weather records.
+
+`WEATHER_TIMESTAMP_MSEC` can also be used when filtering records.
+
+## Errors
+
+If a GraphQL query cannot be completed, the response provides information about the error.
+
+Use the returned error information to identify problems with the query.
+
+## GraphQL schema
+
+The GraphQL schema defines the queries, fields, arguments, filters and data types available through the API.
+
+Use the schema to determine which:
+
+- fields can be requested
+- arguments are available for a query
+- fields can be filtered or sorted
+- filter operators and data types are available
+
+For definitions of weather measurements and weather station information, see [About weather data](about-weather-data) and [About weather stations](about-weather-stations).
+
+[Explore the GraphQL schema]()
+
+## Learn more about GraphQL
+
+### New to GraphQL?
+
+Learn about GraphQL queries, fields, arguments and other concepts.
+
+[Learn about GraphQL]()
+
+</datamart-markdown>
