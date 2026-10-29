@@ -1,0 +1,75 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/download/v2.0.12/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "dwsql",
+    "connection-string": "@env('FABRIC_SQL_CONNECTION_STRING_2')",
+    "options": {
+      "set-session-context": false
+    }
+  },
+  "entities": {
+    "fire_centres": {
+      "source": {
+        "object": "dbo.CURRENT_FIRE_CENTRE_VW",
+        "type": "table",
+        "key-fields": [
+          "FIRE_ZONE_ORG_UNIT_IDENTIFIER"
+        ]
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "fire_zones": {
+      "source": {
+        "object": "dbo.CURRENT_FIRE_ZONE_VW",
+        "type": "table",
+        "key-fields": [
+          "FIRE_ZONE_ORG_UNIT_IDENTIFIER"
+        ]
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "org_units": {
+      "source": {
+        "object": "dbo.CURRENT_ORG_UNIT_VW",
+        "type": "table",
+        "key-fields": [
+          "FIRE_ZONE_ORG_UNIT_IDENTIFIER"
+        ]
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    }
+  }
+}

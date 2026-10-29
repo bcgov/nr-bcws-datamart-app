@@ -4,15 +4,18 @@ This API lives in `backend/datamart-api`. Each API of the backend has its own fo
 
 | File | Purpose |
 | --- | --- |
-| `dab-config.json` | Entities, endpoints and permissions. Reads its settings from environment variables. |
-| `Dockerfile` | Builds the image: the official DAB image plus `dab-config.json`. |
+| `dab-config.json` | Runtime settings (REST, GraphQL, MCP, CORS, authentication, log level), a default data source and the list of database files in `data-source-files`. It has no entities. Reads its settings from environment variables. |
+| `dab-config.db1.json` | Data source and entities of the first database. |
+| `dab-config.db2.json` | Data source and entities of the second database. |
+| `Dockerfile` | Builds the image: the official DAB image plus the `dab-config*.json` files. |
 | `.env.example` | Template for the local `.env` file (git-ignored). |
 
 ## Configuration
 
 | Environment variable | Required | Description |
 | --- | --- | --- |
-| `FABRIC_SQL_CONNECTION_STRING` | Yes | Connection string of the Fabric SQL analytics endpoint. |
+| `FABRIC_SQL_CONNECTION_STRING` | Yes | Connection string of the first Fabric SQL analytics endpoint (`dab-config.db1.json`). |
+| `FABRIC_SQL_CONNECTION_STRING_2` | Yes | Connection string of the second Fabric SQL analytics endpoint (`dab-config.db2.json`). |
 | `DAB_RUNTIME_MODE` | Yes for the DAB CLI, defaults to `production` in the image | `development` or `production`. |
 | `DAB_CORS_ORIGIN` | Yes for the DAB CLI, defaults to `*` in the image | Browser origin allowed to call the API. |
 
@@ -20,7 +23,7 @@ The `Authentication` keyword in the connection string decides how DAB signs in t
 
 ```text
 # Docker with an Entra ID user name and password (your IDIR email and password)
-Server=<name>.datawarehouse.fabric.microsoft.com;Database=<warehouse>;Authentication=Active Directory Password;User Id=<IDIR email>;Password=<IDIR password>;Encrypt=True;TrustServerCertificate=False;Command Timeout=240;
+Server=<name>.datawarehouse.fabric.microsoft.com;Database=<warehouse>;Authentication=Active Directory Password;User Id=<IDIR email>;Password=<IDIR password>;Encrypt=True;TrustServerCertificate=False;Command Timeout=240;Connect Timeout=60;
 
 # Service principal (Docker, or anywhere without a signed-in user)
 Server=<name>.datawarehouse.fabric.microsoft.com;Database=<warehouse>;Authentication=Active Directory Service Principal;User ID=<client-id>;Password=<client-secret>;Encrypt=True
@@ -35,6 +38,10 @@ Server=<name>.datawarehouse.fabric.microsoft.com;Database=<warehouse>;Authentica
 Whichever identity you use must have access to the Fabric workspace (Viewer or higher). Service principals also require the Fabric tenant setting "Service principals can use Fabric APIs".
 
 `Active Directory Password` works only for accounts that are not required to use multi-factor authentication. If the sign-in fails with an MFA error, use a service principal instead. Keep your IDIR password out of shared files and shell history, and use the value only in the git-ignored `backend/datamart-api/.env`.
+
+## Several databases
+
+DAB supports one data source per configuration file. `dab-config.json` contains the shared runtime settings and lists the database files in `data-source-files`. It must also declare a `data-source` (it reuses `FABRIC_SQL_CONNECTION_STRING`) and an empty `entities` object. Data API builder 2.0.12 answers every REST request with `Invalid Entity path` when the top-level file has no `data-source`, even though the child files load. Each database file (`dab-config.db1.json`, `dab-config.db2.json`) has its own `data-source` and `entities`. Entity names must be unique across all files. The runtime settings come only from `dab-config.json`. To expose a table, add it to `entities` of the file of its database. `dab-config.db2.json` ships with no entities. To add a third database, create `dab-config.db3.json`, list it in `data-source-files`, copy it in the `Dockerfile`, and add a connection string variable. DAB reads the schema of every entity when it starts, so a wrong table name stops the service.
 
 ## Endpoints
 
@@ -112,7 +119,7 @@ DAB loads `backend/datamart-api/.env` automatically. With the CLI, the `Active D
 
 Terraform in `infra/` deploys this image. CI builds it from this folder (`.github/workflows/.builds.yml`, with `build_context` set to `backend/datamart-api`) and publishes `ghcr.io/<owner>/<repo>/backend:<tag>`, and Terraform passes that image to the backend host (Container Apps or App Service).
 
-1. Create the GitHub environment secret `FABRIC_SQL_CONNECTION_STRING` for each environment. The deployer workflow passes it to Terraform as `TF_VAR_fabric_sql_connection_string`, and Terraform stores it as a Container Apps secret (or App Service app setting).
+1. Create the GitHub environment secrets `FABRIC_SQL_CONNECTION_STRING` and `FABRIC_SQL_CONNECTION_STRING_2` for each environment. The deployer workflow passes it to Terraform as `TF_VAR_fabric_sql_connection_string`, and Terraform stores it as a Container Apps secret (or App Service app setting).
 2. For the managed identity style, deploy first, then add the identity to the Fabric workspace. Read its object ID from the Terraform output `backend_managed_identity_principal_id` (Container Apps). In Fabric, open the workspace, choose Manage access, and add the identity as Viewer. Look up the identity by the name of the container app.
 3. For local Terraform runs, set `TF_VAR_fabric_sql_connection_string` together with the other `TF_VAR_*` values described in `GHA.md`.
 

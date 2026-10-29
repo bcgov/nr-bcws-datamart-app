@@ -16,7 +16,6 @@ module "backend_plan" {
   enable_telemetry = var.enable_telemetry
 }
 
-
 module "backend_site" {
   source  = "Azure/avm-res-web-site/azurerm"
   version = "0.23.0"
@@ -31,10 +30,14 @@ module "backend_site" {
   https_only                = true
   virtual_network_subnet_id = var.backend_subnet_id
 
-managed_identities = {
-  system_assigned            = true
-  user_assigned_resource_ids = []
-}
+  managed_identities = {
+    system_assigned            = true
+    user_assigned_resource_ids = var.user_assigned_identity_id != "" ? [var.user_assigned_identity_id] : []
+  }
+
+  # Enabled so that the access restrictions below decide who can call the API. When this is disabled,
+  # Azure rejects all public traffic and ignores the IP rules.
+  public_network_access_enabled = true
 
   site_config = {
     always_on                               = true
@@ -62,11 +65,12 @@ managed_identities = {
 
   app_settings = {
     # Data API builder listens on port 5000 inside the container.
-    WEBSITES_PORT                = "5000"
-    FABRIC_SQL_CONNECTION_STRING = var.fabric_sql_connection_string
-    DAB_RUNTIME_MODE             = var.dab_runtime_mode
-    DAB_CORS_ORIGIN              = "*"
-    DOCKER_ENABLE_CI             = "true"
+    WEBSITES_PORT                  = "5000"
+    FABRIC_SQL_CONNECTION_STRING   = var.fabric_sql_connection_string
+    FABRIC_SQL_CONNECTION_STRING_2 = var.fabric_sql_connection_string_2
+    DAB_RUNTIME_MODE               = var.dab_runtime_mode
+    DAB_CORS_ORIGIN                = "*"
+    DOCKER_ENABLE_CI               = "true"
     # Health check eviction time in minutes; the AVM module has no site_config equivalent.
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES   = "2"
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
@@ -106,89 +110,6 @@ managed_identities = {
   tags             = var.common_tags
   enable_telemetry = var.enable_telemetry
 }
-
-module "download_api_site" {
-  source  = "Azure/avm-res-web-site/azurerm"
-  version = "0.23.0"
-
-  kind                     = "webapp"
-  name                     = "${var.repo_name}-${var.app_env}-download-api"
-  parent_id                = var.resource_group_id
-  location                 = var.location
-  os_type                  = "Linux"
-
-  service_plan_resource_id = module.backend_plan.resource_id
-
-  https_only                = true
-  virtual_network_subnet_id = var.backend_subnet_id
-
-managed_identities = {
-  system_assigned            = true
-  user_assigned_resource_ids = []
-}
-
-  site_config = {
-    always_on                               = true
-    container_registry_use_managed_identity = local.download_api_registry_is_acr
-    minimum_tls_version                     = "1.3"
-    health_check_path                       = "/actuator/health"
-    ftps_state                              = "Disabled"
-
-    ip_restriction_default_action = "Allow"
-    ip_restriction                = local.backend_ip_restrictions
-
-    application_stack = {
-      docker = {
-        docker_registry_url = "https://${local.download_api_registry_host}"
-        docker_image_name   = local.download_api_repository
-        docker_image_tag    = local.download_api_image_tag
-      }
-    }
-  }
-
-  app_settings = {
-    WEBSITES_PORT = "8080"
-
-    DATAMART_GRAPHQL_URL = "https://${module.backend_site.resource_uri}/graphql"
-    DATAMART_TIMEOUT_SECONDS = tostring(var.datamart_timeout_seconds)
-    DOWNLOAD_SYNC_THRESHOLD  = tostring(var.download_sync_threshold)
-
-    APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
-    APPINSIGHTS_INSTRUMENTATIONKEY        = var.appinsights_instrumentation_key
-
-    WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
-    WEBSITE_ENABLE_SYNC_UPDATE_SITE     = "1"
-    WEBSITES_CONTAINER_START_TIME_LIMIT = "180"
-  }
-
-  logs = {
-    default = {
-      detailed_error_messages = true
-      failed_requests_tracing = true
-
-      application_logs = {
-        default = {
-          file_system = {
-            level = "Verbose"
-          }
-        }
-      }
-
-      http_logs = {
-        default = {
-          file_system = {
-            retention_in_days = 7
-            retention_in_mb   = 100
-          }
-        }
-      }
-    }
-  }
-
-  tags             = var.common_tags
-  enable_telemetry = var.enable_telemetry
-}
-
 
 # Backend Autoscaler
 resource "azurerm_monitor_autoscale_setting" "backend_autoscale" {
@@ -408,42 +329,6 @@ resource "azurerm_monitor_diagnostic_setting" "backend_diagnostics" {
   # KQL: AzureMetrics | where ResourceProvider == "MICROSOFT.WEB"
   #      | where MetricName in ("CpuTime","MemoryWorkingSet","AverageResponseTime")
   #      | summarize avg(Average) by MetricName, bin(TimeGenerated, 5m)
-  enabled_metric {
-    category = "AllMetrics"
-  }
-}
-
-resource "azurerm_monitor_diagnostic_setting" "download_api_diagnostics" {
-  name                       = "${var.app_name}-download-api-diagnostics"
-  target_resource_id         = module.download_api_site.resource_id
-  log_analytics_workspace_id = var.log_analytics_workspace_id
-
-  # Per-request HTTP access log.
-  enabled_log {
-    category = "AppServiceHTTPLogs"
-  }
-
-  # Container stdout/stderr.
-  enabled_log {
-    category = "AppServiceConsoleLogs"
-  }
-
-  # Structured application logs.
-  enabled_log {
-    category = "AppServiceAppLogs"
-  }
-
-  # SCM/FTP publishing events.
-  enabled_log {
-    category = "AppServiceAuditLogs"
-  }
-
-  # Platform events (container restarts, health checks, scaling).
-  enabled_log {
-    category = "AppServicePlatformLogs"
-  }
-
-  # CPU, memory, response time, request count metrics.
   enabled_metric {
     category = "AllMetrics"
   }
