@@ -126,10 +126,14 @@ module "download_api_site" {
   https_only                = true
   virtual_network_subnet_id = var.backend_subnet_id
 
-managed_identities = {
-  system_assigned            = true
-  user_assigned_resource_ids = []
-}
+  managed_identities = {
+    system_assigned            = true
+    user_assigned_resource_ids = []
+  }
+
+  # Enabled so that the access restrictions below decide who can call the API. When this is disabled,
+  # Azure rejects all public traffic and ignores the IP rules.
+  public_network_access_enabled = true
 
   site_config = {
     always_on                               = true
