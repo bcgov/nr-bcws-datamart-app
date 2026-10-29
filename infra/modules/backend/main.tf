@@ -31,14 +31,19 @@ module "backend_site" {
   virtual_network_subnet_id = var.backend_subnet_id
 
   managed_identities = {
-    system_assigned = true
+    system_assigned            = true
+    user_assigned_resource_ids = var.user_assigned_identity_id != "" ? [var.user_assigned_identity_id] : []
   }
+
+  # Enabled so that the access restrictions below decide who can call the API. When this is disabled,
+  # Azure rejects all public traffic and ignores the IP rules.
+  public_network_access_enabled = true
 
   site_config = {
     always_on                               = true
     container_registry_use_managed_identity = local.api_registry_is_acr
     minimum_tls_version                     = "1.3"
-    health_check_path                       = "/api/health"
+    health_check_path                       = "/"
     ftps_state                              = "Disabled"
 
     ip_restriction_default_action = "Allow"
@@ -59,13 +64,12 @@ module "backend_site" {
   }
 
   app_settings = {
-    NODE_ENV                       = var.node_env
-    PORT                           = "80"
-    LOG_LEVEL                      = var.log_level
-    HTTP_ACCESS_LOG_MODE           = var.http_access_log_mode
-    DB_SLOW_QUERY_LOG_THRESHOLD_MS = tostring(var.slow_query_log_threshold_ms)
-    OTEL_SERVICE_NAME              = "${var.app_name}-backend"
-    OTEL_RESOURCE_ATTRIBUTES       = "deployment.environment.name=${var.app_env}"
+    # Data API builder listens on port 5000 inside the container.
+    WEBSITES_PORT                  = "5000"
+    FABRIC_SQL_CONNECTION_STRING   = var.fabric_sql_connection_string
+    FABRIC_SQL_CONNECTION_STRING_2 = var.fabric_sql_connection_string_2
+    DAB_RUNTIME_MODE               = var.dab_runtime_mode
+    DAB_CORS_ORIGIN                = "*"
     DOCKER_ENABLE_CI               = "true"
     # Health check eviction time in minutes; the AVM module has no site_config equivalent.
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES   = "2"
@@ -83,7 +87,8 @@ module "backend_site" {
       application_logs = {
         default = {
           file_system = {
-            level = "Off"
+            # "Off" hides container stdout and stderr from the portal Log stream, which is where Data API builder writes its logs.
+            level = "Verbose"
           }
         }
       }

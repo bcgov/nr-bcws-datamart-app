@@ -13,6 +13,24 @@ resource "azurerm_resource_group" "main" {
   }
 }
 
+locals {
+  # A user-assigned managed identity needs User Id=<client id> in the connection string so that the
+  # SQL client selects it instead of the system-assigned identity.
+  append_user_id = var.user_assigned_managed_identity_client_id != ""
+
+  fabric_sql_connection_string = (
+    local.append_user_id && !can(regex("(?i)user id *=", var.fabric_sql_connection_string))
+    ? "${trimsuffix(trimspace(var.fabric_sql_connection_string), ";")};User Id=${var.user_assigned_managed_identity_client_id}"
+    : var.fabric_sql_connection_string
+  )
+
+  fabric_sql_connection_string_2 = (
+    local.append_user_id && var.fabric_sql_connection_string_2 != "" && !can(regex("(?i)user id *=", var.fabric_sql_connection_string_2))
+    ? "${trimsuffix(trimspace(var.fabric_sql_connection_string_2), ";")};User Id=${var.user_assigned_managed_identity_client_id}"
+    : var.fabric_sql_connection_string_2
+  )
+}
+
 # -------------
 # Modules based on Dependency
 # -------------
@@ -118,7 +136,9 @@ module "backend" {
   common_tags                             = var.common_tags
   enable_frontdoor                        = var.enable_frontdoor
   vivid_cidr                              = var.vivid_cidr
-  fabric_sql_connection_string            = var.fabric_sql_connection_string
+  fabric_sql_connection_string            = local.fabric_sql_connection_string
+  fabric_sql_connection_string_2          = local.fabric_sql_connection_string_2
+  user_assigned_identity_id               = var.user_assigned_managed_identity_id
   frontend_frontdoor_resource_guid        = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
   frontend_possible_outbound_ip_addresses = var.enable_app_service_frontend ? module.frontend[0].possible_outbound_ip_addresses : ""
   location                                = var.location
@@ -164,19 +184,20 @@ module "apim" {
 
 # Container Apps Module (optional alongside App Service)
 module "container_apps" {
-  count  = var.enable_container_apps ? 1 : 0
-  source = "./modules/container-apps"
+  count                           = var.enable_container_apps ? 1 : 0
+  source                          = "./modules/container-apps"
   appinsights_connection_string   = module.monitoring.appinsights_connection_string
   appinsights_instrumentation_key = module.monitoring.appinsights_instrumentation_key
-  app_name                     = var.app_name
-  app_env                      = var.app_env
-  location                     = var.location
-  resource_group_name          = azurerm_resource_group.main.name
-  common_tags                  = var.common_tags
-  container_apps_subnet_id     = module.network.container_apps_subnet_id
-  log_analytics_workspace_id   = module.monitoring.log_analytics_workspace_id
-  backend_image                = var.api_image
-  fabric_sql_connection_string = var.fabric_sql_connection_string
+  app_name                        = var.app_name
+  app_env                         = var.app_env
+  location                        = var.location
+  resource_group_name             = azurerm_resource_group.main.name
+  common_tags                     = var.common_tags
+  container_apps_subnet_id        = module.network.container_apps_subnet_id
+  log_analytics_workspace_id      = module.monitoring.log_analytics_workspace_id
+  backend_image                   = var.api_image
+  fabric_sql_connection_string    = local.fabric_sql_connection_string
+  user_assigned_identity_id       = var.user_assigned_managed_identity_id
   # Avoid referencing module.frontend here to prevent a dependency cycle.
   # Frontend App Service hostname is deterministic: <repo>-<env>-frontend.azurewebsites.net
   # Front Door endpoint hostname is also deterministic: <repo>-<env>-frontend-fd.azurefd.net
