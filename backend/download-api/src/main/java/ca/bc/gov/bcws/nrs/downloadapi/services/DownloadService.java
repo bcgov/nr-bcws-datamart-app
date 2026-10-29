@@ -10,6 +10,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.beans.factory.annotation.Value;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +44,11 @@ public class DownloadService {
     private final CsvService csvService;
     private final ZipService zipService;
 
-    private static final int PAGE_SIZE = 1000;
-    private static final int MAX_SYNC_ROWS = 10000;
+    @Value("${download.page-size:1000}")
+    private int pageSize;
+
+    @Value("${download.sync-threshold:10000}")
+    private int maxSyncRows;
 
     public DownloadService(
             DatamartApiClient datamartApiClient,
@@ -85,14 +90,14 @@ public class DownloadService {
 
             totalRows += items.size();
 
-            if (totalRows > MAX_SYNC_ROWS) {
+            if (totalRows > maxSyncRows) {
 
                 logger.warn(
                     "Download exceeded synchronous row limit. Total rows processed: {}, limit: {}",
                     totalRows,
-                    MAX_SYNC_ROWS);
+                    maxSyncRows);
 
-                throw new DownloadLimitExceededException(MAX_SYNC_ROWS);
+                throw new DownloadLimitExceededException(maxSyncRows);
             }
 
             logger.info("Query '{}' returned {} rows (running total: {})",
@@ -232,7 +237,7 @@ public class DownloadService {
         arguments.add(
                 Argument.newArgument()
                         .name("first")
-                        .value(IntValue.newIntValue(BigInteger.valueOf(PAGE_SIZE)).build())
+                        .value(IntValue.newIntValue(BigInteger.valueOf(pageSize)).build())
                         .build());
 
         if (cursor != null)

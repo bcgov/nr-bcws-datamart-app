@@ -26,6 +26,13 @@ variable "download_sync_threshold" {
   default     = 10000
 }
 
+variable "download_page_size" {
+  description = "Page size that download api uses to request from datamart API."
+  type        = number
+  default     = 1000
+}
+
+
 variable "datamart_timeout_seconds" {
   description = "Timeout in seconds for calls to Datamart API."
   type        = number

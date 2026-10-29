@@ -7,6 +7,7 @@ datamart:
 
 download:
   sync-threshold: ${DOWNLOAD_SYNC_THRESHOLD:10000}
+  page-size: ${DOWNLOAD_PAGE_SIZE:1000}
 
 management:
   endpoints:

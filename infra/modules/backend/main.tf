@@ -160,6 +160,7 @@ module "download_api_site" {
     DATAMART_GRAPHQL_URL = "https://${module.backend_site.resource_uri}/graphql"
     DATAMART_TIMEOUT_SECONDS = tostring(var.datamart_timeout_seconds)
     DOWNLOAD_SYNC_THRESHOLD  = tostring(var.download_sync_threshold)
+    DOWNLOAD_PAGE_SIZE       = tostring(var.download_page_size)
 
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY        = var.appinsights_instrumentation_key

@@ -24,6 +24,14 @@ variable "download_sync_threshold" {
   default     = 10000
 }
 
+variable "download_page_size" {
+  description = "Page size that download api uses to request from datamart API."
+  type        = number
+  default     = 1000
+}
+
+
+
 variable "app_env" {
   description = "Application environment (dev, test, prod)"
   type        = string
