@@ -4,11 +4,7 @@ on:
   workflow_call:
     inputs:
       ### Required
-      environment_name:
-        description: "The name of the environment to deploy to"
-        required: true
-        default: "dev"
-        type: string
+
       command:
         description: "The terragrunt command to run"
         required: true
@@ -30,11 +26,6 @@ on:
   workflow_dispatch:
     inputs:
       ### Required
-      environment_name:
-        description: "The name of the azure environment to deploy to, i.e. dev or tools"
-        required: true
-        default: "dev"
-        type: string
       command:
         description: "The terragrunt command to run"
         required: true
@@ -65,8 +56,8 @@ permissions:
 
 jobs:
   infra:
-    environment: ${{ inputs.environment_name }}
-    name: Terraform ${{inputs.command}}  ${{ inputs.environment_name }}
+    environment: ${{ inputs.app_env }}
+    name: Terraform ${{inputs.command}}  ${{ inputs.app_env }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -130,7 +121,7 @@ jobs:
           echo "BACKEND_CONTAINER_NAME=tfstate" >> "$GITHUB_ENV"
           echo "BACKEND_STATE_KEY=${{ inputs.stack_prefix }}/${{ inputs.app_env }}/terraform.tfstate" >> "$GITHUB_ENV"
 
-          echo "TF_VAR_target_env=${{ inputs.environment_name }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_target_env=${{ vars.AZURE_ENVIRONMENT }}" >> "$GITHUB_ENV"
           echo "TF_VAR_azure_subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> "$GITHUB_ENV"
           echo "TF_VAR_azure_tenant_id=${{ secrets.AZURE_TENANT_ID }}" >> "$GITHUB_ENV"
           echo "TF_VAR_azure_client_id=${{ secrets.AZURE_CLIENT_ID }}" >> "$GITHUB_ENV"
@@ -161,11 +152,11 @@ jobs:
           echo "TF_VAR_application_alert_emails=$notify_emails_json" >> "$GITHUB_ENV"
 
           echo "TF_VAR_common_tags<<EOF" >> "$GITHUB_ENV"
-          echo '{"environment":"${{ inputs.environment_name }}","stack_prefix":"${{ inputs.stack_prefix }}","app_env":"${{ inputs.app_env }}","repo_name":"${{ github.event.repository.name }}"}' >> "$GITHUB_ENV"
+          echo '{"environment":"${{ vars.AZURE_ENVIRONMENT }}","stack_prefix":"${{ inputs.stack_prefix }}","app_env":"${{ inputs.app_env }}","repo_name":"${{ github.event.repository.name }}"}' >> "$GITHUB_ENV"
           echo "EOF" >> "$GITHUB_ENV"
 
       - name: Terraform ${{ inputs.command }}
         shell: bash
         working-directory: infra
         run: |
-          ./deploy-terraform.sh ${{ inputs.command }} -var-file=${{ inputs.environment_name }}.tfvars
+          ./deploy-terraform.sh ${{ inputs.command }} -var-file=${{ vars.AZURE_ENVIRONMENT }}.tfvars
