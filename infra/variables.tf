@@ -7,6 +7,31 @@ variable "api_image" {
   type        = string
 }
 
+variable "download_api_image" {
+  description = "The image for the Download API container"
+  type        = string
+}
+
+variable "datamart_timeout_seconds" {
+  description = "Timeout in seconds for calls to Datamart API."
+  type        = number
+  default     = 30
+}
+
+variable "download_sync_threshold" {
+  description = "Maximum synchronous export row count."
+  type        = number
+  default     = 10000
+}
+
+variable "download_page_size" {
+  description = "Page size that download api uses to request from datamart API."
+  type        = number
+  default     = 1000
+}
+
+
+
 variable "app_env" {
   description = "Application environment (dev, test, prod)"
   type        = string

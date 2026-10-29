@@ -1,0 +1,20 @@
+server:
+  port: ${PORT:8080}
+
+datamart:
+  graphql-url: ${DATAMART_GRAPHQL_URL:http://host.docker.internal:5000/graphql}
+  timeout-seconds: ${DATAMART_TIMEOUT_SECONDS:30}
+
+download:
+  sync-threshold: ${DOWNLOAD_SYNC_THRESHOLD:10000}
+  page-size: ${DOWNLOAD_PAGE_SIZE:1000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true

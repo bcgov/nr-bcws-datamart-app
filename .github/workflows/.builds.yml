@@ -24,6 +24,9 @@ jobs:
           - package: backend
             build_context: backend/datamart-api
             build_file: backend/datamart-api/Dockerfile
+          - package: download-api
+            build_context: backend/download-api
+            build_file: backend/download-api/Dockerfile
           - package: frontend
     timeout-minutes: 10
     steps:
