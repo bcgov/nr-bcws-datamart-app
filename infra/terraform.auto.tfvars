@@ -2,6 +2,7 @@
 # Terraform Variables for All Environments -- Only static values should go here for all specific tfvars
 # NO SECRETS OR SENSITIVE VALUES SHOULD BE STORED IN THESE FILES
 # ========================================================================================================
+vivid_cidr = "216.232.132.75/32"
 
 # -----------------------------------------------------------------------------
 # Backend Hosting (Azure App Service is the default backend)
