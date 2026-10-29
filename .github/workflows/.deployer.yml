@@ -31,7 +31,7 @@ on:
     inputs:
       ### Required
       environment_name:
-        description: "The name of the environment to deploy to"
+        description: "The name of the azure environment to deploy to, i.e. dev or tools"
         required: true
         default: "dev"
         type: string
@@ -48,7 +48,7 @@ on:
       app_env:
         required: false
         type: string
-        description: "The APP env separates between Azure ENV and Actual APP, since Azure dev is where PR, and TEST is deployed"
+        description: "The visible name of the environment, i.e. int or dlv"
       stack_prefix:
         required: true
         type: string
