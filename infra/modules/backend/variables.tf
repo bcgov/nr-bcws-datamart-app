@@ -203,23 +203,6 @@ variable "dab_runtime_mode" {
   }
 }
 
-variable "user_assigned_identity_id" {
-  description = "Resource ID of a user-assigned managed identity to attach to the App Service. Empty means none."
-  type        = string
-  default     = ""
-}
-
-variable "dab_runtime_mode" {
-  description = "Data API builder runtime mode (production or development). Substituted into dab-config.json through DAB_RUNTIME_MODE."
-  type        = string
-  default     = "production"
-
-  validation {
-    condition     = contains(["production", "development"], var.dab_runtime_mode)
-    error_message = "dab_runtime_mode must be production or development."
-  }
-}
-
 variable "vivid_cidr" {
   description = "Vivid CIDR block, used to restrict access to DEV"
   type        = string
