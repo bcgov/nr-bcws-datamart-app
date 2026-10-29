@@ -12,9 +12,9 @@ import {
 // import * as L from 'leaflet';
 import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 import { Subscription } from 'rxjs';
-import { SelectedStationsService } from '../../../../services/selected-stations.service';
-import { StationDataService } from '../../../../services/station-data.service';
 import { StationSelectionContentMapInformationPanelComponent } from './information-panel/station-selection-content-map-information-panel.component';
+import { SelectedWeatherStationsService } from '../../../../services/selected-weather-stations.service';
+import { WeatherStationService } from '../../../../services/weather-station.service';
 
 declare const SMK: any;
 
@@ -36,8 +36,8 @@ declare global {
 export class StationSelectionContentMapComponent implements AfterViewInit, OnDestroy {
     appRef = inject( ApplicationRef )
     environmentInjector = inject( EnvironmentInjector )
-    stationDataService = inject( StationDataService )
-    selectedStationsService = inject( SelectedStationsService )
+    weatherStationService = inject( WeatherStationService )
+    selectedWeatherStationsService = inject( SelectedWeatherStationsService )
     snackbarUtilService = inject( SnackbarUtilService )
     elementRef = inject( ElementRef )
 
@@ -79,7 +79,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit, OnDes
             .then( ( smk ) => {
                 this.smk = smk
 
-                this.stationsSubscription = this.stationDataService.stations$.subscribe( (stations) => {
+                this.stationsSubscription = this.weatherStationService.stations$.subscribe( (stations) => {
                     this.loadLayer( 'weather-stations', {
                         "type": "FeatureCollection",
                         "features": stations
@@ -93,14 +93,14 @@ export class StationSelectionContentMapComponent implements AfterViewInit, OnDes
                     } )
                 } )
 
-                this.selectedStationsSubscription = this.selectedStationsService.selectedStations$.subscribe((stations) => {
+                this.selectedStationsSubscription = this.selectedWeatherStationsService.selectedStations$.subscribe((stations) => {
                     if ( this.stationWasSelected ) {
                         this.stationWasSelected.forEach( id => {
                             this.toggleStationSelected( id, false )
                         } )
                     }
 
-                    this.stationWasSelected = stations.map( s => s.properties.WEATHER_STATION_GUID )
+                    this.stationWasSelected = stations.map( s => s.properties.weather_station_guid )
 
                     this.stationWasSelected.forEach( id => {
                         this.toggleStationSelected( id, true )
@@ -108,7 +108,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit, OnDes
                 });
 
                 this.smk.$viewer.lassoed.addedFeatures( ( ev:any ) => {
-                    this.selectedStationsService.addStations( ev.features )
+                    this.selectedWeatherStationsService.addStations( ev.features )
                     if ( ev.features.length == 1 ) {
                         this.snackbarUtilService.successful( 'Selected 1 station', 2000 )
                     }
@@ -152,7 +152,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit, OnDes
 
                 this.stationLayer = {}
                 this.smk.$viewer.visibleLayer[ layerId ].getLayers().forEach( (featureLayer:any) => {
-                    let key: string = featureLayer.feature.properties[ 'WEATHER_STATION_GUID' ]
+                    let key: string = featureLayer.feature.properties.weather_station_guid
                     this.stationLayer[ key ] = featureLayer
                 } )
             } )
@@ -198,7 +198,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit, OnDes
             environmentInjector: this.environmentInjector,
         });
 
-        this.toggleStationActive( feature.properties[ 'WEATHER_STATION_GUID' ], true )
+        this.toggleStationActive( feature.properties.weather_station_guid, true )
 
         componentRef.instance.feature = {
             ...feature,

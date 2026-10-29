@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent, FilterSearchComponent, FilterSelectComponent, FiltersPanelComponent, IconComponent } from "@bcgov/nr-ngx-component-lib";
-import { StationDataService } from "../../../services/station-data.service";
+import { WeatherStationService } from "../../../services/weather-station.service";
 
 export type Filter = {
 	search: string
@@ -60,7 +60,7 @@ export function initialFilter(): Filter {
 })
 export class StationSelectionFiltersComponent {
 	// codeTableService = inject(CodeTableService)
-    stationDataService = inject(StationDataService)
+    weatherStationService = inject(WeatherStationService)
 
     @Input() filter: Filter = emptyFilter()
 	@Output() filterChange = new EventEmitter<Filter>()
@@ -127,7 +127,7 @@ export class StationSelectionFiltersComponent {
 			this.filterChange.emit({...this.filter})
 		}, 200)
 
-        this.stationDataService.filterStations( this.filter )
+        this.weatherStationService.filterStations( this.filter )
 	}
 
     onFiltersClick(): void {

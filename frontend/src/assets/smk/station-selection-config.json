@@ -32,7 +32,7 @@
             "isQueryable": true,
             "useClustering": false,
             "isInternal": true,
-            "titleAttribute": "STATION_NAME",
+            "titleAttribute": "station_name",
             "popupTemplate": "<div id='weatherStationPopup'>{{ window.weatherStationPopup( feature ) }}</div>",
             "opacity": 0.85,    
             "style": {

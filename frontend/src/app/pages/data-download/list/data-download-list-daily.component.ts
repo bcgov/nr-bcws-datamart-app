@@ -6,14 +6,11 @@ import {
 } from '@angular/core';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { ButtonComponent, GapComponent, InitialState, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
+import { GapComponent, InitialState, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Observable, of } from 'rxjs';
-import { GeoJsonPoint, WeatherStation } from '../../../services/station-data.service';
-import { DataDownloadListBase } from './data-download-list.base';
-
-export type TableRow = GeoJsonPoint<WeatherStation>
-export type Filter = {}
+import { DataDownloadListBase, Filter, TableRow } from './data-download-list.base';
+import { WeatherStationFeature } from '../../../services/weather-station.service';
 
 @Component({
     selector: 'data-download-list-daily',
@@ -44,16 +41,16 @@ export class DataDownloadListDailyComponent extends DataDownloadListBase impleme
         this.paginationId = 'data-download-daily'
     }
 
-    override fetchRowListPage(): Observable<GeoJsonPoint<WeatherStation>[]> {
-        return of( this.selectedStationsService.selectedStations )
+    override fetchRowListPage(): Observable<WeatherStationFeature[]> {
+        return of( this.selectedWeatherStationsService.selectedStations )
     }
     
-    override parseRows(res: GeoJsonPoint<WeatherStation>[]): TableRow[] {
+    override parseRows(res: WeatherStationFeature[]): TableRow[] {
         return res
     }
 
     override parseTotalRowCount(res: any): number {
-        return this.selectedStationsService.selectedStations.length
+        return this.selectedWeatherStationsService.selectedStations.length
     }
 
     override getInitialPageState(): InitialState<Filter> {

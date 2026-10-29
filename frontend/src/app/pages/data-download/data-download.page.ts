@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { ButtonComponent, GapComponent, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
-import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
-import { DataDownloadFiltersComponent, Filter, initialFilter } from './filters/data-download-filters.component';
-import { ROUTE } from '../../bcws-datamart-app.routes';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ButtonComponent, GapComponent, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
+import { ROUTE } from '../../bcws-datamart-app.routes';
+import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
+import { CodeDescriptionHeading, CodeTableService } from '../../services/code-table.service';
+import { SelectedWeatherStationsService } from '../../services/selected-weather-stations.service';
+import { WeatherStationService } from '../../services/weather-station.service';
+import { DataDownloadFiltersComponent, Filter, initialFilter } from './filters/data-download-filters.component';
 import { DataDownloadListDailyComponent } from './list/data-download-list-daily.component';
 import { DataDownloadListHourlyComponent } from './list/data-download-list-hourly.component';
-import { CodeDescriptionHeading, CodeTableService } from '../../services/code-table.service';
-import { SelectedStationsService } from '../../services/selected-stations.service';
-import { StationDataService } from '../../services/station-data.service';
 
 @Component({
     selector: 'data-download-page',
@@ -31,9 +31,9 @@ export class DataDownloadPage implements OnInit {
     router = inject(Router)
     codeTableService = inject(CodeTableService)
     activatedRoute = inject(ActivatedRoute)
-    selectedStationsService = inject(SelectedStationsService)
+    selectedWeatherStationsService = inject( SelectedWeatherStationsService )
     snackbarUtilService = inject(SnackbarUtilService)
-    stationDataService = inject(StationDataService)
+    weatherStationService = inject(WeatherStationService)
 
     filter: Filter = initialFilter( {
         dailyColumns: [ ...this.codeTableService.DAILY_WEATHER_OBSERVATIONS_COLUMNS.items.map( c => c.code ) ],
@@ -65,10 +65,10 @@ export class DataDownloadPage implements OnInit {
                 if ( !param.has( 'stations' ) ) return
 
                 let stationCodes = param.get( 'stations' )!.split( ',' ).map( v => Number( v) )
-                return this.stationDataService.getStationsByCode( stationCodes )
+                return this.weatherStationService.getStationsByCode( stationCodes )
                     .then( ( stations ) => {
-                        this.selectedStationsService.clearStations()
-                        this.selectedStationsService.addStations( stations )
+                        this.selectedWeatherStationsService.clearStations()
+                        this.selectedWeatherStationsService.addStations( stations )
                     } )
             } )
             .then( () => {
@@ -117,7 +117,7 @@ export class DataDownloadPage implements OnInit {
     }
 
     get enableCopyLink() {
-        return this.selectedStationsService.count > 0 &&
+        return this.selectedWeatherStationsService.count > 0 &&
             ( this.dailyReportColumns.length > 0 || this.hourlyReportColumns.length > 0 )
     }
 
@@ -131,7 +131,7 @@ export class DataDownloadPage implements OnInit {
             queryParams: {
                 start: this.filter.startDate,
                 end: this.filter.endDate,
-                stations: this.selectedStationsService.selectedStations.map( s => s.properties.STATION_CODE ).join(','),
+                stations: this.selectedWeatherStationsService.selectedStations.map( s => s.properties.station_code ).join(','),
                 dailyFields: dailyFields.join(','),
                 hourlyFields: hourlyFields.join(','),
                 metadataFields: metadataFields.join(','),
