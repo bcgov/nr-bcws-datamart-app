@@ -13,7 +13,6 @@ import { ButtonComponent, IconComponent, IndicatorComponent } from '@bcgov/nr-ng
     styleUrl: './station-selection-content-map-information-panel.component.scss',
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
-        IconComponent,
         IndicatorComponent,
         ButtonComponent
     ]
