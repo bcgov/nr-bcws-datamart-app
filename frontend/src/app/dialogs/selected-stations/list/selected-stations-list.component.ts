@@ -84,7 +84,7 @@ export class SelectedStationsListComponent extends RowListBase<Filter, TableRow,
     sortRows( rows: TableRow[] ): TableRow[] {
         let sortFn: ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => number 
         let sortDir = ( d: SortDirection, sort: number ) => d == 'asc' ? sort : -1 * sort
-        let stringSort = ( field: keyof WeatherStation ) => ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => sortDir( d, (a.properties[field] as string).localeCompare( b.properties[field] as string ) )
+        let stringSort = ( field: keyof WeatherStation ) => ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => sortDir( d, (a.properties[field] as string || '').localeCompare( b.properties[field] as string || '') )
         let numericSort = ( field: keyof WeatherStation ) => ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => sortDir( d, (a.properties[field] as number) - ( b.properties[field] as number ) )
 
         switch ( this.sortActive ) {
