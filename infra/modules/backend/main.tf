@@ -162,6 +162,10 @@ module "download_api_site" {
     DOWNLOAD_SYNC_THRESHOLD  = tostring(var.download_sync_threshold)
     DOWNLOAD_PAGE_SIZE       = tostring(var.download_page_size)
 
+    DOWNLOAD_QUEUE_NAME = azurerm_storage_queue.download_jobs.name
+    APP_STORAGE_ACCOUNT_NAME = data.azurerm_storage_account.app_storage.name
+    
+
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY        = var.appinsights_instrumentation_key
 
@@ -196,6 +200,16 @@ module "download_api_site" {
 
   tags             = var.common_tags
   enable_telemetry = var.enable_telemetry
+}
+
+data "azurerm_storage_account" "app_storage" {
+  name                = var.app_storage_account_name
+  resource_group_name = var.app_storage_resource_group_name
+}
+
+resource "azurerm_storage_queue" "download_jobs" {
+  name               = "download-jobs-${var.app_env}"
+  storage_account_id = data.azurerm_storage_account.app_storage.id
 }
 
 # Backend Autoscaler
