@@ -152,6 +152,9 @@ module "backend" {
   download_sync_threshold  = var.download_sync_threshold
   download_page_size = var.download_page_size
 
+  app_storage_account_name           = var.app_storage_account_name
+  app_storage_resource_group_name    = var.app_storage_resource_group_name
+
 
   depends_on = [module.frontend]
 }

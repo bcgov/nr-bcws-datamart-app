@@ -216,3 +216,12 @@ variable "vivid_cidr" {
   default     = ""
 }
 
+variable "app_storage_account_name" {
+  description = "Storage account containing download queues."
+  type        = string
+}
+
+variable "app_storage_resource_group_name" {
+  description = "Resource group containing the storage account."
+  type        = string
+}

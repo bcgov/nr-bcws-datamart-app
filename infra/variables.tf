@@ -30,7 +30,13 @@ variable "download_page_size" {
   default     = 1000
 }
 
+variable "app_storage_account_name" {
+  type = string
+}
 
+variable "app_storage_resource_group_name" {
+  type = string
+}
 
 variable "app_env" {
   description = "Application environment (dev, test, prod)"
