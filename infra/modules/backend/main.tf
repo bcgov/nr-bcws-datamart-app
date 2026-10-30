@@ -163,7 +163,7 @@ module "download_api_site" {
     DOWNLOAD_PAGE_SIZE       = tostring(var.download_page_size)
 
     DOWNLOAD_QUEUE_NAME = azurerm_storage_queue.download_jobs.name
-    DOWNLOAD_STORAGE_ACCOUNT_NAME = data.azurerm_storage_account.download_storage.name
+    APP_STORAGE_ACCOUNT_NAME = data.azurerm_storage_account.app_storage.name
     
 
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
