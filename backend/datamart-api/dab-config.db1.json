@@ -16,6 +16,18 @@
           "DAILY_WEATHER_MEAS_GUID"
         ]
       },
+      "relationships": {
+        "weather_station": {
+          "cardinality": "one",
+          "target.entity": "weather_stations",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "weather_station_guid"
+          ]
+        }
+      },
       "cache": {
         "enabled": true,
         "ttl-seconds": 3600
@@ -36,6 +48,18 @@
         "key-fields": [
           "HOURLY_WEATHER_MEAS_GUID"
         ]
+      },
+      "relationships": {
+        "weather_station": {
+          "cardinality": "one",
+          "target.entity": "weather_stations",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "weather_station_guid"
+          ]
+        }
       },
       "cache": {
         "enabled": true,
