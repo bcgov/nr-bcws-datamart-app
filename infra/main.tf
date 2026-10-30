@@ -22,16 +22,16 @@ resource "azurerm_user_assigned_identity" "backend_user_assigned_identity" {
 locals {
   # A user-assigned managed identity needs User Id=<client id> in the connection string so that the
   # SQL client selects it instead of the system-assigned identity.
-  append_user_id = user_assigned_managed_identity_client_id.backend_user_assigned_identity.client_id
+  append_user_id = azurerm_user_assigned_identity.backend_user_assigned_identity.client_id 
 
   fabric_sql_connection_string = (
-    local.append_user_id && !can(regex("(?i)user id *=", var.fabric_sql_connection_string))
+    local.append_user_id != "" && !can(regex("(?i)user id *=", var.fabric_sql_connection_string))
     ? "${trimsuffix(trimspace(var.fabric_sql_connection_string), ";")};User Id=${local.append_user_id}"
     : var.fabric_sql_connection_string
   )
 
   fabric_sql_connection_string_2 = (
-    local.append_user_id && var.fabric_sql_connection_string_2 != "" && !can(regex("(?i)user id *=", var.fabric_sql_connection_string_2))
+    local.append_user_id != "" && var.fabric_sql_connection_string_2 != "" && !can(regex("(?i)user id *=", var.fabric_sql_connection_string_2))
     ? "${trimsuffix(trimspace(var.fabric_sql_connection_string_2), ";")};User Id=${local.append_user_id}"
     : var.fabric_sql_connection_string_2
   )
