@@ -13,20 +13,26 @@ resource "azurerm_resource_group" "main" {
   }
 }
 
+resource "azurerm_user_assigned_identity" "backend_user_assigned_identity" {
+  location = azurerm_resource_group.main.location
+  name = "backend-user-identity-${var.app_env}"
+  resource_group_name = azurerm_resource_group.main.name
+}
+
 locals {
   # A user-assigned managed identity needs User Id=<client id> in the connection string so that the
   # SQL client selects it instead of the system-assigned identity.
-  append_user_id = var.user_assigned_managed_identity_client_id != ""
+  append_user_id = user_assigned_managed_identity_client_id.backend_user_assigned_identity.client_id
 
   fabric_sql_connection_string = (
     local.append_user_id && !can(regex("(?i)user id *=", var.fabric_sql_connection_string))
-    ? "${trimsuffix(trimspace(var.fabric_sql_connection_string), ";")};User Id=${var.user_assigned_managed_identity_client_id}"
+    ? "${trimsuffix(trimspace(var.fabric_sql_connection_string), ";")};User Id=${local.append_user_id}"
     : var.fabric_sql_connection_string
   )
 
   fabric_sql_connection_string_2 = (
     local.append_user_id && var.fabric_sql_connection_string_2 != "" && !can(regex("(?i)user id *=", var.fabric_sql_connection_string_2))
-    ? "${trimsuffix(trimspace(var.fabric_sql_connection_string_2), ";")};User Id=${var.user_assigned_managed_identity_client_id}"
+    ? "${trimsuffix(trimspace(var.fabric_sql_connection_string_2), ";")};User Id=${local.append_user_id}"
     : var.fabric_sql_connection_string_2
   )
 }
@@ -139,7 +145,7 @@ module "backend" {
   vivid_cidr                              = var.vivid_cidr
   fabric_sql_connection_string            = local.fabric_sql_connection_string
   fabric_sql_connection_string_2          = local.fabric_sql_connection_string_2
-  user_assigned_identity_id               = var.user_assigned_managed_identity_id
+  user_assigned_identity_id               = azurerm_user_assigned_identity.backend_user_assigned_identity.id
   frontend_frontdoor_resource_guid        = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
   frontend_possible_outbound_ip_addresses = var.enable_app_service_frontend ? module.frontend[0].possible_outbound_ip_addresses : ""
   location                                = var.location
@@ -203,7 +209,7 @@ module "container_apps" {
   log_analytics_workspace_id      = module.monitoring.log_analytics_workspace_id
   backend_image                   = var.api_image
   fabric_sql_connection_string    = local.fabric_sql_connection_string
-  user_assigned_identity_id       = var.user_assigned_managed_identity_id
+  user_assigned_identity_id       = azurerm_user_assigned_identity.backend_user_assigned_identity.id
   # Avoid referencing module.frontend here to prevent a dependency cycle.
   # Frontend App Service hostname is deterministic: <repo>-<env>-frontend.azurewebsites.net
   # Front Door endpoint hostname is also deterministic: <repo>-<env>-frontend-fd.azurefd.net
