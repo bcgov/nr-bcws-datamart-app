@@ -38,9 +38,7 @@ jobs:
     needs: [stack-prefix]
     uses: ./.github/workflows/.deployer.yml
     with:
-      environment_name: ${{ inputs.environment_name }}
       command: ${{ inputs.command }}
-      stack_prefix: ${{ needs.stack-prefix.outputs.stack_prefix }}
       app_env: ${{ inputs.app_env }}
       tag: ${{ inputs.tag }}
     secrets: inherit

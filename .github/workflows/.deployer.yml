@@ -119,7 +119,7 @@ jobs:
           echo "BACKEND_RESOURCE_GROUP=${{ secrets.VNET_RESOURCE_GROUP_NAME }}" >> "$GITHUB_ENV"
           echo "BACKEND_STORAGE_ACCOUNT=${{ vars.STORAGE_ACCOUNT_NAME }}" >> "$GITHUB_ENV"
           echo "BACKEND_CONTAINER_NAME=tfstate" >> "$GITHUB_ENV"
-          echo "BACKEND_STATE_KEY=${{ inputs.stack_prefix }}/${{ inputs.app_env }}/terraform.tfstate" >> "$GITHUB_ENV"
+          echo "BACKEND_STATE_KEY=${{ vars.STACK_PREFIX }}/${{ inputs.app_env }}/terraform.tfstate" >> "$GITHUB_ENV"
 
           echo "TF_VAR_target_env=${{ vars.AZURE_ENVIRONMENT }}" >> "$GITHUB_ENV"
           echo "TF_VAR_azure_subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> "$GITHUB_ENV"
@@ -143,7 +143,7 @@ jobs:
           echo "TF_VAR_frontend_image=ghcr.io/${{ github.repository }}/frontend:${{ inputs.tag }}" >> "$GITHUB_ENV"
           echo "TF_VAR_fabric_sql_connection_string=${{ secrets.FABRIC_SQL_CONNECTION_STRING }}" >> "$GITHUB_ENV"
           echo "TF_VAR_fabric_sql_connection_string_2=${{ secrets.FABRIC_SQL_CONNECTION_STRING_2 }}" >> "$GITHUB_ENV"
-          echo "TF_VAR_stack_prefix=${{ inputs.stack_prefix }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_stack_prefix=${{ inputs.STACK_PREFIX }}" >> "$GITHUB_ENV"
           echo "TF_VAR_app_env=${{ inputs.app_env }}" >> "$GITHUB_ENV"
           echo "TF_VAR_app_name=${{ inputs.stack_prefix }}-${{ inputs.app_env }}" >> "$GITHUB_ENV"
           echo "TF_VAR_location=${{ env.AZURE_REGION }}" >> "$GITHUB_ENV"
