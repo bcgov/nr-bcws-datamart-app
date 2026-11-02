@@ -128,7 +128,9 @@ module "download_api_site" {
 
   managed_identities = {
     system_assigned            = true
-    user_assigned_resource_ids = []
+    user_assigned_resource_ids = [
+      var.download_queue_identity_id
+    ]
   }
 
   # Enabled so that the access restrictions below decide who can call the API. When this is disabled,
@@ -168,6 +170,10 @@ module "download_api_site" {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
     WEBSITE_ENABLE_SYNC_UPDATE_SITE     = "1"
     WEBSITES_CONTAINER_START_TIME_LIMIT = "180"
+
+    DOWNLOAD_QUEUE_NAME          = var.download_queue_name
+    DOWNLOAD_STORAGE_ACCOUNT_NAME = var.storage_account_name
+    DOWNLOAD_QUEUE_CLIENT_ID = var.download_queue_identity_client_id
   }
 
   logs = {

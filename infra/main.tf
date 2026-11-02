@@ -121,6 +121,15 @@ module "frontend" {
   depends_on = [module.monitoring, module.network]
 }
 
+module "storage" {
+  source = "./modules/storage"
+
+  app_name            = var.app_name
+  app_env             = var.app_env
+  location            = var.location
+  common_tags         = var.common_tags
+}
+
 module "backend" {
   count  = var.enable_app_service_backend ? 1 : 0
   source = "./modules/backend"
@@ -152,6 +161,10 @@ module "backend" {
   download_sync_threshold  = var.download_sync_threshold
   download_page_size = var.download_page_size
 
+  storage_account_name = module.storage.storage_account_name
+  download_queue_name  = module.storage.download_queue_name
+  download_queue_identity_id = module.storage.download_queue_identity_id
+  download_queue_identity_client_id = module.storage.download_queue_identity_client_id
 
   depends_on = [module.frontend]
 }
