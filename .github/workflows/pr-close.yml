@@ -79,8 +79,8 @@ jobs:
   #         BACKEND_RESOURCE_GROUP="${{ secrets.VNET_RESOURCE_GROUP_NAME }}"
   #         BACKEND_STORAGE_ACCOUNT="${{ vars.STORAGE_ACCOUNT_NAME }}"
   #         BACKEND_CONTAINER_NAME="tfstate"
-  #         BACKEND_STATE_KEY="${{ needs.stack-prefix.outputs.stack_prefix }}/${{ github.event.number }}/terraform.tfstate"
-  #         BACKEND_PREFIX="${{ needs.stack-prefix.outputs.stack_prefix }}/${{ github.event.number }}/"
+  #         BACKEND_STATE_KEY="${{ vars.STACK_PREFIX }}/${{ github.event.number }}/terraform.tfstate"
+  #         BACKEND_PREFIX="${{ vars.STACK_PREFIX }}/${{ github.event.number }}/"
 
   #         # Use storage account key auth for all data-plane operations.
   #         # This keeps the workflow simple when the identity doesn't have Storage Blob Data roles.

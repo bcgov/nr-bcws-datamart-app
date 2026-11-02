@@ -19,10 +19,6 @@ on:
         required: false
         type: string
         description: "The APP env separates between Azure ENV and Actual APP, since Azure dev is where PR, and TEST is deployed"
-      stack_prefix:
-        required: true
-        type: string
-        description: "The stack prefix to use for the resources"
   workflow_dispatch:
     inputs:
       ### Required
@@ -40,10 +36,6 @@ on:
         required: false
         type: string
         description: "The visible name of the environment, i.e. int or dlv"
-      stack_prefix:
-        required: true
-        type: string
-        description: "The stack prefix to use for the resources"
 
 env:
   TF_VERSION: 1.12.2
@@ -143,9 +135,9 @@ jobs:
           echo "TF_VAR_frontend_image=ghcr.io/${{ github.repository }}/frontend:${{ inputs.tag }}" >> "$GITHUB_ENV"
           echo "TF_VAR_fabric_sql_connection_string=${{ secrets.FABRIC_SQL_CONNECTION_STRING }}" >> "$GITHUB_ENV"
           echo "TF_VAR_fabric_sql_connection_string_2=${{ secrets.FABRIC_SQL_CONNECTION_STRING_2 }}" >> "$GITHUB_ENV"
-          echo "TF_VAR_stack_prefix=${{ inputs.STACK_PREFIX }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_stack_prefix=${{ vars.STACK_PREFIX }}" >> "$GITHUB_ENV"
           echo "TF_VAR_app_env=${{ inputs.app_env }}" >> "$GITHUB_ENV"
-          echo "TF_VAR_app_name=${{ inputs.stack_prefix }}-${{ inputs.app_env }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_app_name=${{ vars.stack_prefix }}-${{ inputs.app_env }}" >> "$GITHUB_ENV"
           echo "TF_VAR_location=${{ env.AZURE_REGION }}" >> "$GITHUB_ENV"
 
           echo "TF_VAR_use_oidc=true" >> "$GITHUB_ENV"
@@ -154,7 +146,7 @@ jobs:
           echo "TF_VAR_application_alert_emails=$notify_emails_json" >> "$GITHUB_ENV"
 
           echo "TF_VAR_common_tags<<EOF" >> "$GITHUB_ENV"
-          echo '{"environment":"${{ vars.AZURE_ENVIRONMENT }}","stack_prefix":"${{ inputs.stack_prefix }}","app_env":"${{ inputs.app_env }}","repo_name":"${{ github.event.repository.name }}"}' >> "$GITHUB_ENV"
+          echo '{"environment":"${{ vars.AZURE_ENVIRONMENT }}","stack_prefix":"${{ vars.stack_prefix }}","app_env":"${{ inputs.app_env }}","repo_name":"${{ github.event.repository.name }}"}' >> "$GITHUB_ENV"
           echo "EOF" >> "$GITHUB_ENV"
 
       - name: Terraform ${{ inputs.command }}
