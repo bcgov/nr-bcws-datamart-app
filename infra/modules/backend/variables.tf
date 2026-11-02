@@ -216,3 +216,18 @@ variable "vivid_cidr" {
   default     = ""
 }
 
+variable "storage_account_name" {
+  type = string
+}
+
+variable "download_queue_name" {
+  type = string
+}
+
+variable "download_queue_identity_id" {
+  type = string
+}
+
+variable "download_queue_identity_client_id" {
+  type = string
+}
