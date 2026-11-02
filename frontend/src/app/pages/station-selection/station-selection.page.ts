@@ -40,7 +40,7 @@ export class StationSelectionPage implements OnInit {
             this.changeDetectorRef.detectChanges()
         }, 1000);
 
-        this.weatherStationService.initialize()
+        // this.weatherStationService.initialize()
     }    
 
     onViewDataClick() {

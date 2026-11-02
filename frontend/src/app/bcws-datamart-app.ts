@@ -4,6 +4,8 @@ import { ApplicationComponent, ApplicationHeaderComponent, ApplicationMenuCompon
 import { filter, Subscription } from 'rxjs';
 import { ROUTE } from './bcws-datamart-app.routes';
 import { DialogService } from './services/dialog.service';
+import { WeatherStationService } from './services/weather-station.service';
+import { DatamartRestApiService } from './services/datamart-rest-api.service';
 
 const MENU = {
     HOME: 'home',
@@ -34,6 +36,8 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
     snackbarUtilService = inject( SnackbarUtilService )
     dialogService = inject( DialogService )
     configurationService = inject( ConfigurationService )
+    weatherStationService = inject(WeatherStationService)
+    datamartRestApiService = inject(DatamartRestApiService)
 
     title = 'Wildfire DataMart';
     logoAriaLabel = 'BC Wildfire Service logo';
@@ -98,6 +102,9 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
             .subscribe( ( event: NavigationEnd ) => {
                 this.onRouteChanged( event.urlAfterRedirects )
             } )
+
+        this.weatherStationService.initialize()
+        // this.datamartRestApiService.getFireCentres()
 
         this.showDisclaimerDialog()
     }

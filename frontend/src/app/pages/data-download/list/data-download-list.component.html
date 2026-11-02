@@ -1,6 +1,7 @@
 <nrcl-row-list-desktop>
+        <!-- [dataSource]="rows | paginate: paginateState( paginationId! )" -->
     <mat-table
-        [dataSource]="rows | paginate: paginateState( paginationId! )"
+        [dataSource]="rows"
         matSort
         [matSortActive]="sortActive"
         [matSortDirection]="sortDirection"
@@ -47,7 +48,7 @@
         </mat-row>
     </mat-table>
 </nrcl-row-list-desktop>
-
+<!-- 
 <nrcl-gap/>
 
 <nrcl-row-list-pagination
@@ -57,4 +58,4 @@
     [rowCount]="totalRowCount"
     (pageNumberChange)="onPageNumberChange($event)"
     (pageSizeChange)="onPageSizeChange($event)">
-</nrcl-row-list-pagination>
+</nrcl-row-list-pagination> -->

@@ -36,7 +36,7 @@ export class DataDownloadFilterStationMetadataDialog extends DialogBase<DataDown
     override ngOnInit(): void {
         super.ngOnInit()
         
-        this.metadata = this.config.columns.filter( c => this.codeTableService.STATIONS_METADATA_COLUMNS.forCode( c ) )
+        this.metadata = this.config.columns.filter( c => this.codeTableService.STATION_METADATA_COLUMNS.forCode( c ) )
     }
 
     onMetadataChange( ev: string[] ) {

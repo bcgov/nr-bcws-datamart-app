@@ -1,16 +1,25 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    inject,
+    Input,
     OnChanges,
     SimpleChanges
 } from '@angular/core';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { GapComponent, InitialState, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
+import { GapComponent, InitialState, RowListBase, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Observable, of } from 'rxjs';
-import { WeatherStationFeature } from '../../../services/weather-station.service';
-import { DataDownloadListBase, Filter, TableRow } from './data-download-list.base';
+import { DailyWeather, DatamartRestApiService } from '../../../services/datamart-rest-api.service';
+import { WeatherStationFeature, WeatherStationService } from '../../../services/weather-station.service';
+import { CodeDescriptionHeading } from '../../../services/code-table.service';
+import { SelectedWeatherStationsService } from '../../../services/selected-weather-stations.service';
+import { formatApiDate, formatTableDate, formatTableTime } from '../../../util';
+import { DownloadList } from '../data-download.page';
+
+export type TableRow = DailyWeather
+export type Filter = {}
 
 @Component({
     selector: 'data-download-list-hourly',
@@ -26,7 +35,18 @@ import { DataDownloadListBase, Filter, TableRow } from './data-download-list.bas
         GapComponent
     ]
 })
-export class DataDownloadListHourlyComponent extends DataDownloadListBase implements OnChanges {
+export class DataDownloadListHourlyComponent extends RowListBase<Filter, TableRow, any> implements OnChanges, DownloadList {
+    selectedWeatherStationsService = inject( SelectedWeatherStationsService )
+    datamartRestApiService = inject( DatamartRestApiService )
+    weatherStationService = inject( WeatherStationService )
+
+    @Input() reportColumns: CodeDescriptionHeading[] = []
+    @Input() startDate?: string
+    @Input() endDate?: string    
+
+    displayedColumns: string[] = []    
+    paginationId = 'data-download-hourly'
+
     ngOnChanges(changes: SimpleChanges<DataDownloadListHourlyComponent>): void {
         if ( changes.reportColumns ) {
             this.displayedColumns = [
@@ -37,21 +57,45 @@ export class DataDownloadListHourlyComponent extends DataDownloadListBase implem
         }
     }
 
-    override ngOnInit(): void {
-        super.ngOnInit()
-        this.paginationId = 'data-download-hourly'
+    refreshList(): void {
+        console.log('DataDownloadListHourlyComponent')
     }
 
-    fetchRowListPage(): Observable<WeatherStationFeature[]> {
-        return of( this.selectedWeatherStationsService.selectedStations )
+    override fetchRowListPage(): Observable<any> {
+        if ( this.selectedWeatherStationsService.selectedStations.length == 0 ) return of([])
+
+        let start = formatApiDate( this.startDate )
+        let end = formatApiDate( this.endDate )
+        let stationFilter = this.selectedWeatherStationsService.selectedStations.map( s => `WEATHER_STATION_GUID eq '${ s.properties.weather_station_guid }'` ).join( ' or ' ) 
+
+        return of( 
+            this.datamartRestApiService.getHourlyWeather( { 
+                filter: `WEATHER_TIMESTAMP ge ${ start } and WEATHER_TIMESTAMP le ${ end } and (${ stationFilter })` 
+            } )
+                .then( res => {
+                    return res.reduce<Promise<TableRow[]>>( ( acc, row: any ) => {
+                        return acc.then( ( res ) => {
+                            return this.weatherStationService.getStationById( row.WEATHER_STATION_GUID )
+                                .then( ( station ) => {
+                                    return res.concat( {
+                                        date: formatTableDate( row.WEATHER_TIMESTAMP ),
+                                        time: formatTableTime( row.WEATHER_TIMESTAMP ),
+                                        ...row,
+                                        ...station?.properties
+                                    } )
+                                } )
+                        } )
+                    }, Promise.resolve([]) )
+                } )
+        )
     }
     
-    parseRows(res: WeatherStationFeature[]): TableRow[] {
+    parseRows(res: any): TableRow[] {
         return res
     }
 
     override parseTotalRowCount(res: any): number {
-        return this.selectedWeatherStationsService.selectedStations.length
+        return res.length
     }
 
     getInitialPageState(): InitialState<Filter> {
