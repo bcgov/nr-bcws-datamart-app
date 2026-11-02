@@ -9,10 +9,14 @@ download:
   sync-threshold: ${DOWNLOAD_SYNC_THRESHOLD:10000}
   page-size: ${DOWNLOAD_PAGE_SIZE:1000}
 
-  queue-name: ${DOWNLOAD_QUEUE_NAME}
-  storage-account-name: ${DOWNLOAD_STORAGE_ACCOUNT_NAME}
-  queue-client-id: ${DOWNLOAD_QUEUE_CLIENT_ID}
+  queue-name: ${DOWNLOAD_QUEUE_NAME:downloads}
 
+  # Azure deployment settings
+  storage-account-name: ${DOWNLOAD_STORAGE_ACCOUNT_NAME:}
+  queue-client-id: ${DOWNLOAD_QUEUE_CLIENT_ID:}
+
+  # Local development / Azurite
+  queue-connection-string: ${DOWNLOAD_QUEUE_CONNECTION_STRING:}
 
 management:
   endpoints:
