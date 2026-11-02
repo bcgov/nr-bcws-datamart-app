@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -21,6 +22,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import ca.bc.gov.bcws.nrs.downloadapi.clients.DatamartApiClient;
 import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadFile;
+import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadJobMessage;
+import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadJobResponse;
 import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadQuery;
 import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadRequest;
 import ca.bc.gov.bcws.nrs.downloadapi.utils.Utils;
@@ -43,6 +46,7 @@ public class DownloadService {
     private final DatamartApiClient datamartApiClient;
     private final CsvService csvService;
     private final ZipService zipService;
+    private final QueueService queueService;
 
     @Value("${download.page-size:1000}")
     private int pageSize;
@@ -53,11 +57,13 @@ public class DownloadService {
     public DownloadService(
             DatamartApiClient datamartApiClient,
             CsvService csvService,
-            ZipService zipService) {
+            ZipService zipService,
+            QueueService queueService) {
 
         this.datamartApiClient = datamartApiClient;
         this.csvService = csvService;
         this.zipService = zipService;
+        this.queueService = queueService;
     }
 
     public DownloadFile createDownload(DownloadRequest request) throws IOException {
@@ -65,8 +71,6 @@ public class DownloadService {
         request.getQueries().size(),
         request.getStartDate(),
         request.getEndDate());
-
-        if (request.isEmailDownload())throw new IllegalArgumentException("Email downloads are not yet implemented.");
 
         Map<String, byte[]> csvFiles = new HashMap<>();
 
@@ -308,5 +312,52 @@ public class DownloadService {
         }
 
         return "Invalid GraphQL query.";
+    }
+
+    public DownloadJobResponse submitDownloadJob(DownloadRequest request) {
+
+        if (request.getEmailAddress() == null || request.getEmailAddress().isBlank()) {
+            throw new IllegalArgumentException(
+                    "Email address is required for email downloads.");
+        }
+
+        if (request.getQueries() == null || request.getQueries().isEmpty()) {
+            throw new IllegalArgumentException(
+                "At least one query is required.");
+        }
+
+        String jobId = UUID.randomUUID().toString();
+
+        DownloadJobMessage message = createJobMessage(request, jobId);
+
+        queueService.enqueue(message);
+
+        logger.info(
+            "Queued download job {} for {} with {} query(s)",
+            jobId,
+            request.getEmailAddress(),
+            request.getQueries().size());
+
+        DownloadJobResponse response = new DownloadJobResponse();
+
+        response.setJobId(jobId);
+        response.setStatus("ACCEPTED");
+        response.setMessage(
+                "Download request accepted and queued for processing.");
+
+        return response;
+    }
+
+    private DownloadJobMessage createJobMessage(DownloadRequest request, String jobId) {
+
+        DownloadJobMessage message = new DownloadJobMessage();
+
+        message.setJobId(jobId);
+        message.setQueries(request.getQueries());
+        message.setStartDate(request.getStartDate());
+        message.setEndDate(request.getEndDate());
+        message.setEmailAddress(request.getEmailAddress());
+
+        return message;
     }
 }
