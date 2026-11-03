@@ -1,4 +1,4 @@
-<datamart-header>
+<datamart-header #header>
     <section title>
         <h1>Weather data</h1>
     </section>
@@ -34,6 +34,7 @@
                         [startDate]="filter.startDate"
                         [endDate]="filter.endDate"
                         [reportColumns]="dailyReportColumns"
+                        (isLoadingChange)="header.isLoading = $event"
                     ></data-download-list-daily>
                 </ng-template>
             </nrcl-tab>
@@ -46,6 +47,7 @@
                         [startDate]="filter.startDate"
                         [endDate]="filter.endDate"
                         [reportColumns]="hourlyReportColumns"
+                        (isLoadingChange)="header.isLoading = $event"
                     ></data-download-list-hourly>
                 </ng-template>
             </nrcl-tab>

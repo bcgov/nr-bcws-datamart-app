@@ -7,7 +7,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { ButtonComponent, GapComponent, RowListDesktopComponent } from '@bcgov/nr-ngx-component-lib';
 import { HourlyWeather, Result, WeatherStation } from '../../../services/datamart-graphql-api.service';
-import { formatTableDate } from '../../../util';
+import { formatTableDate, formatTableTime } from '../../../util';
 import { DataDownloadListBase } from './data-download-list.base';
 
 export type TableRow = { date?: string, time?: string } & HourlyWeather & WeatherStation
@@ -38,13 +38,14 @@ export class DataDownloadListHourlyComponent extends DataDownloadListBase<TableR
         }
     }
 
-    getResourePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<TableRow>> {
+    getResourcePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<TableRow>> {
         return this.datamartGraphqlApiService.getHourlyWeather( startDate, endDate, stationCodes, fields, endCursor )
             .then( res => {
                 res.items = res.items.map( row => {
                     return {
                         ...row,
                         date: formatTableDate( row.WEATHER_TIMESTAMP ),
+                        time: formatTableTime( row.WEATHER_TIMESTAMP ),
                         ...this.weatherStationService.getStationByCode( row.STATION_CODE! )?.properties
                     } 
                 } )

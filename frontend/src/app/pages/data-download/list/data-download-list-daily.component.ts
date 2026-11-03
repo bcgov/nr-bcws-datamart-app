@@ -39,7 +39,7 @@ export class DataDownloadListDailyComponent extends DataDownloadListBase<TableRo
         }
     }
 
-    getResourePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<TableRow>> {
+    getResourcePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<TableRow>> {
         return this.datamartGraphqlApiService.getDailyWeather( startDate, endDate, stationCodes, fields, endCursor )
             .then( res => {
                 res.items = res.items.map( row => {

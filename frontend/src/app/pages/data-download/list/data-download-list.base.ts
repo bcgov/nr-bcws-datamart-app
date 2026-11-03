@@ -5,6 +5,7 @@ import {
     inject,
     Input,
     OnChanges,
+    OnInit,
     Output,
     SimpleChanges
 } from '@angular/core';
@@ -21,7 +22,7 @@ export class DownloadList {
 }
 
 @Directive({})
-export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList {
+export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList, OnInit {
     selectedWeatherStationsService = inject( SelectedWeatherStationsService )
     datamartRestApiService = inject( DatamartRestApiService )
     weatherStationService = inject( WeatherStationService )
@@ -50,7 +51,12 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
     
     ngOnChanges( changes: SimpleChanges ): void {}
 
+    ngOnInit(): void {
+        this.refreshList()
+    }
+
     refreshList(): Promise<void> {
+        console.log('refreshList')
         return this.fetchListPage( true )
     }
 
@@ -69,7 +75,7 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
 
         this.isLoading = true
 
-        return this.getResourePage(
+        return this.getResourcePage(
             this.startDate!,
             this.endDate!,
             this.selectedWeatherStationsService.selectedStations.map( s => s.properties.station_code ),
@@ -92,7 +98,7 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
             } )
     }
 
-    abstract getResourePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<R>>
+    abstract getResourcePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<R>>
 
     onLoadMoreClick() {
         this.nextListPage()

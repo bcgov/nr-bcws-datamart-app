@@ -164,12 +164,12 @@ export class DatamartGraphqlApiService {
     codeTableService = inject( CodeTableService )
     
     getHourlyWeather( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<DailyWeather>> {
-        // let url = `${ BASE_URL }/hourly_weather`
         let filteredFields = fields.filter( f => this.codeTableService.HOURLY_WEATHER_COLUMNS.forCode( f ) )
+
         let after = ''
         if ( endCursor ) after = `after: "${ endCursor }"`
 
-        return fetchGraphQL<HourlyWeather>( { query: `
+        return fetchGraphQL<HourlyWeather>( 'hourly_weathers', `
             query {
                 hourly_weathers( 
                     ${ after }
@@ -192,7 +192,7 @@ export class DatamartGraphqlApiService {
                     endCursor
                 }
             }
-        ` }, 'hourly_weathers' )
+        ` )
             .then( res => {
                 res.items = res.items.map( (row: any) => {
                     return {
@@ -205,13 +205,12 @@ export class DatamartGraphqlApiService {
     }
 
     getDailyWeather( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<DailyWeather>> {
-        // let url = `${ BASE_URL }/daily_weather`
-// console.log(fields)        
         let filteredFields = fields.filter( f => this.codeTableService.DAILY_WEATHER_COLUMNS.forCode( f ) )
+        
         let after = ''
         if ( endCursor ) after = `after: "${ endCursor }"`
 
-        return fetchGraphQL<DailyWeather>( { query: `
+        return fetchGraphQL<DailyWeather>( 'daily_weathers', `
             query {
                 daily_weathers( 
                     ${ after }
@@ -234,7 +233,7 @@ export class DatamartGraphqlApiService {
                     endCursor
                 }
             }
-        ` }, 'daily_weathers' )
+        ` )
             .then( res => {
                 res.items = res.items.map( (row: any) => {
                     return {
@@ -256,15 +255,13 @@ export class DatamartGraphqlApiService {
     }
 }
 
-function fetchGraphQL<T>( body: { query: string, [key: string]: string }, queryName: string ): Promise<Result<T>> {
-    let query = body.query.replace( /\s+/g, ' ' )
-    // console.log( query )
+function fetchGraphQL<T>( queryName: string, query: string, body?: { [key: string]: string } ): Promise<Result<T>> {
     return fetch( BASE_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify( { ...body, query } )
+        body: JSON.stringify( { ...body, query: query.replace( /\s+/g, ' ' ) } )
     } )
         .then( res => {
             if ( !res.ok ) throw Error( 'HTTP error: ' + res.statusText )
@@ -274,81 +271,3 @@ function fetchGraphQL<T>( body: { query: string, [key: string]: string }, queryN
             return res.data[ queryName ] 
         } )
 }
-
-// export function fetchAllPages<RESULT>( url: string, accum: RESULT[], maxPages: number, description: string ): Promise<RESULT[]> { 
-//     if ( maxPages == 0 ) return Promise.resolve( accum )
-
-//     return fetchWithRetry( url, description, 3 ) 
-//         .then( res => res.json() )
-//         .then( payload => {
-//             if ( payload.nextLink )
-//                 return fetchAllPages( payload.nextLink, accum.concat( payload.value ), maxPages - 1, description )
-            
-//             return accum.concat( payload.value )
-//         } )
-// }
-
-// export function fetchWithRetry( url: string, description: string, retries: number, delay = 1000 ): Promise<Response> {
-//     return fetch( url )
-//         .then( res => {
-//             if ( !res.ok ) {
-//                 throw Error( res.statusText )
-//             }
-
-//             return res
-//         } )
-//         .catch( err => {
-//             if ( retries > 0 ) {
-//                 console.warn( `${ description } failed: ${ err }, retrying` )
-
-//                 return new Promise( res => { setTimeout( res, delay ) } )
-//                     .then( () => {
-//                         return fetchWithRetry( url, description, retries - 1 )
-//                     } )
-//             }
-//             else {
-//                 console.error( `${ description } failed: ${ err }` )
-
-//                 throw Error( `${ description } failed` )
-//             }
-//         } )
-// }
-
-
-
-// query { 
-//     daily_weathers( 
-//         filter: { 
-//             WEATHER_STATION_GUID: { eq: \"0xBB7CB089281A4734E0531D09228EECA8\" }, 
-//             WEATHER_TIMESTAMP_MSEC: { gte: 1659470400000, lt: 1659579600000 } 
-//         }
-//     ) { 
-//         items { 
-//             DAILY_WEATHER_MEAS_GUID 
-//             WEATHER_STATION_GUID
-//             WEATHER_TIMESTAMP_MSEC
-//             DAILY_MEASUREMENT_TYPE_CODE
-//             TEMPERATURE
-//             TEMPERATURE_MIN
-//             TEMPERATURE_MAX
-//             RELATIVE_HUMIDITY
-//             RELATIVE_HUMIDITY_MIN
-//             RELATIVE_HUMIDITY_MAX
-//             PRECIPITATION
-//             WIND_SPEED
-//             WIND_DIRECTION_DEGREES
-//             DAILY_SEVERITY_RATING
-//             DROUGHT_CODE
-//             DUFF_MOISTURE_CODE
-//             FINE_FUEL_MOISTURE_CODE
-//             GRASSLAND_CURING
-//             BUILD_UP_INDEX
-//             DANGER_FOREST_INDEX
-//             DANGER_GRASSLAND_INDEX
-//             DANGER_SCRUB_INDEX
-//             FIRE_WEATHER_INDEX
-//             INITIAL_SPREAD_INDEX
-//             LAST_UPDATED_TIMESTAMP_MSEC
-//         } 
-//     } 
-// }
