@@ -1,6 +1,7 @@
 package ca.bc.gov.bcws.nrs.downloadapi.controllers;
 
 import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadFile;
+import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadJobResponse;
 import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadRequest;
 import ca.bc.gov.bcws.nrs.downloadapi.services.DownloadService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,14 @@ public class DownloadController {
     private final DownloadService downloadService;
 
     @PostMapping
-    public ResponseEntity<byte[]> createDownload(@RequestBody DownloadRequest request)throws IOException {
+    public ResponseEntity<?> createDownload(@RequestBody DownloadRequest request)throws IOException {
+
+        if (request.isEmailDownload()) {
+
+            DownloadJobResponse response = downloadService.submitDownloadJob(request);
+
+            return ResponseEntity.accepted().body(response);
+        }
 
         DownloadFile downloadFile = downloadService.createDownload(request);
 
