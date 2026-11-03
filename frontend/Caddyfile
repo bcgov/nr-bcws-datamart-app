@@ -19,10 +19,21 @@
 		}
 	}
 	rewrite @spa_router {http.matchers.file.relative}
-	# Proxy requests to API service
-	reverse_proxy /api* {$VITE_BACKEND_URL} {
-		header_up Host {http.reverse_proxy.upstream.hostport}
-		header_up X-Real-IP {remote_host}
+
+	# Download API
+	handle /api/downloads {
+		reverse_proxy {$VITE_DOWNLOAD_API_URL} {
+			header_up Host {http.reverse_proxy.upstream.hostport}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	# Datamart API / GraphQL
+	handle /api* {
+		reverse_proxy {$VITE_BACKEND_URL} {
+			header_up Host {http.reverse_proxy.upstream.hostport}
+			header_up X-Real-IP {remote_host}
+		}
 	}
 
 	# 'unsafe-eval', Required by BCGov SMK/Turf runtime.

@@ -79,6 +79,7 @@ module "frontend_site" {
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY        = var.appinsights_instrumentation_key
     VITE_BACKEND_URL                      = coalesce(var.backend_url, "https://${var.repo_name}-${var.app_env}-api.azurewebsites.net")
+    VITE_DOWNLOAD_API_URL = coalesce(var.download_api_url, "")
     LOG_LEVEL                             = "info"
   }
 

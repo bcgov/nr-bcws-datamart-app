@@ -104,6 +104,13 @@ variable "backend_url" {
   default     = null
 }
 
+variable "download_api_url" {
+  description = "Download API base URL for the frontend (e.g., https://<download-api-host>). Used to set VITE_DOWNLOAD_API_URL in the App Service container."
+  type        = string
+  nullable    = true
+  default     = null
+}
+
 variable "resource_group_name" {
   description = "The name of the resource group in which to create resources."
   type        = string
