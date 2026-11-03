@@ -8,16 +8,12 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
+import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 import { CodeDescriptionHeading } from '../../../services/code-table.service';
-import { DailyWeather, DatamartRestApiService, WeatherStation } from '../../../services/datamart-rest-api.service';
+import { DatamartGraphqlApiService, Result } from '../../../services/datamart-graphql-api.service';
+import { DatamartRestApiService } from '../../../services/datamart-rest-api.service';
 import { SelectedWeatherStationsService } from '../../../services/selected-weather-stations.service';
 import { WeatherStationService } from '../../../services/weather-station.service';
-import { DatamartGraphqlApiService, Result } from '../../../services/datamart-graphql-api.service';
-import { formatTableDate } from '../../../util';
-import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
-
-// export type TableRow = { date?: string } & DailyWeather & WeatherStation
-// export type Filter = {}
 
 @Directive()
 export class DownloadList {
@@ -42,7 +38,7 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
     displayedColumns: string[] = []    
     isMoreAvailable = true
     endCursor?: string
-    rows: R[] = []
+    rows: Partial<R>[] = []
 
     private _isLoading = false
     get isLoading() { return this._isLoading }
@@ -82,14 +78,6 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
         )
             .then( res => {
                 this.rows = this.rows.concat( res.items )
-                // // console.log(res)
-                // this.rows = this.rows.concat( res.items.map( row => {
-                //     return {
-                //         ...row,
-                //         date: formatTableDate( row.WEATHER_TIMESTAMP ),
-                //         ...this.weatherStationService.getStationByCode( row.STATION_CODE )?.properties
-                //     } as TableRow
-                // } ) )
 
                 this.isMoreAvailable = res.hasNextPage
                 this.endCursor = res.endCursor 

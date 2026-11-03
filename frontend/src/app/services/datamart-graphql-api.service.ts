@@ -5,102 +5,156 @@ import { CodeTableService } from './code-table.service';
 const BASE_URL = 'https://nr-bcws-datamart-app-dev-api.azurewebsites.net/graphql'
 
 export type Result<T> = {
-    items: T[]
+    items: Partial<T>[]
     hasNextPage: boolean
     endCursor: string
 }
 
 export type DailyWeather = {
-    DAILY_WEATHER_MEAS_GUID?: string             // "0x000062DE1D9B4452AB7192C43CA88038",
-    WEATHER_STATION_GUID?: string                // "0xBB7CB089281A4734E0531D09228EECA8",
-    WEATHER_TIMESTAMP_MSEC?: number              // 1659470400000,
-    WEATHER_TIMESTAMP: string                   // "2022-08-02 20:00:00.000000",
-    DAILY_MEASUREMENT_TYPE_CODE?: string         // "ACTUAL",
-    TEMPERATURE?: number                         // 13.7,
-    TEMPERATURE_MIN?: number                     // 13,
-    TEMPERATURE_MAX?: number                     // 17.3,
-    RELATIVE_HUMIDITY?: number                   // 96,
-    RELATIVE_HUMIDITY_MIN?: number               // 79,
-    RELATIVE_HUMIDITY_MAX?: number               // 98,
-    PRECIPITATION?: number                       // 2.9,
-    WIND_SPEED?: number                          // 13,
-    WIND_DIRECTION_DEGREES?: number              // 160,
-    ADJUSTED_WIND_SPEED?: number                 // 13,
-    DAILY_SEVERITY_RATING?: string               // null,
-    DROUGHT_CODE?: string                        // null,
-    DUFF_MOISTURE_CODE?: string                  // null,
-    FINE_FUEL_MOISTURE_CODE?: string             // null,
-    GRASSLAND_CURING?: string                    // null,
-    BUILD_UP_INDEX?: string                      // null,
-    DANGER_FOREST_INDEX?: string                 // null,
-    DANGER_GRASSLAND_INDEX?: string              // null,
-    DANGER_SCRUB_INDEX?: string                  // null,
-    FIRE_WEATHER_INDEX?: string                  // null,
-    INITIAL_SPREAD_INDEX?: string                // null,
-    MISSING_HOURLY_DATA_IND?: string             // "N",
-    OBSERVATION_VALID_IND?: string               // "Y",
-    OBSERVATION_VALID_COMMENT?: string           // null,
-    ARCHIVED_IND?: string                        // "Y",
-    LAST_UPDATED_TIMESTAMP_MSEC?: number         // 1659471252602,
-    LAST_UPDATED_TIMESTAMP?: string              // "2022-08-02 20:14:12.602000",
-    CREATE_USER?: string                         // "WFWX_WEATHER_API",
-    CREATE_DATE?: string                         // "2022-08-02 13:14:12.000000",
-    UPDATE_USER?: string                         // "WFWX-2413",
-    UPDATE_DATE?: string                         // "2024-06-26 10:49:07.000000"
+    DAILY_WEATHER_MEAS_GUID: string
+    WEATHER_STATION_GUID: string
     STATION_CODE: number
+    STATION_NAME: string
+    STATION_ACRONYM: string
+    WEATHER_TIMESTAMP_MSEC: number
+    WEATHER_TIMESTAMP: string
+    DAILY_MEASUREMENT_TYPE_CODE: string
+    TEMPERATURE: number
+    TEMPERATURE_MIN: number
+    TEMPERATURE_MAX: number
+    RELATIVE_HUMIDITY: number
+    RELATIVE_HUMIDITY_MIN: number
+    RELATIVE_HUMIDITY_MAX: number
+    PRECIPITATION: number
+    WIND_SPEED: number
+    WIND_DIRECTION_DEGREES: number
+    ADJUSTED_WIND_SPEED: number
+    DAILY_SEVERITY_RATING: number
+    DROUGHT_CODE: number
+    DUFF_MOISTURE_CODE: number
+    FINE_FUEL_MOISTURE_CODE: number
+    GRASSLAND_CURING: number
+    BUILD_UP_INDEX: number
+    DANGER_FOREST_INDEX: number
+    DANGER_GRASSLAND_INDEX: number
+    DANGER_SCRUB_INDEX: number
+    FIRE_WEATHER_INDEX: number
+    INITIAL_SPREAD_INDEX: number
+    MISSING_HOURLY_DATA_IND: string
+    OBSERVATION_VALID_IND: string
+    OBSERVATION_VALID_COMMENT: string
+    ARCHIVED_IND: string
+    LAST_UPDATED_TIMESTAMP_MSEC: number
+    LAST_UPDATED_TIMESTAMP: string
+    CREATE_USER: string
+    CREATE_DATE: string
+    UPDATE_USER: string
+    UPDATE_DATE: string
+}
+
+export type HourlyWeather = {
+    HOURLY_WEATHER_MEAS_GUID: string
+    WEATHER_STATION_GUID: string
+    STATION_CODE: number
+    STATION_NAME: string
+    STATION_ACRONYM: string
+    WEATHER_TIMESTAMP_MSEC: number
+    WEATHER_TIMESTAMP: string
+    HOURLY_MEASUREMENT_TYPE_CODE: string
+    HOURLY_MEASUREMENT_TYPE_DESC: string
+    TEMPERATURE: number
+    BAROMETRIC_PRESSURE: number
+    RELATIVE_HUMIDITY: number
+    PRECIPITATION: number
+    WIND_SPEED: number
+    WIND_DIRECTION_DEGREES: number
+    FINE_FUEL_MOISTURE_CODE: number
+    FIRE_WEATHER_INDEX: number
+    INITIAL_SPREAD_INDEX: number
+    OBSERVATION_VALID_IND: string
+    OBSERVATION_VALID_COMMENT: string
+    ADJUSTED_WIND_SPEED: number
+    BATTERY_SUPPLY_CURRENT: number
+    BATTERY_SUPPLY_VOLTAGE: number
+    FUEL_STICK_MOISTURE: number
+    FUEL_STICK_TEMPERATURE: number
+    PRECIP_PLUVIO_1_STATUS: number
+    PRECIP_PLUVIO_1_TOTAL: number
+    PRECIP_PLUVIO_2_STATUS: number
+    PRECIP_PLUVIO_2_TOTAL: number
+    PRECIP_RIT_STATUS: number
+    PRECIP_RIT_TOTAL: number
+    PRECIP_RGT: number
+    PRECIP_PC2_STATUS: number
+    PRECIP_PC2_TOTAL: number
+    RELATIVE_HUMIDITY_HOURLY_AVG: number
+    RN_1_PLUVIO_1: number
+    RN_1_PLUVIO_2: number
+    RN_1_RIT: number
+    RN_1_PC2: number
+    SNOW_DEPTH: number
+    SNOW_DEPTH_QUALITY: number
+    SOLAR_RADIATION_CM3: number
+    SOLAR_RADIATION_LICOR: number
+    SOLAR_SUPPLY_CURRENT: number
+    SOLAR_SUPPLY_VOLTAGE: number
+    TEMPERATURE_HOURLY_AVERAGE: number
+    WIND_SPEED_HOURLY_AVERAGE: number
+    WIND_DIRECTION_HOURLY_AVERAGE: number
+    WIND_SPEED_MAX_10_MINUTE: number
+    WIND_GUST: number
+    SOIL_MOISTURE_PROBE_1: number
+    SOIL_MOISTURE_PROBE_2: number
+    SOIL_MOISTURE_PROBE_3: number
+    SOIL_TEMPERATURE_PROBE_1: number
+    SOIL_TEMPERATURE_PROBE_2: number
+    SOIL_TEMPERATURE_PROBE_3: number
+    ARCHIVED_IND: string
+    LAST_UPDATED_TIMESTAMP_MSEC: number
+    LAST_UPDATED_TIMESTAMP: string
+    CREATE_USER: string
+    CREATE_DATE: string
+    UPDATE_USER: string
+    UPDATE_DATE: string
 }
 
 export type WeatherStation = {
-    weather_station_guid: string                // "0xBB7CB0892BE34734E0531D09228EECA8",
-    station_code: number                        // 1341,
-    station_status_code: string                 // "ARCHIVED",
-    station_status_desc: string                 // "Archived",
-    site_type_code: string                      // "WXSTN_TEL",
-    site_type_desc: string                      // "Weather Station - Telephone",
-    influencing_aspect_code: string             // "SW",
-    influencing_aspect_desc: string             // "South-West",
-    data_logger_type_code: string               // "FWS12S",
-    data_logger_type_desc: string               // "FWS12S",
-    weather_zone: number                        // 26,
-    weather_zone_desc: string                   // "Zone 26",
-    danger_region: number                       // 3,
-    station_acronym: string                     // null,
-    station_name: string                        // "ZZ SYRINGA QD",
-    fire_centre_org_unit_ident: number          // 34,
-    fire_centre: string                         // "Southeast Fire Centre",
-    zone_org_unit_identifier: number            // 38,
-    fire_zone: string                           // "Arrow Zone",
-    data_source: string                         // "HRLY_POLL",
-    installation_timestamp_msec: number         // 1534921200000,
-    decommission_timestamp_msec: number         // 1600239600000,
-    hourly_ind: string                          // "Y",
-    over_winter_precip_adj_ind: string          // "N",
-    latitude: number                            // 49.4088,
-    longitude: number                           // -117.96,
-    elevation_m: number                         // 863,
-    influencing_slope: string                   // null,
-    windspeed_adjustment_height: string         // "2.0_2.9",
-    windspeed_adjustment_roughness: string      // null,
-    eccc_file_base_url_template: string         // null,
-    last_updated_timestamp_msec: number         // 1613486000000,
-    create_user: string                         // "LEGACY_DATA_LOAD",
-    create_date: string                         // "2021-02-16 14:33:20.000000",
-    update_user: string                         // "WFWX-2495",
-    update_date: string                         // "2024-11-20 13:05:43.000000"
-}
-
-export type FireCentre = {
-    FIRE_ZONE_ORG_UNIT_IDENTIFIER: number       // 2,
-    FIRE_ZONE_INTEGER_ALIAS: number             // 7,
-    FIRE_ZONE_ORG_UNIT_NAME: string             // "Cariboo Fire Centre",
-    FIRE_ZONE_ORG_UNIT_TYPE_DESC: string        // "Fire Centre"
-}
-
-export type FireZone = {
-    FIRE_ZONE_ORG_UNIT_IDENTIFIER: number       // 2,
-    FIRE_ZONE_INTEGER_ALIAS: number             // 7,
-    FIRE_ZONE_ORG_UNIT_NAME: string             // "Cariboo Fire Centre",
-    FIRE_ZONE_ORG_UNIT_TYPE_DESC: string        // "Fire Centre"
+    weather_station_guid: string
+    station_code: number
+    station_status_code: string
+    station_status_desc: string
+    site_type_code: string
+    site_type_desc: string
+    influencing_aspect_code: string
+    influencing_aspect_desc: string
+    data_logger_type_code: string
+    data_logger_type_desc: string
+    weather_zone: number
+    weather_zone_desc: string
+    danger_region: number
+    station_acronym: string
+    station_name: string
+    fire_centre_org_unit_ident: number
+    fire_centre: string
+    zone_org_unit_identifier: number
+    fire_zone: string
+    data_source: string
+    installation_timestamp_msec: number
+    decommission_timestamp_msec: number
+    hourly_ind: string
+    over_winter_precip_adj_ind: string
+    latitude: number
+    longitude: number
+    elevation_m: number
+    influencing_slope: number
+    windspeed_adjustment_height: string
+    windspeed_adjustment_roughness: number
+    eccc_file_base_url_template: string
+    last_updated_timestamp_msec: number
+    create_user: string
+    create_date: string
+    update_user: string
+    update_date: string
 }
 
 @Injectable({
@@ -109,8 +163,45 @@ export type FireZone = {
 export class DatamartGraphqlApiService {
     codeTableService = inject( CodeTableService )
     
-    getHourlyWeather() {
-        let url = `${ BASE_URL }/hourly_weather`
+    getHourlyWeather( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<DailyWeather>> {
+        // let url = `${ BASE_URL }/hourly_weather`
+        let filteredFields = fields.filter( f => this.codeTableService.HOURLY_WEATHER_COLUMNS.forCode( f ) )
+        let after = ''
+        if ( endCursor ) after = `after: "${ endCursor }"`
+
+        return fetchGraphQL<HourlyWeather>( { query: `
+            query {
+                hourly_weathers( 
+                    ${ after }
+                    filter: {
+                        WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" } 
+                        STATION_CODE: { in: [${ stationCodes.join(',')}] }
+                    } 
+                    orderBy: {
+                        WEATHER_TIMESTAMP: ASC,
+                        STATION_NAME: ASC
+                    }
+                ) {
+                    items {
+                        WEATHER_TIMESTAMP
+                        STATION_NAME
+                        STATION_CODE
+                        ${ filteredFields.join( '\n' ) }
+                    }
+                    hasNextPage
+                    endCursor
+                }
+            }
+        ` }, 'hourly_weathers' )
+            .then( res => {
+                res.items = res.items.map( (row: any) => {
+                    return {
+                        ...row,
+                    }
+                } )
+
+                return res
+            } )
     }
 
     getDailyWeather( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<DailyWeather>> {
@@ -126,17 +217,17 @@ export class DatamartGraphqlApiService {
                     ${ after }
                     filter: {
                         WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" } 
-                        weather_station: { station_code: { in: [${ stationCodes.join(',')}] }}
+                        STATION_CODE: { in: [${ stationCodes.join(',')}] }
                     } 
                     orderBy: {
-                        WEATHER_TIMESTAMP: ASC
+                        WEATHER_TIMESTAMP: ASC,
+                        STATION_NAME: ASC
                     }
                 ) {
                     items {
                         WEATHER_TIMESTAMP
-                        weather_station {
-                            station_code
-                        }
+                        STATION_NAME
+                        STATION_CODE
                         ${ filteredFields.join( '\n' ) }
                     }
                     hasNextPage
@@ -148,7 +239,6 @@ export class DatamartGraphqlApiService {
                 res.items = res.items.map( (row: any) => {
                     return {
                         ...row,
-                        STATION_CODE: row.weather_station.station_code
                     }
                 } )
 
@@ -181,7 +271,7 @@ function fetchGraphQL<T>( body: { query: string, [key: string]: string }, queryN
             return res.json()
         } )
         .then( res => {
-            return res.data[ queryName ]
+            return res.data[ queryName ] 
         } )
 }
 
