@@ -48,6 +48,9 @@ class DownloadServiceTest {
     @InjectMocks
     private DownloadService downloadService;
 
+	@Mock
+	private QueueService queueService;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
@@ -478,4 +481,33 @@ class DownloadServiceTest {
         verify(datamartApiClient, times(2))
                 .executeQuery(any());
     }
+
+    @Test
+	void submitDownloadJob_ReturnsAcceptedResponse() {
+
+			DownloadRequest request = new DownloadRequest();
+			request.setEmailAddress("cody.bergin@gov.bc.ca");
+			request.setEmailDownload(true);
+
+			DownloadQuery query = new DownloadQuery();
+			query.setName("daily-weather");
+			query.setQuery("query { daily_weathers { items { ID } } }");
+
+			request.setQueries(List.of(query));
+
+			downloadService.submitDownloadJob(request);
+
+			verify(queueService).enqueue(any());
+	}
+
+	@Test
+	void submitDownloadJob_MissingEmail_ThrowsException() {
+
+		DownloadRequest request = new DownloadRequest();
+		request.setEmailDownload(true);
+
+		assertThrows(
+			IllegalArgumentException.class,
+			() -> downloadService.submitDownloadJob(request));
+	}
 }

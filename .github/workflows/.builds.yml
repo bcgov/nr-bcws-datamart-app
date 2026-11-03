@@ -28,6 +28,7 @@ jobs:
             build_context: backend/download-api
             build_file: backend/download-api/Dockerfile
           - package: frontend
+            build_context: frontend
     timeout-minutes: 10
     steps:
       - uses: bcgov/action-builder-ghcr@v4.4.1
@@ -36,5 +37,5 @@ jobs:
           build_context: ${{ matrix.build_context }}
           build_file: ${{ matrix.build_file }}
           tags: ${{ inputs.tags }}
-          triggers: ('${{ matrix.package }}/' '.github/workflows/.builds.yml')
+          triggers: ('${{ matrix.build_context }}/' '.github/workflows/.builds.yml')
           tag_fallback: latest

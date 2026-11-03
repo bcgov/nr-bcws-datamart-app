@@ -10,23 +10,11 @@
   "entities": {
     "daily_weather": {
       "source": {
-        "object": "dbo.DAILY_WEATHER_MEASUREMENT",
-        "type": "table",
+        "object": "dbo.DAILY_WEATHER_MEASUREMENT_VW",
+        "type": "view",
         "key-fields": [
           "DAILY_WEATHER_MEAS_GUID"
         ]
-      },
-      "relationships": {
-        "weather_station": {
-          "cardinality": "one",
-          "target.entity": "weather_stations",
-          "source.fields": [
-            "WEATHER_STATION_GUID"
-          ],
-          "target.fields": [
-            "weather_station_guid"
-          ]
-        }
       },
       "cache": {
         "enabled": true,
@@ -43,23 +31,11 @@
     },
     "hourly_weather": {
       "source": {
-        "object": "dbo.HOURLY_WEATHER_MEASUREMENT",
-        "type": "table",
+        "object": "dbo.HOURLY_WEATHER_MEASUREMENT_VW",
+        "type": "view",
         "key-fields": [
           "HOURLY_WEATHER_MEAS_GUID"
         ]
-      },
-      "relationships": {
-        "weather_station": {
-          "cardinality": "one",
-          "target.entity": "weather_stations",
-          "source.fields": [
-            "WEATHER_STATION_GUID"
-          ],
-          "target.fields": [
-            "weather_station_guid"
-          ]
-        }
       },
       "cache": {
         "enabled": true,
@@ -79,30 +55,8 @@
         "object": "dbo.WEATHER_STATION",
         "type": "table",
         "key-fields": [
-          "weather_station_guid"
+          "WEATHER_STATION_GUID"
         ]
-      },
-      "relationships": {
-        "hourly_weather": {
-          "cardinality": "many",
-          "target.entity": "hourly_weather",
-          "source.fields": [
-            "weather_station_guid"
-          ],
-          "target.fields": [
-            "WEATHER_STATION_GUID"
-          ]
-        },
-        "daily_weather": {
-          "cardinality": "many",
-          "target.entity": "daily_weather",
-          "source.fields": [
-            "weather_station_guid"
-          ],
-          "target.fields": [
-            "WEATHER_STATION_GUID"
-          ]
-        }
       },
       "cache": {
         "enabled": true,

@@ -2,31 +2,72 @@ services:
 
   backend:
     container_name: backend
-    environment:
-      NODE_ENV: development
-      PORT: 3001
-      POSTGRES_SSLMODE: disable
-    image: ${BACKEND_IMAGE:-backend}
     build:
       context: ./backend/datamart-api
-    ports: ["3001:3001"]
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/api"]
-    working_dir: "/app"
+    image: ${BACKEND_IMAGE:-backend}
+    env_file:
+      - ./backend/datamart-api/.env
+    ports:
+      - "5000:5000"
+
+  download-api:
+    container_name: download-api
+    build:
+      context: ./backend/download-api
+    environment:
+      DATAMART_GRAPHQL_URL: http://backend:5000/graphql
+      DOWNLOAD_QUEUE_NAME: downloads
+      DOWNLOAD_QUEUE_CONNECTION_STRING: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;"
+      
+    ports:
+      - "8080:8080"
+    depends_on:
+      backend:
+        condition: service_started
+      azurite:
+        condition: service_started
+      azurite-init:
+        condition: service_completed_successfully
+
+  azurite:
+    container_name: azurite
+    image: mcr.microsoft.com/azure-storage/azurite
+    command: azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0
+    ports:
+      - "10000:10000"
+      - "10001:10001"
 
   frontend:
     container_name: frontend
     build:
       context: ./frontend
     environment:
-      VITE_BACKEND_URL: http://backend:3001
+      VITE_BACKEND_URL: http://backend:5000
+      VITE_DOWNLOAD_API_URL: http://download-api:8080
       VITE_PORT: 3000
       NODE_ENV: development
       LOG_LEVEL: debug
     image: ${FRONTEND_IMAGE:-frontend}
-    ports: ["3000:3000"]
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+    ports:
+      - "3000:3000"
     depends_on:
       backend:
         condition: service_started
+
+
+  azurite-init:
+    container_name: azurite-init
+    image: mcr.microsoft.com/azure-cli
+
+    depends_on:
+      - azurite
+
+    entrypoint:
+      - sh
+      - -c
+      - |
+        sleep 10
+
+        az storage queue create \
+          --name downloads \
+          --connection-string "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;"
