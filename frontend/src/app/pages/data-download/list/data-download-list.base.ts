@@ -56,7 +56,6 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
     }
 
     refreshList(): Promise<void> {
-        console.log('refreshList')
         return this.fetchListPage( true )
     }
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Directive, inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Directive, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonComponent, GapComponent, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
 import { ROUTE } from '../../bcws-datamart-app.routes';
@@ -10,6 +10,8 @@ import { DataDownloadFiltersComponent, Filter, initialFilter } from './filters/d
 import { DataDownloadListDailyComponent } from './list/data-download-list-daily.component';
 import { DataDownloadListHourlyComponent } from './list/data-download-list-hourly.component';
 import { DownloadList } from './list/data-download-list.base';
+import { ApplicationStateService } from '../../services/application-state.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'data-download-page',
@@ -28,13 +30,15 @@ import { DownloadList } from './list/data-download-list.base';
         DataDownloadListHourlyComponent
     ]
 })
-export class DataDownloadPage implements OnInit {
+export class DataDownloadPage implements OnInit, OnDestroy {
     router = inject(Router)
     codeTableService = inject(CodeTableService)
     activatedRoute = inject(ActivatedRoute)
     selectedWeatherStationsService = inject( SelectedWeatherStationsService )
     snackbarUtilService = inject(SnackbarUtilService)
     weatherStationService = inject(WeatherStationService)
+    applicationStateService = inject(ApplicationStateService)
+    changeDetectorRef = inject(ChangeDetectorRef)
 
     @ViewChild( 'list' ) downloadList?: DownloadList
 
@@ -44,30 +48,35 @@ export class DataDownloadPage implements OnInit {
     } )
     hourlyReportColumns: CodeDescriptionHeading[] = []
     dailyReportColumns: CodeDescriptionHeading[] = []
+    selectedStationsSubscription?: Subscription
 
     ngOnInit(): void {
-        Promise.resolve(  )
+        if ( this.applicationStateService.hasDownloadFilterState ) {
+            this.filter = this.applicationStateService.downloadFilterState
+        }
+
+        Promise.resolve()
             .then( () => {
                 let param = this.activatedRoute.snapshot.queryParamMap
                 
-                if ( param.has( 'start' ) ) 
-                    this.filter.startDate = param.get( 'start' ) || undefined
+                if ( param.has( 's' ) ) 
+                    this.filter.startDate = param.get( 's' ) || undefined
 
-                if ( param.has( 'end' ) ) 
-                    this.filter.endDate = param.get( 'end' ) || undefined
+                if ( param.has( 'e' ) ) 
+                    this.filter.endDate = param.get( 'e' ) || undefined
 
-                if ( param.has( 'dailyFields' ) ) 
-                    this.filter.dailyColumns = param.get( 'dailyFields' )!.split( ',' ).map( a => this.codeTableService.DAILY_WEATHER_COLUMNS.forAbbrev( a )!.code )
+                if ( param.has( 'd' ) ) 
+                    this.filter.dailyColumns = param.get( 'd' )!.split( ',' ).filter( i => i ).map( a => this.codeTableService.DAILY_WEATHER_COLUMNS.forAbbrev( a )!.code )
 
-                if ( param.has( 'hourlyFields' ) ) 
-                    this.filter.hourlyColumns = param.get( 'hourlyFields' )!.split( ',' ).map( a => this.codeTableService.HOURLY_WEATHER_COLUMNS.forAbbrev( a )!.code )
+                if ( param.has( 'h' ) ) 
+                    this.filter.hourlyColumns = param.get( 'h' )!.split( ',' ).filter( i => i ).map( a => this.codeTableService.HOURLY_WEATHER_COLUMNS.forAbbrev( a )!.code )
 
-                if ( param.has( 'metadataFields' ) ) 
-                    this.filter.metadataColumns = param.get( 'metadataFields' )!.split( ',' ).map( a => this.codeTableService.STATION_METADATA_COLUMNS.forAbbrev( a )!.code )
+                if ( param.has( 'm' ) ) 
+                    this.filter.metadataColumns = param.get( 'm' )!.split( ',' ).filter( i => i ).map( a => this.codeTableService.STATION_METADATA_COLUMNS.forAbbrev( a )!.code )
                 
-                if ( !param.has( 'stations' ) ) return
+                if ( !param.has( 'w' ) ) return
 
-                let stationCodes = param.get( 'stations' )!.split( ',' ).map( v => Number( v) )
+                let stationCodes = param.get( 'w' )!.split( ',' ).map( v => Number( v) )
                 return this.weatherStationService.getStationsByCode( stationCodes )
                     .then( ( stations ) => {
                         this.selectedWeatherStationsService.clearStations()
@@ -75,18 +84,19 @@ export class DataDownloadPage implements OnInit {
                     } )
             } )
             .then( () => {
-                this.onFilterChange( this.filter )
-
-                this.router.navigate([], {
-                    relativeTo: this.activatedRoute, // Clears within the current route context
-                    queryParams: {},        // Overwrites all parameters with an empty object
-                    replaceUrl: true        // Overwrites history state so 'Back' doesn't re-apply parameters
-                });
+                this.selectedStationsSubscription = this.selectedWeatherStationsService.selectedStations$.subscribe((stations) => {
+                    this.onFilterChange( this.filter )
+                } )
             } )
+    }
+
+    ngOnDestroy(): void {
+        if ( this.selectedStationsSubscription ) this.selectedStationsSubscription.unsubscribe()
     }
 
     onFilterChange( filter: Filter ) {
         this.filter = { ...filter }
+        this.applicationStateService.downloadFilterState = filter
 
         this.hourlyReportColumns = []
         if ( this.filter.hourlyColumns.length > 0 ) {
@@ -118,9 +128,21 @@ export class DataDownloadPage implements OnInit {
             )
         }
 
+        let p = this.getQueryParams()
+        delete p['s']
+        delete p['e']
+
+        this.router.navigate([], {
+            relativeTo: this.activatedRoute, 
+            queryParams: p,
+            replaceUrl: true
+        });
+
+        this.changeDetectorRef.detectChanges()
+
         setTimeout(() => {
             this.downloadList?.refreshList()        
-        })
+        },1000)
     }
 
     onAddMoreStationsClick() {
@@ -132,21 +154,21 @@ export class DataDownloadPage implements OnInit {
             ( this.dailyReportColumns.length > 0 || this.hourlyReportColumns.length > 0 )
     }
 
+    getQueryParams(): Record<string,string> {
+        return {
+            s: this.filter.startDate!,
+            e: this.filter.endDate!,
+            w: this.selectedWeatherStationsService.selectedStations.map( s => s.properties.station_code ).join(','),
+            d: this.filter.dailyColumns.map( c => this.codeTableService.DAILY_WEATHER_COLUMNS.forCode( c )?.abbrev ).join(','),
+            h: this.filter.hourlyColumns.map( c => this.codeTableService.HOURLY_WEATHER_COLUMNS.forCode( c )?.abbrev ).join(','),
+            m: this.filter.metadataColumns.map( c => this.codeTableService.STATION_METADATA_COLUMNS.forCode( c )?.abbrev ).join(','),
+        }        
+    }
+
     onCopyLinkClick() {
-        let dailyFields = this.filter.dailyColumns.map( c => this.codeTableService.DAILY_WEATHER_COLUMNS.forCode( c )?.abbrev )
-        let hourlyFields = this.filter.hourlyColumns.map( c => this.codeTableService.HOURLY_WEATHER_COLUMNS.forCode( c )?.abbrev )
-        let metadataFields = this.filter.metadataColumns.map( c => this.codeTableService.STATION_METADATA_COLUMNS.forCode( c )?.abbrev )
-        
         const urlTree = this.router.createUrlTree([], {
             relativeTo: this.activatedRoute,
-            queryParams: {
-                start: this.filter.startDate,
-                end: this.filter.endDate,
-                stations: this.selectedWeatherStationsService.selectedStations.map( s => s.properties.station_code ).join(','),
-                dailyFields: dailyFields.join(','),
-                hourlyFields: hourlyFields.join(','),
-                metadataFields: metadataFields.join(','),
-            },
+            queryParams: this.getQueryParams(),
             queryParamsHandling: 'merge',            
         });
 
