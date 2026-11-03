@@ -117,7 +117,6 @@ module "frontend" {
   # This is a runtime env var consumed by Caddy's reverse_proxy upstream in the frontend container.
   # Prefer Container Apps backend when enabled; otherwise fall back to the predictable App Service backend hostname.
   backend_url = var.enable_container_apps ? try(module.container_apps[0].backend_container_app_url, null) : "https://${var.repo_name}-${var.app_env}-api.azurewebsites.net"
-  download_api_url = module.backend[0].download_api_url
 
   depends_on = [module.monitoring, module.network]
 }
