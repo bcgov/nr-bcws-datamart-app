@@ -268,18 +268,6 @@ variable "fabric_sql_connection_string_2" {
   default     = ""
 }
 
-variable "user_assigned_managed_identity_id" {
-  description = "Resource ID of an existing user-assigned managed identity to attach to the datamart API host. It must have access to the Fabric workspace. Leave empty to use only the system-assigned identity."
-  type        = string
-  default     = ""
-}
-
-variable "user_assigned_managed_identity_client_id" {
-  description = "Client ID of the user-assigned managed identity. When set, Terraform appends User Id=<client id> to the Fabric connection string unless it already contains a User Id."
-  type        = string
-  default     = ""
-}
-
 variable "enable_application_alerts" {
   description = "Whether application alert resources should be created when alert recipients are configured."
   type        = bool

@@ -2,23 +2,13 @@ name: Destroy Stack
 on:
  workflow_dispatch:
   inputs:
-    environment_name:
-      description: 'The name of the environment to destroy resources from dev or test or prod(BE CAREFUL HERE)'
-      required: true
-      default: 'dev'
-      type: choice
-      options:
-        - dev
-        - test
-        - tools
     app_env:
       required: true
       type: choice
-      description: 'The APP env separates between Azure ENV and Actual APP'
       options:
-        - dev
-        - test
-        - tools
+        - int
+        - dlv
+        - tst
 permissions:
   id-token: write # This is required for requesting the JWT
   contents: write # This is required for actions/checkout
@@ -30,7 +20,6 @@ jobs:
     uses: ./.github/workflows/.destroy_stack.yml
     secrets: inherit
     with:
-      environment_name: ${{ github.event.inputs.environment_name }}
       app_env: ${{ github.event.inputs.app_env }}
   destroy-dev:
     name: Destroy Stack Dev
@@ -38,7 +27,6 @@ jobs:
     uses: ./.github/workflows/.destroy_stack.yml
     secrets: inherit
     with:
-      environment_name: ${{ github.event.inputs.environment_name }}
       app_env: ${{ github.event.inputs.app_env }}
   destroy-test:
     name: Destroy Stack Test
@@ -46,5 +34,4 @@ jobs:
     uses: ./.github/workflows/.destroy_stack.yml
     secrets: inherit
     with:
-      environment_name: ${{ github.event.inputs.environment_name }}
       app_env: ${{ github.event.inputs.app_env }}

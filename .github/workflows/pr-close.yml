@@ -13,10 +13,6 @@ permissions:
   packages: write
   pull-requests: write
 jobs:
-  stack-prefix:
-    name: Stack Prefix
-    uses: ./.github/workflows/.stack-prefix.yml
-
   lint:
     name: Lint
     runs-on: ubuntu-24.04
@@ -46,20 +42,19 @@ jobs:
 
       - name: Run TFLint
         run: tflint --recursive -f compact
-  deploy-to-dev:
-   name: Deploy to dev
-   uses: ./.github/workflows/.deploy_stack.yml
-   needs: lint
-   with:
-     environment_name: dev
-     command: apply
-     tag: ${{ github.event.number }}
-     app_env: dev
-   secrets: inherit
+  deploy-to-int:
+    if: github.event.pull_request.merged == true
+    name: Deploy to int
+    uses: ./.github/workflows/.deploy_stack.yml
+    needs: lint
+    with:
+      command: apply
+      tag: ${{ github.event.number }}
+      app_env: int
+    secrets: inherit
 
   # cleanup:
   #   name: Cleanup
-  #   needs: stack-prefix
   #   environment: tools # if PR plan is used in different environments, cleanup should be done in that environment where the state is stored
   #   runs-on: ubuntu-24.04
   #   steps:
@@ -80,8 +75,8 @@ jobs:
   #         BACKEND_RESOURCE_GROUP="${{ secrets.VNET_RESOURCE_GROUP_NAME }}"
   #         BACKEND_STORAGE_ACCOUNT="${{ vars.STORAGE_ACCOUNT_NAME }}"
   #         BACKEND_CONTAINER_NAME="tfstate"
-  #         BACKEND_STATE_KEY="${{ needs.stack-prefix.outputs.stack_prefix }}/${{ github.event.number }}/terraform.tfstate"
-  #         BACKEND_PREFIX="${{ needs.stack-prefix.outputs.stack_prefix }}/${{ github.event.number }}/"
+  #         BACKEND_STATE_KEY="${{ vars.STACK_PREFIX }}/${{ github.event.number }}/terraform.tfstate"
+  #         BACKEND_PREFIX="${{ vars.STACK_PREFIX }}/${{ github.event.number }}/"
 
   #         # Use storage account key auth for all data-plane operations.
   #         # This keeps the workflow simple when the identity doesn't have Storage Blob Data roles.
