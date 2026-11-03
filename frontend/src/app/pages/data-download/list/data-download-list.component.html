@@ -1,11 +1,16 @@
 <nrcl-row-list-desktop>
         <!-- [dataSource]="rows | paginate: paginateState( paginationId! )" -->
-    <mat-table
-        [dataSource]="rows"
-        matSort
-        [matSortActive]="sortActive"
+
+        <!-- [matSortActive]="sortActive"
         [matSortDirection]="sortDirection"
-        (matSortChange)="onSortChange( $event )"
+        (matSortChange)="onSortChange( $event )" 
+        matSort-->
+    @if ( rows ) {
+    <mat-table [dataSource]="rows"
+        matSort
+        matSortActive="date"
+        matSortDirection="asc"
+        matSortDisabled
     >
         <ng-container matColumnDef="date">
             <mat-header-cell *matHeaderCellDef mat-sort-header="date">
@@ -29,7 +34,7 @@
 
         @for ( column of reportColumns; track column ) {
             <ng-container [matColumnDef]="column.code">
-                <mat-header-cell *matHeaderCellDef [mat-sort-header]="column.code">
+                <mat-header-cell *matHeaderCellDef>
                     {{ column.description }}
                 </mat-header-cell>
 
@@ -46,8 +51,20 @@
         <mat-row
             *matRowDef="let row; columns: displayedColumns;">
         </mat-row>
-    </mat-table>
+    </mat-table> }
 </nrcl-row-list-desktop>
+
+<nrcl-gap/>
+
+@if ( isMoreAvailable ) {
+    <nrcl-button
+        label="Load More"
+        (click)="onLoadMoreClick()"
+    ></nrcl-button>
+
+    <nrcl-gap/>
+}
+
 <!-- 
 <nrcl-gap/>
 

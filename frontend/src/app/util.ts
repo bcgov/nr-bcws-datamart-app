@@ -10,7 +10,7 @@ export function formatApiDate( val: Moment|string|undefined ): string|undefined 
 export function formatTableDate( val: Moment|string|undefined ): string|undefined {
     if ( !val ) return
 
-    return moment( val ).format( 'MMM d, y' )
+    return moment( val ).format( 'MMM D, y' )
 } 
 
 export function formatTableTime( val: Moment|string|undefined ): string|undefined {

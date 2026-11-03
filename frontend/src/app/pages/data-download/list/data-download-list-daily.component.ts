@@ -1,22 +1,14 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    inject,
-    Input,
-    OnChanges,
     SimpleChanges
 } from '@angular/core';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { GapComponent, InitialState, RowListBase, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
-import { NgxPaginationModule } from 'ngx-pagination';
-import { Observable, of } from 'rxjs';
-import { CodeDescriptionHeading } from '../../../services/code-table.service';
-import { DailyWeather, DatamartRestApiService, WeatherStation } from '../../../services/datamart-rest-api.service';
-import { SelectedWeatherStationsService } from '../../../services/selected-weather-stations.service';
-import { formatApiDate, formatTableDate } from '../../../util';
-import { WeatherStationService } from '../../../services/weather-station.service';
-import { DownloadList } from '../data-download.page';
+import { ButtonComponent, GapComponent, RowListDesktopComponent } from '@bcgov/nr-ngx-component-lib';
+import { formatTableDate } from '../../../util';
+import { DataDownloadListBase } from './data-download-list.base';
+import { DailyWeather, Result, WeatherStation } from '../../../services/datamart-graphql-api.service';
 
 export type TableRow = { date?: string } & DailyWeather & WeatherStation
 export type Filter = {}
@@ -30,24 +22,28 @@ export type Filter = {}
         RowListDesktopComponent,
         MatTableModule,
         MatSortModule,
-        NgxPaginationModule,
-        RowListPaginationComponent,
-        GapComponent
+        GapComponent,
+        ButtonComponent,
     ]
 })
-export class DataDownloadListDailyComponent extends RowListBase<Filter, TableRow, any> implements OnChanges, DownloadList {
-    selectedWeatherStationsService = inject( SelectedWeatherStationsService )
-    datamartRestApiService = inject( DatamartRestApiService )
-    weatherStationService = inject( WeatherStationService )
+export class DataDownloadListDailyComponent extends DataDownloadListBase<TableRow> {
+    // selectedWeatherStationsService = inject( SelectedWeatherStationsService )
+    // datamartRestApiService = inject( DatamartRestApiService )
+    // weatherStationService = inject( WeatherStationService )
 
-    @Input() reportColumns: CodeDescriptionHeading[] = []
-    @Input() startDate?: string
-    @Input() endDate?: string    
+    // @Input() reportColumns: CodeDescriptionHeading[] = []
+    // @Input() startDate?: string
+    // @Input() endDate?: string    
 
-    displayedColumns: string[] = []    
-    paginationId = 'data-download-daily'
+    // displayedColumns: string[] = []    
+    // paginationId = 'data-download-daily'
+    // isMoreAvailable = true
 
-    ngOnChanges(changes: SimpleChanges<DataDownloadListDailyComponent>): void {
+    override ngOnChanges(changes: SimpleChanges<DataDownloadListDailyComponent>): void {
+        super.ngOnChanges( changes )
+        
+        this.endCursor = undefined
+
         if ( changes.reportColumns ) {
             this.displayedColumns = [
                 'date',
@@ -56,56 +52,115 @@ export class DataDownloadListDailyComponent extends RowListBase<Filter, TableRow
         }
     }
 
-    refreshList(): void {
-        console.log('DataDownloadListDailyComponent')
-    }
+    // override refreshList(): void {
+    //     this.fetchPage( true )
+    // }
 
-    override fetchRowListPage(): Observable<any> {
-        if ( this.selectedWeatherStationsService.selectedStations.length == 0 ) return of([])
+    // override nextListPage(): void {
+    //     this.fetchPage( false )
+    // }
 
-        let start = formatApiDate( this.startDate )
-        let end = formatApiDate( this.endDate )
-        let stationFilter = this.selectedWeatherStationsService.selectedStations.map( s => `WEATHER_STATION_GUID eq '${ s.properties.weather_station_guid }'` ).join( ' or ' ) 
-
-        return of( 
-            this.datamartRestApiService.getDailyWeather( { 
-                filter: `WEATHER_TIMESTAMP ge ${ start } and WEATHER_TIMESTAMP le ${ end } and (${ stationFilter })` 
-            } )
-                .then( res => {
-                    return res.reduce<Promise<TableRow[]>>( ( acc, row: any ) => {
-                        return acc.then( ( res ) => {
-                            return this.weatherStationService.getStationById( row.WEATHER_STATION_GUID )
-                                .then( ( station ) => {
-                                    return res.concat( {
-                                        date: formatTableDate( row.WEATHER_TIMESTAMP ),
-                                        ...row,
-                                        ...station?.properties
-                                    } )
-                                } )
-                        } )
-                    }, Promise.resolve([]) )
-                } )
+    getResourePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<TableRow>> {
+        return this.datamartGraphqlApiService.getDailyWeather(
+            this.startDate!,
+            this.endDate!,
+            this.selectedWeatherStationsService.selectedStations.map( s => s.properties.station_code ),
+            this.reportColumns.map( c => c.code ),
+            this.endCursor
         )
+            .then( res => {
+                // console.log(res)
+                res.items = res.items.map( row => {
+                    return {
+                        ...row,
+                        date: formatTableDate( row.WEATHER_TIMESTAMP ),
+                        ...this.weatherStationService.getStationByCode( row.STATION_CODE )?.properties
+                    } 
+                } )
+
+                return res as Result<TableRow>
+            } )
     }
+
+    // fetchPage( first: boolean ): void {
+    //     if ( first ) {
+    //         this.rows = []
+    //         this.isMoreAvailable = false
+    //         this.endCursor = undefined
+    //         this.changeDetectorRef.detectChanges()
+    //     }
+
+    //     this.datamartGraphqlApiService.getDailyWeather(
+    //         this.startDate!,
+    //         this.endDate!,
+    //         this.selectedWeatherStationsService.selectedStations.map( s => s.properties.station_code ),
+    //         this.reportColumns.map( c => c.code ),
+    //         this.endCursor
+    //     )
+    //         .then( res => {
+    //             // console.log(res)
+    //             this.rows = this.rows.concat( res.items.map( row => {
+    //                 return {
+    //                     ...row,
+    //                     date: formatTableDate( row.WEATHER_TIMESTAMP ),
+    //                     ...this.weatherStationService.getStationByCode( row.STATION_CODE )?.properties
+    //                 } as TableRow
+    //             } ) )
+
+    //             this.isMoreAvailable = res.hasNextPage
+    //             this.endCursor = res.endCursor 
+
+    //             this.changeDetectorRef.detectChanges()
+    //         } )
+    // }
+
+    // override fetchRowListPage(): Observable<any> {
+    //     if ( this.selectedWeatherStationsService.selectedStations.length == 0 ) return of([])
+
+    //     let start = formatApiDate( this.startDate )
+    //     let end = formatApiDate( this.endDate )
+    //     let stationFilter = this.selectedWeatherStationsService.selectedStations.map( s => `WEATHER_STATION_GUID eq '${ s.properties.weather_station_guid }'` ).join( ' or ' ) 
+
+    //     return of( 
+    //         this.datamartRestApiService.getDailyWeather( { 
+    //             filter: `WEATHER_TIMESTAMP ge ${ start } and WEATHER_TIMESTAMP le ${ end } and (${ stationFilter })` 
+    //         } )
+    //             .then( res => {
+    //                 return res.reduce<Promise<TableRow[]>>( ( acc, row: any ) => {
+    //                     return acc.then( ( res ) => {
+    //                         return this.weatherStationService.getStationById( row.WEATHER_STATION_GUID )
+    //                             .then( ( station ) => {
+    //                                 return res.concat( {
+    //                                     date: formatTableDate( row.WEATHER_TIMESTAMP ),
+    //                                     ...row,
+    //                                     ...station?.properties
+    //                                 } )
+    //                             } )
+    //                     } )
+    //                 }, Promise.resolve([]) )
+    //             } )
+    //     )
+    // }
     
-    override parseRows(res: any): TableRow[] {
-        return res
-    }
+    // override parseRows(res: any): TableRow[] {
+    //     return res
+    // }
 
-    override parseTotalRowCount(res: any): number {
-        return res.length
-    }
+    // override parseTotalRowCount(res: any): number {
+    //     return res.length
+    // }
 
-    override getInitialPageState(): InitialState<Filter> {
-        return {
-            instance: '',
-            filter: {},
-            pageConfig: {
-                pageSize: 10,
-                pageNumber: 1,
-                sortActive: 'date',
-                sortDirection: 'asc',
-            }
-        }
-    }
+    // override getInitialPageState(): InitialState<Filter> {
+    //     return {
+    //         instance: '',
+    //         filter: {},
+    //         pageConfig: {
+    //             pageSize: 10,
+    //             pageNumber: 1,
+    //             sortActive: 'date',
+    //             sortDirection: 'asc',
+    //         }
+    //     }
+    // }
+
 }

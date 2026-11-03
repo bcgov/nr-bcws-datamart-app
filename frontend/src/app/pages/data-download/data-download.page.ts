@@ -9,13 +9,7 @@ import { WeatherStationService } from '../../services/weather-station.service';
 import { DataDownloadFiltersComponent, Filter, initialFilter } from './filters/data-download-filters.component';
 import { DataDownloadListDailyComponent } from './list/data-download-list-daily.component';
 import { DataDownloadListHourlyComponent } from './list/data-download-list-hourly.component';
-
-@Directive()
-export class DownloadList {
-    refreshList() {
-
-    }
-}
+import { DownloadList } from './list/data-download-list.base';
 
 @Component({
     selector: 'data-download-page',
@@ -124,7 +118,9 @@ export class DataDownloadPage implements OnInit {
             )
         }
 
-        this.downloadList?.refreshList()
+        setTimeout(() => {
+            this.downloadList?.refreshList()        
+        })
     }
 
     onAddMoreStationsClick() {

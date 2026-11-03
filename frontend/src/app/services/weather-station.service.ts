@@ -30,6 +30,8 @@ export class WeatherStationService {
 
     private _totalCount = 0
 
+    private _stations?: GeoJsonPoint<WeatherStation>[]
+
     get totalCount() {
         return this._totalCount
     }
@@ -43,6 +45,7 @@ export class WeatherStationService {
             .then( stations => {
                 this._totalCount = stations.length
                 this.stationsSubject.next( stations )
+                this._stations = stations
             } )
             .catch( err => {
                 this.snackbarUtilService.error( err )
@@ -92,12 +95,12 @@ export class WeatherStationService {
             } )
     }
 
-    getStationById( id: string ): Promise<WeatherStationFeature|undefined> {
-        console.log(id)
-        return this.loadStations()
-            .then( stations => {
-                return stations.find( s => id == s.properties.weather_station_guid )
-            } )
+    getStationById( id: string ): WeatherStationFeature | undefined {
+        return this._stations?.find( s => id == s.properties.weather_station_guid )
+    }
+
+    getStationByCode( code: number ): WeatherStationFeature | undefined {
+        return this._stations?.find( s => code == s.properties.station_code )
     }
 }
 

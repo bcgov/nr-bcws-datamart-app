@@ -104,41 +104,41 @@ export class CodeTableService {
         ...this.METADATA_COLUMNS.items, 
     ])
 
-    FIRE_CENTRES = new CodeTable( [], () => {
-        return this.datamartRestApiService.getFireCentres()
-            .then( fcs => {
-                return fcs.map( fc => {
-                    return {
-                        code: String(fc.FIRE_ZONE_ORG_UNIT_IDENTIFIER),
-                        description: fc.FIRE_ZONE_ORG_UNIT_NAME
-                    }
-                } )
-            } )
-    } )
+    // FIRE_CENTRES = new CodeTable( [], () => {
+    //     return this.datamartRestApiService.getFireCentres()
+    //         .then( fcs => {
+    //             return fcs.map( fc => {
+    //                 return {
+    //                     code: String(fc.FIRE_ZONE_ORG_UNIT_IDENTIFIER),
+    //                     description: fc.FIRE_ZONE_ORG_UNIT_NAME
+    //                 }
+    //             } )
+    //         } )
+    // } )
     
-    FIRE_ZONES = new CodeTable( [], () => {
-        return this.datamartRestApiService.getFireZones()
-            .then( fcs => {
-                return fcs.map( fc => {
-                    return {
-                        code: String(fc.FIRE_ZONE_ORG_UNIT_IDENTIFIER),
-                        description: fc.FIRE_ZONE_ORG_UNIT_NAME
-                    }
-                } )
-            } )
-    } )
+    // FIRE_ZONES = new CodeTable( [], () => {
+    //     return this.datamartRestApiService.getFireZones()
+    //         .then( fcs => {
+    //             return fcs.map( fc => {
+    //                 return {
+    //                     code: String(fc.FIRE_ZONE_ORG_UNIT_IDENTIFIER),
+    //                     description: fc.FIRE_ZONE_ORG_UNIT_NAME
+    //                 }
+    //             } )
+    //         } )
+    // } )
 
-    ORG_UNITS = new CodeTable( [], () => {
-        return this.datamartRestApiService.getOrgUnits()
-            .then( fcs => {
-                return fcs.map( fc => {
-                    return {
-                        code: String(fc.FIRE_ZONE_ORG_UNIT_IDENTIFIER),
-                        description: fc.FIRE_ZONE_ORG_UNIT_NAME
-                    }
-                } )
-            } )
-    } )
+    // ORG_UNITS = new CodeTable( [], () => {
+    //     return this.datamartRestApiService.getOrgUnits()
+    //         .then( fcs => {
+    //             return fcs.map( fc => {
+    //                 return {
+    //                     code: String(fc.FIRE_ZONE_ORG_UNIT_IDENTIFIER),
+    //                     description: fc.FIRE_ZONE_ORG_UNIT_NAME
+    //                 }
+    //             } )
+    //         } )
+    // } )
 }
 
 
