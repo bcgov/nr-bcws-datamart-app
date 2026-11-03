@@ -3,8 +3,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { ButtonComponent } from '@bcgov/nr-ngx-component-lib';
-import { SelectedStationsService } from '../../../../services/selected-stations.service';
-import { GeoJsonPoint, StationDataService, WeatherStation } from '../../../../services/station-data.service';
+import { SelectedWeatherStationsService } from '../../../../services/selected-weather-stations.service';
+import { WeatherStationFeature, WeatherStationService } from '../../../../services/weather-station.service';
 
 type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
 
@@ -21,23 +21,25 @@ type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
     ]
 })
 export class StationSelectionContentListComponent implements OnInit {
-    stationDataService = inject( StationDataService )
-    selectedStationsService = inject( SelectedStationsService )
+    weatherStationService = inject( WeatherStationService )
+    selectedWeatherStationsService = inject( SelectedWeatherStationsService )
     changeDetectorRef = inject( ChangeDetectorRef )
 
     sortOption: SortOption = 'nameAsc';
-    stations: GeoJsonPoint<WeatherStation>[] = [];
+    stations: WeatherStationFeature[] = [];
 
     ngOnInit(): void {
-        this.stationDataService.stations$.subscribe( (stations) => {
+        this.weatherStationService.stations$.subscribe( (stations) => {
             this.stations = stations
+            // console.log(this.stations)
             // this.pageNumber = 1
+            this.changeDetectorRef.detectChanges()
         } )
     }
 
     get listDescription() {
-        let t = this.stationDataService.totalCount
-        let f = this.stationDataService.filteredCount
+        let t = this.weatherStationService.totalCount
+        let f = this.weatherStationService.filteredCount
 
         if ( t == f ) {
             return `Showing all ${ t } stations`
@@ -64,26 +66,26 @@ export class StationSelectionContentListComponent implements OnInit {
         return 'Sort stations. Current sort: ' + this.sortDescription
     }
 
-    isSelected(station: GeoJsonPoint<WeatherStation>): boolean {
-        return this.selectedStationsService.isSelected(station);
+    isSelected(station: WeatherStationFeature): boolean {
+        return this.selectedWeatherStationsService.isSelected(station);
     }
 
-    onStationSelectClick(station: GeoJsonPoint<WeatherStation>): void {
-        this.selectedStationsService.isSelected(station)
-            ? this.selectedStationsService.removeStation(station)
-            : this.selectedStationsService.addStation(station);
+    onStationSelectClick(station: WeatherStationFeature): void {
+        this.selectedWeatherStationsService.isSelected(station)
+            ? this.selectedWeatherStationsService.removeStation(station)
+            : this.selectedWeatherStationsService.addStation(station);
     }
 
     get areAllSelected(): boolean {
-        return this.stations.every( s => this.selectedStationsService.isSelected( s ) )
+        return this.stations.every( s => this.selectedWeatherStationsService.isSelected( s ) )
     }
 
     onSelectAllClick(): void {
         if ( this.areAllSelected ) {
-            this.selectedStationsService.clearStations()
+            this.selectedWeatherStationsService.clearStations()
         }
         else {
-            this.stations.forEach( s => this.selectedStationsService.addStation( s ) )
+            this.stations.forEach( s => this.selectedWeatherStationsService.addStation( s ) )
         }
     }
 
@@ -91,21 +93,21 @@ export class StationSelectionContentListComponent implements OnInit {
         this.sortOption = sortOption;
     }
 
-    get sortedStations(): GeoJsonPoint<WeatherStation>[] {
+    get sortedStations(): WeatherStationFeature[] {
         const stations = [...this.stations];
 
         switch (this.sortOption) {
             case 'nameAsc':
-                return stations.sort((a, b) => a.properties.STATION_NAME.localeCompare(b.properties.STATION_NAME));
+                return stations.sort((a, b) => a.properties.station_name.localeCompare(b.properties.station_name));
 
             case 'nameDesc':
-                return stations.sort((a, b) => b.properties.STATION_NAME.localeCompare(a.properties.STATION_NAME));
+                return stations.sort((a, b) => b.properties.station_name.localeCompare(a.properties.station_name));
 
             case 'codeAsc':
-                return stations.sort((a, b) => Number(a.properties.STATION_CODE) - Number(b.properties.STATION_CODE));
+                return stations.sort((a, b) => Number(a.properties.station_code) - Number(b.properties.station_code));
 
             case 'codeDesc':
-                return stations.sort((a, b) => Number(b.properties.STATION_CODE) - Number(a.properties.STATION_CODE));
+                return stations.sort((a, b) => Number(b.properties.station_code) - Number(a.properties.station_code));
 
             default:
                 return stations;

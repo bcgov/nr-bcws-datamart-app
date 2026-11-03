@@ -3,6 +3,7 @@ import {
     ChangeDetectorRef,
     Component,
     inject,
+    Input,
     OnDestroy,
     OnInit
 } from '@angular/core';
@@ -10,7 +11,8 @@ import { Router } from '@angular/router';
 import { ButtonComponent } from '@bcgov/nr-ngx-component-lib';
 import { Subscription } from 'rxjs';
 import { DialogService } from '../../services/dialog.service';
-import { SelectedStationsService } from '../../services/selected-stations.service';
+import { SelectedWeatherStationsService } from '../../services/selected-weather-stations.service';
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @Component({
     selector: 'datamart-header',
@@ -19,19 +21,22 @@ import { SelectedStationsService } from '../../services/selected-stations.servic
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
         ButtonComponent,
+        MatProgressSpinnerModule
     ]
 })
 export class DataMartHeaderComponent implements OnInit, OnDestroy {
-    selectedStationsService = inject( SelectedStationsService )
+    selectedWeatherStationsService = inject( SelectedWeatherStationsService )
     dialogService = inject( DialogService )
     router = inject( Router )
     changeDetectorRef = inject( ChangeDetectorRef )
+
+    @Input() isLoading = false
 
     selectedCount = 0;
     selectedStationsSubscription?: Subscription
 
     ngOnInit(): void {
-        this.selectedStationsSubscription = this.selectedStationsService.selectedStations$.subscribe(
+        this.selectedStationsSubscription = this.selectedWeatherStationsService.selectedStations$.subscribe(
             (stations) => {
                 this.selectedCount = stations.length;
                 this.changeDetectorRef.markForCheck();

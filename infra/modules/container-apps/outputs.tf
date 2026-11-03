@@ -43,3 +43,8 @@ output "backend_container_app_url" {
   value       = "https://${azurerm_container_app.backend.ingress[0].fqdn}"
   sensitive   = true
 }
+
+output "backend_container_app_principal_id" {
+  description = "Object ID of the backend Container App system-assigned managed identity. Add it as a member of the Fabric workspace so Data API builder can read from Fabric."
+  value       = try(azurerm_container_app.backend.identity[0].principal_id, null)
+}

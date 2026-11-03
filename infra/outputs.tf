@@ -45,3 +45,12 @@ output "apim_name" {
   description = "The name of the API Management service"
   value       = try(module.apim[0].apim_name, null)
 }
+
+# -------------
+# Backend (Data API builder) Outputs
+# -------------
+
+output "backend_managed_identity_principal_id" {
+  description = "Object ID of the backend managed identity. Grant it access to the Fabric workspace when the Fabric connection string uses 'Active Directory Managed Identity'."
+  value       = try(module.container_apps[0].backend_container_app_principal_id, null)
+}

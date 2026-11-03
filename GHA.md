@@ -114,6 +114,9 @@ CI also sets container image variables (all using GHCR):
 - `TF_VAR_api_image=ghcr.io/<owner>/<repo>/backend:<tag>`
 - `TF_VAR_frontend_image=ghcr.io/<owner>/<repo>/frontend:<tag>`
 
+CI also passes the connection string of the Microsoft Fabric SQL analytics endpoint, which the backend (Data API builder) reads from:
+- `TF_VAR_fabric_sql_connection_string=${{ secrets.FABRIC_SQL_CONNECTION_STRING }}` (create the `FABRIC_SQL_CONNECTION_STRING` secret in each GitHub environment)
+
 ## Auto-import behavior for "already exists" errors
 
 When `terraform apply` fails with an Azure error like “a resource with the ID ... already exists”, `infra/deploy-terraform.sh`:

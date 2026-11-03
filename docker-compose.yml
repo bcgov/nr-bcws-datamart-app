@@ -8,7 +8,7 @@ services:
       POSTGRES_SSLMODE: disable
     image: ${BACKEND_IMAGE:-backend}
     build:
-      context: ./backend
+      context: ./backend/datamart-api
     ports: ["3001:3001"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/api"]

@@ -77,39 +77,6 @@ variable "location" {
   nullable    = false
 }
 
-variable "log_level" {
-  description = "Backend Winston/Nest log level for structured application logs that can flow to Application Insights."
-  type        = string
-  default     = "info"
-
-  validation {
-    condition     = contains(["error", "warn", "info", "http", "verbose", "debug", "silly"], var.log_level)
-    error_message = "log_level must be one of: error, warn, info, http, verbose, debug, silly."
-  }
-}
-
-variable "http_access_log_mode" {
-  description = "Controls request access logging written to container stdout for LAW ingestion. Supported values: off, failures, all."
-  type        = string
-  default     = "failures"
-
-  validation {
-    condition     = contains(["off", "failures", "all"], var.http_access_log_mode)
-    error_message = "http_access_log_mode must be one of: off, failures, all."
-  }
-}
-
-variable "slow_query_log_threshold_ms" {
-  description = "Emit Prisma slow-query diagnostics to container stdout when query duration meets or exceeds this threshold in milliseconds. Set to -1 to disable."
-  type        = number
-  default     = 1000
-
-  validation {
-    condition     = var.slow_query_log_threshold_ms >= -1
-    error_message = "slow_query_log_threshold_ms must be greater than or equal to -1."
-  }
-}
-
 variable "log_analytics_workspace_id" {
   description = "Log Analytics Workspace ID for Container Apps Environment"
   type        = string
@@ -155,6 +122,36 @@ variable "log_analytics_workspace_key" {
 
 variable "fabric_sql_connection_string" {
   description = "Secret used for connection between API and fabric"
-  type = string
-  sensitive = true
+  type        = string
+  sensitive   = true
+}
+
+variable "fabric_sql_connection_string_2" {
+  description = "Secret used for connection between API and the second Fabric database"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "user_assigned_identity_id" {
+  description = "Resource ID of a user-assigned managed identity to attach to the container app. Empty means none."
+  type        = string
+  default     = ""
+}
+
+variable "dab_port" {
+  description = "Port that Data API builder listens on inside the container."
+  type        = number
+  default     = 5000
+}
+
+variable "dab_runtime_mode" {
+  description = "Data API builder runtime mode (production or development). Substituted into dab-config.json through DAB_RUNTIME_MODE."
+  type        = string
+  default     = "production"
+
+  validation {
+    condition     = contains(["production", "development"], var.dab_runtime_mode)
+    error_message = "dab_runtime_mode must be production or development."
+  }
 }

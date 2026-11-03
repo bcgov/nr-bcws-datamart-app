@@ -39,7 +39,7 @@
 </div>
 
 <div class="list">
-    @for ( station of sortedStations; track station.properties.WEATHER_STATION_GUID ) {
+    @for ( station of sortedStations; track station.properties.weather_station_guid ) {
         <div class="station"
             (click)="onStationSelectClick(station)"
         >
@@ -49,17 +49,17 @@
 
             <div class="content">
                 <nrcl-button anchor
-                    [label]="station.properties.STATION_NAME"
-                    [attr.aria-label]="'View details for station ' + station.properties.STATION_NAME"
+                    [label]="station.properties.station_name"
+                    [attr.aria-label]="'View details for station ' + station.properties.station_name"
                 ></nrcl-button>
 
                 <div class="details">
                     <span>
-                        Station Code: {{ station.properties.STATION_CODE || '-' }}
+                        Station Code: {{ station.properties.station_code || '-' }}
                     </span>
 
                     <span>
-                        Acronym: {{ station.properties.STATION_ACRONYM || '-' }}
+                        Acronym: {{ station.properties.station_acronym || '-' }}
                     </span>
                 </div>
             </div>

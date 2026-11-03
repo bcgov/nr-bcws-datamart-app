@@ -1,0 +1,75 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/download/v2.0.12/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "dwsql",
+    "connection-string": "@env('FABRIC_SQL_CONNECTION_STRING')",
+    "options": {
+      "set-session-context": false
+    }
+  },
+  "entities": {
+    "daily_weather": {
+      "source": {
+        "object": "dbo.DAILY_WEATHER_MEASUREMENT",
+        "type": "table",
+        "key-fields": [
+          "DAILY_WEATHER_MEAS_GUID"
+        ]
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 3600
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "hourly_weather": {
+      "source": {
+        "object": "dbo.HOURLY_WEATHER_MEASUREMENT",
+        "type": "table",
+        "key-fields": [
+          "HOURLY_WEATHER_MEAS_GUID"
+        ]
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 3600
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "weather_stations": {
+      "source": {
+        "object": "dbo.WEATHER_STATION",
+        "type": "table",
+        "key-fields": [
+          "weather_station_guid"
+        ]
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    }
+  }
+}

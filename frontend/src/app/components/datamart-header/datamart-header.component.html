@@ -11,3 +11,9 @@
 
     <ng-content select="section[actions]"></ng-content>
 </div>
+
+<div class="status">
+    @if ( isLoading ) {
+        <mat-spinner class="loading" [diameter]="30"></mat-spinner>
+    }
+</div>

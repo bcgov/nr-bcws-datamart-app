@@ -4,7 +4,7 @@ import {
     inject
 } from '@angular/core';
 import { ButtonComponent, DialogBase, DialogComponent, GapComponent } from '@bcgov/nr-ngx-component-lib';
-import { SelectedStationsService } from '../../services/selected-stations.service';
+import { SelectedWeatherStationsService } from '../../services/selected-weather-stations.service';
 import { SelectedStationsListComponent } from './list/selected-stations-list.component';
 
 export type SelectedStationsDialogConfig = {}
@@ -23,12 +23,12 @@ export type SelectedStationsDialogResult = void
     ]
 })
 export class SelectedStationsDialog extends DialogBase<SelectedStationsDialogConfig,SelectedStationsDialogResult> {
-    selectedStationsService = inject( SelectedStationsService )
+    selectedWeatherStationsService = inject( SelectedWeatherStationsService )
 
     selectedCount = 0;
 
     override ngOnInit(): void {
-        this.selectedStationsService.selectedStations$.subscribe(
+        this.selectedWeatherStationsService.selectedStations$.subscribe(
             (stations) => {
                 this.selectedCount = stations.length;
                 this.changeDetectorRef.markForCheck();
@@ -37,6 +37,6 @@ export class SelectedStationsDialog extends DialogBase<SelectedStationsDialogCon
     }
 
     onRemoveAllClick() {
-        this.selectedStationsService.clearStations()
+        this.selectedWeatherStationsService.clearStations()
     }
 }
