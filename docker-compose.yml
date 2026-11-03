@@ -43,6 +43,7 @@ services:
       context: ./frontend
     environment:
       VITE_BACKEND_URL: http://backend:5000
+      VITE_DOWNLOAD_API_URL: http://download-api:8080
       VITE_PORT: 3000
       NODE_ENV: development
       LOG_LEVEL: debug
