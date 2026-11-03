@@ -47,14 +47,15 @@ jobs:
       - name: Run TFLint
         run: tflint --recursive -f compact
   deploy-to-int:
-   name: Deploy to int
-   uses: ./.github/workflows/.deploy_stack.yml
-   needs: lint
-   with:
-     command: apply
-     tag: ${{ github.event.number }}
-     app_env: int
-   secrets: inherit
+    if: github.event.pull_request.merged == true
+    name: Deploy to int
+    uses: ./.github/workflows/.deploy_stack.yml
+    needs: lint
+    with:
+      command: apply
+      tag: ${{ github.event.number }}
+      app_env: int
+    secrets: inherit
 
   # cleanup:
   #   name: Cleanup
