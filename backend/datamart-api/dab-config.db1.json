@@ -55,7 +55,7 @@
         "object": "dbo.WEATHER_STATION",
         "type": "table",
         "key-fields": [
-          "weather_station_guid"
+          "WEATHER_STATION_GUID"
         ]
       },
       "cache": {
