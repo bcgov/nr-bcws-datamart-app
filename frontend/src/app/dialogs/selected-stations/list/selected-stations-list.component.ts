@@ -51,7 +51,7 @@ export class SelectedStationsListComponent extends RowListBase<Filter, TableRow,
     }
     
     parseRows(res: WeatherStationFeature[]): TableRow[] {
-        return this.sortRows( res )
+        return this.sortRows( [ ...res ] )
     }
 
     override parseTotalRowCount(res: any): number {
@@ -76,15 +76,9 @@ export class SelectedStationsListComponent extends RowListBase<Filter, TableRow,
         this.refreshRowList()
     }
 
-    override onSortChange(ev: Sort): Promise<void> {
-        let res = super.onSortChange( ev )
-        this.sortRows( this.rows )
-        return res
-    }
-
     sortRows( rows: TableRow[] ): TableRow[] {
         let sortFn: ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => number 
-        let sortDir = ( d: SortDirection, sort: number ) => d == 'asc' ? sort : -1 * sort
+        let sortDir = ( d: SortDirection, sort: number ) => d == 'asc' ? sort : d == 'desc' ? -1 * sort : 0
         let stringSort = ( field: keyof WeatherStation ) => ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => sortDir( d, (a.properties[field] as string || '').localeCompare( b.properties[field] as string || '') )
         let numericSort = ( field: keyof WeatherStation ) => ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => sortDir( d, (a.properties[field] as number) - ( b.properties[field] as number ) )
 
@@ -99,7 +93,6 @@ export class SelectedStationsListComponent extends RowListBase<Filter, TableRow,
             case 'elevation':       sortFn = numericSort( 'elevation_m' ); break
             case 'status':          sortFn = stringSort( 'station_status_code' ); break
         }
-
         return rows.sort( sortFn!( this.sortDirection ) )
     }
 }

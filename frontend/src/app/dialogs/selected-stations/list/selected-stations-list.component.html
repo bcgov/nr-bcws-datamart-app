@@ -1,6 +1,6 @@
 <nrcl-row-list-desktop>
     <mat-table
-        [dataSource]="rows | paginate: paginateState( 'selected-stations' )"
+        [dataSource]="rows"
         matSort
         [matSortActive]="sortActive"
         [matSortDirection]="sortDirection"
@@ -120,12 +120,3 @@
 </nrcl-row-list-desktop>
 
 <nrcl-gap/>
-
-<nrcl-row-list-pagination
-    paginationId="selected-stations"
-    [pageSize]="pageSize"
-    [pageNumber]="pageNumber"
-    [rowCount]="totalRowCount"
-    (pageNumberChange)="onPageNumberChange($event)"
-    (pageSizeChange)="onPageSizeChange($event)">
-</nrcl-row-list-pagination>
