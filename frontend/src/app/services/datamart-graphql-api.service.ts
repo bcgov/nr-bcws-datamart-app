@@ -316,23 +316,23 @@ export class DatamartGraphqlApiService {
 //     }
 // }
 
-function fetchGraphQL<T>( queryName: string, query: string, body?: { [key: string]: string } ): Promise<Result<T>> {
+export function fetchGraphQL<T>( queryName: string, query: string, body?: { [key: string]: string } ): Promise<Result<T>> {
     return fetch( GRAPHQL_BASE_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify( { ...body, query: query.replace( /\s+/g, ' ' ) } )
+        body: JSON.stringify( { ...body, query: compact( query ) } )
     } )
         .then( res => {
-            if ( !res.ok ) throw Error( 'HTTP error: ' + res.statusText )
             return res.json()
         } )
         .then( res => {
+            if ( res.errors ) throw res.errors 
             return res.data[ queryName ]
         } )
 }
 
-function compact( s: string ): string {
+export function compact( s: string ): string {
     return s.replace( /\s+/g, ' ' )
 }
