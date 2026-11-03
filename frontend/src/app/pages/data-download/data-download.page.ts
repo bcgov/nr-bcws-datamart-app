@@ -12,6 +12,7 @@ import { DataDownloadListHourlyComponent } from './list/data-download-list-hourl
 import { DownloadList } from './list/data-download-list.base';
 import { ApplicationStateService } from '../../services/application-state.service';
 import { Subscription } from 'rxjs';
+import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
 
 @Component({
     selector: 'data-download-page',
@@ -39,6 +40,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     weatherStationService = inject(WeatherStationService)
     applicationStateService = inject(ApplicationStateService)
     changeDetectorRef = inject(ChangeDetectorRef)
+    datamartGraphqlApiService = inject( DatamartGraphqlApiService )
 
     @ViewChild( 'list' ) downloadList?: DownloadList
 
@@ -147,6 +149,24 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
     onAddMoreStationsClick() {
         this.router.navigate( [ ROUTE.STATION_SELECTION ] )       
+    }
+
+    get enableDownload() {
+        return true
+    }
+
+    onDownloadClick() {
+        this.datamartGraphqlApiService.downloadWeatherData( 
+            this.filter.startDate!, 
+            this.filter.endDate!, 
+            this.selectedWeatherStationsService.selectedStations.map( s => s.properties.station_code ),
+            this.dailyReportColumns.map( c => c.code ),
+            this.hourlyReportColumns.map( c => c.code ),
+        )
+    }
+
+    onEmailClick() {
+
     }
 
     get enableCopyLink() {

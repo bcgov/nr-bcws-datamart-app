@@ -58,11 +58,14 @@
         <nrcl-button primary
             label="Download"
             icon="download"
+            (click)="onDownloadClick()"
+            [disabled]="!enableDownload"
         ></nrcl-button>
 
         <nrcl-button 
             label="Email download link"
             icon="email"
+            (click)="onEmailClick()"
         ></nrcl-button>
 
         <nrcl-button 

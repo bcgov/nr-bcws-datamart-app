@@ -28,8 +28,6 @@ export type TableRow = { date?: string } & DailyWeather & WeatherStation
 export class DataDownloadListDailyComponent extends DataDownloadListBase<TableRow> {
     override ngOnChanges(changes: SimpleChanges<DataDownloadListDailyComponent>): void {
         super.ngOnChanges( changes )
-        
-        this.endCursor = undefined
 
         if ( changes.reportColumns ) {
             this.displayedColumns = [
