@@ -284,15 +284,32 @@ export class DatamartGraphqlApiService {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify( body )
+            body: JSON.stringify( body ),            
         } )
             .then( res => {
                 if ( !res.ok ) throw Error( 'HTTP error: ' + res.statusText )
-                return res.json()
-            } )
+                res.headers.forEach((v,k)=>console.log(k,v))
+                let disposition = res.headers.get( 'content-disposition' )
+                console.log( disposition )
+                let filename = disposition?.match( /filename="(.+)"/ )?.[1]
+                console.log( filename )
+
+                return res.blob()
             .then( res => {
-                console.log(res)
+                        let obj = URL.createObjectURL( res )
+
+                        let anchor = document.createElement('a')
+                        anchor.href = obj
+                        anchor.download = filename!
+                        document.body.appendChild( anchor )
+                        anchor.click()
+
+                        anchor.remove()
+                        URL.revokeObjectURL( obj )
+                        // console.log(res)
                 // return res.data[ queryName ]
+            } )
+
             } )
     }
 }
