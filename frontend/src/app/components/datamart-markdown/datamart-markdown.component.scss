@@ -5,7 +5,9 @@
     markdown {
         max-width: 800px;
         color: #2d2d2d;
-       
+        display: block;
+        line-height: 1.6;
+
         ::ng-deep {
             a {
                 color: #255A90;
@@ -79,6 +81,48 @@
                 padding: 16px;
                 border-radius: 16px;
                 box-sizing: border-box;
+            }
+
+            /* Predictable spacing between content blocks */
+            & > * {
+                margin-block: 0;
+            }
+
+            & > * + * {
+                margin-block-start: 1rem;
+            }
+
+            /* More space before sections than after their headings */
+            & > h2 {
+                margin-block-start: 3rem;
+            }
+
+            & > h3 {
+                margin-block-start: 2rem;
+            }
+
+            & > h3 + * {
+                margin-block-start: 0.75rem;
+            }
+
+            & > :first-child {
+                margin-block-start: 0;
+            }
+
+            & :is(h1, h2, h3) {
+                line-height: 1.25;
+            }
+
+            /* Give table content room to breathe */
+            & table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            & :is(th, td) {
+                padding: 0.75rem 1rem;
+                vertical-align: top;
+                line-height: 1.5;
             }
         }
     }
