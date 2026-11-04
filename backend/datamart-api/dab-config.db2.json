@@ -70,6 +70,27 @@
           "role": "anonymous"
         }
       ]
+    },
+    "wildfire_org_units": {
+      "source": {
+        "object": "dbo.FULL_ORG_UNIT_VW",
+        "type": "table",
+        "key-fields": [
+          "ORG_UNIT_IDENTIFIER"
+        ]
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
     }
   }
 }
