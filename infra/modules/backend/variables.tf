@@ -231,3 +231,11 @@ variable "download_queue_identity_id" {
 variable "download_queue_identity_client_id" {
   type = string
 }
+
+variable "download_blob_identity_id" {
+  type = string
+}
+
+variable "download_blob_identity_client_id" {
+  type = string
+}
