@@ -1,19 +1,17 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    OnChanges,
     SimpleChanges
 } from '@angular/core';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { ButtonComponent, GapComponent, InitialState, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
-import { NgxPaginationModule } from 'ngx-pagination';
-import { Observable, of } from 'rxjs';
-import { GeoJsonPoint, WeatherStation } from '../../../services/station-data.service';
+import { ButtonComponent, GapComponent, RowListDesktopComponent } from '@bcgov/nr-ngx-component-lib';
+import { Result } from '../../../services/datamart-graphql-api.service';
+import { formatTableDate, formatTableTime } from '../../../util';
 import { DataDownloadListBase } from './data-download-list.base';
+import { HourlyWeather, WeatherStation } from '../../../api-types';
 
-export type TableRow = GeoJsonPoint<WeatherStation>
-export type Filter = {}
+export type TableRow = { date?: string, time?: string } & HourlyWeather & WeatherStation
 
 @Component({
     selector: 'data-download-list-hourly',
@@ -24,13 +22,14 @@ export type Filter = {}
         RowListDesktopComponent,
         MatTableModule,
         MatSortModule,
-        NgxPaginationModule,
-        RowListPaginationComponent,
-        GapComponent
+        GapComponent,
+        ButtonComponent,
     ]
 })
-export class DataDownloadListHourlyComponent extends DataDownloadListBase implements OnChanges {
-    ngOnChanges(changes: SimpleChanges<DataDownloadListHourlyComponent>): void {
+export class DataDownloadListHourlyComponent extends DataDownloadListBase<TableRow> {
+    override ngOnChanges(changes: SimpleChanges<DataDownloadListHourlyComponent>): void {
+        super.ngOnChanges( changes )
+
         if ( changes.reportColumns ) {
             this.displayedColumns = [
                 'date',
@@ -40,33 +39,19 @@ export class DataDownloadListHourlyComponent extends DataDownloadListBase implem
         }
     }
 
-    override ngOnInit(): void {
-        super.ngOnInit()
-        this.paginationId = 'data-download-hourly'
-    }
+    getResourcePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<TableRow>> {
+        return this.datamartGraphqlApiService.getHourlyWeather( startDate, endDate, stationCodes, fields, endCursor )
+            .then( res => {
+                res.items = res.items.map( row => {
+                    return {
+                        ...row,
+                        date: formatTableDate( row.WEATHER_TIMESTAMP ),
+                        time: formatTableTime( row.WEATHER_TIMESTAMP ),
+                        ...this.weatherStationService.getStationByCode( row.STATION_CODE! )?.properties
+                    } 
+                } )
 
-    fetchRowListPage(): Observable<GeoJsonPoint<WeatherStation>[]> {
-        return of( this.selectedStationsService.selectedStations )
-    }
-    
-    parseRows(res: GeoJsonPoint<WeatherStation>[]): TableRow[] {
-        return res
-    }
-
-    override parseTotalRowCount(res: any): number {
-        return this.selectedStationsService.selectedStations.length
-    }
-
-    getInitialPageState(): InitialState<Filter> {
-        return {
-            instance: '',
-            filter: {},
-            pageConfig: {
-                pageSize: 10,
-                pageNumber: 1,
-                sortActive: 'stationName',
-                sortDirection: 'asc',
-            }
-        }
+                return res as Result<TableRow>
+            } )
     }
 }

@@ -63,3 +63,20 @@ body {
         }
     }
 }
+
+.cdk-overlay-container {
+    .nrcl-menu {
+        .nrcl-button {
+            --nrcl-button-width: 100%;
+            width: 100%;
+
+            button {
+                text-align: left;
+            }
+        }
+    }
+}
+
+.mat-mdc-table {
+    --mat-table-row-item-label-text-weight: 500;
+}

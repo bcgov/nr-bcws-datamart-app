@@ -32,7 +32,9 @@ export class DialogService {
             SelectedStationsDialogResult
         >( SelectedStationsDialog, data, {
             minWidth: '95vw',
+            maxWidth: '95vw',
             minHeight: '95vh',
+            maxHeight: '95vh',
         } )
     }   
 

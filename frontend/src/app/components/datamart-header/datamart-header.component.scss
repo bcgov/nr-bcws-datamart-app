@@ -54,15 +54,21 @@ $button-active-background-color: #e6e6e6;
     }
 
     .actions {
-        display: flex;
-        align-items: center;
+        flex-grow: 1;
 
+        display: flex;
+        align-items: center;        
         gap: 20px;
 
         .selected-stations-button {
             border: 1px solid $border-color;
             background: $button-background-color;
         }
+    }
+
+    .statux {
+        display: flex;
+        align-items: center;        
     }
 }
 

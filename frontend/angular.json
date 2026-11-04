@@ -69,6 +69,12 @@
                         },
                         "development": {
                             "sourceMap": true,
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environment.ts",
+                                    "with": "src/environment.dev.ts"
+                                }
+                            ],
                             "optimization": false,
                             "extractLicenses": false
                         }

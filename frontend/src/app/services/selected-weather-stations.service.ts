@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { GeoJsonPoint, WeatherStation } from './station-data.service';
+import { WeatherStationFeature } from './weather-station.service';
 
 @Injectable( {
     providedIn: 'root',
 } )
-export class SelectedStationsService {
-    private readonly selectedStationsSubject = new BehaviorSubject<GeoJsonPoint<WeatherStation>[]>( [] );
+export class SelectedWeatherStationsService {
+    private readonly selectedStationsSubject = new BehaviorSubject<WeatherStationFeature[]>( [] );
 
     readonly selectedStations$ = this.selectedStationsSubject.asObservable();
 
-    addStation( station: GeoJsonPoint<WeatherStation> ): void {
+    addStation( station: WeatherStationFeature ): void {
         const stations = this.selectedStationsSubject.value;
 
         const exists = stations.some(
@@ -27,7 +27,7 @@ export class SelectedStationsService {
         ] );
     }
 
-    addStations( stations: GeoJsonPoint<WeatherStation>[] ): void {
+    addStations( stations: WeatherStationFeature[] ): void {
         const existingStations = this.selectedStationsSubject.value;
 
         let newStations = stations.filter( s => {
@@ -44,7 +44,7 @@ export class SelectedStationsService {
         ] )
     }
 
-    removeStation( station: GeoJsonPoint<WeatherStation> ): void {
+    removeStation( station: WeatherStationFeature ): void {
         this.selectedStationsSubject.next(
             this.selectedStationsSubject.value.filter(
                 ( s ) => s.properties.WEATHER_STATION_GUID !== station.properties.WEATHER_STATION_GUID,
@@ -52,7 +52,7 @@ export class SelectedStationsService {
         );
     }
 
-    isSelected( station: GeoJsonPoint<WeatherStation> ): boolean {
+    isSelected( station: WeatherStationFeature ): boolean {
         return this.selectedStationsSubject.value.some(
             ( s ) => s.properties.WEATHER_STATION_GUID === station.properties.WEATHER_STATION_GUID,
         );
@@ -66,7 +66,7 @@ export class SelectedStationsService {
         return this.selectedStationsSubject.value.length;
     }
 
-    get selectedStations(): GeoJsonPoint<WeatherStation>[] {
+    get selectedStations(): WeatherStationFeature[] {
         return this.selectedStationsSubject.value;
     }
 }
