@@ -26,7 +26,6 @@ export type Filter = {}
         MatTableModule,
         MatSortModule,
         NgxPaginationModule,
-        RowListPaginationComponent,
         GapComponent
     ]
 })
