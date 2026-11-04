@@ -155,7 +155,9 @@ module "backend" {
   fabric_sql_connection_string            = local.fabric_sql_connection_string
   fabric_sql_connection_string_2          = local.fabric_sql_connection_string_2
   user_assigned_identity_id               = azurerm_user_assigned_identity.backend_user_assigned_identity.id
-  frontend_frontdoor_resource_guid        = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
+  backend_frontdoor_id                    = var.enable_frontdoor ? module.frontdoor[0].frontdoor_id : null
+  backend_frontdoor_resource_guid         = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
+  frontdoor_backend_firewall_policy_id    = var.enable_frontdoor ? module.frontdoor[0].firewall_policy_id : null
   frontend_possible_outbound_ip_addresses = var.enable_app_service_frontend ? module.frontend[0].possible_outbound_ip_addresses : ""
   location                                = var.location
   log_analytics_workspace_id              = module.monitoring.log_analytics_workspace_id

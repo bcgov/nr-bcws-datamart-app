@@ -81,7 +81,7 @@ locals {
       ip_address  = null
       virtual_network_subnet_id = null
       headers = {
-        x_azure_fdid      = [var.frontend_frontdoor_resource_guid]
+        x_azure_fdid      = [var.backend_frontdoor_resource_guid]
       }
     },
     {
