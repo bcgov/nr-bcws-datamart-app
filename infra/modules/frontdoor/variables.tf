@@ -1,3 +1,9 @@
+variable "app_env" {
+  description = "Environment of the application"
+  type        = string
+  nullable    = false
+}
+
 variable "app_name" {
   description = "Name of the application"
   type        = string

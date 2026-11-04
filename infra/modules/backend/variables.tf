@@ -144,6 +144,12 @@ variable "frontdoor_backend_firewall_policy_id" {
   nullable    = true
 }
 
+variable "frontdoor_endpoint_id" {
+  description = "ID for frontdoor endpoint"
+  type = string
+  nullable = true
+}
+
 variable "frontend_possible_outbound_ip_addresses" {
   description = "Possible outbound IP addresses for the frontend App Service."
   type        = string
