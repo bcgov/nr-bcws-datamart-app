@@ -280,7 +280,7 @@ resource "azurerm_cdn_frontdoor_route" "backend_download_route" {
   count                         = var.enable_frontdoor ? 1 : 0
   name                          = "${var.repo_name}-${var.app_env}-backend-download-fd"
   cdn_frontdoor_endpoint_id     = var.frontdoor_endpoint_id
-  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.backend_origin_group[0].id
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.backend_download_origin_group[0].id
   cdn_frontdoor_origin_ids      = [azurerm_cdn_frontdoor_origin.backend_download_app_service_origin[0].id]
 
   supported_protocols    = ["Http", "Https"]
