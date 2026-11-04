@@ -1,4 +1,4 @@
-<h1>GraphQL Explorer</h1>
+<h1>GraphQL explorer</h1>
 
 <p>
     Build and run queries against the Weather DataMart GraphQL API. 
@@ -16,30 +16,46 @@
     ></nrcl-button>
 </p>
 
-<h3>Example Queries</h3>
+<h3>Example queries</h3>
 
 <p>
-    Select an example to load it into the query editor.
-</p>
+    <nrcl-button 
+        label="Select an example"
+        [matMenuTriggerFor]="exampleMenu"
+        iconRight="expand_more"
+    ></nrcl-button>
 
-<div class="examples">
-    @for ( example of examples; track example ) {
-        <nrcl-button tertiary
-            [label]="example.label"
-            (click)="onExampleClick( example )"
-            iconRight="search"
-            [small]="false"
-        ></nrcl-button>
-    }
-</div>
+    <mat-menu #exampleMenu="matMenu" class="nrcl-menu">
+        @for ( example of examples; track example ) {
+            <nrcl-button tertiary 
+                [label]="example.label"
+                (click)="onExampleClick( example )"
+                [small]="false"
+            ></nrcl-button>
+        }
+    </mat-menu>
+</p>
 
 <nrcl-gap/>
 
-<div class="query">
-    <mat-form-field appearance="outline" subscriptSizing="dynamic"> 
-        <mat-label>GraphQL Query</mat-label>
+<div class="content">
+    <div class="actions">
+        <nrcl-button primary
+            label="Run Query"
+            (click)="onRunQueryClick()"
+            [disabled]="queryField.invalid"
+        ></nrcl-button>
 
-        <textarea matInput cdkTextareaAutosize
+        <nrcl-button tertiary
+            label="Clear Query"
+            (click)="onClearQueryClick()"
+        ></nrcl-button>
+    </div>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="query"> 
+        <mat-label>GraphQL Query Editor</mat-label>
+
+        <textarea matInput
             [(ngModel)]="query"
             #queryField="ngModel"        
         ></textarea>
@@ -51,18 +67,5 @@
         }
     </mat-form-field>
 
-    <div class="result" [class.empty]="!result">{{ result || 'Query result appears here' }}</div>
-</div>
-
-<div class="actions">
-    <nrcl-button primary
-        label="Run Query"
-        (click)="onRunQueryClick()"
-        [disabled]="queryField.invalid"
-    ></nrcl-button>
-
-    <nrcl-button tertiary
-        label="Clear Query"
-        (click)="onClearQueryClick()"
-    ></nrcl-button>
+    <pre class="result" [class.empty]="!result">{{ result || 'Query result appears here' }}</pre>
 </div>

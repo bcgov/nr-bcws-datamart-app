@@ -1,14 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { ButtonComponent, GapComponent, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
-import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
-import { DataDownloadFiltersComponent, Filter, initialFilter } from './filters/data-download-filters.component';
-import { ROUTE } from '../../bcws-datamart-app.routes';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Directive, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ButtonComponent, GapComponent, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
+import { ROUTE } from '../../bcws-datamart-app.routes';
+import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
+import { CodeDescriptionHeading, CodeTableService } from '../../services/code-table.service';
+import { SelectedWeatherStationsService } from '../../services/selected-weather-stations.service';
+import { WeatherStationService } from '../../services/weather-station.service';
+import { DataDownloadFiltersComponent, Filter, initialFilter } from './filters/data-download-filters.component';
 import { DataDownloadListDailyComponent } from './list/data-download-list-daily.component';
 import { DataDownloadListHourlyComponent } from './list/data-download-list-hourly.component';
-import { CodeDescriptionHeading, CodeTableService } from '../../services/code-table.service';
-import { SelectedStationsService } from '../../services/selected-stations.service';
-import { StationDataService } from '../../services/station-data.service';
+import { DownloadList } from './list/data-download-list.base';
+import { ApplicationStateService } from '../../services/application-state.service';
+import { Subscription } from 'rxjs';
+import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
 
 @Component({
     selector: 'data-download-page',
@@ -27,72 +31,85 @@ import { StationDataService } from '../../services/station-data.service';
         DataDownloadListHourlyComponent
     ]
 })
-export class DataDownloadPage implements OnInit {
+export class DataDownloadPage implements OnInit, OnDestroy {
     router = inject(Router)
     codeTableService = inject(CodeTableService)
     activatedRoute = inject(ActivatedRoute)
-    selectedStationsService = inject(SelectedStationsService)
+    selectedWeatherStationsService = inject( SelectedWeatherStationsService )
     snackbarUtilService = inject(SnackbarUtilService)
-    stationDataService = inject(StationDataService)
+    weatherStationService = inject(WeatherStationService)
+    applicationStateService = inject(ApplicationStateService)
+    changeDetectorRef = inject(ChangeDetectorRef)
+    datamartGraphqlApiService = inject( DatamartGraphqlApiService )
+
+    @ViewChild( 'list' ) downloadList?: DownloadList
 
     filter: Filter = initialFilter( {
         dailyColumns: [ ...this.codeTableService.DAILY_WEATHER_OBSERVATIONS_COLUMNS.items.map( c => c.code ) ],
-        metadataColumns: [ 'stationName', 'stationCode' ]
+        metadataColumns: [ 'STATION_NAME', 'STATION_CODE' ]
     } )
     hourlyReportColumns: CodeDescriptionHeading[] = []
     dailyReportColumns: CodeDescriptionHeading[] = []
+    selectedStationsSubscription?: Subscription
 
     ngOnInit(): void {
-        Promise.resolve(  )
+        if ( this.applicationStateService.hasDownloadFilterState ) {
+            this.filter = this.applicationStateService.downloadFilterState
+        }
+
+        Promise.resolve()
             .then( () => {
                 let param = this.activatedRoute.snapshot.queryParamMap
                 
-                if ( param.has( 'start' ) ) 
-                    this.filter.startDate = param.get( 'start' ) || undefined
+                if ( param.has( 's' ) ) 
+                    this.filter.startDate = param.get( 's' ) || undefined
 
-                if ( param.has( 'end' ) ) 
-                    this.filter.endDate = param.get( 'end' ) || undefined
+                if ( param.has( 'e' ) ) 
+                    this.filter.endDate = param.get( 'e' ) || undefined
 
-                if ( param.has( 'dailyFields' ) ) 
-                    this.filter.dailyColumns = param.get( 'dailyFields' )!.split( ',' ).map( a => this.codeTableService.DAILY_WEATHER_COLUMNS.forAbbrev( a )!.code )
+                if ( param.has( 'd' ) ) 
+                    this.filter.dailyColumns = param.get( 'd' )!.split( ',' ).filter( i => i ).map( a => this.codeTableService.DAILY_WEATHER_COLUMNS.forAbbrev( a )!.code )
 
-                if ( param.has( 'hourlyFields' ) ) 
-                    this.filter.hourlyColumns = param.get( 'hourlyFields' )!.split( ',' ).map( a => this.codeTableService.HOURLY_WEATHER_COLUMNS.forAbbrev( a )!.code )
+                if ( param.has( 'h' ) ) 
+                    this.filter.hourlyColumns = param.get( 'h' )!.split( ',' ).filter( i => i ).map( a => this.codeTableService.HOURLY_WEATHER_COLUMNS.forAbbrev( a )!.code )
 
-                if ( param.has( 'metadataFields' ) ) 
-                    this.filter.metadataColumns = param.get( 'metadataFields' )!.split( ',' ).map( a => this.codeTableService.STATIONS_METADATA_COLUMNS.forAbbrev( a )!.code )
+                if ( param.has( 'm' ) ) 
+                    this.filter.metadataColumns = param.get( 'm' )!.split( ',' ).filter( i => i ).map( a => this.codeTableService.STATION_METADATA_COLUMNS.forAbbrev( a )!.code )
                 
-                if ( !param.has( 'stations' ) ) return
+                if ( !param.has( 'w' ) ) return
 
-                let stationCodes = param.get( 'stations' )!.split( ',' ).map( v => Number( v) )
-                return this.stationDataService.getStationsByCode( stationCodes )
+                let stationCodes = param.get( 'w' )!.split( ',' ).map( v => Number( v) )
+                return this.weatherStationService.getStationsByCode( stationCodes )
                     .then( ( stations ) => {
-                        this.selectedStationsService.clearStations()
-                        this.selectedStationsService.addStations( stations )
+                        this.selectedWeatherStationsService.clearStations()
+                        this.selectedWeatherStationsService.addStations( stations )
                     } )
             } )
             .then( () => {
-                this.onFilterChange( this.filter )
-
-                this.router.navigate([], {
-                    relativeTo: this.activatedRoute, // Clears within the current route context
-                    queryParams: {},        // Overwrites all parameters with an empty object
-                    replaceUrl: true        // Overwrites history state so 'Back' doesn't re-apply parameters
-                });
+                this.selectedStationsSubscription = this.selectedWeatherStationsService.selectedStations$.subscribe((stations) => {
+                    this.onFilterChange( this.filter )
+                } )
             } )
+    }
+
+    ngOnDestroy(): void {
+        if ( this.selectedStationsSubscription ) this.selectedStationsSubscription.unsubscribe()
     }
 
     onFilterChange( filter: Filter ) {
         this.filter = { ...filter }
+        this.applicationStateService.downloadFilterState = filter
 
         this.hourlyReportColumns = []
         if ( this.filter.hourlyColumns.length > 0 ) {
-            this.hourlyReportColumns = this.codeTableService.HOURLY_WEATHER_COLUMNS.items.filter( c => {
-                return this.filter.hourlyColumns.includes( c.code )
-            } )
-
             this.hourlyReportColumns = this.hourlyReportColumns.concat( 
-                this.codeTableService.STATIONS_METADATA_COLUMNS.items.filter( c => {
+                this.codeTableService.STATION_COLUMNS.items.filter( c => {
+                    return this.filter.metadataColumns.includes( c.code )
+                } ),
+                this.hourlyReportColumns = this.codeTableService.HOURLY_WEATHER_COLUMNS.items.filter( c => {
+                    return this.filter.hourlyColumns.includes( c.code )
+                } ),
+                this.codeTableService.METADATA_COLUMNS.items.filter( c => {
                     return this.filter.metadataColumns.includes( c.code )
                 } )
             )
@@ -100,42 +117,78 @@ export class DataDownloadPage implements OnInit {
 
         this.dailyReportColumns = []
         if ( this.filter.dailyColumns.length > 0 ) {
-            this.dailyReportColumns = this.codeTableService.DAILY_WEATHER_COLUMNS.items.filter( c => {
-                return this.filter.dailyColumns.includes( c.code )
-            } )
-
             this.dailyReportColumns = this.dailyReportColumns.concat( 
-                this.codeTableService.STATIONS_METADATA_COLUMNS.items.filter( c => {
+                this.codeTableService.STATION_COLUMNS.items.filter( c => {
+                    return this.filter.metadataColumns.includes( c.code )
+                } ),
+                this.codeTableService.DAILY_WEATHER_COLUMNS.items.filter( c => {
+                    return this.filter.dailyColumns.includes( c.code )
+                } ),                
+                this.codeTableService.METADATA_COLUMNS.items.filter( c => {
                     return this.filter.metadataColumns.includes( c.code )
                 } )
             )
         }
+
+        let p = this.getQueryParams()
+        delete p['s']
+        delete p['e']
+
+        this.router.navigate([], {
+            relativeTo: this.activatedRoute, 
+            queryParams: p,
+            replaceUrl: true
+        });
+
+        this.changeDetectorRef.detectChanges()
+
+        setTimeout(() => {
+            this.downloadList?.refreshList()        
+        },1000)
     }
 
     onAddMoreStationsClick() {
         this.router.navigate( [ ROUTE.STATION_SELECTION ] )       
     }
 
+    get enableDownload() {
+        return true
+    }
+
+    onDownloadClick() {
+        this.datamartGraphqlApiService.downloadWeatherData( 
+            this.filter.startDate!, 
+            this.filter.endDate!, 
+            this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ),
+            this.dailyReportColumns.map( c => c.code ),
+            this.hourlyReportColumns.map( c => c.code ),
+        )
+    }
+
+    onEmailClick() {
+
+    }
+
     get enableCopyLink() {
-        return this.selectedStationsService.count > 0 &&
+        return this.selectedWeatherStationsService.count > 0 &&
             ( this.dailyReportColumns.length > 0 || this.hourlyReportColumns.length > 0 )
     }
 
+    getQueryParams(): Record<string,string> {
+        return {
+            s: this.filter.startDate!,
+            e: this.filter.endDate!,
+            w: this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ).join(','),
+            d: this.filter.dailyColumns.map( c => this.codeTableService.DAILY_WEATHER_COLUMNS.forCode( c )?.abbrev ).join(','),
+            h: this.filter.hourlyColumns.map( c => this.codeTableService.HOURLY_WEATHER_COLUMNS.forCode( c )?.abbrev ).join(','),
+            m: this.filter.metadataColumns.map( c => this.codeTableService.STATION_METADATA_COLUMNS.forCode( c )?.abbrev ).join(','),
+        }        
+    }
+
     onCopyLinkClick() {
-        let dailyFields = this.filter.dailyColumns.map( c => this.codeTableService.DAILY_WEATHER_COLUMNS.forCode( c )?.abbrev )
-        let hourlyFields = this.filter.hourlyColumns.map( c => this.codeTableService.HOURLY_WEATHER_COLUMNS.forCode( c )?.abbrev )
-        let metadataFields = this.filter.metadataColumns.map( c => this.codeTableService.STATIONS_METADATA_COLUMNS.forCode( c )?.abbrev )
-        
         const urlTree = this.router.createUrlTree([], {
             relativeTo: this.activatedRoute,
-            queryParams: {
-                start: this.filter.startDate,
-                end: this.filter.endDate,
-                stations: this.selectedStationsService.selectedStations.map( s => s.properties.STATION_CODE ).join(','),
-                dailyFields: dailyFields.join(','),
-                hourlyFields: hourlyFields.join(','),
-                metadataFields: metadataFields.join(','),
-            },
+            queryParams: this.getQueryParams(),
             queryParamsHandling: 'merge',            
         });
 

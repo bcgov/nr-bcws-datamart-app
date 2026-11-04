@@ -1,19 +1,17 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    OnChanges,
     SimpleChanges
 } from '@angular/core';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { ButtonComponent, GapComponent, InitialState, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
-import { NgxPaginationModule } from 'ngx-pagination';
-import { Observable, of } from 'rxjs';
-import { GeoJsonPoint, WeatherStation } from '../../../services/station-data.service';
+import { ButtonComponent, GapComponent, RowListDesktopComponent } from '@bcgov/nr-ngx-component-lib';
+import { formatTableDate } from '../../../util';
 import { DataDownloadListBase } from './data-download-list.base';
+import { Result } from '../../../services/datamart-graphql-api.service';
+import { DailyWeather, WeatherStation } from '../../../api-types';
 
-export type TableRow = GeoJsonPoint<WeatherStation>
-export type Filter = {}
+export type TableRow = { date?: string } & DailyWeather & WeatherStation
 
 @Component({
     selector: 'data-download-list-daily',
@@ -24,13 +22,14 @@ export type Filter = {}
         RowListDesktopComponent,
         MatTableModule,
         MatSortModule,
-        NgxPaginationModule,
-        RowListPaginationComponent,
-        GapComponent
+        GapComponent,
+        ButtonComponent,
     ]
 })
-export class DataDownloadListDailyComponent extends DataDownloadListBase implements OnChanges {
-    ngOnChanges(changes: SimpleChanges<DataDownloadListDailyComponent>): void {
+export class DataDownloadListDailyComponent extends DataDownloadListBase<TableRow> {
+    override ngOnChanges(changes: SimpleChanges<DataDownloadListDailyComponent>): void {
+        super.ngOnChanges( changes )
+
         if ( changes.reportColumns ) {
             this.displayedColumns = [
                 'date',
@@ -39,33 +38,18 @@ export class DataDownloadListDailyComponent extends DataDownloadListBase impleme
         }
     }
 
-    override ngOnInit(): void {
-        super.ngOnInit()
-        this.paginationId = 'data-download-daily'
-    }
+    getResourcePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<TableRow>> {
+        return this.datamartGraphqlApiService.getDailyWeather( startDate, endDate, stationCodes, fields, endCursor )
+            .then( res => {
+                res.items = res.items.map( row => {
+                    return {
+                        ...row,
+                        date: formatTableDate( row.WEATHER_TIMESTAMP ),
+                        ...this.weatherStationService.getStationByCode( row.STATION_CODE! )?.properties
+                    } 
+                } )
 
-    override fetchRowListPage(): Observable<GeoJsonPoint<WeatherStation>[]> {
-        return of( this.selectedStationsService.selectedStations )
-    }
-    
-    override parseRows(res: GeoJsonPoint<WeatherStation>[]): TableRow[] {
-        return res
-    }
-
-    override parseTotalRowCount(res: any): number {
-        return this.selectedStationsService.selectedStations.length
-    }
-
-    override getInitialPageState(): InitialState<Filter> {
-        return {
-            instance: '',
-            filter: {},
-            pageConfig: {
-                pageSize: 10,
-                pageNumber: 1,
-                sortActive: 'date',
-                sortDirection: 'asc',
-            }
-        }
+                return res as Result<TableRow>
+            } )
     }
 }

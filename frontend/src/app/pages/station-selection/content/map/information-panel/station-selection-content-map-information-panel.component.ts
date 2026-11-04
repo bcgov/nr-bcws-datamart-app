@@ -1,11 +1,11 @@
 import {
-    Component,
-    Input,
     ChangeDetectionStrategy,
+    Component,
     inject,
+    Input,
 } from '@angular/core';
-import { SelectedStationsService } from '../../../../../services/selected-stations.service';
-import { ButtonComponent, IconComponent, IndicatorComponent } from '@bcgov/nr-ngx-component-lib';
+import { ButtonComponent, IndicatorComponent } from '@bcgov/nr-ngx-component-lib';
+import { SelectedWeatherStationsService } from '../../../../../services/selected-weather-stations.service';
 
 @Component({
     selector: 'station-selection-content-map-information-panel',
@@ -18,7 +18,7 @@ import { ButtonComponent, IconComponent, IndicatorComponent } from '@bcgov/nr-ng
     ]
 })
 export class StationSelectionContentMapInformationPanelComponent {
-    selectedStationsService = inject( SelectedStationsService )
+    selectedWeatherStationsService = inject( SelectedWeatherStationsService )
 
     @Input() feature: any;
 
@@ -29,15 +29,15 @@ export class StationSelectionContentMapInformationPanelComponent {
     }
 
     get isSelected(): boolean {
-        return this.selectedStationsService.isSelected(this.feature);
+        return this.selectedWeatherStationsService.isSelected(this.feature);
     }
 
     onSelectStation(): void {
-        this.selectedStationsService.addStation(this.feature);
+        this.selectedWeatherStationsService.addStation(this.feature);
     }
 
     onRemoveStation(): void {
-        this.selectedStationsService.removeStation(this.feature);
+        this.selectedWeatherStationsService.removeStation(this.feature);
     }
 
     get installationDate(): string {

@@ -8,10 +8,11 @@ import { MatTableModule } from '@angular/material/table';
 import { ButtonComponent, GapComponent, InitialState, RowListBase, RowListDesktopComponent, RowListPaginationComponent } from '@bcgov/nr-ngx-component-lib';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Observable, of } from 'rxjs';
-import { SelectedStationsService } from '../../../services/selected-stations.service';
-import { GeoJsonPoint, WeatherStation } from '../../../services/station-data.service';
+import { SelectedWeatherStationsService } from '../../../services/selected-weather-stations.service';
+import { WeatherStationFeature } from '../../../services/weather-station.service';
+import { WeatherStation } from '../../../api-types';
 
-export type TableRow = GeoJsonPoint<WeatherStation>
+export type TableRow = WeatherStationFeature
 export type Filter = {}
 
 @Component({
@@ -30,7 +31,7 @@ export type Filter = {}
     ]
 })
 export class SelectedStationsListComponent extends RowListBase<Filter, TableRow, any> {
-    selectedStationsService = inject( SelectedStationsService )
+    selectedWeatherStationsService = inject( SelectedWeatherStationsService )
 
     displayedColumns = [
         'stationName',
@@ -45,16 +46,16 @@ export class SelectedStationsListComponent extends RowListBase<Filter, TableRow,
         'remove',
     ];
 
-    fetchRowListPage(): Observable<GeoJsonPoint<WeatherStation>[]> {
-        return of( this.selectedStationsService.selectedStations )
+    fetchRowListPage(): Observable<WeatherStationFeature[]> {
+        return of( this.selectedWeatherStationsService.selectedStations )
     }
     
-    parseRows(res: GeoJsonPoint<WeatherStation>[]): TableRow[] {
-        return this.sortRows( res )
+    parseRows(res: WeatherStationFeature[]): TableRow[] {
+        return this.sortRows( [ ...res ] )
     }
 
     override parseTotalRowCount(res: any): number {
-        return this.selectedStationsService.selectedStations.length
+        return this.selectedWeatherStationsService.selectedStations.length
     }
 
     getInitialPageState(): InitialState<Filter> {
@@ -70,20 +71,14 @@ export class SelectedStationsListComponent extends RowListBase<Filter, TableRow,
         }
     }
 
-    onRemoveStationClick( station: GeoJsonPoint<WeatherStation> ) {
-        this.selectedStationsService.removeStation( station )
+    onRemoveStationClick( station: WeatherStationFeature ) {
+        this.selectedWeatherStationsService.removeStation( station )
         this.refreshRowList()
-    }
-
-    override onSortChange(ev: Sort): Promise<void> {
-        let res = super.onSortChange( ev )
-        this.sortRows( this.rows )
-        return res
     }
 
     sortRows( rows: TableRow[] ): TableRow[] {
         let sortFn: ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => number 
-        let sortDir = ( d: SortDirection, sort: number ) => d == 'asc' ? sort : -1 * sort
+        let sortDir = ( d: SortDirection, sort: number ) => d == 'asc' ? sort : d == 'desc' ? -1 * sort : 0
         let stringSort = ( field: keyof WeatherStation ) => ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => sortDir( d, (a.properties[field] as string || '').localeCompare( b.properties[field] as string || '') )
         let numericSort = ( field: keyof WeatherStation ) => ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => sortDir( d, (a.properties[field] as number) - ( b.properties[field] as number ) )
 
@@ -98,7 +93,6 @@ export class SelectedStationsListComponent extends RowListBase<Filter, TableRow,
             case 'elevation':       sortFn = numericSort( 'ELEVATION_M' ); break
             case 'status':          sortFn = stringSort( 'STATION_STATUS_CODE' ); break
         }
-
         return rows.sort( sortFn!( this.sortDirection ) )
     }
 }
