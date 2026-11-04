@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadJobMessage;
+import ca.bc.gov.bcws.nrs.downloadapi.models.QueuedDownloadJob;
 
 @Service
 public class QueueService {
@@ -55,24 +56,59 @@ public class QueueService {
         }
     }
 
-    public QueueMessageItem dequeueMessage() {
+    public QueuedDownloadJob dequeueMessage() {
 
-        QueueMessageItem message = queueClient.receiveMessage();
+        try {
 
-        if (message != null) {
-            logger.info(
-                "Dequeued message {}",
-                message.getMessageId());
+            QueueMessageItem message = queueClient.receiveMessage();
+
+            if (message == null) {
+                return null;
+            }
+
+            logger.info("Dequeued message {}", message.getMessageId());
+
+            DownloadJobMessage job = objectMapper.readValue(
+                message.getBody().toString(),
+                DownloadJobMessage.class);
+
+            QueuedDownloadJob queuedJob = new QueuedDownloadJob();
+
+            queuedJob.setMessageId(message.getMessageId());
+            queuedJob.setPopReceipt(message.getPopReceipt());
+            queuedJob.setDequeueCount(message.getDequeueCount());
+            queuedJob.setJob(job);
+
+            return queuedJob;
+
+        } catch (JsonProcessingException e) {
+
+            throw new IllegalStateException(
+                "Failed to deserialize queue message",
+                e);
+
+        } catch (Exception e) {
+
+            throw new IllegalStateException(
+                "Failed to dequeue message",
+                e);
         }
-
-        return message;
     }
 
     public void deleteMessage(String messageId, String popReceipt) {
 
-        queueClient.deleteMessage(messageId, popReceipt);
+        try {
 
-        logger.info("Deleted message {}", messageId);
+            queueClient.deleteMessage(messageId, popReceipt);
+
+            logger.info("Deleted message {}", messageId);
+
+        } catch (Exception e) {
+
+            throw new IllegalStateException(
+                "Failed to delete queue message",
+                e);
+        }
     }
 
     

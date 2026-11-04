@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.azure.storage.queue.models.QueueMessageItem;
-
 import ca.bc.gov.bcws.nrs.downloadapi.config.DownloadSchedulerProperties;
+import ca.bc.gov.bcws.nrs.downloadapi.models.QueuedDownloadJob;
+
 
 @Component
 public class DownloadJobScheduler {
@@ -18,9 +18,16 @@ public class DownloadJobScheduler {
 
     private final QueueService queueService;
 
-    public DownloadJobScheduler( DownloadSchedulerProperties properties, QueueService queueService) {
+    private final DownloadJobProcessorService downloadJobProcessorService;
+
+    public DownloadJobScheduler(
+            DownloadSchedulerProperties properties,
+            QueueService queueService,
+            DownloadJobProcessorService downloadJobProcessorService) {
+
         this.properties = properties;
         this.queueService = queueService;
+        this.downloadJobProcessorService = downloadJobProcessorService;
     }
 
     @Scheduled(cron = "${download.scheduler.cron}")
@@ -30,21 +37,32 @@ public class DownloadJobScheduler {
             return;
         }
 
-        QueueMessageItem message = queueService.dequeueMessage();
+        QueuedDownloadJob queuedJob = queueService.dequeueMessage();
 
-        if (message == null) {
-
-            logger.info( "Download scheduler found no queued jobs");
+        if (queuedJob == null) {
+            logger.info("Download scheduler found no queued jobs");
             return;
         }
 
-        logger.info("Retrieved queued job {}",message.getMessageId());
+        try {
 
-        logger.info("Retrieved queued job {} with body {}",message.getMessageId(),message.getBody().toString());
+            logger.info("Retrieved queued job {}", queuedJob.getMessageId());
 
-        queueService.deleteMessage(message.getMessageId(),message.getPopReceipt());
+            downloadJobProcessorService.process(queuedJob);
 
-        logger.info("Removed queued job {}", message.getMessageId());
+            queueService.deleteMessage(
+                queuedJob.getMessageId(),
+                queuedJob.getPopReceipt());
+
+            logger.info("Removed queued job {}", queuedJob.getMessageId());
+
+        } catch (Exception e) {
+
+            logger.error(
+                "Failed processing queued job {}",
+                queuedJob.getJob().getJobId(),
+                e);
+        }
     }
 
 }
