@@ -25,6 +25,37 @@ locals {
 }
 
 locals {
+  download_api_image_ref   = trimprefix(trimprefix(var.download_api_image, "https://"), "http://")
+  download_api_parts       = split("/", local.download_api_image_ref)
+
+  download_api_has_registry = length(local.download_api_parts) > 1 && (
+    strcontains(local.download_api_parts[0], ".") ||
+    strcontains(local.download_api_parts[0], ":")
+  )
+
+  download_api_registry_host = (
+    local.download_api_has_registry
+    ? local.download_api_parts[0]
+    : trimprefix(trimprefix(var.container_registry_url, "https://"), "http://")
+  )
+
+  download_api_repository_ref = (
+    local.download_api_has_registry
+    ? join("/", slice(local.download_api_parts, 1, length(local.download_api_parts)))
+    : local.download_api_image_ref
+  )
+
+  download_api_image_tag = regex(":([^:/]+)$", local.download_api_repository_ref)[0]
+
+  download_api_repository = trimsuffix(
+    local.download_api_repository_ref,
+    ":${local.download_api_image_tag}"
+  )
+
+  download_api_registry_is_acr =endswith(local.download_api_registry_host, ".azurecr.io")
+}
+
+locals {
   frontend_possible_outbound_ips = distinct([
     for ip in split(",", var.frontend_possible_outbound_ip_addresses) : trimspace(ip)
   ])

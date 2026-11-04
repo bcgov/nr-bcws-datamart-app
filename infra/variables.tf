@@ -7,6 +7,31 @@ variable "api_image" {
   type        = string
 }
 
+variable "download_api_image" {
+  description = "The image for the Download API container"
+  type        = string
+}
+
+variable "datamart_timeout_seconds" {
+  description = "Timeout in seconds for calls to Datamart API."
+  type        = number
+  default     = 30
+}
+
+variable "download_sync_threshold" {
+  description = "Maximum synchronous export row count."
+  type        = number
+  default     = 10000
+}
+
+variable "download_page_size" {
+  description = "Page size that download api uses to request from datamart API."
+  type        = number
+  default     = 1000
+}
+
+
+
 variable "app_env" {
   description = "Application environment (dev, test, prod)"
   type        = string
@@ -239,18 +264,6 @@ variable "fabric_sql_connection_string" {
 
 variable "fabric_sql_connection_string_2" {
   description = "Connection between datamart API and the second Fabric database"
-  type        = string
-  default     = ""
-}
-
-variable "user_assigned_managed_identity_id" {
-  description = "Resource ID of an existing user-assigned managed identity to attach to the datamart API host. It must have access to the Fabric workspace. Leave empty to use only the system-assigned identity."
-  type        = string
-  default     = ""
-}
-
-variable "user_assigned_managed_identity_client_id" {
-  description = "Client ID of the user-assigned managed identity. When set, Terraform appends User Id=<client id> to the Fabric connection string unless it already contains a User Id."
   type        = string
   default     = ""
 }

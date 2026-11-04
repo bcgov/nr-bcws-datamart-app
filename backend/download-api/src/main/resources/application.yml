@@ -1,0 +1,29 @@
+server:
+  port: ${PORT:8080}
+
+datamart:
+  graphql-url: ${DATAMART_GRAPHQL_URL:http://host.docker.internal:5000/graphql}
+  timeout-seconds: ${DATAMART_TIMEOUT_SECONDS:30}
+
+download:
+  sync-threshold: ${DOWNLOAD_SYNC_THRESHOLD:10000}
+  page-size: ${DOWNLOAD_PAGE_SIZE:1000}
+
+  queue-name: ${DOWNLOAD_QUEUE_NAME:downloads}
+
+  # Azure deployment settings
+  storage-account-name: ${DOWNLOAD_STORAGE_ACCOUNT_NAME:}
+  queue-client-id: ${DOWNLOAD_QUEUE_CLIENT_ID:}
+
+  # Local development / Azurite
+  queue-connection-string: ${DOWNLOAD_QUEUE_CONNECTION_STRING:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
