@@ -14,7 +14,7 @@ export class SelectedWeatherStationsService {
         const stations = this.selectedStationsSubject.value;
 
         const exists = stations.some(
-            ( s ) => s.properties.weather_station_guid === station.properties.weather_station_guid,
+            ( s ) => s.properties.WEATHER_STATION_GUID === station.properties.WEATHER_STATION_GUID,
         );
 
         if ( exists ) {
@@ -32,7 +32,7 @@ export class SelectedWeatherStationsService {
 
         let newStations = stations.filter( s => {
             return !existingStations.some( e => {
-                return e.properties.weather_station_guid == s.properties.weather_station_guid
+                return e.properties.WEATHER_STATION_GUID == s.properties.WEATHER_STATION_GUID
             } )
         } )
 
@@ -47,14 +47,14 @@ export class SelectedWeatherStationsService {
     removeStation( station: WeatherStationFeature ): void {
         this.selectedStationsSubject.next(
             this.selectedStationsSubject.value.filter(
-                ( s ) => s.properties.weather_station_guid !== station.properties.weather_station_guid,
+                ( s ) => s.properties.WEATHER_STATION_GUID !== station.properties.WEATHER_STATION_GUID,
             ),
         );
     }
 
     isSelected( station: WeatherStationFeature ): boolean {
         return this.selectedStationsSubject.value.some(
-            ( s ) => s.properties.weather_station_guid === station.properties.weather_station_guid,
+            ( s ) => s.properties.WEATHER_STATION_GUID === station.properties.WEATHER_STATION_GUID,
         );
     }
 

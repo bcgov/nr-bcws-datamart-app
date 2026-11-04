@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { emptyFilter, Filter } from '../pages/data-download/filters/data-download-filters.component';
+import { Environment, environment } from '../../environment';
 
 @Injectable( {
     providedIn: 'root',
@@ -24,5 +25,22 @@ export class ApplicationStateService {
         if ( f.dailyColumns ) this._downloadFilterState!.dailyColumns = f.dailyColumns
         if ( f.hourlyColumns ) this._downloadFilterState!.hourlyColumns = f.hourlyColumns
         if ( f.metadataColumns ) this._downloadFilterState!.metadataColumns = f.metadataColumns
+    }
+
+    get showDisclaimer(): boolean {
+        return localStorage.getItem( 'hideDisclaimer' ) != 'hide'
+    }
+
+    set showDisclaimer( val: boolean ) {        
+        if ( val ) {
+            localStorage.setItem( 'hideDisclaimer', '' )
+        }
+        else {
+            localStorage.setItem( 'hideDisclaimer','hide' )
+        }
+    }
+
+    get environment(): Environment {
+        return environment
     }
 }

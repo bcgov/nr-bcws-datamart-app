@@ -1,9 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { formatApiDate } from '../util';
 import { CodeTableService } from './code-table.service';
-
-const GRAPHQL_BASE_URL = 'https://nr-bcws-datamart-app-dev-api.azurewebsites.net/graphql'
-const DOWNLOAD_BASE_URL = 'https://nr-bcws-datamart-app-dev-download-api.azurewebsites.net/api/downloads'
+import { ApplicationStateService } from './application-state.service';
+import { DailyWeather, HourlyWeather } from '../api-types';
 
 export type Result<T> = {
     items: Partial<T>[]
@@ -11,158 +10,12 @@ export type Result<T> = {
     endCursor: string
 }
 
-export type DailyWeather = {
-    DAILY_WEATHER_MEAS_GUID: string
-    WEATHER_STATION_GUID: string
-    STATION_CODE: number
-    STATION_NAME: string
-    STATION_ACRONYM: string
-    WEATHER_TIMESTAMP_MSEC: number
-    WEATHER_TIMESTAMP: string
-    DAILY_MEASUREMENT_TYPE_CODE: string
-    TEMPERATURE: number
-    TEMPERATURE_MIN: number
-    TEMPERATURE_MAX: number
-    RELATIVE_HUMIDITY: number
-    RELATIVE_HUMIDITY_MIN: number
-    RELATIVE_HUMIDITY_MAX: number
-    PRECIPITATION: number
-    WIND_SPEED: number
-    WIND_DIRECTION_DEGREES: number
-    ADJUSTED_WIND_SPEED: number
-    DAILY_SEVERITY_RATING: number
-    DROUGHT_CODE: number
-    DUFF_MOISTURE_CODE: number
-    FINE_FUEL_MOISTURE_CODE: number
-    GRASSLAND_CURING: number
-    BUILD_UP_INDEX: number
-    DANGER_FOREST_INDEX: number
-    DANGER_GRASSLAND_INDEX: number
-    DANGER_SCRUB_INDEX: number
-    FIRE_WEATHER_INDEX: number
-    INITIAL_SPREAD_INDEX: number
-    MISSING_HOURLY_DATA_IND: string
-    OBSERVATION_VALID_IND: string
-    OBSERVATION_VALID_COMMENT: string
-    ARCHIVED_IND: string
-    LAST_UPDATED_TIMESTAMP_MSEC: number
-    LAST_UPDATED_TIMESTAMP: string
-    CREATE_USER: string
-    CREATE_DATE: string
-    UPDATE_USER: string
-    UPDATE_DATE: string
-}
-
-export type HourlyWeather = {
-    HOURLY_WEATHER_MEAS_GUID: string
-    WEATHER_STATION_GUID: string
-    STATION_CODE: number
-    STATION_NAME: string
-    STATION_ACRONYM: string
-    WEATHER_TIMESTAMP_MSEC: number
-    WEATHER_TIMESTAMP: string
-    HOURLY_MEASUREMENT_TYPE_CODE: string
-    HOURLY_MEASUREMENT_TYPE_DESC: string
-    TEMPERATURE: number
-    BAROMETRIC_PRESSURE: number
-    RELATIVE_HUMIDITY: number
-    PRECIPITATION: number
-    WIND_SPEED: number
-    WIND_DIRECTION_DEGREES: number
-    FINE_FUEL_MOISTURE_CODE: number
-    FIRE_WEATHER_INDEX: number
-    INITIAL_SPREAD_INDEX: number
-    OBSERVATION_VALID_IND: string
-    OBSERVATION_VALID_COMMENT: string
-    ADJUSTED_WIND_SPEED: number
-    BATTERY_SUPPLY_CURRENT: number
-    BATTERY_SUPPLY_VOLTAGE: number
-    FUEL_STICK_MOISTURE: number
-    FUEL_STICK_TEMPERATURE: number
-    PRECIP_PLUVIO_1_STATUS: number
-    PRECIP_PLUVIO_1_TOTAL: number
-    PRECIP_PLUVIO_2_STATUS: number
-    PRECIP_PLUVIO_2_TOTAL: number
-    PRECIP_RIT_STATUS: number
-    PRECIP_RIT_TOTAL: number
-    PRECIP_RGT: number
-    PRECIP_PC2_STATUS: number
-    PRECIP_PC2_TOTAL: number
-    RELATIVE_HUMIDITY_HOURLY_AVG: number
-    RN_1_PLUVIO_1: number
-    RN_1_PLUVIO_2: number
-    RN_1_RIT: number
-    RN_1_PC2: number
-    SNOW_DEPTH: number
-    SNOW_DEPTH_QUALITY: number
-    SOLAR_RADIATION_CM3: number
-    SOLAR_RADIATION_LICOR: number
-    SOLAR_SUPPLY_CURRENT: number
-    SOLAR_SUPPLY_VOLTAGE: number
-    TEMPERATURE_HOURLY_AVERAGE: number
-    WIND_SPEED_HOURLY_AVERAGE: number
-    WIND_DIRECTION_HOURLY_AVERAGE: number
-    WIND_SPEED_MAX_10_MINUTE: number
-    WIND_GUST: number
-    SOIL_MOISTURE_PROBE_1: number
-    SOIL_MOISTURE_PROBE_2: number
-    SOIL_MOISTURE_PROBE_3: number
-    SOIL_TEMPERATURE_PROBE_1: number
-    SOIL_TEMPERATURE_PROBE_2: number
-    SOIL_TEMPERATURE_PROBE_3: number
-    ARCHIVED_IND: string
-    LAST_UPDATED_TIMESTAMP_MSEC: number
-    LAST_UPDATED_TIMESTAMP: string
-    CREATE_USER: string
-    CREATE_DATE: string
-    UPDATE_USER: string
-    UPDATE_DATE: string
-}
-
-export type WeatherStation = {
-    weather_station_guid: string
-    station_code: number
-    station_status_code: string
-    station_status_desc: string
-    site_type_code: string
-    site_type_desc: string
-    influencing_aspect_code: string
-    influencing_aspect_desc: string
-    data_logger_type_code: string
-    data_logger_type_desc: string
-    weather_zone: number
-    weather_zone_desc: string
-    danger_region: number
-    station_acronym: string
-    station_name: string
-    fire_centre_org_unit_ident: number
-    fire_centre: string
-    zone_org_unit_identifier: number
-    fire_zone: string
-    data_source: string
-    installation_timestamp_msec: number
-    decommission_timestamp_msec: number
-    hourly_ind: string
-    over_winter_precip_adj_ind: string
-    latitude: number
-    longitude: number
-    elevation_m: number
-    influencing_slope: number
-    windspeed_adjustment_height: string
-    windspeed_adjustment_roughness: number
-    eccc_file_base_url_template: string
-    last_updated_timestamp_msec: number
-    create_user: string
-    create_date: string
-    update_user: string
-    update_date: string
-}
-
 @Injectable({
     providedIn: 'root',
 })
 export class DatamartGraphqlApiService {
     codeTableService = inject( CodeTableService )
+    applicationStateService = inject( ApplicationStateService )
 
     makeHourlyWeatherQuery( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string, pagination = false ): string {
         let filteredFields = fields.filter( f => this.codeTableService.HOURLY_WEATHER_COLUMNS.forCode( f ) )
@@ -195,8 +48,8 @@ export class DatamartGraphqlApiService {
         ` )
     }
 
-    getHourlyWeather( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<DailyWeather>> {
-        return fetchGraphQL<HourlyWeather>( 'hourly_weathers',  this.makeHourlyWeatherQuery( startDate, endDate, stationCodes, fields, endCursor, true ) )
+    getHourlyWeather( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<HourlyWeather>> {
+        return this.fetchGraphQL<HourlyWeather>( 'hourly_weathers',  this.makeHourlyWeatherQuery( startDate, endDate, stationCodes, fields, endCursor, true ) )
             .then( res => {
                 // res.items = res.items.map( (row: any) => {
                 //     return {
@@ -240,7 +93,7 @@ export class DatamartGraphqlApiService {
     }
 
     getDailyWeather( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<DailyWeather>> {
-        return fetchGraphQL<DailyWeather>( 'daily_weathers', this.makeDailyWeatherQuery( startDate, endDate, stationCodes, fields, endCursor, true ) )
+        return this.fetchGraphQL<DailyWeather>( 'daily_weathers', this.makeDailyWeatherQuery( startDate, endDate, stationCodes, fields, endCursor, true ) )
             .then( res => {
                 // res.items = res.items.map( (row: any) => {
                 //     return {
@@ -261,6 +114,29 @@ export class DatamartGraphqlApiService {
     getOrgUnits() {
     }
 
+    getCount() {
+        // return fetchGraphQL<any>('daily_weathers', `
+// query {
+//   dailies(groupBy: []) {
+//     count(field: id) {
+//       value
+//     }
+//   }
+// }  
+  
+
+// query {
+//   daily_weathers {
+//     groupBy( fields: DAILY_WEATHER_MEAS_GUID) {
+//       aggregations {
+//         count: count(field: DAILY_WEATHER_MEAS_GUID)
+//       }
+//     }
+//   }
+// }
+//         `)
+    }
+
     downloadWeatherData( startDate: string, endDate: string, stationCodes: number[], dailyFields: string[], hourlyFields: string[] ): Promise<void> {
         let body = {
             queries: [
@@ -279,7 +155,7 @@ export class DatamartGraphqlApiService {
             emailDownload: false
         }
 
-        return fetch( DOWNLOAD_BASE_URL, {
+        return fetch( this.applicationStateService.environment.DOWNLOAD_BASE_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -295,7 +171,7 @@ export class DatamartGraphqlApiService {
                 console.log( filename )
 
                 return res.blob()
-            .then( res => {
+                    .then( res => {
                         let obj = URL.createObjectURL( res )
 
                         let anchor = document.createElement('a')
@@ -307,9 +183,26 @@ export class DatamartGraphqlApiService {
                         anchor.remove()
                         URL.revokeObjectURL( obj )
                         // console.log(res)
-                // return res.data[ queryName ]
-            } )
+                        // return res.data[ queryName ]
+                    } )
 
+            } )
+    }
+
+    fetchGraphQL<T>( queryName: string, query: string, body?: { [key: string]: string } ): Promise<Result<T>> {
+        return fetch( this.applicationStateService.environment.GRAPHQL_BASE_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify( { ...body, query: compact( query ) } )
+        } )
+            .then( res => {
+                return res.json()
+            } )
+            .then( res => {
+                if ( res.errors ) throw res.errors
+                return res.data[ queryName ]
             } )
     }
 }
@@ -333,23 +226,8 @@ export class DatamartGraphqlApiService {
 //     }
 // }
 
-export function fetchGraphQL<T>( queryName: string, query: string, body?: { [key: string]: string } ): Promise<Result<T>> {
-    return fetch( GRAPHQL_BASE_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify( { ...body, query: compact( query ) } )
-    } )
-        .then( res => {
-            return res.json()
-        } )
-        .then( res => {
-            if ( res.errors ) throw res.errors 
-            return res.data[ queryName ]
-        } )
-}
 
 export function compact( s: string ): string {
+    console.log(s)
     return s.replace( /\s+/g, ' ' )
 }
