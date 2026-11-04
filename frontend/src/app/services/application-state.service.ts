@@ -25,4 +25,17 @@ export class ApplicationStateService {
         if ( f.hourlyColumns ) this._downloadFilterState!.hourlyColumns = f.hourlyColumns
         if ( f.metadataColumns ) this._downloadFilterState!.metadataColumns = f.metadataColumns
     }
+
+    get showDisclaimer(): boolean {
+        return localStorage.getItem( 'hideDisclaimer' ) != 'hide'
+    }
+
+    set showDisclaimer( val: boolean ) {        
+        if ( val ) {
+            localStorage.setItem( 'hideDisclaimer', '' )
+        }
+        else {
+            localStorage.setItem( 'hideDisclaimer','hide' )
+        }
+    }
 }
