@@ -1,5 +1,5 @@
-resource "azurerm_cdn_frontdoor_profile" "frontend_frontdoor" {
-  name                = "${var.app_name}-frontend-frontdoor"
+resource "azurerm_cdn_frontdoor_profile" "unified_frontdoor" {
+  name                = "${var.app_name}-${var.app_env}-frontdoor"
   resource_group_name = var.resource_group_name
   sku_name            = var.frontdoor_sku_name
 
@@ -109,9 +109,9 @@ resource "azurerm_cdn_frontdoor_profile" "frontend_frontdoor" {
 #      | where MetricName == "RequestCount"
 #      | summarize total=sum(Total) by bin(TimeGenerated, 1h)
 #      | order by TimeGenerated desc
-resource "azurerm_monitor_diagnostic_setting" "frontdoor_diagnostics" {
+resource "azurerm_monitor_diagnostic_setting" "unified_frontdoor_diagnostics" {
   name                       = "${var.app_name}-frontdoor-diagnostics"
-  target_resource_id         = azurerm_cdn_frontdoor_profile.frontend_frontdoor.id
+  target_resource_id         = azurerm_cdn_frontdoor_profile.unified_frontdoor.id
   log_analytics_workspace_id = var.log_analytics_workspace_id
   # log_analytics_destination_type is intentionally omitted — Dedicated mode is
   # not supported by Microsoft.Cdn/profiles and Azure silently reverts it to null.
@@ -157,8 +157,8 @@ resource "azurerm_monitor_diagnostic_setting" "frontdoor_diagnostics" {
   }
 }
 
-resource "azurerm_cdn_frontdoor_firewall_policy" "frontend_firewall_policy" {
-  name                = "${replace(var.app_name, "/[^a-zA-Z0-9]/", "")}frontendfirewall"
+resource "azurerm_cdn_frontdoor_firewall_policy" "unified_firewall_policy" {
+  name                = "${replace(var.app_name, "/[^a-zA-Z0-9]/", "")}firewall"
   resource_group_name = var.resource_group_name
   sku_name            = var.frontdoor_sku_name
   mode                = "Prevention"
@@ -239,6 +239,11 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "frontend_firewall_policy" {
       tags
     ]
   }
+}
+
+resource "azurerm_cdn_frontdoor_endpoint" "unified_fd_endpoint" {
+  name                     = "${var.app_name}-${var.app_env}-fd"
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.unified_frontdoor.id
 }
 
 
