@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.azure.storage.queue.models.QueueMessageItem;
+
 import ca.bc.gov.bcws.nrs.downloadapi.config.DownloadSchedulerProperties;
 
 @Component
@@ -14,21 +16,35 @@ public class DownloadJobScheduler {
 
     private final DownloadSchedulerProperties properties;
 
-    public DownloadJobScheduler(DownloadSchedulerProperties properties) {
+    private final QueueService queueService;
+
+    public DownloadJobScheduler( DownloadSchedulerProperties properties, QueueService queueService) {
         this.properties = properties;
+        this.queueService = queueService;
     }
 
     @Scheduled(cron = "${download.scheduler.cron}")
     public void processQueue() {
 
         if (!properties.isEnabled()) {
-            logger.debug("Download job scheduler is disabled");
             return;
         }
 
-        logger.info("Download scheduler triggered. Enabled={}, Cron={}, VisibilityTimeout={}s",
-            properties.isEnabled(),
-            properties.getCron(),
-            properties.getVisibilityTimeoutSeconds());
+        QueueMessageItem message = queueService.dequeueMessage();
+
+        if (message == null) {
+
+            logger.info( "Download scheduler found no queued jobs");
+            return;
+        }
+
+        logger.info("Retrieved queued job {}",message.getMessageId());
+
+        logger.info("Retrieved queued job {} with body {}",message.getMessageId(),message.getBody().toString());
+
+        queueService.deleteMessage(message.getMessageId(),message.getPopReceipt());
+
+        logger.info("Removed queued job {}", message.getMessageId());
     }
+
 }

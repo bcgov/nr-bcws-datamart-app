@@ -1,6 +1,7 @@
 package ca.bc.gov.bcws.nrs.downloadapi.services;
 
 import com.azure.storage.queue.QueueClient;
+import com.azure.storage.queue.models.QueueMessageItem;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -53,4 +54,26 @@ public class QueueService {
                     e);
         }
     }
+
+    public QueueMessageItem dequeueMessage() {
+
+        QueueMessageItem message = queueClient.receiveMessage();
+
+        if (message != null) {
+            logger.info(
+                "Dequeued message {}",
+                message.getMessageId());
+        }
+
+        return message;
+    }
+
+    public void deleteMessage(String messageId, String popReceipt) {
+
+        queueClient.deleteMessage(messageId, popReceipt);
+
+        logger.info("Deleted message {}", messageId);
+    }
+
+    
 }
