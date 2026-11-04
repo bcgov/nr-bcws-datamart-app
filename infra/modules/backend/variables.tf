@@ -126,9 +126,20 @@ variable "container_registry_url" {
   default     = "https://ghcr.io"
 }
 
+variable "backend_frontdoor_id" {
+  description = "The ID of the Front Door profile for the frontend."
+  type        = string
+  nullable    = true
+}
 
-variable "frontend_frontdoor_resource_guid" {
-  description = "The resource GUID for the Front Door service associated with the frontend App Service."
+variable "backend_frontdoor_resource_guid" {
+  description = "The resource GUID for the Front Door service associated with the backend App Service."
+  type        = string
+  nullable    = true
+}
+
+variable "frontdoor_backend_firewall_policy_id" {
+  description = "The resource ID of the Front Door firewall policy for the backend."
   type        = string
   nullable    = true
 }

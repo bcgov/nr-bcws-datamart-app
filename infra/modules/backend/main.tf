@@ -206,6 +206,102 @@ module "download_api_site" {
   enable_telemetry = var.enable_telemetry
 }
 
+resource "azurerm_cdn_frontdoor_endpoint" "backend_fd_endpoint" {
+  count                    = var.enable_frontdoor ? 1 : 0
+  name                     = "${var.repo_name}-${var.app_env}-backend-fd"
+  cdn_frontdoor_profile_id = var.backend_frontdoor_id
+}
+
+resource "azurerm_cdn_frontdoor_origin_group" "backend_origin_group" {
+  count                    = var.enable_frontdoor ? 1 : 0
+  name                     = "${var.repo_name}-${var.app_env}-backend-origin-group"
+  cdn_frontdoor_profile_id = var.backend_frontdoor_id
+  session_affinity_enabled = true
+
+  load_balancing {
+    sample_size                 = 4
+    successful_samples_required = 3
+  }
+
+}
+
+resource "azurerm_cdn_frontdoor_origin" "backend_app_service_origin" {
+  count                         = var.enable_frontdoor ? 1 : 0
+  name                          = "${var.repo_name}-${var.app_env}-backend-origin"
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.backend_origin_group[0].id
+
+  enabled                        = true
+  host_name                      = module.backend_site.resource_uri
+  http_port                      = 80
+  https_port                     = 443
+  origin_host_header             = module.backend_site.resource_uri
+  priority                       = 1
+  weight                         = 1000
+  certificate_name_check_enabled = true
+}
+
+resource "azurerm_cdn_frontdoor_origin" "backend_download_app_service_origin" {
+  count                         = var.enable_frontdoor ? 1 : 0
+  name                          = "${var.repo_name}-${var.app_env}-backend-download-origin"
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.backend_origin_group[0].id
+
+  enabled                        = true
+  host_name                      = module.download_api_site.resource_uri
+  http_port                      = 80
+  https_port                     = 443
+  origin_host_header             = module.download_api_site.resource_uri
+  priority                       = 1
+  weight                         = 1000
+  certificate_name_check_enabled = true
+}
+
+resource "azurerm_cdn_frontdoor_route" "backend_route" {
+  count                         = var.enable_frontdoor ? 1 : 0
+  name                          = "${var.repo_name}-${var.app_env}-backend-fd"
+  cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.backend_fd_endpoint[0].id
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.backend_origin_group[0].id
+  cdn_frontdoor_origin_ids      = [azurerm_cdn_frontdoor_origin.backend_app_service_origin[0].id]
+
+  supported_protocols    = ["Http", "Https"]
+  patterns_to_match      = ["/api/*"]
+  forwarding_protocol    = "HttpsOnly"
+  link_to_default_domain = true
+  https_redirect_enabled = true
+}
+
+resource "azurerm_cdn_frontdoor_route" "backend_download_route" {
+  count                         = var.enable_frontdoor ? 1 : 0
+  name                          = "${var.repo_name}-${var.app_env}-backend-download-fd"
+  cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.backend_fd_endpoint[0].id
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.backend_origin_group[0].id
+  cdn_frontdoor_origin_ids      = [azurerm_cdn_frontdoor_origin.backend_download_app_service_origin[0].id]
+
+  supported_protocols    = ["Http", "Https"]
+  patterns_to_match      = ["/download-api/*"]
+  forwarding_protocol    = "HttpsOnly"
+  link_to_default_domain = true
+  https_redirect_enabled = true
+}
+
+resource "azurerm_cdn_frontdoor_security_policy" "frontend_fd_security_policy" {
+  count                    = var.enable_frontdoor ? 1 : 0
+  name                     = "${var.app_name}-backend-fd-waf-security-policy"
+  cdn_frontdoor_profile_id = var.backend_frontdoor_id
+
+  security_policies {
+    firewall {
+      cdn_frontdoor_firewall_policy_id = var.frontdoor_backend_firewall_policy_id
+
+      association {
+        domain {
+          cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_endpoint.backend_fd_endpoint[0].id
+        }
+        patterns_to_match = ["/*"]
+      }
+    }
+  }
+}
+
 # Backend Autoscaler
 resource "azurerm_monitor_autoscale_setting" "backend_autoscale" {
   name                = "${var.app_name}-backend-autoscale"
