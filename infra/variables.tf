@@ -30,6 +30,21 @@ variable "download_page_size" {
   default     = 1000
 }
 
+variable "download_scheduler_enabled" {
+  type    = bool
+  default = true
+}
+
+variable "download_scheduler_cron" {
+  type    = string
+  default = "0 0 7 * * *"
+}
+
+variable "download_queue_visibility_timeout_seconds" {
+  type    = number
+  default = 300
+}
+
 
 
 variable "app_env" {

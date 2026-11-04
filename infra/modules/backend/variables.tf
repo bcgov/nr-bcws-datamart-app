@@ -32,6 +32,19 @@ variable "download_page_size" {
   default     = 1000
 }
 
+variable "download_scheduler_enabled" {
+  type = bool
+}
+
+variable "download_scheduler_cron" {
+  type = string
+}
+
+variable "download_queue_visibility_timeout_seconds" {
+  type = number
+}
+
+
 
 variable "datamart_timeout_seconds" {
   description = "Timeout in seconds for calls to Datamart API."

@@ -176,6 +176,10 @@ module "download_api_site" {
     DOWNLOAD_STORAGE_ACCOUNT_NAME = var.storage_account_name
     DOWNLOAD_QUEUE_CLIENT_ID = var.download_queue_identity_client_id
     DOWNLOAD_BLOB_CLIENT_ID = var.download_blob_identity_client_id
+
+    DOWNLOAD_SCHEDULER_ENABLED = tostring(var.download_scheduler_enabled)
+    DOWNLOAD_SCHEDULER_CRON = var.download_scheduler_cron
+    DOWNLOAD_QUEUE_VISIBILITY_TIMEOUT_SECONDS = tostring(var.download_queue_visibility_timeout_seconds)
   }
 
   logs = {

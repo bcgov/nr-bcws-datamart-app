@@ -174,6 +174,10 @@ module "backend" {
   download_blob_identity_id        = module.storage.download_blob_identity_id
   download_blob_identity_client_id = module.storage.download_blob_identity_client_id
 
+  download_scheduler_enabled                  = var.download_scheduler_enabled
+  download_scheduler_cron                     = var.download_scheduler_cron
+  download_queue_visibility_timeout_seconds   = var.download_queue_visibility_timeout_seconds
+
   depends_on = [module.frontend]
 }
 

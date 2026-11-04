@@ -14,9 +14,15 @@ download:
   # Azure deployment settings
   storage-account-name: ${DOWNLOAD_STORAGE_ACCOUNT_NAME:}
   queue-client-id: ${DOWNLOAD_QUEUE_CLIENT_ID:}
+  blob-client-id: ${DOWNLOAD_BLOB_CLIENT_ID:}
 
   # Local development / Azurite
   queue-connection-string: ${DOWNLOAD_QUEUE_CONNECTION_STRING:}
+
+  scheduler:
+    enabled: ${DOWNLOAD_SCHEDULER_ENABLED:true}
+    cron: ${DOWNLOAD_SCHEDULER_CRON:0 */5 * * * *}
+    visibility-timeout-seconds: ${DOWNLOAD_QUEUE_VISIBILITY_TIMEOUT_SECONDS:300}
 
 management:
   endpoints:

@@ -18,7 +18,10 @@ services:
       DATAMART_GRAPHQL_URL: http://backend:5000/graphql
       DOWNLOAD_QUEUE_NAME: downloads
       DOWNLOAD_QUEUE_CONNECTION_STRING: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;"
-      
+      DOWNLOAD_SCHEDULER_ENABLED: "true"
+      DOWNLOAD_SCHEDULER_CRON: "*/30 * * * * *"
+      DOWNLOAD_QUEUE_VISIBILITY_TIMEOUT_SECONDS: "300"
+
     ports:
       - "8080:8080"
     depends_on:
