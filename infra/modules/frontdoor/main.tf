@@ -242,7 +242,7 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "unified_firewall_policy" {
 }
 
 resource "azurerm_cdn_frontdoor_endpoint" "unified_fd_endpoint" {
-  name                     = "${var.app_name}-${var.app_env}-fd"
+  name                     = "${var.app_name}-datamart-app-fd"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.unified_frontdoor.id
 }
 
