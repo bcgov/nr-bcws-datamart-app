@@ -1,5 +1,5 @@
 resource "azurerm_cdn_frontdoor_profile" "unified_frontdoor" {
-  name                = "${var.app_name}-${var.app_env}-frontdoor"
+  name                = "${var.app_name}-datamart-app-frontdoor"
   resource_group_name = var.resource_group_name
   sku_name            = var.frontdoor_sku_name
 
