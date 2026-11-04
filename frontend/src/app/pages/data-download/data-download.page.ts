@@ -46,7 +46,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
     filter: Filter = initialFilter( {
         dailyColumns: [ ...this.codeTableService.DAILY_WEATHER_OBSERVATIONS_COLUMNS.items.map( c => c.code ) ],
-        metadataColumns: [ 'station_name', 'station_code' ]
+        metadataColumns: [ 'STATION_NAME', 'STATION_CODE' ]
     } )
     hourlyReportColumns: CodeDescriptionHeading[] = []
     dailyReportColumns: CodeDescriptionHeading[] = []
@@ -159,7 +159,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
         this.datamartGraphqlApiService.downloadWeatherData( 
             this.filter.startDate!, 
             this.filter.endDate!, 
-            this.selectedWeatherStationsService.selectedStations.map( s => s.properties.station_code ),
+            this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ),
             this.dailyReportColumns.map( c => c.code ),
             this.hourlyReportColumns.map( c => c.code ),
         )
@@ -178,7 +178,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
         return {
             s: this.filter.startDate!,
             e: this.filter.endDate!,
-            w: this.selectedWeatherStationsService.selectedStations.map( s => s.properties.station_code ).join(','),
+            w: this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ).join(','),
             d: this.filter.dailyColumns.map( c => this.codeTableService.DAILY_WEATHER_COLUMNS.forCode( c )?.abbrev ).join(','),
             h: this.filter.hourlyColumns.map( c => this.codeTableService.HOURLY_WEATHER_COLUMNS.forCode( c )?.abbrev ).join(','),
             m: this.filter.metadataColumns.map( c => this.codeTableService.STATION_METADATA_COLUMNS.forCode( c )?.abbrev ).join(','),

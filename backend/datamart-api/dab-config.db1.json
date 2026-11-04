@@ -10,8 +10,8 @@
   "entities": {
     "daily_weather": {
       "source": {
-        "object": "dbo.DAILY_WEATHER_MEASUREMENT",
-        "type": "table",
+        "object": "dbo.DAILY_WEATHER_MEASUREMENT_VW",
+        "type": "view",
         "key-fields": [
           "DAILY_WEATHER_MEAS_GUID"
         ]
@@ -31,8 +31,8 @@
     },
     "hourly_weather": {
       "source": {
-        "object": "dbo.HOURLY_WEATHER_MEASUREMENT",
-        "type": "table",
+        "object": "dbo.HOURLY_WEATHER_MEASUREMENT_VW",
+        "type": "view",
         "key-fields": [
           "HOURLY_WEATHER_MEAS_GUID"
         ]
@@ -55,7 +55,28 @@
         "object": "dbo.WEATHER_STATION",
         "type": "table",
         "key-fields": [
-          "weather_station_guid"
+          "WEATHER_STATION_GUID"
+        ]
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "daily_measurement_type_codes": {
+      "source": {
+        "object": "dbo.DAILY_MEASUREMENT_TYPE_CODE",
+        "type": "table",
+        "key-fields": [
+          "DAILY_MEASUREMENT_TYPE_CODE"
         ]
       },
       "cache": {

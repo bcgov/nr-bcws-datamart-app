@@ -10,10 +10,10 @@
   "entities": {
     "fire_centres": {
       "source": {
-        "object": "dbo.CURRENT_FIRE_CENTRE_VW",
+        "object": "dbo.FIRE_CENTRE_CODE_VW",
         "type": "table",
         "key-fields": [
-          "FIRE_ZONE_ORG_UNIT_IDENTIFIER"
+          "FIRE_CENTRE_CODE"
         ]
       },
       "cache": {
@@ -31,10 +31,10 @@
     },
     "fire_zones": {
       "source": {
-        "object": "dbo.CURRENT_FIRE_ZONE_VW",
+        "object": "dbo.FIRE_ZONE_CODE_VW",
         "type": "table",
         "key-fields": [
-          "FIRE_ZONE_ORG_UNIT_IDENTIFIER"
+          "FIRE_ZONE_CODE"
         ]
       },
       "cache": {
@@ -52,10 +52,31 @@
     },
     "org_units": {
       "source": {
-        "object": "dbo.CURRENT_ORG_UNIT_VW",
+        "object": "dbo.FULL_ORG_UNIT_CURRENT_VW",
         "type": "table",
         "key-fields": [
-          "FIRE_ZONE_ORG_UNIT_IDENTIFIER"
+          "ORG_UNIT_IDENTIFIER"
+        ]
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "wildfire_org_units": {
+      "source": {
+        "object": "dbo.FULL_ORG_UNIT_VW",
+        "type": "table",
+        "key-fields": [
+          "ORG_UNIT_IDENTIFIER"
         ]
       },
       "cache": {

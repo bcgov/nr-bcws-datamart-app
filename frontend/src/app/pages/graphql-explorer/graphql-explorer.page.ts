@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, inject, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
-import { ButtonComponent, DesktopViewDirective, DeviceViewComponent, GapComponent, MobileViewDirective, SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
-import { DatamartGraphqlApiService, fetchGraphQL } from '../../services/datamart-graphql-api.service';
+import { ButtonComponent, GapComponent, SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
+import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
 
 type Example = {
     label: string
@@ -161,7 +161,7 @@ export class GraphqlExplorerPage implements OnInit {
         this.result = 'Working...'
         this.changeDetectorRef.detectChanges()
 
-        fetchGraphQL<any>( this.queryName, this.query )
+        this.datamartGraphqlApiService.fetchGraphQL<any>( this.queryName, this.query )
             .then( res => {
                 console.log(res)
                 this.result = JSON.stringify( res, null, '  ' )

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { emptyFilter, Filter } from '../pages/data-download/filters/data-download-filters.component';
+import { Environment, environment } from '../../environment';
 
 @Injectable( {
     providedIn: 'root',
@@ -37,5 +38,9 @@ export class ApplicationStateService {
         else {
             localStorage.setItem( 'hideDisclaimer','hide' )
         }
+    }
+
+    get environment(): Environment {
+        return environment
     }
 }

@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Filter } from '../pages/station-selection/filters/station-selection-filters.component';
-import { DatamartRestApiService, WeatherStation } from './datamart-rest-api.service';
+import { DatamartRestApiService } from './datamart-rest-api.service';
 import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
+import { WeatherStation } from '../api-types';
 
 export type GeoJsonPoint<P> = {
     type: 'Feature',
@@ -55,7 +56,7 @@ export class WeatherStationService {
     loadStations(): Promise<WeatherStationFeature[]> {
         if ( this._stationsPromise ) return this._stationsPromise
 
-        this._stationsPromise = this.datamartRestApiService.getActiveWeatherStations( { filter: "station_status_code eq 'ACTIVE'" } )
+        this._stationsPromise = this.datamartRestApiService.getActiveWeatherStations( { filter: "STATION_STATUS_CODE eq 'ACTIVE'" } )
             .then( stations => {
                 return stations.map( ( s ) => {
                     return {
@@ -63,7 +64,7 @@ export class WeatherStationService {
                         properties: s,
                         geometry: {
                             type: 'Point',
-                            coordinates: [ s.longitude, s.latitude ]
+                            coordinates: [ s.LONGITUDE, s.LATITUDE ]
                         }
                     }
                 } )
@@ -76,10 +77,10 @@ export class WeatherStationService {
         return this.loadStations()
             .then( stations => {
                 let filteredStations = stations.filter( s => {
-                    return textFilter( s.properties.station_name, filter.search )
-                        && rangeFilter( s.properties.elevation_m, filter.elevation )
-                        && rangeFilter( s.properties.latitude, filter.latitude )
-                        && rangeFilter( s.properties.longitude, filter.longitude )
+                    return textFilter( s.properties.STATION_NAME, filter.search )
+                        && rangeFilter( s.properties.ELEVATION_M, filter.elevation )
+                        && rangeFilter( s.properties.LATITUDE, filter.latitude )
+                        && rangeFilter( s.properties.LONGITUDE, filter.longitude )
                 } )
 
                 this.stationsSubject.next( filteredStations )
@@ -91,16 +92,16 @@ export class WeatherStationService {
     getStationsByCode( codes: number[] ): Promise<WeatherStationFeature[]> {
         return this.loadStations()
             .then( stations => {
-                return stations.filter( s => codes.includes( s.properties.station_code ) )
+                return stations.filter( s => codes.includes( s.properties.STATION_CODE ) )
             } )
     }
 
     getStationById( id: string ): WeatherStationFeature | undefined {
-        return this._stations?.find( s => id == s.properties.weather_station_guid )
+        return this._stations?.find( s => id == s.properties.WEATHER_STATION_GUID )
     }
 
     getStationByCode( code: number ): WeatherStationFeature | undefined {
-        return this._stations?.find( s => code == s.properties.station_code )
+        return this._stations?.find( s => code == s.properties.STATION_CODE )
     }
 }
 

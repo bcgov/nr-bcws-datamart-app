@@ -98,16 +98,16 @@ export class StationSelectionContentListComponent implements OnInit {
 
         switch (this.sortOption) {
             case 'nameAsc':
-                return stations.sort((a, b) => a.properties.station_name.localeCompare(b.properties.station_name));
+                return stations.sort((a, b) => a.properties.STATION_NAME.localeCompare(b.properties.STATION_NAME));
 
             case 'nameDesc':
-                return stations.sort((a, b) => b.properties.station_name.localeCompare(a.properties.station_name));
+                return stations.sort((a, b) => b.properties.STATION_NAME.localeCompare(a.properties.STATION_NAME));
 
             case 'codeAsc':
-                return stations.sort((a, b) => Number(a.properties.station_code) - Number(b.properties.station_code));
+                return stations.sort((a, b) => Number(a.properties.STATION_CODE) - Number(b.properties.STATION_CODE));
 
             case 'codeDesc':
-                return stations.sort((a, b) => Number(b.properties.station_code) - Number(a.properties.station_code));
+                return stations.sort((a, b) => Number(b.properties.STATION_CODE) - Number(a.properties.STATION_CODE));
 
             default:
                 return stations;

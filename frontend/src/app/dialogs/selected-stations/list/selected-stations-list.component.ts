@@ -9,8 +9,8 @@ import { ButtonComponent, GapComponent, InitialState, RowListBase, RowListDeskto
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Observable, of } from 'rxjs';
 import { SelectedWeatherStationsService } from '../../../services/selected-weather-stations.service';
-import { WeatherStation } from '../../../services/datamart-rest-api.service';
 import { WeatherStationFeature } from '../../../services/weather-station.service';
+import { WeatherStation } from '../../../api-types';
 
 export type TableRow = WeatherStationFeature
 export type Filter = {}
@@ -83,15 +83,15 @@ export class SelectedStationsListComponent extends RowListBase<Filter, TableRow,
         let numericSort = ( field: keyof WeatherStation ) => ( d: SortDirection ) => ( a: TableRow, b: TableRow ) => sortDir( d, (a.properties[field] as number) - ( b.properties[field] as number ) )
 
         switch ( this.sortActive ) {
-            case 'stationName':     sortFn = stringSort( 'station_name' ); break
-            case 'stationCode':     sortFn = numericSort( 'station_code' ); break
-            case 'stationAcronym':  sortFn = stringSort( 'station_acronym' ); break
-            case 'fireCentre':      sortFn = numericSort( 'fire_centre_org_unit_ident' ); break
-            case 'fireZone':        sortFn = numericSort( 'zone_org_unit_identifier' ); break
-            case 'latitude':        sortFn = numericSort( 'latitude' ); break
-            case 'longitude':       sortFn = numericSort( 'longitude' ); break
-            case 'elevation':       sortFn = numericSort( 'elevation_m' ); break
-            case 'status':          sortFn = stringSort( 'station_status_code' ); break
+            case 'stationName':     sortFn = stringSort( 'STATION_NAME' ); break
+            case 'stationCode':     sortFn = numericSort( 'STATION_CODE' ); break
+            case 'stationAcronym':  sortFn = stringSort( 'STATION_ACRONYM' ); break
+            case 'fireCentre':      sortFn = numericSort( 'FIRE_CENTRE_ORG_UNIT_IDENT' ); break
+            case 'fireZone':        sortFn = numericSort( 'ZONE_ORG_UNIT_IDENTIFIER' ); break
+            case 'latitude':        sortFn = numericSort( 'LATITUDE' ); break
+            case 'longitude':       sortFn = numericSort( 'LONGITUDE' ); break
+            case 'elevation':       sortFn = numericSort( 'ELEVATION_M' ); break
+            case 'status':          sortFn = stringSort( 'STATION_STATUS_CODE' ); break
         }
         return rows.sort( sortFn!( this.sortDirection ) )
     }

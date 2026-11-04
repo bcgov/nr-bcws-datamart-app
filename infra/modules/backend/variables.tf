@@ -9,6 +9,36 @@ variable "api_image" {
   }
 }
 
+variable "download_api_image" {
+  description = "The Docker image for the Download API, including an explicit tag."
+  type        = string
+  nullable    = false
+
+  validation {
+    condition     = can(regex(":[^:/]+$", var.download_api_image))
+    error_message = "download_api_image must include an explicit tag."
+  }
+}
+
+variable "download_sync_threshold" {
+  description = "Maximum synchronous export row count."
+  type        = number
+  default     = 10000
+}
+
+variable "download_page_size" {
+  description = "Page size that download api uses to request from datamart API."
+  type        = number
+  default     = 1000
+}
+
+
+variable "datamart_timeout_seconds" {
+  description = "Timeout in seconds for calls to Datamart API."
+  type        = number
+  default     = 30
+}
+
 variable "app_env" {
   description = "The deployment environment (e.g., dev, test, prod)."
   type        = string
@@ -186,3 +216,26 @@ variable "vivid_cidr" {
   default     = ""
 }
 
+variable "storage_account_name" {
+  type = string
+}
+
+variable "download_queue_name" {
+  type = string
+}
+
+variable "download_queue_identity_id" {
+  type = string
+}
+
+variable "download_queue_identity_client_id" {
+  type = string
+}
+
+variable "download_blob_identity_id" {
+  type = string
+}
+
+variable "download_blob_identity_client_id" {
+  type = string
+}

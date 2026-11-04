@@ -8,7 +8,8 @@ import { MatTableModule } from '@angular/material/table';
 import { ButtonComponent, GapComponent, RowListDesktopComponent } from '@bcgov/nr-ngx-component-lib';
 import { formatTableDate } from '../../../util';
 import { DataDownloadListBase } from './data-download-list.base';
-import { DailyWeather, Result, WeatherStation } from '../../../services/datamart-graphql-api.service';
+import { Result } from '../../../services/datamart-graphql-api.service';
+import { DailyWeather, WeatherStation } from '../../../api-types';
 
 export type TableRow = { date?: string } & DailyWeather & WeatherStation
 

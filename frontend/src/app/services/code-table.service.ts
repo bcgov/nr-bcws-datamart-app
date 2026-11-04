@@ -81,22 +81,22 @@ export class CodeTableService {
 
 
     STATION_COLUMNS = new CodeTableHeading([
-        { code: "station_name",              description: "Station name",                        abbrev: 'sn' },
-        { code: "station_code",              description: "Station code",                        abbrev: 'sc' },
-        { code: "station_acronym",           description: "Station acronym",                     abbrev: 'sa' },
+        { code: "STATION_NAME",              description: "Station name",                        abbrev: 'sn' },
+        { code: "STATION_CODE",              description: "Station code",                        abbrev: 'sc' },
+        { code: "STATION_ACRONYM",           description: "Station acronym",                     abbrev: 'sa' },
     ])
 
     METADATA_COLUMNS = new CodeTableHeading([
-        { code: "fire_centre",               description: "Fire centre",                         abbrev: 'fc' },
-        { code: "fire_zone",                 description: "Fire zone",                           abbrev: 'fz' },
-        { code: "elevation_m",                description: "Elevation (m)",                       abbrev: 'e',    style: 'numeric' },
-        { code: "influencing_slope",                    description: "Slope",                               abbrev: 's',    style: 'numeric' },
-        { code: "geometry",                 description: "Geometry",                            abbrev: 'g' },
-        { code: "influencing_aspect_desc",                   description: "Aspect",                              abbrev: 'a',    style: 'numeric' },
-        { code: "pluvioSnowGaugeInd",       description: "Has Pluvio Snow Gauge",               abbrev: 'psg' },
-        { code: "over_winter_precip_adj_ind",      description: "Has Over Winter Precipitation Adjustment",    abbrev: 'owpa' },
-        { code: "latitude",                 description: "Latitude",                            abbrev: 'lat',  style: 'numeric' },
-        { code: "longitude",                description: "Longitude",                           abbrev: 'long', style: 'numeric' },
+        { code: "FIRE_CENTRE",               description: "Fire centre",                         abbrev: 'fc' },
+        { code: "FIRE_ZONE",                 description: "Fire zone",                           abbrev: 'fz' },
+        { code: "ELEVATION_M",                description: "Elevation (m)",                       abbrev: 'e',    style: 'numeric' },
+        { code: "INFLUENCING_SLOPE",                    description: "Slope",                               abbrev: 's',    style: 'numeric' },
+        { code: "GEOMETRY",                 description: "Geometry",                            abbrev: 'g' },
+        { code: "INFLUENCING_ASPECT_DESC",                   description: "Aspect",                              abbrev: 'a',    style: 'numeric' },
+        { code: "PLUVIOSNOWGAUGEIND",       description: "Has Pluvio Snow Gauge",               abbrev: 'psg' },
+        { code: "OVER_WINTER_PRECIP_ADJ_IND",      description: "Has Over Winter Precipitation Adjustment",    abbrev: 'owpa' },
+        { code: "LATITUDE",                 description: "Latitude",                            abbrev: 'lat',  style: 'numeric' },
+        { code: "LONGITUDE",                description: "Longitude",                           abbrev: 'long', style: 'numeric' },
     ])
 
     STATION_METADATA_COLUMNS = new CodeTableHeading([

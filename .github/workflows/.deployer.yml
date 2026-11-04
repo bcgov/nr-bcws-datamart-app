@@ -4,11 +4,7 @@ on:
   workflow_call:
     inputs:
       ### Required
-      environment_name:
-        description: "The name of the environment to deploy to"
-        required: true
-        default: "dev"
-        type: string
+
       command:
         description: "The terragrunt command to run"
         required: true
@@ -23,18 +19,9 @@ on:
         required: false
         type: string
         description: "The APP env separates between Azure ENV and Actual APP, since Azure dev is where PR, and TEST is deployed"
-      stack_prefix:
-        required: true
-        type: string
-        description: "The stack prefix to use for the resources"
   workflow_dispatch:
     inputs:
       ### Required
-      environment_name:
-        description: "The name of the environment to deploy to"
-        required: true
-        default: "dev"
-        type: string
       command:
         description: "The terragrunt command to run"
         required: true
@@ -46,13 +33,13 @@ on:
         type: string
         required: false
       app_env:
-        required: false
-        type: string
-        description: "The APP env separates between Azure ENV and Actual APP, since Azure dev is where PR, and TEST is deployed"
-      stack_prefix:
         required: true
-        type: string
-        description: "The stack prefix to use for the resources"
+        type: choice
+        options:
+          - int
+          - dlv
+          - tst
+          - prd
 
 env:
   TF_VERSION: 1.12.2
@@ -65,8 +52,8 @@ permissions:
 
 jobs:
   infra:
-    environment: ${{ inputs.environment_name }}
-    name: Terraform ${{inputs.command}}  ${{ inputs.environment_name }}
+    environment: ${{ inputs.app_env }}
+    name: Terraform ${{inputs.command}}  ${{ inputs.app_env }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -128,9 +115,9 @@ jobs:
           echo "BACKEND_RESOURCE_GROUP=${{ secrets.VNET_RESOURCE_GROUP_NAME }}" >> "$GITHUB_ENV"
           echo "BACKEND_STORAGE_ACCOUNT=${{ vars.STORAGE_ACCOUNT_NAME }}" >> "$GITHUB_ENV"
           echo "BACKEND_CONTAINER_NAME=tfstate" >> "$GITHUB_ENV"
-          echo "BACKEND_STATE_KEY=${{ inputs.stack_prefix }}/${{ inputs.app_env }}/terraform.tfstate" >> "$GITHUB_ENV"
+          echo "BACKEND_STATE_KEY=${{ vars.STACK_PREFIX }}/${{ inputs.app_env }}/terraform.tfstate" >> "$GITHUB_ENV"
 
-          echo "TF_VAR_target_env=${{ inputs.environment_name }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_target_env=${{ vars.AZURE_ENVIRONMENT }}" >> "$GITHUB_ENV"
           echo "TF_VAR_azure_subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> "$GITHUB_ENV"
           echo "TF_VAR_azure_tenant_id=${{ secrets.AZURE_TENANT_ID }}" >> "$GITHUB_ENV"
           echo "TF_VAR_azure_client_id=${{ secrets.AZURE_CLIENT_ID }}" >> "$GITHUB_ENV"
@@ -144,15 +131,17 @@ jobs:
           echo "TF_VAR_vnet_address_space=${{ secrets.VNET_ADDRESS_SPACE }}" >> "$GITHUB_ENV"
 
           echo "TF_VAR_api_image=ghcr.io/${{ github.repository }}/backend:${{ inputs.tag }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_download_api_image=ghcr.io/${{ github.repository }}/download-api:${{ inputs.tag }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_datamart_timeout_seconds=${{ vars.DATAMART_TIMEOUT_SECONDS }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_download_sync_threshold=${{ vars.DOWNLOAD_SYNC_THRESHOLD }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_download_page_size=${{ vars.DOWNLOAD_PAGE_SIZE }}" >> "$GITHUB_ENV"
+          
           echo "TF_VAR_frontend_image=ghcr.io/${{ github.repository }}/frontend:${{ inputs.tag }}" >> "$GITHUB_ENV"
           echo "TF_VAR_fabric_sql_connection_string=${{ secrets.FABRIC_SQL_CONNECTION_STRING }}" >> "$GITHUB_ENV"
           echo "TF_VAR_fabric_sql_connection_string_2=${{ secrets.FABRIC_SQL_CONNECTION_STRING_2 }}" >> "$GITHUB_ENV"
-          echo "TF_VAR_user_assigned_managed_identity_id=${{ secrets.USER_ASSIGNED_MANAGED_IDENTITY_ID }}" >> "$GITHUB_ENV"
-          echo "TF_VAR_user_assigned_managed_identity_client_id=${{ secrets.USER_ASSIGNED_MANAGED_IDENTITY_CLIENT_ID }}" >> "$GITHUB_ENV"
-
-          echo "TF_VAR_stack_prefix=${{ inputs.stack_prefix }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_stack_prefix=${{ vars.STACK_PREFIX }}" >> "$GITHUB_ENV"
           echo "TF_VAR_app_env=${{ inputs.app_env }}" >> "$GITHUB_ENV"
-          echo "TF_VAR_app_name=${{ inputs.stack_prefix }}-${{ inputs.app_env }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_app_name=${{ vars.stack_prefix }}-${{ inputs.app_env }}" >> "$GITHUB_ENV"
           echo "TF_VAR_location=${{ env.AZURE_REGION }}" >> "$GITHUB_ENV"
 
           echo "TF_VAR_use_oidc=true" >> "$GITHUB_ENV"
@@ -161,11 +150,11 @@ jobs:
           echo "TF_VAR_application_alert_emails=$notify_emails_json" >> "$GITHUB_ENV"
 
           echo "TF_VAR_common_tags<<EOF" >> "$GITHUB_ENV"
-          echo '{"environment":"${{ inputs.environment_name }}","stack_prefix":"${{ inputs.stack_prefix }}","app_env":"${{ inputs.app_env }}","repo_name":"${{ github.event.repository.name }}"}' >> "$GITHUB_ENV"
+          echo '{"environment":"${{ vars.AZURE_ENVIRONMENT }}","stack_prefix":"${{ vars.stack_prefix }}","app_env":"${{ inputs.app_env }}","repo_name":"${{ github.event.repository.name }}"}' >> "$GITHUB_ENV"
           echo "EOF" >> "$GITHUB_ENV"
 
       - name: Terraform ${{ inputs.command }}
         shell: bash
         working-directory: infra
         run: |
-          ./deploy-terraform.sh ${{ inputs.command }} -var-file=${{ inputs.environment_name }}.tfvars
+          ./deploy-terraform.sh ${{ inputs.command }} -var-file=${{ vars.AZURE_ENVIRONMENT }}.tfvars

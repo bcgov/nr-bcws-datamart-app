@@ -54,7 +54,7 @@ export class StationSelectionPage implements OnInit {
 
         this.router.navigate( [ ROUTE.DATA_DOWNLOAD ], {
             queryParams: {
-                w: this.selectedWeatherStationsService.selectedStations.map( s => s.properties.station_code ).join(','),
+                w: this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ).join(','),
             }
         } )       
     }

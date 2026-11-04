@@ -77,7 +77,7 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
         return this.getResourcePage(
             this.startDate!,
             this.endDate!,
-            this.selectedWeatherStationsService.selectedStations.map( s => s.properties.station_code ),
+            this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ),
             this.reportColumns.map( c => c.code ),
             this.endCursor
         )

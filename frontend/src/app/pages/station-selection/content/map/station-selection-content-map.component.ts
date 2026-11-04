@@ -100,7 +100,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit, OnDes
                         } )
                     }
 
-                    this.stationWasSelected = stations.map( s => s.properties.weather_station_guid )
+                    this.stationWasSelected = stations.map( s => s.properties.WEATHER_STATION_GUID )
 
                     this.stationWasSelected.forEach( id => {
                         this.toggleStationSelected( id, true )
@@ -152,7 +152,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit, OnDes
 
                 this.stationLayer = {}
                 this.smk.$viewer.visibleLayer[ layerId ].getLayers().forEach( (featureLayer:any) => {
-                    let key: string = featureLayer.feature.properties.weather_station_guid
+                    let key: string = featureLayer.feature.properties.WEATHER_STATION_GUID
                     this.stationLayer[ key ] = featureLayer
                 } )
             } )
@@ -198,7 +198,7 @@ export class StationSelectionContentMapComponent implements AfterViewInit, OnDes
             environmentInjector: this.environmentInjector,
         });
 
-        this.toggleStationActive( feature.properties.weather_station_guid, true )
+        this.toggleStationActive( feature.properties.WEATHER_STATION_GUID, true )
 
         componentRef.instance.feature = {
             ...feature,

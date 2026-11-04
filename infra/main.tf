@@ -13,20 +13,26 @@ resource "azurerm_resource_group" "main" {
   }
 }
 
+resource "azurerm_user_assigned_identity" "backend_user_assigned_identity" {
+  location = azurerm_resource_group.main.location
+  name = "backend-user-identity-${var.app_env}"
+  resource_group_name = azurerm_resource_group.main.name
+}
+
 locals {
   # A user-assigned managed identity needs User Id=<client id> in the connection string so that the
   # SQL client selects it instead of the system-assigned identity.
-  append_user_id = var.user_assigned_managed_identity_client_id != ""
+  append_user_id = azurerm_user_assigned_identity.backend_user_assigned_identity.client_id 
 
   fabric_sql_connection_string = (
-    local.append_user_id && !can(regex("(?i)user id *=", var.fabric_sql_connection_string))
-    ? "${trimsuffix(trimspace(var.fabric_sql_connection_string), ";")};User Id=${var.user_assigned_managed_identity_client_id}"
+    local.append_user_id != "" && !can(regex("(?i)user id *=", var.fabric_sql_connection_string))
+    ? "${trimsuffix(trimspace(var.fabric_sql_connection_string), ";")};User Id=${local.append_user_id}"
     : var.fabric_sql_connection_string
   )
 
   fabric_sql_connection_string_2 = (
-    local.append_user_id && var.fabric_sql_connection_string_2 != "" && !can(regex("(?i)user id *=", var.fabric_sql_connection_string_2))
-    ? "${trimsuffix(trimspace(var.fabric_sql_connection_string_2), ";")};User Id=${var.user_assigned_managed_identity_client_id}"
+    local.append_user_id != "" && var.fabric_sql_connection_string_2 != "" && !can(regex("(?i)user id *=", var.fabric_sql_connection_string_2))
+    ? "${trimsuffix(trimspace(var.fabric_sql_connection_string_2), ";")};User Id=${local.append_user_id}"
     : var.fabric_sql_connection_string_2
   )
 }
@@ -121,11 +127,21 @@ module "frontend" {
   depends_on = [module.monitoring, module.network]
 }
 
+module "storage" {
+  source = "./modules/storage"
+
+  app_name            = var.app_name
+  app_env             = var.app_env
+  location            = var.location
+  common_tags         = var.common_tags
+}
+
 module "backend" {
   count  = var.enable_app_service_backend ? 1 : 0
   source = "./modules/backend"
 
   api_image                               = var.api_image
+  download_api_image                      = var.download_api_image
   app_env                                 = var.app_env
   app_name                                = var.app_name
   app_service_sku_name_backend            = var.app_service_sku_name_backend
@@ -138,7 +154,7 @@ module "backend" {
   vivid_cidr                              = var.vivid_cidr
   fabric_sql_connection_string            = local.fabric_sql_connection_string
   fabric_sql_connection_string_2          = local.fabric_sql_connection_string_2
-  user_assigned_identity_id               = var.user_assigned_managed_identity_id
+  user_assigned_identity_id               = azurerm_user_assigned_identity.backend_user_assigned_identity.id
   frontend_frontdoor_resource_guid        = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
   frontend_possible_outbound_ip_addresses = var.enable_app_service_frontend ? module.frontend[0].possible_outbound_ip_addresses : ""
   location                                = var.location
@@ -146,6 +162,17 @@ module "backend" {
   repo_name                               = var.repo_name
   resource_group_name                     = azurerm_resource_group.main.name
   resource_group_id                       = azurerm_resource_group.main.id
+
+  datamart_timeout_seconds = var.datamart_timeout_seconds
+  download_sync_threshold  = var.download_sync_threshold
+  download_page_size = var.download_page_size
+
+  storage_account_name = module.storage.storage_account_name
+  download_queue_name  = module.storage.download_queue_name
+  download_queue_identity_id = module.storage.download_queue_identity_id
+  download_queue_identity_client_id = module.storage.download_queue_identity_client_id
+  download_blob_identity_id        = module.storage.download_blob_identity_id
+  download_blob_identity_client_id = module.storage.download_blob_identity_client_id
 
   depends_on = [module.frontend]
 }
@@ -197,7 +224,7 @@ module "container_apps" {
   log_analytics_workspace_id      = module.monitoring.log_analytics_workspace_id
   backend_image                   = var.api_image
   fabric_sql_connection_string    = local.fabric_sql_connection_string
-  user_assigned_identity_id       = var.user_assigned_managed_identity_id
+  user_assigned_identity_id       = azurerm_user_assigned_identity.backend_user_assigned_identity.id
   # Avoid referencing module.frontend here to prevent a dependency cycle.
   # Frontend App Service hostname is deterministic: <repo>-<env>-frontend.azurewebsites.net
   # Front Door endpoint hostname is also deterministic: <repo>-<env>-frontend-fd.azurefd.net
