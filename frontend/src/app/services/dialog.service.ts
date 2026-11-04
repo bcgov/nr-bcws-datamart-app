@@ -55,6 +55,8 @@ export class DialogService {
             DataDownloadFilterDailyWeatherDialogConfig,
             DataDownloadFilterDailyWeatherDialogResult
         >( DataDownloadFilterDailyWeatherDialog, data, {            
+            maxWidth: '95vw',
+            maxHeight: '95vh',
         } )
     }   
 
@@ -64,6 +66,8 @@ export class DialogService {
             DataDownloadFilterHourlyWeatherDialogConfig,
             DataDownloadFilterHourlyWeatherDialogResult
         >( DataDownloadFilterHourlyWeatherDialog, data, {            
+            maxWidth: '95vw',
+            maxHeight: '95vh',
         } )
     }       
 
@@ -73,6 +77,8 @@ export class DialogService {
             DataDownloadFilterStationMetadataDialogConfig,
             DataDownloadFilterStationMetadataDialogResult
         >( DataDownloadFilterStationMetadataDialog, data, {            
+            maxWidth: '95vw',
+            maxHeight: '95vh',
         } )
     }       
 }
