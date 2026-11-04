@@ -21,3 +21,19 @@ output "download_queue_identity_id" {
 output "download_queue_identity_client_id" {
   value = azurerm_user_assigned_identity.download_queue.client_id
 }
+
+output "datamart_package_container_name" {
+  value = azurerm_storage_container.datamart_packages.name
+}
+
+output "storage_blob_endpoint" {
+  value = azurerm_storage_account.app.primary_blob_endpoint
+}
+
+output "download_blob_identity_id" {
+  value = azurerm_user_assigned_identity.download_blob.id
+}
+
+output "download_blob_identity_client_id" {
+  value = azurerm_user_assigned_identity.download_blob.client_id
+}

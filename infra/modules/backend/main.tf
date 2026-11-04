@@ -129,7 +129,8 @@ module "download_api_site" {
   managed_identities = {
     system_assigned            = true
     user_assigned_resource_ids = [
-      var.download_queue_identity_id
+      var.download_queue_identity_id,
+      var.download_blob_identity_id
     ]
   }
 
@@ -174,6 +175,7 @@ module "download_api_site" {
     DOWNLOAD_QUEUE_NAME          = var.download_queue_name
     DOWNLOAD_STORAGE_ACCOUNT_NAME = var.storage_account_name
     DOWNLOAD_QUEUE_CLIENT_ID = var.download_queue_identity_client_id
+    DOWNLOAD_BLOB_CLIENT_ID = var.download_blob_identity_client_id
   }
 
   logs = {

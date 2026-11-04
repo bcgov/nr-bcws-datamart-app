@@ -171,6 +171,8 @@ module "backend" {
   download_queue_name  = module.storage.download_queue_name
   download_queue_identity_id = module.storage.download_queue_identity_id
   download_queue_identity_client_id = module.storage.download_queue_identity_client_id
+  download_blob_identity_id        = module.storage.download_blob_identity_id
+  download_blob_identity_client_id = module.storage.download_blob_identity_client_id
 
   depends_on = [module.frontend]
 }
