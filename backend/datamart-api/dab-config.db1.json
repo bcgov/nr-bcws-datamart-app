@@ -70,6 +70,27 @@
           "role": "anonymous"
         }
       ]
+    },
+    "daily_measurement_type_codes": {
+      "source": {
+        "object": "dbo.DAILY_MEASUREMENT_TYPE_CODE",
+        "type": "table",
+        "key-fields": [
+          "DAILY_MEASUREMENT_TYPE_CODE"
+        ]
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
     }
   }
 }
