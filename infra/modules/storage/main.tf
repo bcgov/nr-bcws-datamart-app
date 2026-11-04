@@ -16,8 +16,6 @@ resource "azurerm_storage_account" "app" {
 
   min_tls_version          = "TLS1_2"
 
-  allow_nested_items_to_be_public = true
-
   tags = var.common_tags
 }
 
@@ -58,7 +56,7 @@ resource "azurerm_role_assignment" "download_blob_access" {
 resource "azurerm_storage_container" "datamart_packages" {
   name                  = "datamart-packages"
   storage_account_id    = azurerm_storage_account.app.id
-  container_access_type = "blob"
+  container_access_type = "private"
 }
 
 resource "azurerm_storage_management_policy" "datamart_packages" {
