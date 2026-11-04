@@ -79,6 +79,12 @@ variable "frontdoor_frontend_firewall_policy_id" {
   nullable    = true
 }
 
+variable "frontdoor_endpoint_id" {
+  description = "Endpoint for frontdoor"
+  type = string
+  nullable = true
+}
+
 variable "location" {
   description = "The Azure region where resources will be created."
   type        = string

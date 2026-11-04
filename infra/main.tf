@@ -86,6 +86,7 @@ module "acr" {
 module "frontdoor" {
   source                         = "./modules/frontdoor"
   count                          = var.enable_frontdoor ? 1 : 0
+  app_env                        = var.app_env
   app_name                       = var.app_name
   common_tags                    = var.common_tags
   frontdoor_sku_name             = var.frontdoor_sku_name
@@ -111,6 +112,7 @@ module "frontend" {
   enable_frontdoor                      = var.enable_frontdoor
   vivid_cidr                            = var.vivid_cidr
   frontend_frontdoor_id                 = var.enable_frontdoor ? module.frontdoor[0].frontdoor_id : null
+  frontdoor_endpoint_id                 = var.enable_frontdoor ? module.frontdoor[0].endpoint_id : null
   frontend_frontdoor_resource_guid      = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
   frontend_image                        = var.frontend_image
   frontend_subnet_id                    = module.network.app_service_subnet_id
@@ -156,6 +158,7 @@ module "backend" {
   fabric_sql_connection_string_2          = local.fabric_sql_connection_string_2
   user_assigned_identity_id               = azurerm_user_assigned_identity.backend_user_assigned_identity.id
   backend_frontdoor_id                    = var.enable_frontdoor ? module.frontdoor[0].frontdoor_id : null
+  frontdoor_endpoint_id                 = var.enable_frontdoor ? module.frontdoor[0].endpoint_id : null
   backend_frontdoor_resource_guid         = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
   frontdoor_backend_firewall_policy_id    = var.enable_frontdoor ? module.frontdoor[0].firewall_policy_id : null
   frontend_possible_outbound_ip_addresses = var.enable_app_service_frontend ? module.frontend[0].possible_outbound_ip_addresses : ""

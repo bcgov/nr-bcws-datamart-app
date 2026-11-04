@@ -1,6 +1,6 @@
 output "frontend_public_url" {
   description = "The public URL of the frontend (Front Door if enabled else App Service)"
-  value       = var.enable_app_service_frontend ? module.frontend[0].frontend_url : ""
+  value       = var.enable_frontdoor ? module.frontdoor[0].endpoint_hostname : module.frontend.frontend_app_service_url
 }
 
 # -------------
