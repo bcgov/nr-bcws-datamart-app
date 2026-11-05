@@ -6,6 +6,7 @@ import { ROUTE } from './bcws-datamart-app.routes';
 import { DialogService } from './services/dialog.service';
 import { WeatherStationService } from './services/weather-station.service';
 import { DatamartRestApiService } from './services/datamart-rest-api.service';
+import { ApplicationStateService } from './services/application-state.service';
 
 const MENU = {
     HOME: 'home',
@@ -38,6 +39,7 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
     configurationService = inject( ConfigurationService )
     weatherStationService = inject(WeatherStationService)
     datamartRestApiService = inject(DatamartRestApiService)
+    applicationStateService = inject(ApplicationStateService)
 
     title = 'Wildfire DataMart';
     logoAriaLabel = 'BC Wildfire Service logo';
@@ -129,7 +131,7 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
             case MENU.SERVER: this.router.navigate( [ ROUTE.ABOUT_MCP ] ); break
             case MENU.DATA: this.router.navigate( [ ROUTE.ABOUT_REST ] ); break
 
-            case MENU.DISCLAIMER: openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=79F93E018712422FBC8E674A67A70535' ); break
+            case MENU.DISCLAIMER: this.dialogService.openDisclaimerDialog({}); break
             case MENU.PRIVACY: openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=9E890E16955E4FF4BF3B0E07B4722932' ); break
             case MENU.COPYRIGHT: openExternalLink( 'https://www2.gov.bc.ca/gov/content?id=1AAACC9C65754E4D89A118B875E0FBDA' ); break
             
@@ -151,17 +153,9 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
     }
 
     showDisclaimerDialog() {
-        if ( localStorage.getItem('hideDisclaimer') ) return
+        if ( !this.applicationStateService.showDisclaimer ) return 
 
-        this.dialogService.openDisclaimerDialog({}).afterClosed().toPromise()
-            .then( res => {
-                if ( res == 'hide' ) {
-                    localStorage.setItem('hideDisclaimer', 'hide')
-                }
-                else {
-                    localStorage.setItem('hideDisclaimer', '')
-                }
-            } )
+        return this.dialogService.openDisclaimerDialog({}).afterClosed().toPromise()
     }
 
     @HostListener("window:resize", [])

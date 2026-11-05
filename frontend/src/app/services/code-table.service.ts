@@ -13,12 +13,12 @@ export class CodeTableService {
 
     // weather observations
     DAILY_WEATHER_OBSERVATIONS_COLUMNS = new CodeTableHeading([
-        { code: "DAILY_MEASUREMENT_TYPE_CODE",           description: "Record type",                             abbrev: 'rt' },
-        { code: "TEMPERATURE",          description: "Temperature at noon (°C)",                abbrev: 't' },
-        { code: "RELATIVE_HUMIDITY",     description: "Relative humidity at noon (%)",           abbrev: 'rh' },
-        { code: "WIND_SPEED",            description: "Wind speed at noon (km/h)",               abbrev: 'ws' },
-        { code: "WIND_DIRECTION_DEGREES",        description: "Wind direction at noon (degrees)",        abbrev: 'wd' },
-        { code: "PRECIPITATION",        description: "Precipitation in previous 24 hours (mm)", abbrev: 'p' },
+        { code: "PRECIPITATION",                description: "Precipitation in previous 24 hours (mm)", abbrev: 'p' },
+        { code: "TEMPERATURE",                  description: "Temperature at noon (°C)",                abbrev: 't' },
+        { code: "RELATIVE_HUMIDITY",            description: "Relative humidity at noon (%)",           abbrev: 'rh' },
+        { code: "WIND_SPEED",                   description: "Wind speed at noon (km/h)",               abbrev: 'ws' },
+        { code: "WIND_DIRECTION_DEGREES",       description: "Wind direction at noon (degrees)",        abbrev: 'wd' },
+        { code: "DAILY_MEASUREMENT_TYPE_CODE",  description: "Record type",                             abbrev: 'rt' },
     ])
 
     // fire weather calculations 
