@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { ButtonComponent, DialogBase, DialogComponent } from "@bcgov/nr-ngx-component-lib";
+import { ApplicationStateService } from "../../services/application-state.service";
 
 export type DisclaimerDialogConfig = {}
 
-export type DisclaimerDialogResult = 'hide'
+export type DisclaimerDialogResult = void
 
 @Component({
     selector: "disclaimer-dialog",
@@ -19,11 +20,13 @@ export type DisclaimerDialogResult = 'hide'
         FormsModule
     ]
 })
-export class DisclaimerDialogComponent extends DialogBase<DisclaimerDialogConfig,DisclaimerDialogResult> {   
-    dontShowAgain = false
+export class DisclaimerDialogComponent extends DialogBase<DisclaimerDialogConfig,DisclaimerDialogResult> {
+    applicationStateService = inject( ApplicationStateService )
 
-    override getResult(): DisclaimerDialogResult {
-        if ( this.dontShowAgain ) return 'hide'
-        return super.getResult()       
+    dontShowAgain = !this.applicationStateService.showDisclaimer
+
+    override onSaveClick(): void {
+        this.applicationStateService.showDisclaimer = !this.dontShowAgain
+        super.onSaveClick()
     }
 }

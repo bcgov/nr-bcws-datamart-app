@@ -20,8 +20,8 @@ jobs:
     strategy:
       matrix:
         include:
-          # The backend contains one folder per API. Only datamart-api is built into the backend image.
-          - package: backend
+          # The backend contains one folder per API. The image is published as ghcr.io/<owner>/<repo>/datamart-api.
+          - package: datamart-api
             build_context: backend/datamart-api
             build_file: backend/datamart-api/Dockerfile
           - package: download-api

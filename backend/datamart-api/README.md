@@ -117,7 +117,7 @@ DAB loads `backend/datamart-api/.env` automatically. With the CLI, the `Active D
 
 ## Deploy to Azure
 
-Terraform in `infra/` deploys this image. CI builds it from this folder (`.github/workflows/.builds.yml`, with `build_context` set to `backend/datamart-api`) and publishes `ghcr.io/<owner>/<repo>/backend:<tag>`, and Terraform passes that image to the backend host (Container Apps or App Service).
+Terraform in `infra/` deploys this image. CI builds it from this folder (`.github/workflows/.builds.yml`, with `build_context` set to `backend/datamart-api`) and publishes `ghcr.io/<owner>/<repo>/datamart-api:<tag>`, and Terraform passes that image to the backend host (Container Apps or App Service).
 
 1. Create the GitHub environment secrets `FABRIC_SQL_CONNECTION_STRING` and `FABRIC_SQL_CONNECTION_STRING_2` for each environment. The deployer workflow passes it to Terraform as `TF_VAR_fabric_sql_connection_string`, and Terraform stores it as a Container Apps secret (or App Service app setting).
 2. For the managed identity style, deploy first, then add the identity to the Fabric workspace. Read its object ID from the Terraform output `backend_managed_identity_principal_id` (Container Apps). In Fabric, open the workspace, choose Manage access, and add the identity as Viewer. Look up the identity by the name of the container app.

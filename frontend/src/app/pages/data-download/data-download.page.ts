@@ -45,8 +45,20 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     @ViewChild( 'list' ) downloadList?: DownloadList
 
     filter: Filter = initialFilter( {
-        dailyColumns: [ ...this.codeTableService.DAILY_WEATHER_OBSERVATIONS_COLUMNS.items.map( c => c.code ) ],
-        metadataColumns: [ 'STATION_NAME', 'STATION_CODE' ]
+        dailyColumns: [ 
+            'PRECIPITATION',
+            'TEMPERATURE',
+            'RELATIVE_HUMIDITY',
+            'WIND_SPEED',
+            'WIND_DIRECTION_DEGREES', 
+        ],
+        metadataColumns: [ 
+            'STATION_NAME', 
+            'STATION_CODE', 
+            'STATION_ACRONYM', 
+            'FIRE_CENTRE', 
+            'ELEVATION_M' 
+        ]
     } )
     hourlyReportColumns: CodeDescriptionHeading[] = []
     dailyReportColumns: CodeDescriptionHeading[] = []
