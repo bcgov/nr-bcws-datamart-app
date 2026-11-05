@@ -55,9 +55,9 @@ export type WeatherStation = {
 export type DailyWeather = {
     DAILY_WEATHER_MEAS_GUID: string
     WEATHER_STATION_GUID: string
-    STATION_CODE: number
-    STATION_NAME: string
-    STATION_ACRONYM: string
+    // STATION_CODE: number
+    // STATION_NAME: string
+    // STATION_ACRONYM: string
     WEATHER_TIMESTAMP_MSEC: number
     WEATHER_TIMESTAMP: string
     DAILY_MEASUREMENT_TYPE_CODE: string
@@ -97,9 +97,9 @@ export type DailyWeather = {
 export type HourlyWeather = {
     HOURLY_WEATHER_MEAS_GUID: string
     WEATHER_STATION_GUID: string
-    STATION_CODE: number
-    STATION_NAME: string
-    STATION_ACRONYM: string
+    // STATION_CODE: number
+    // STATION_NAME: string
+    // STATION_ACRONYM: string
     WEATHER_TIMESTAMP_MSEC: number
     WEATHER_TIMESTAMP: string
     HOURLY_MEASUREMENT_TYPE_CODE: string

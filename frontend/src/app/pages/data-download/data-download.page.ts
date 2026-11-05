@@ -168,12 +168,18 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     }
 
     onDownloadClick() {
+        let daily: string[]|undefined
+        if ( this.filter.dailyColumns.length > 0 ) daily = this.dailyReportColumns.map( c => c.code )
+
+        let hourly: string[]|undefined
+        if ( this.filter.hourlyColumns.length > 0 ) hourly = this.hourlyReportColumns.map( c => c.code )
+
         this.datamartGraphqlApiService.downloadWeatherData( 
             this.filter.startDate!, 
             this.filter.endDate!, 
             this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ),
-            this.dailyReportColumns.map( c => c.code ),
-            this.hourlyReportColumns.map( c => c.code ),
+            daily,
+            hourly
         )
     }
 

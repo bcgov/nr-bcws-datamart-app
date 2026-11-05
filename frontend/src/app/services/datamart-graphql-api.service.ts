@@ -18,7 +18,7 @@ export class DatamartGraphqlApiService {
     applicationStateService = inject( ApplicationStateService )
 
     makeHourlyWeatherQuery( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string, pagination = false ): string {
-        let filteredFields = fields.filter( f => this.codeTableService.HOURLY_WEATHER_COLUMNS.forCode( f ) )
+        // let filteredFields = fields.filter( f => this.codeTableService.HOURLY_WEATHER_COLUMNS.forCode( f ) )
 
         let after = ''
         if ( endCursor ) after = `after: "${ endCursor }"`
@@ -29,7 +29,7 @@ export class DatamartGraphqlApiService {
                     ${ after }
                     filter: {
                         WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
-                        STATION_CODE: { in: [${ stationCodes.join(',')}] }
+                        station: { STATION_CODE: { in: [${ stationCodes.join(',')}] } }
                     }
                     orderBy: {
                         WEATHER_TIMESTAMP: ASC,
@@ -38,15 +38,16 @@ export class DatamartGraphqlApiService {
                 ) {
                     items {
                         WEATHER_TIMESTAMP
-                        STATION_NAME
-                        STATION_CODE
-                        ${ filteredFields.join( '\n' ) }
+                        ${ fields.join( '\n' ) }
                     }
                     ${ pagination ? 'hasNextPage endCursor' : '' }
                 }
             }
         ` )
     }
+                        // STATION_NAME
+                        // STATION_CODE
+                        // ${ filteredFields.join( '\n' ) }
 
     getHourlyWeather( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<HourlyWeather>> {
         return this.fetchGraphQL<HourlyWeather>( 'hourly_weathers',  this.makeHourlyWeatherQuery( startDate, endDate, stationCodes, fields, endCursor, true ) )
@@ -62,7 +63,7 @@ export class DatamartGraphqlApiService {
     }
 
     makeDailyWeatherQuery( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string, pagination = false ): string {
-        let filteredFields = fields.filter( f => this.codeTableService.DAILY_WEATHER_COLUMNS.forCode( f ) )
+        // let filteredFields = fields.filter( f => this.codeTableService.DAILY_WEATHER_COLUMNS.forCode( f ) )
 
         let after = ''
         if ( endCursor ) after = `after: "${ endCursor }"`
@@ -82,15 +83,16 @@ export class DatamartGraphqlApiService {
                 ) {
                     items {
                         WEATHER_TIMESTAMP
-                        STATION_NAME
-                        STATION_CODE
-                        ${ filteredFields.join( '\n' ) }
+                        ${ fields.join( '\n' ) }
                     }
                     ${ pagination ? 'hasNextPage endCursor' : '' }
                 }
             }
         ` )
     }
+                        // STATION_NAME
+                        // STATION_CODE
+                        // ${ filteredFields.join( '\n' ) }
 
     getDailyWeather( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<DailyWeather>> {
         return this.fetchGraphQL<DailyWeather>( 'daily_weathers', this.makeDailyWeatherQuery( startDate, endDate, stationCodes, fields, endCursor, true ) )
@@ -114,15 +116,30 @@ export class DatamartGraphqlApiService {
     getOrgUnits() {
     }
 
-    getCount() {
-        // return fetchGraphQL<any>('daily_weathers', `
-// query {
-//   dailies(groupBy: []) {
-//     count(field: id) {
-//       value
-//     }
-//   }
-// }  
+    getDailyWeatherCount( startDate: string, endDate: string, stationCodes: number[] ) {
+        return this.fetchGraphQL<DailyWeather>( 'daily_weathers', `
+            query {
+                daily_weathers(
+                    filter: { STATION_CODE: { in: [123,234,456] } }
+                ) {               
+                    groupBy {
+                        aggregations {
+                            count: count(field: WEATHER_TIMESTAMP_MSEC)
+                        }
+                    }
+                }
+            }
+        ` )
+    }
+//     getCount() {
+//         // return fetchGraphQL<any>('daily_weathers', `
+// // query {
+// //   dailies(groupBy: []) {
+// //     count(field: id) {
+// //       value
+// //     }
+// //   }
+// // }  
   
 
 // query {
@@ -134,41 +151,51 @@ export class DatamartGraphqlApiService {
 //     }
 //   }
 // }
-//         `)
-    }
+// //         `)
+//     }
 
-    downloadWeatherData( startDate: string, endDate: string, stationCodes: number[], dailyFields: string[], hourlyFields: string[] ): Promise<void> {
-        let body = {
-            queries: [
-                {
-                    name: 'daily-weather',
-                    query: this.makeDailyWeatherQuery( startDate, endDate, stationCodes, dailyFields )
-                },
-                {
-                    name: 'hourly-weather',
-                    query: this.makeHourlyWeatherQuery( startDate, endDate, stationCodes, hourlyFields )
-                },
-            ],
-            startDate: startDate,
-            endDate: endDate,
-            emailAddress: "cody.bergin@gov.bc.ca",
-            emailDownload: false
-        }
+    downloadWeatherData( startDate: string, endDate: string, stationCodes: number[], dailyFields?: string[], hourlyFields?: string[] ): Promise<void> {
+        // let body = {
+            // queries: [
+                // {
+                //     name: 'daily-weather',
+                //     query: this.makeDailyWeatherQuery( startDate, endDate, stationCodes, dailyFields )
+                // },
+                // {
+                //     name: 'hourly-weather',
+                //     query: this.makeHourlyWeatherQuery( startDate, endDate, stationCodes, hourlyFields )
+                // },
+            // ],
+            // let startDate: startDate,
+            // endDate: endDate,
+            // emailAddress: "cody.bergin@gov.bc.ca",
+            // emailDownload: false
+        // }
+
+        let queries = []
+        if ( dailyFields ) queries.push( {
+            name: 'daily-weather',
+            query: this.makeDailyWeatherQuery( startDate, endDate, stationCodes, dailyFields )
+        } )
+        if ( hourlyFields ) queries.push( {
+            name: 'hourly-weather',
+            query: this.makeHourlyWeatherQuery( startDate, endDate, stationCodes, hourlyFields )
+        } )
 
         return fetch( this.applicationStateService.environment.DOWNLOAD_BASE_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify( body ),            
+            body: JSON.stringify( { queries, startDate, endDate } ),            
         } )
             .then( res => {
                 if ( !res.ok ) throw Error( 'HTTP error: ' + res.statusText )
-                res.headers.forEach((v,k)=>console.log(k,v))
+                // res.headers.forEach((v,k)=>console.log(k,v))
                 let disposition = res.headers.get( 'content-disposition' )
-                console.log( disposition )
+                // console.log( disposition )
                 let filename = disposition?.match( /filename="(.+)"/ )?.[1]
-                console.log( filename )
+                // console.log( filename )
 
                 return res.blob()
                     .then( res => {
