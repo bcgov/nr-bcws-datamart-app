@@ -1,9 +1,9 @@
 :host {
     display: flex;
-    justify-content: center;
+    padding: var( --nrcl-gutter-space );
 
     markdown {
-        max-width: 800px;
+        max-width: 1400px;
         color: #2d2d2d;
         display: block;
         line-height: 1.6;
