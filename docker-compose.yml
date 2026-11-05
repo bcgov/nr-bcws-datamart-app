@@ -21,6 +21,8 @@ services:
       DOWNLOAD_SCHEDULER_ENABLED: "true"
       DOWNLOAD_SCHEDULER_CRON: "*/30 * * * * *"
       DOWNLOAD_QUEUE_VISIBILITY_TIMEOUT_SECONDS: "300"
+      DOWNLOAD_BLOB_CONTAINER_NAME: downloads
+      DOWNLOAD_BLOB_CONNECTION_STRING: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"
 
     ports:
       - "8080:8080"
@@ -48,7 +50,7 @@ services:
       VITE_BACKEND_URL: http://backend:5000
       VITE_DOWNLOAD_API_URL: http://download-api:8080
       VITE_PORT: 3000
-      NODE_ENV: development
+      NODE_ENV: production
       LOG_LEVEL: debug
     image: ${FRONTEND_IMAGE:-frontend}
     ports:
@@ -74,3 +76,6 @@ services:
         az storage queue create \
           --name downloads \
           --connection-string "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;"
+        az storage container create \
+          --name downloads \
+          --connection-string "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"

@@ -31,17 +31,20 @@ public class DownloadJobProcessorService {
     private final CsvService csvService;
     private final DatamartQueryService datamartQueryService;
     private final ZipService zipService;
+    private final BlobStorageService blobStorageService;
 
     public DownloadJobProcessorService(
         DatamartApiClient datamartApiClient,
         CsvService csvService,
         DatamartQueryService datamartQueryService,
-        ZipService zipService) {
+        ZipService zipService,
+        BlobStorageService blobStorageService) {
 
         this.datamartApiClient = datamartApiClient;
         this.csvService = csvService;
         this.datamartQueryService = datamartQueryService;
         this.zipService = zipService;
+        this.blobStorageService = blobStorageService;
     }
 
     public void process(QueuedDownloadJob queuedJob) {
@@ -95,6 +98,10 @@ public class DownloadJobProcessorService {
         zipService.createZipFile(csvFiles, zipFile);
 
         logger.info("Created ZIP file {} ({} bytes) containing {} CSV files", zipFile, Files.size(zipFile), csvFiles.size());
+
+        blobStorageService.uploadFile(zipFile);
+
+        logger.info("Uploaded ZIP {}", zipFile.getFileName());
             
         } catch (IOException e) {
 

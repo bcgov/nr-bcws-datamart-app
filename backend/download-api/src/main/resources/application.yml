@@ -15,9 +15,11 @@ download:
   storage-account-name: ${DOWNLOAD_STORAGE_ACCOUNT_NAME:}
   queue-client-id: ${DOWNLOAD_QUEUE_CLIENT_ID:}
   blob-client-id: ${DOWNLOAD_BLOB_CLIENT_ID:}
+  blob-container-name: ${DOWNLOAD_BLOB_CONTAINER_NAME:downloads}
 
   # Local development / Azurite
   queue-connection-string: ${DOWNLOAD_QUEUE_CONNECTION_STRING:}
+  blob-connection-string: ${DOWNLOAD_BLOB_CONNECTION_STRING:}
 
   scheduler:
     enabled: ${DOWNLOAD_SCHEDULER_ENABLED:true}
