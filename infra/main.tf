@@ -122,9 +122,8 @@ module "frontend" {
   repo_name                             = var.repo_name
   resource_group_name                   = azurerm_resource_group.main.name
   resource_group_id                     = azurerm_resource_group.main.id
-  # This is a runtime env var consumed by Caddy's reverse_proxy upstream in the frontend container.
-  # Prefer Container Apps backend when enabled; otherwise fall back to the predictable App Service backend hostname.
-  backend_url = var.enable_frontdoor ? "https://${module.frontdoor[0].endpoint_hostname}/api" : "https://${var.repo_name}-${var.app_env}-api.azurewebsites.net"
+  # Prefer frontdoor url when enabled; otherwise fall back to the predictable App Service backend hostname.
+  backend_url = var.enable_frontdoor ? "https://${module.frontdoor[0].endpoint_hostname}" : "https://${var.repo_name}-${var.app_env}-api.azurewebsites.net"
 
   depends_on = [module.monitoring, module.network]
 }
