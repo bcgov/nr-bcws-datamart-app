@@ -86,6 +86,7 @@ module "acr" {
 module "frontdoor" {
   source                         = "./modules/frontdoor"
   count                          = var.enable_frontdoor ? 1 : 0
+  
   app_name                       = var.app_name
   common_tags                    = var.common_tags
   frontdoor_sku_name             = var.frontdoor_sku_name
@@ -111,6 +112,7 @@ module "frontend" {
   enable_frontdoor                      = var.enable_frontdoor
   vivid_cidr                            = var.vivid_cidr
   frontend_frontdoor_id                 = var.enable_frontdoor ? module.frontdoor[0].frontdoor_id : null
+  frontdoor_endpoint_id                 = var.enable_frontdoor ? module.frontdoor[0].endpoint_id : null
   frontend_frontdoor_resource_guid      = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
   frontend_image                        = var.frontend_image
   frontend_subnet_id                    = module.network.app_service_subnet_id
@@ -120,9 +122,8 @@ module "frontend" {
   repo_name                             = var.repo_name
   resource_group_name                   = azurerm_resource_group.main.name
   resource_group_id                     = azurerm_resource_group.main.id
-  # This is a runtime env var consumed by Caddy's reverse_proxy upstream in the frontend container.
-  # Prefer Container Apps backend when enabled; otherwise fall back to the predictable App Service backend hostname.
-  backend_url = var.enable_container_apps ? try(module.container_apps[0].backend_container_app_url, null) : "https://${var.repo_name}-${var.app_env}-api.azurewebsites.net"
+  # Prefer frontdoor url when enabled; otherwise fall back to the predictable App Service backend hostname.
+  backend_url = var.enable_frontdoor ? "https://${module.frontdoor[0].endpoint_hostname}" : "https://${var.repo_name}-${var.app_env}-api.azurewebsites.net"
 
   depends_on = [module.monitoring, module.network]
 }
@@ -155,7 +156,9 @@ module "backend" {
   fabric_sql_connection_string            = local.fabric_sql_connection_string
   fabric_sql_connection_string_2          = local.fabric_sql_connection_string_2
   user_assigned_identity_id               = azurerm_user_assigned_identity.backend_user_assigned_identity.id
-  frontend_frontdoor_resource_guid        = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
+  backend_frontdoor_id                    = var.enable_frontdoor ? module.frontdoor[0].frontdoor_id : null
+  frontdoor_endpoint_id                 = var.enable_frontdoor ? module.frontdoor[0].endpoint_id : null
+  backend_frontdoor_resource_guid         = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
   frontend_possible_outbound_ip_addresses = var.enable_app_service_frontend ? module.frontend[0].possible_outbound_ip_addresses : ""
   location                                = var.location
   log_analytics_workspace_id              = module.monitoring.log_analytics_workspace_id

@@ -78,8 +78,8 @@ module "frontend_site" {
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES   = "2"
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY        = var.appinsights_instrumentation_key
-    VITE_BACKEND_URL                      = coalesce(var.backend_url, "https://${var.repo_name}-${var.app_env}-api.azurewebsites.net")
-    VITE_DOWNLOAD_API_URL                 = "https://${var.repo_name}-${var.app_env}-download-api.azurewebsites.net"
+    VITE_BACKEND_URL                      = "${var.backend_url}/api"
+    VITE_DOWNLOAD_API_URL                 = "${var.backend_url}/download-api"
     LOG_LEVEL                             = "info"
   }
 
@@ -290,12 +290,6 @@ resource "azurerm_monitor_diagnostic_setting" "frontend_diagnostics" {
   }
 }
 
-resource "azurerm_cdn_frontdoor_endpoint" "frontend_fd_endpoint" {
-  count                    = var.enable_frontdoor ? 1 : 0
-  name                     = "${var.repo_name}-${var.app_env}-frontend-fd"
-  cdn_frontdoor_profile_id = var.frontend_frontdoor_id
-}
-
 resource "azurerm_cdn_frontdoor_origin_group" "frontend_origin_group" {
   count                    = var.enable_frontdoor ? 1 : 0
   name                     = "${var.repo_name}-${var.app_env}-frontend-origin-group"
@@ -327,7 +321,7 @@ resource "azurerm_cdn_frontdoor_origin" "frontend_app_service_origin" {
 resource "azurerm_cdn_frontdoor_route" "frontend_route" {
   count                         = var.enable_frontdoor ? 1 : 0
   name                          = "${var.repo_name}-${var.app_env}-frontend-fd"
-  cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.frontend_fd_endpoint[0].id
+  cdn_frontdoor_endpoint_id     = var.frontdoor_endpoint_id
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.frontend_origin_group[0].id
   cdn_frontdoor_origin_ids      = [azurerm_cdn_frontdoor_origin.frontend_app_service_origin[0].id]
 
@@ -348,7 +342,7 @@ resource "azurerm_cdn_frontdoor_security_policy" "frontend_fd_security_policy" {
 
       association {
         domain {
-          cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_endpoint.frontend_fd_endpoint[0].id
+          cdn_frontdoor_domain_id = var.frontdoor_endpoint_id
         }
         patterns_to_match = ["/*"]
       }
