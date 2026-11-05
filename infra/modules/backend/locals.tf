@@ -1,7 +1,7 @@
 locals {
   # avm-res-web-site composes linuxFxVersion as DOCKER|<registry-host>/<repository>:<tag>,
   # so a full image reference has to be split back into its three parts.
-  api_image_ref   = trimprefix(trimprefix(var.api_image, "https://"), "http://")
+  api_image_ref   = trimprefix(trimprefix(var.datamart_api_image, "https://"), "http://")
   api_image_parts = split("/", local.api_image_ref)
   api_image_has_registry = length(local.api_image_parts) > 1 && (
     strcontains(local.api_image_parts[0], ".") || strcontains(local.api_image_parts[0], ":")
@@ -16,7 +16,7 @@ locals {
     ? join("/", slice(local.api_image_parts, 1, length(local.api_image_parts)))
     : local.api_image_ref
   )
-  # An explicit tag is guaranteed by the api_image validation block.
+  # An explicit tag is guaranteed by the datamart_api_image validation block.
   api_image_tag  = regex(":([^:/]+)$", local.api_repository_ref)[0]
   api_repository = trimsuffix(local.api_repository_ref, ":${local.api_image_tag}")
 
