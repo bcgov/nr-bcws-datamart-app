@@ -111,7 +111,7 @@ CI sets:
 - `TF_VAR_subscription_id`, `TF_VAR_tenant_id`, `TF_VAR_client_id`
 
 CI also sets container image variables (all using GHCR):
-- `TF_VAR_api_image=ghcr.io/<owner>/<repo>/backend:<tag>`
+- `TF_VAR_datamart_api_image=ghcr.io/<owner>/<repo>/datamart-api:<tag>`
 - `TF_VAR_frontend_image=ghcr.io/<owner>/<repo>/frontend:<tag>`
 
 CI also passes the connection string of the Microsoft Fabric SQL analytics endpoint, which the backend (Data API builder) reads from:

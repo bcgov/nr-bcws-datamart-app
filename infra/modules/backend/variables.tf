@@ -1,11 +1,11 @@
-variable "api_image" {
-  description = "The Docker image for the backend API, including an explicit tag."
+variable "datamart_api_image" {
+  description = "The Docker image for the Datamart API, including an explicit tag."
   type        = string
   nullable    = false
 
   validation {
-    condition     = can(regex(":[^:/]+$", var.api_image))
-    error_message = "api_image must include an explicit tag, e.g. 'ghcr.io/org/repo:tag'."
+    condition     = can(regex(":[^:/]+$", var.datamart_api_image))
+    error_message = "datamart_api_image must include an explicit tag, e.g. 'ghcr.io/org/repo:tag'."
   }
 }
 

@@ -140,7 +140,7 @@ module "backend" {
   count  = var.enable_app_service_backend ? 1 : 0
   source = "./modules/backend"
 
-  api_image                               = var.api_image
+  datamart_api_image                      = var.datamart_api_image
   download_api_image                      = var.download_api_image
   app_env                                 = var.app_env
   app_name                                = var.app_name
@@ -222,7 +222,7 @@ module "container_apps" {
   common_tags                     = var.common_tags
   container_apps_subnet_id        = module.network.container_apps_subnet_id
   log_analytics_workspace_id      = module.monitoring.log_analytics_workspace_id
-  backend_image                   = var.api_image
+  backend_image                   = var.datamart_api_image
   fabric_sql_connection_string    = local.fabric_sql_connection_string
   user_assigned_identity_id       = azurerm_user_assigned_identity.backend_user_assigned_identity.id
   # Avoid referencing module.frontend here to prevent a dependency cycle.

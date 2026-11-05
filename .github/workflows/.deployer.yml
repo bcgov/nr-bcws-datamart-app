@@ -130,7 +130,7 @@ jobs:
           echo "TF_VAR_vnet_name=${{ secrets.VNET_NAME }}" >> "$GITHUB_ENV"
           echo "TF_VAR_vnet_address_space=${{ secrets.VNET_ADDRESS_SPACE }}" >> "$GITHUB_ENV"
 
-          echo "TF_VAR_api_image=ghcr.io/${{ github.repository }}/backend:${{ inputs.tag }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_datamart_api_image=ghcr.io/${{ github.repository }}/datamart-api:${{ inputs.tag }}" >> "$GITHUB_ENV"
           echo "TF_VAR_download_api_image=ghcr.io/${{ github.repository }}/download-api:${{ inputs.tag }}" >> "$GITHUB_ENV"
           echo "TF_VAR_datamart_timeout_seconds=${{ vars.DATAMART_TIMEOUT_SECONDS }}" >> "$GITHUB_ENV"
           echo "TF_VAR_download_sync_threshold=${{ vars.DOWNLOAD_SYNC_THRESHOLD }}" >> "$GITHUB_ENV"
