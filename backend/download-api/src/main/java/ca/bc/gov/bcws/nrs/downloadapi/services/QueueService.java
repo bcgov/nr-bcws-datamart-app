@@ -37,11 +37,6 @@ public class QueueService {
 
             queueClient.sendMessage(payload);
 
-            logger.info(
-                    "Queued download job {} for {}",
-                    message.getJobId(),
-                    message.getEmailAddress());
-
         } catch (JsonProcessingException e) {
 
             throw new IllegalStateException(
