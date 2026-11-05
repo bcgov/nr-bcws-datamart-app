@@ -138,12 +138,6 @@ variable "backend_frontdoor_resource_guid" {
   nullable    = true
 }
 
-variable "frontdoor_backend_firewall_policy_id" {
-  description = "The resource ID of the Front Door firewall policy for the backend."
-  type        = string
-  nullable    = true
-}
-
 variable "frontdoor_endpoint_id" {
   description = "ID for frontdoor endpoint"
   type = string
