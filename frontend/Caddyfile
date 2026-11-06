@@ -21,7 +21,7 @@
 	}
 	rewrite @spa_router {http.matchers.file.relative}
 
-    # Download API
+	# Download API
 	handle /api/downloads {
 		reverse_proxy {$VITE_DOWNLOAD_API_URL} {
 			header_up Host {http.reverse_proxy.upstream.hostport}
