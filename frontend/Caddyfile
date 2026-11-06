@@ -21,7 +21,7 @@
 	}
 	rewrite @spa_router {http.matchers.file.relative}
 
-	# Datamart API / GraphQL
+    # Download API
 	handle /api/downloads {
 		reverse_proxy {$VITE_DOWNLOAD_API_URL} {
 			header_up Host {http.reverse_proxy.upstream.hostport}
@@ -29,7 +29,7 @@
 		}
 	}
 
-	# Download API
+	# Datamart API / GraphQL
 	handle /graphql {
 		reverse_proxy {$VITE_BACKEND_URL} {
 			header_up Host {http.reverse_proxy.upstream.hostport}
