@@ -92,6 +92,7 @@
             grid-template-columns: 1fr;
             grid-template-rows: 1fr auto 1fr;
             gap: 8px;
+            min-height: 0;
 
             .actions {
                 grid-row: 2;
@@ -99,6 +100,7 @@
 
             .query {
                 grid-row: 1;
+                font-size: 12px;
             }
 
             .result {
