@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Directive, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ButtonComponent, GapComponent, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
+import { ButtonComponent, FilterContainerComponent, GapComponent, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
 import { ROUTE } from '../../bcws-datamart-app.routes';
 import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
 import { CodeDescriptionHeading, CodeTableService } from '../../services/code-table.service';
@@ -13,6 +13,8 @@ import { DownloadList } from './list/data-download-list.base';
 import { ApplicationStateService } from '../../services/application-state.service';
 import { Subscription } from 'rxjs';
 import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
+
+const MAX_TOTAL_ROW_COUNT = 10000
 
 @Component({
     selector: 'data-download-page',
@@ -28,7 +30,8 @@ import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.s
         ButtonComponent,
         DataDownloadFiltersComponent,
         DataDownloadListDailyComponent,
-        DataDownloadListHourlyComponent
+        DataDownloadListHourlyComponent,
+        FilterContainerComponent
     ]
 })
 export class DataDownloadPage implements OnInit, OnDestroy {
@@ -62,7 +65,9 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     } )
     hourlyReportColumns: CodeDescriptionHeading[] = []
     dailyReportColumns: CodeDescriptionHeading[] = []
+    metadataColumns: CodeDescriptionHeading[] = []
     selectedStationsSubscription?: Subscription
+    totalRowCount = 0
 
     ngOnInit(): void {
         if ( this.applicationStateService.hasDownloadFilterState ) {
@@ -115,28 +120,25 @@ export class DataDownloadPage implements OnInit, OnDestroy {
         this.hourlyReportColumns = []
         if ( this.filter.hourlyColumns.length > 0 ) {
             this.hourlyReportColumns = this.hourlyReportColumns.concat( 
-                this.codeTableService.STATION_COLUMNS.items.filter( c => {
-                    return this.filter.metadataColumns.includes( c.code )
-                } ),
-                this.hourlyReportColumns = this.codeTableService.HOURLY_WEATHER_COLUMNS.items.filter( c => {
+                this.codeTableService.HOURLY_WEATHER_COLUMNS.items.filter( c => {
                     return this.filter.hourlyColumns.includes( c.code )
                 } ),
-                this.codeTableService.METADATA_COLUMNS.items.filter( c => {
-                    return this.filter.metadataColumns.includes( c.code )
-                } )
             )
         }
 
         this.dailyReportColumns = []
         if ( this.filter.dailyColumns.length > 0 ) {
             this.dailyReportColumns = this.dailyReportColumns.concat( 
-                this.codeTableService.STATION_COLUMNS.items.filter( c => {
-                    return this.filter.metadataColumns.includes( c.code )
-                } ),
                 this.codeTableService.DAILY_WEATHER_COLUMNS.items.filter( c => {
                     return this.filter.dailyColumns.includes( c.code )
                 } ),                
-                this.codeTableService.METADATA_COLUMNS.items.filter( c => {
+            )
+        }
+
+        this.metadataColumns = []
+        if ( this.filter.metadataColumns.length > 0 ) {
+            this.metadataColumns = this.metadataColumns.concat( 
+                this.codeTableService.STATION_METADATA_COLUMNS.items.filter( c => {
                     return this.filter.metadataColumns.includes( c.code )
                 } )
             )
@@ -157,6 +159,8 @@ export class DataDownloadPage implements OnInit, OnDestroy {
         setTimeout(() => {
             this.downloadList?.refreshList()        
         },1000)
+
+        this.updateTotalRowCount()
     }
 
     onAddMoreStationsClick() {
@@ -164,22 +168,27 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     }
 
     get enableDownload() {
-        return true
+        return this.totalRowCount < MAX_TOTAL_ROW_COUNT
     }
 
     onDownloadClick() {
-        let daily: string[]|undefined
+        let daily: string[] = []
         if ( this.filter.dailyColumns.length > 0 ) daily = this.dailyReportColumns.map( c => c.code )
 
-        let hourly: string[]|undefined
+        let hourly: string[] = []
         if ( this.filter.hourlyColumns.length > 0 ) hourly = this.hourlyReportColumns.map( c => c.code )
+
+        let metadata: string[] = []
+        if ( this.filter.metadataColumns.length > 0 ) metadata = this.metadataColumns.map( c => c.code )
 
         this.datamartGraphqlApiService.downloadWeatherData( 
             this.filter.startDate!, 
             this.filter.endDate!, 
             this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ),
             daily,
-            hourly
+            hourly,
+            metadata,
+            'benjubb@gmail.com'
         )
     }
 
@@ -215,6 +224,32 @@ export class DataDownloadPage implements OnInit, OnDestroy {
         navigator.clipboard.writeText( url )
             .then( () => {
                 this.snackbarUtilService.successful( `Copied URL to clipboard:\n${ url }`, 2500 )
+            } )
+    }
+
+    updateTotalRowCount() {
+        let stationCodes = this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE )
+        this.totalRowCount = 0
+        this.changeDetectorRef.detectChanges()
+
+        return Promise.resolve( 0 )
+            .then( ( sum ) => {
+                if ( this.filter.dailyColumns.length == 0 ) return sum
+                return this.datamartGraphqlApiService.getDailyWeatherCount( this.filter.startDate!, this.filter.endDate!, stationCodes )
+                    .then( res => {
+                        return sum + res
+                    } )
+            } )
+            .then( ( sum ) => {
+                if ( this.filter.hourlyColumns.length == 0 ) return sum
+                return this.datamartGraphqlApiService.getHourlyWeatherCount( this.filter.startDate!, this.filter.endDate!, stationCodes )
+                    .then( res => {
+                        return sum + res
+                    } )
+            } )
+            .then( ( sum ) => {
+                this.totalRowCount = sum
+                this.changeDetectorRef.detectChanges()
             } )
     }
 }

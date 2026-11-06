@@ -6,12 +6,12 @@ import {
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { ButtonComponent, GapComponent, RowListDesktopComponent } from '@bcgov/nr-ngx-component-lib';
+import { HourlyWeatherStation } from '../../../api-types';
 import { Result } from '../../../services/datamart-graphql-api.service';
 import { formatTableDate, formatTableTime } from '../../../util';
 import { DataDownloadListBase } from './data-download-list.base';
-import { HourlyWeather, WeatherStation } from '../../../api-types';
 
-export type TableRow = { date?: string, time?: string } & HourlyWeather & WeatherStation
+export type TableRow = { date?: string, time?: string } & HourlyWeatherStation
 
 @Component({
     selector: 'data-download-list-hourly',
@@ -30,28 +30,44 @@ export class DataDownloadListHourlyComponent extends DataDownloadListBase<TableR
     override ngOnChanges(changes: SimpleChanges<DataDownloadListHourlyComponent>): void {
         super.ngOnChanges( changes )
 
-        if ( changes.reportColumns ) {
+        if ( changes.reportColumns || changes.metadataColumns ) {
+            let stationCols = this.codeTableService.STATION_COLUMNS.items.filter( c => this.metadataColumns.find( x => x.code == c.code ) ).map( c => c.code )
+            let metadataCols =  this.codeTableService.METADATA_COLUMNS.items.filter( c => this.metadataColumns.find( x => x.code == c.code ) ).map( c => c.code )
+            
             this.displayedColumns = [
                 'date',
                 'time',
-                ...this.reportColumns.map( c => c.code )
+                ...stationCols,
+                ...this.reportColumns.map( c => c.code ),
+                ...metadataCols
             ]
         }
     }
 
-    getResourcePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<TableRow>> {
-        return this.datamartGraphqlApiService.getHourlyWeather( startDate, endDate, stationCodes, fields, endCursor )
+    getResourcePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], metadataFields: string[], endCursor?: string ): Promise<Result<TableRow>> {
+        return this.datamartGraphqlApiService.getHourlyWeather( startDate, endDate, stationCodes, fields, metadataFields, endCursor )
             .then( res => {
                 res.items = res.items.map( row => {
                     return {
                         ...row,
                         date: formatTableDate( row.WEATHER_TIMESTAMP ),
                         time: formatTableTime( row.WEATHER_TIMESTAMP ),
-                        ...this.weatherStationService.getStationByCode( row.STATION_CODE! )?.properties
                     } 
                 } )
 
                 return res as Result<TableRow>
             } )
+    }
+
+    sortRows() {
+        this.rows.sort( ( a, b ) => {
+            let c1 = a.WEATHER_TIMESTAMP!.localeCompare( b.WEATHER_TIMESTAMP! ) 
+            if ( c1 ) return c1
+
+            let aCode = a.station!.STATION_CODE 
+            let bCode = b.station!.STATION_CODE 
+            let c2 = aCode == bCode ? 0 : aCode > bCode ? 1 : -1
+            return c2
+        } )
     }
 }

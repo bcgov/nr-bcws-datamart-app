@@ -10,15 +10,14 @@ import {
     SimpleChanges
 } from '@angular/core';
 import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
-import { CodeDescriptionHeading } from '../../../services/code-table.service';
+import { CodeDescriptionHeading, CodeTableService } from '../../../services/code-table.service';
 import { DatamartGraphqlApiService, Result } from '../../../services/datamart-graphql-api.service';
 import { DatamartRestApiService } from '../../../services/datamart-rest-api.service';
 import { SelectedWeatherStationsService } from '../../../services/selected-weather-stations.service';
 import { WeatherStationService } from '../../../services/weather-station.service';
 
-@Directive()
-export class DownloadList {
-    refreshList() {}
+export interface DownloadList {
+    refreshList(): Promise<void>
 }
 
 @Directive({})
@@ -29,8 +28,10 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
     datamartGraphqlApiService = inject( DatamartGraphqlApiService )
     changeDetectorRef = inject( ChangeDetectorRef )
     snackbarUtilService = inject( SnackbarUtilService )
+    codeTableService = inject( CodeTableService )
 
     @Input() reportColumns: CodeDescriptionHeading[] = []
+    @Input() metadataColumns: CodeDescriptionHeading[] = []
     @Input() startDate?: string
     @Input() endDate?: string    
 
@@ -40,6 +41,7 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
     isMoreAvailable = true
     endCursor?: string
     rows: Partial<R>[] = []
+    totalRowCount?: number
 
     private _isLoading = false
     get isLoading() { return this._isLoading }
@@ -79,6 +81,7 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
             this.endDate!,
             this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ),
             this.reportColumns.map( c => c.code ),
+            this.metadataColumns.map( c => c.code ),
             this.endCursor
         )
             .then( res => {
@@ -87,17 +90,22 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
                 this.isMoreAvailable = res.hasNextPage
                 this.endCursor = res.endCursor 
 
+                this.sortRows()
+
                 this.changeDetectorRef.detectChanges()
             } )
             .catch( err => {
-                this.snackbarUtilService.error( 'failed to get page: ' + err )
+                console.warn(err)
+                this.snackbarUtilService.error( 'Failed to get page' )
             } )
             .finally( () => {
                 this.isLoading = false
             } )
     }
 
-    abstract getResourcePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], endCursor?: string ): Promise<Result<R>>
+    abstract getResourcePage( startDate: string, endDate: string, stationCodes: number[], fields: string[], metadataFields: string[], endCursor?: string ): Promise<Result<R>>
+
+    abstract sortRows(): void
 
     onLoadMoreClick() {
         this.nextListPage()

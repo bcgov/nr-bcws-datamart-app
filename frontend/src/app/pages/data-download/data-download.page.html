@@ -20,6 +20,7 @@
 
 <nrcl-gap/>
 
+
 <div class="tabs-container">
     <nrcl-tab-group standard>
         @if ( filter.dailyColumns.length == 0 && filter.hourlyColumns.length == 0 ) {
@@ -34,6 +35,7 @@
                         [startDate]="filter.startDate"
                         [endDate]="filter.endDate"
                         [reportColumns]="dailyReportColumns"
+                        [metadataColumns]="metadataColumns"
                         (isLoadingChange)="header.isLoading = $event"
                     ></data-download-list-daily>
                 </ng-template>
@@ -47,6 +49,7 @@
                         [startDate]="filter.startDate"
                         [endDate]="filter.endDate"
                         [reportColumns]="hourlyReportColumns"
+                        [metadataColumns]="metadataColumns"
                         (isLoadingChange)="header.isLoading = $event"
                     ></data-download-list-hourly>
                 </ng-template>
@@ -55,6 +58,18 @@
     </nrcl-tab-group>
 
     <div class="actions">
+        <nrcl-filter-container
+            label="Row Count"
+            
+            wide="1"
+        >
+            <div style="text-align: right; width: 100%;"
+                title="Total row count for daily and hourly weather data"
+            >
+                {{ totalRowCount }}
+            </div>
+        </nrcl-filter-container>
+
         <nrcl-button primary
             label="Download"
             icon="download"
@@ -66,6 +81,7 @@
             label="Email download link"
             icon="email"
             (click)="onEmailClick()"
+            disabled
         ></nrcl-button>
 
         <nrcl-button 
