@@ -4,14 +4,12 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+
 
 
 import org.springframework.stereotype.Service;
@@ -65,28 +63,47 @@ public class CsvService {
         return writer.toString().getBytes(StandardCharsets.UTF_8);
     }
 
-    public void appendRows(JsonNode items, BufferedWriter writer, boolean writeHeaders)
+    public void appendRows(
+            JsonNode items,
+            BufferedWriter writer,
+            boolean writeHeaders)
             throws IOException {
 
         if (items == null || !items.isArray() || items.isEmpty()) {
             return;
         }
 
+        List<Map<String, String>> flattenedRows = new ArrayList<>();
         List<String> headers = new ArrayList<>();
 
-        items.get(0).fieldNames().forEachRemaining(headers::add);
+        for (JsonNode row : items) {
+
+            Map<String, String> flattened = new LinkedHashMap<>();
+
+            flattenNode(row, flattened);
+
+            if (headers.isEmpty()) {
+                headers.addAll(flattened.keySet());
+            }
+
+            flattenedRows.add(flattened);
+        }
 
         if (writeHeaders) {
             writer.write(String.join(",", headers));
             writer.newLine();
         }
 
-        for (JsonNode row : items) {
+        for (Map<String, String> row : flattenedRows) {
 
             List<String> values = new ArrayList<>();
 
             for (String header : headers) {
-                values.add(escape(row.path(header).asText("")));
+                values.add(
+                    escape(
+                        row.getOrDefault(header, "")
+                    )
+                );
             }
 
             writer.write(String.join(",", values));
@@ -127,4 +144,5 @@ public class CsvService {
             }
         });
     }
-    }
+
+}
