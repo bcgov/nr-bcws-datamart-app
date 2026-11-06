@@ -8,6 +8,8 @@ import com.azure.identity.ManagedIdentityCredential;
 import com.azure.identity.ManagedIdentityCredentialBuilder;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
 
 @Configuration
 public class BlobConfiguration {
@@ -48,6 +50,31 @@ public class BlobConfiguration {
                         "https://%s.blob.core.windows.net/%s",
                         storageAccountName,
                         containerName))
+                .credential(credential)
+                .buildClient();
+    }
+
+    @Bean
+    public BlobServiceClient blobServiceClient(
+            @Value("${download.storage-account-name:}") String storageAccountName,
+            @Value("${download.blob-client-id:}") String managedIdentityClientId,
+            @Value("${download.blob-connection-string:}") String connectionString) {
+
+        if (!connectionString.isBlank()) {
+            return new BlobServiceClientBuilder()
+                    .connectionString(connectionString)
+                    .buildClient();
+        }
+
+        ManagedIdentityCredential credential =
+                new ManagedIdentityCredentialBuilder()
+                        .clientId(managedIdentityClientId)
+                        .build();
+
+        return new BlobServiceClientBuilder()
+                .endpoint(String.format(
+                        "https://%s.blob.core.windows.net",
+                        storageAccountName))
                 .credential(credential)
                 .buildClient();
     }

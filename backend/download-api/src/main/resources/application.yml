@@ -16,6 +16,7 @@ download:
   queue-client-id: ${DOWNLOAD_QUEUE_CLIENT_ID:}
   blob-client-id: ${DOWNLOAD_BLOB_CLIENT_ID:}
   blob-container-name: ${DOWNLOAD_BLOB_CONTAINER_NAME:downloads}
+  sas-expiry-days: 7
 
   # Local development / Azurite
   queue-connection-string: ${DOWNLOAD_QUEUE_CONNECTION_STRING:}

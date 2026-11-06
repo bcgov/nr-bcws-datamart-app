@@ -99,10 +99,9 @@ public class DownloadJobProcessorService {
 
         logger.info("Created ZIP file {} ({} bytes) containing {} CSV files", zipFile, Files.size(zipFile), csvFiles.size());
 
-        String blobUrl = blobStorageService.uploadFile(zipFile);
+        String downloadUrl = blobStorageService.uploadFile(zipFile);
 
-        logger.info("Uploaded ZIP {}", zipFile.getFileName());
-            
+        logger.info("Uploaded ZIP {}. Download URL: {}", zipFile.getFileName(), downloadUrl);
         } catch (IOException e) {
 
             logger.error(
