@@ -1,7 +1,9 @@
 package ca.bc.gov.bcws.nrs.downloadapi.services;
 
 import com.azure.storage.queue.QueueClient;
+import com.azure.storage.queue.models.PeekedMessageItem;
 import com.azure.storage.queue.models.QueueMessageItem;
+import com.azure.storage.queue.models.QueueProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -104,6 +106,21 @@ public class QueueService {
                 "Failed to delete queue message",
                 e);
         }
+    }
+
+    public boolean messageAvailable(){
+        PeekedMessageItem peekedMessageItem = queueClient.peekMessage();
+        if (peekedMessageItem != null){
+            return true;
+        }
+        return false;
+
+    }
+
+    public int totalMessages(){
+       QueueProperties properties = queueClient.getProperties();
+       int messageCount = properties.getApproximateMessagesCount();
+       return messageCount;
     }
 
     

@@ -33,36 +33,48 @@ public class DownloadJobScheduler {
     @Scheduled(cron = "${download.scheduler.cron}")
     public void processQueue() {
 
+        logger.info("Download scheduler started");
         if (!properties.isEnabled()) {
             return;
         }
 
-        QueuedDownloadJob queuedJob = queueService.dequeueMessage();
-
-        if (queuedJob == null) {
-            logger.info("Download scheduler found no queued jobs");
-            return;
-        }
+        int processedMessageCount = 0;
 
         try {
+            
 
-            logger.info("Retrieved queued job {}", queuedJob.getMessageId());
+            while (queueService.messageAvailable()){
 
-            downloadJobProcessorService.process(queuedJob);
+                logger.info( "{} messages on queue",
+                queueService.totalMessages());
 
-            queueService.deleteMessage(
-                queuedJob.getMessageId(),
-                queuedJob.getPopReceipt());
+                QueuedDownloadJob queuedJob = queueService.dequeueMessage();
+            
+                logger.info("Retrieved queued job {}", queuedJob.getMessageId());
 
-            logger.info("Removed queued job {}", queuedJob.getMessageId());
+                downloadJobProcessorService.process(queuedJob);
 
+                queueService.deleteMessage(
+                    queuedJob.getMessageId(),
+                    queuedJob.getPopReceipt());
+
+                processedMessageCount += 1;
+
+                logger.info("Removed queued job {}", queuedJob.getMessageId());
+            }
         } catch (Exception e) {
-
-            logger.error(
-                "Failed processing queued job {}",
-                queuedJob.getJob().getJobId(),
-                e);
+                logger.error(
+                    "Failed processing queued job",
+                    e);
         }
+
+        finally {
+                logger.info("Download scheduler completed. {} messages processed",
+                    processedMessageCount
+                );
+        }
+
+
     }
 
 }

@@ -99,7 +99,7 @@ public class DownloadJobProcessorService {
 
         logger.info("Created ZIP file {} ({} bytes) containing {} CSV files", zipFile, Files.size(zipFile), csvFiles.size());
 
-        blobStorageService.uploadFile(zipFile);
+        String blobUrl = blobStorageService.uploadFile(zipFile);
 
         logger.info("Uploaded ZIP {}", zipFile.getFileName());
             

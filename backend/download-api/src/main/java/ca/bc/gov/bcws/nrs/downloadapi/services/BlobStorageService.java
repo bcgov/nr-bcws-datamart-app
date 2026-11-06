@@ -17,10 +17,12 @@ public class BlobStorageService {
         this.blobContainerClient = blobContainerClient;
     }
 
-    public void uploadFile(Path file) {
+    public String uploadFile(Path file) {
 
         BlobClient blobClient = blobContainerClient.getBlobClient(file.getFileName().toString());
 
         blobClient.uploadFromFile(file.toString(),true);
+
+        return blobClient.getBlobUrl();
     }
 }
