@@ -200,6 +200,8 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     }
 
     onDownloadClick() {
+        this.startLoading()
+
         let daily: string[] = []
         if ( this.filter.dailyColumns.length > 0 ) daily = this.dailyReportColumns.map( c => c.code )
 
@@ -217,6 +219,13 @@ export class DataDownloadPage implements OnInit, OnDestroy {
             hourly,
             metadata
         )
+            .catch( err => {
+                console.warn( JSON.stringify( err, null, '  ' ) )
+                this.snackbarUtilService.error( 'Failed to download data' )
+            } )
+            .finally( () => {
+                this.stopLoading()
+            } )
     }
 
     onEmailClick() {
