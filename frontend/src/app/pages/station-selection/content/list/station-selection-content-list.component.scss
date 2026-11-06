@@ -10,24 +10,31 @@ $color-hover-background-color: #d7d7d7;
     height: 100%;
     overflow: hidden;
 
-    .description {
-        border: 1px solid $color-border;
-        display: flex;
-        justify-content: center;
-        padding: 4px 0;
-    }
-
     .header {
         flex-grow: 0;
         flex-shrink: 0;
-        display: flex;
-        justify-content: space-between;
         padding-left: 8px;
+        border-top: 1px solid $color-border;
+        border-left: 1px solid $color-border;
+        border-right: 1px solid $color-border;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+
+        .description {
+            grid-row: 1;
+            grid-column: 1 / span 2;
+            font-weight: bold;
+            padding: 8px;
+        }
 
         .select-all {
             --mat-checkbox-label-text-font: var( --nrcl-font-family );
-            --mat-checkbox-label-text-weight: normal;
+            --mat-checkbox-label-text-weight: normal;   
         }       
+
+        .nrcl-button {
+            justify-self: flex-end;
+        }
     }
 
     .list {
