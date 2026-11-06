@@ -14,11 +14,20 @@
 	file_server
 	@spa_router {
 		not path /api*
+		not path /graphql
 		file {
 			try_files {path} /index.html
 		}
 	}
 	rewrite @spa_router {http.matchers.file.relative}
+
+	# Datamart API / GraphQL
+	handle /api/downloads {
+		reverse_proxy {$VITE_DOWNLOAD_API_URL} {
+			header_up Host {http.reverse_proxy.upstream.hostport}
+			header_up X-Real-IP {remote_host}
+		}
+	}
 
 	# Download API
 	handle /graphql {
@@ -28,14 +37,6 @@
 		}
 	}
 
-	handle /api* {
-		reverse_proxy {$VITE_BACKEND_URL} {
-			header_up Host {http.reverse_proxy.upstream.hostport}
-			header_up X-Real-IP {remote_host}
-		}
-	}
-
-	# Datamart API / GraphQL
 	handle /api* {
 		reverse_proxy {$VITE_BACKEND_URL} {
 			header_up Host {http.reverse_proxy.upstream.hostport}
