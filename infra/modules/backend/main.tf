@@ -268,10 +268,9 @@ resource "azurerm_cdn_frontdoor_route" "backend_route" {
   cdn_frontdoor_endpoint_id     = var.frontdoor_endpoint_id
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.backend_origin_group[0].id
   cdn_frontdoor_origin_ids      = [azurerm_cdn_frontdoor_origin.backend_app_service_origin[0].id]
-  cdn_frontdoor_origin_path = "/"
 
   supported_protocols    = ["Http", "Https"]
-  patterns_to_match      = ["/api/*"]
+  patterns_to_match      = ["/api/*","/graphql","/mcp"]
   forwarding_protocol    = "HttpsOnly"
   link_to_default_domain = true
   https_redirect_enabled = true
@@ -283,10 +282,9 @@ resource "azurerm_cdn_frontdoor_route" "backend_download_route" {
   cdn_frontdoor_endpoint_id     = var.frontdoor_endpoint_id
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.backend_download_origin_group[0].id
   cdn_frontdoor_origin_ids      = [azurerm_cdn_frontdoor_origin.backend_download_app_service_origin[0].id]
-  cdn_frontdoor_origin_path = "/"
 
   supported_protocols    = ["Http", "Https"]
-  patterns_to_match      = ["/download-api/*"]
+  patterns_to_match      = ["/api/download/"]
   forwarding_protocol    = "HttpsOnly"
   link_to_default_domain = true
   https_redirect_enabled = true
