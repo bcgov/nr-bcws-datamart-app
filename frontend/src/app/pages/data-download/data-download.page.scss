@@ -5,6 +5,21 @@
         padding: 0 var( --nrcl-gutter-space );
     }
 
+    .download-warning {
+        display: flex;
+        align-items: center;
+        margin:  var( --nrcl-gutter-space );
+        padding: var( --nrcl-gutter-space );
+        gap: 8px;
+        border: 1px solid #053662;
+        border-radius: 8px;
+        background-color: #F7F9FC;
+
+        span {
+            flex-grow: 1;
+        }
+    }
+
     .tabs-container {
         padding: 0 var( --nrcl-gutter-space );
         position: relative;

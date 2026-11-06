@@ -38,6 +38,18 @@
                 </ng-container>
             }
 
+            @for ( column of metadataColumns; track column ) {
+                <ng-container [matColumnDef]="column.code">
+                    <mat-header-cell *matHeaderCellDef>
+                        {{ column.description }}
+                    </mat-header-cell>
+
+                    <mat-cell *matCellDef="let row" [class]="column.style">
+                        {{ row.station?.[ column.code ] }}
+                    </mat-cell>
+                </ng-container>
+            }
+
             <mat-header-row
                 *matHeaderRowDef="displayedColumns; sticky: true">
             </mat-header-row>

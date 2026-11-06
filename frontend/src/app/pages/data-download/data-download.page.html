@@ -1,4 +1,6 @@
-<datamart-header #header>
+<datamart-header
+    [isLoading]="isLoading"
+>
     <section title>
         <h1>Weather data</h1>
     </section>
@@ -18,7 +20,22 @@
     (filterChange)="onFilterChange( $event )"
 ></data-download-filters>
 
-<nrcl-gap/>
+@if ( showDownloadWarning ) {
+    <div class="download-warning">
+        <nrcl-icon>{{' info;{"fill":false} '}}</nrcl-icon>
+        <span>
+            Direct download limit is {{ MAX_TOTAL_ROW_COUNT }} rows. 
+            You can select fewer stations or shorten the date range to minimize the rows or email yourself a download link for the full dataset.
+        </span>
+        <nrcl-button tertiary
+            icon="close"
+            (click)="onCloseWarningClick()"
+        ></nrcl-button>
+    </div>
+}
+@else {
+    <nrcl-gap/>
+}
 
 <div class="tabs-container">
     <nrcl-tab-group standard>
@@ -34,7 +51,8 @@
                         [startDate]="filter.startDate"
                         [endDate]="filter.endDate"
                         [reportColumns]="dailyReportColumns"
-                        (isLoadingChange)="header.isLoading = $event"
+                        [metadataColumns]="metadataColumns"
+                        (isLoadingChange)="onIsLoadingChange( $event )"
                     ></data-download-list-daily>
                 </ng-template>
             </nrcl-tab>
@@ -47,7 +65,8 @@
                         [startDate]="filter.startDate"
                         [endDate]="filter.endDate"
                         [reportColumns]="hourlyReportColumns"
-                        (isLoadingChange)="header.isLoading = $event"
+                        [metadataColumns]="metadataColumns"
+                        (isLoadingChange)="onIsLoadingChange( $event )"
                     ></data-download-list-hourly>
                 </ng-template>
             </nrcl-tab>
@@ -55,24 +74,35 @@
     </nrcl-tab-group>
 
     <div class="actions">
+        <nrcl-filter-container
+            label="Row Count"            
+            wide="1"
+        >
+            <div style="text-align: right; width: 100%;"
+                title="Total row count for daily and hourly weather data"
+            >
+                {{ totalRowCount }}
+            </div>
+        </nrcl-filter-container>
+
         <nrcl-button primary
             label="Download"
             icon="download"
             (click)="onDownloadClick()"
-            [disabled]="!enableDownload"
+            [disabled]="!enableDownload || isLoading"
         ></nrcl-button>
 
         <nrcl-button 
             label="Email download link"
             icon="email"
             (click)="onEmailClick()"
+            disabled
         ></nrcl-button>
 
         <nrcl-button 
             label="Copy link"
             icon="link"
             (click)="onCopyLinkClick()"
-            [disabled]="!enableCopyLink"
             tooltip="Copy a link to this page with your current selections"
         ></nrcl-button>
     </div>
