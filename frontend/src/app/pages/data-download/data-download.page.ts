@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Directive, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ButtonComponent, FilterContainerComponent, GapComponent, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
+import { ButtonComponent, FilterContainerComponent, GapComponent, IconComponent, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent } from '@bcgov/nr-ngx-component-lib';
 import { ROUTE } from '../../bcws-datamart-app.routes';
 import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
 import { CodeDescriptionHeading, CodeTableService } from '../../services/code-table.service';
@@ -31,7 +31,8 @@ const MAX_TOTAL_ROW_COUNT = 10000
         DataDownloadFiltersComponent,
         DataDownloadListDailyComponent,
         DataDownloadListHourlyComponent,
-        FilterContainerComponent
+        FilterContainerComponent,
+        IconComponent,
     ]
 })
 export class DataDownloadPage implements OnInit, OnDestroy {
@@ -68,6 +69,9 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     metadataColumns: CodeDescriptionHeading[] = []
     selectedStationsSubscription?: Subscription
     totalRowCount = 0
+
+    readonly threshold: number = 10
+    showDownloadWarning = true
 
     ngOnInit(): void {
         if ( this.applicationStateService.hasDownloadFilterState ) {
@@ -251,5 +255,10 @@ export class DataDownloadPage implements OnInit, OnDestroy {
                 this.totalRowCount = sum
                 this.changeDetectorRef.detectChanges()
             } )
+        
+    }
+    
+    onCloseWarningClick() {
+        this.showDownloadWarning = false
     }
 }
