@@ -1,4 +1,6 @@
-<datamart-header #header>
+<datamart-header
+    [isLoading]="isLoading"
+>
     <section title>
         <h1>Weather data</h1>
     </section>
@@ -22,7 +24,7 @@
     <div class="download-warning">
         <nrcl-icon>{{' info;{"fill":false} '}}</nrcl-icon>
         <span>
-            Direct download limit is {{ threshold }} rows. 
+            Direct download limit is {{ MAX_TOTAL_ROW_COUNT }} rows. 
             You can select fewer stations or shorten the date range to minimize the rows or email yourself a download link for the full dataset.
         </span>
         <nrcl-button tertiary
@@ -34,7 +36,6 @@
 @else {
     <nrcl-gap/>
 }
-
 
 <div class="tabs-container">
     <nrcl-tab-group standard>
@@ -51,7 +52,7 @@
                         [endDate]="filter.endDate"
                         [reportColumns]="dailyReportColumns"
                         [metadataColumns]="metadataColumns"
-                        (isLoadingChange)="header.isLoading = $event"
+                        (isLoadingChange)="onIsLoadingChange( $event )"
                     ></data-download-list-daily>
                 </ng-template>
             </nrcl-tab>
@@ -65,7 +66,7 @@
                         [endDate]="filter.endDate"
                         [reportColumns]="hourlyReportColumns"
                         [metadataColumns]="metadataColumns"
-                        (isLoadingChange)="header.isLoading = $event"
+                        (isLoadingChange)="onIsLoadingChange( $event )"
                     ></data-download-list-hourly>
                 </ng-template>
             </nrcl-tab>
@@ -88,7 +89,7 @@
             label="Download"
             icon="download"
             (click)="onDownloadClick()"
-            [disabled]="!enableDownload"
+            [disabled]="!enableDownload || isLoading"
         ></nrcl-button>
 
         <nrcl-button 
@@ -102,7 +103,6 @@
             label="Copy link"
             icon="link"
             (click)="onCopyLinkClick()"
-            [disabled]="!enableCopyLink"
             tooltip="Copy a link to this page with your current selections"
         ></nrcl-button>
     </div>

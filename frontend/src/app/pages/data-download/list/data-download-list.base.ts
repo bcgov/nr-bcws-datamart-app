@@ -95,7 +95,7 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
                 this.changeDetectorRef.detectChanges()
             } )
             .catch( err => {
-                console.warn(err)
+                console.warn( JSON.stringify(err, null, '  ') )
                 this.snackbarUtilService.error( 'Failed to get page' )
             } )
             .finally( () => {

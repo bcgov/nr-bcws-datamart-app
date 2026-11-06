@@ -14,8 +14,6 @@ import { ApplicationStateService } from '../../services/application-state.servic
 import { Subscription } from 'rxjs';
 import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
 
-const MAX_TOTAL_ROW_COUNT = 10000
-
 @Component({
     selector: 'data-download-page',
     templateUrl: './data-download.page.html',
@@ -46,6 +44,8 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     changeDetectorRef = inject(ChangeDetectorRef)
     datamartGraphqlApiService = inject( DatamartGraphqlApiService )
 
+    readonly MAX_TOTAL_ROW_COUNT = 10000
+
     @ViewChild( 'list' ) downloadList?: DownloadList
 
     filter: Filter = initialFilter( {
@@ -70,8 +70,32 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     selectedStationsSubscription?: Subscription
     totalRowCount = 0
 
-    readonly threshold: number = 10
-    showDownloadWarning = true
+    showDownloadWarning = false
+
+    loadingCount = 0
+
+    get isLoading() {
+        return this.loadingCount > 0
+    }
+
+    startLoading() {
+        this.loadingCount += 1
+        this.changeDetectorRef.detectChanges()
+    }
+
+    stopLoading() {
+        this.loadingCount -= 1
+        this.changeDetectorRef.detectChanges()
+    }
+
+    onIsLoadingChange( ev: boolean ) {
+        if ( ev ) {
+            this.startLoading()
+        }
+        else {
+            this.stopLoading()
+        }
+    }
 
     ngOnInit(): void {
         if ( this.applicationStateService.hasDownloadFilterState ) {
@@ -172,7 +196,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     }
 
     get enableDownload() {
-        return this.totalRowCount < MAX_TOTAL_ROW_COUNT
+        return this.totalRowCount > 0 && this.totalRowCount < this.MAX_TOTAL_ROW_COUNT
     }
 
     onDownloadClick() {
@@ -200,11 +224,6 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
     }
 
-    get enableCopyLink() {
-        return this.selectedWeatherStationsService.count > 0 &&
-            ( this.dailyReportColumns.length > 0 || this.hourlyReportColumns.length > 0 )
-    }
-
     getQueryParams(): Record<string,string> {
         return {
             s: this.filter.startDate!,
@@ -227,13 +246,15 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
         navigator.clipboard.writeText( url )
             .then( () => {
-                this.snackbarUtilService.successful( `Copied URL to clipboard:\n${ url }`, 2500 )
+                this.snackbarUtilService.successful( `Copied URL to clipboard`, 2500 )
             } )
     }
 
     updateTotalRowCount() {
         let stationCodes = this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE )
         this.totalRowCount = 0
+        this.showDownloadWarning = false
+        this.startLoading()
         this.changeDetectorRef.detectChanges()
 
         return Promise.resolve( 0 )
@@ -253,9 +274,17 @@ export class DataDownloadPage implements OnInit, OnDestroy {
             } )
             .then( ( sum ) => {
                 this.totalRowCount = sum
+                this.showDownloadWarning = this.totalRowCount > this.MAX_TOTAL_ROW_COUNT 
+
                 this.changeDetectorRef.detectChanges()
             } )
-        
+            .catch( err => {
+                console.warn( JSON.stringify( err, null, '  ' ) )
+                this.snackbarUtilService.error( 'Failed to get row count' )
+            } )            
+            .finally( () => {
+                this.stopLoading()
+            } )
     }
     
     onCloseWarningClick() {
