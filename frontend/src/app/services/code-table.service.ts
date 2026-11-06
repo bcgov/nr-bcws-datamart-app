@@ -91,10 +91,9 @@ export class CodeTableService {
         { code: "FIRE_ZONE",                    description: "Fire zone",                               abbrev: 'fz' },
         { code: "ELEVATION_M",                  description: "Elevation (m)",                           abbrev: 'e',    style: 'numeric' },
         { code: "INFLUENCING_SLOPE",            description: "Slope",                                   abbrev: 's',    style: 'numeric' },
-        { code: "GEOMETRY",                     description: "Geometry",                                abbrev: 'g' },
         { code: "INFLUENCING_ASPECT_DESC",      description: "Aspect",                                  abbrev: 'a',    style: 'numeric' },
-        { code: "PLUVIOSNOWGAUGEIND",           description: "Has Pluvio Snow Gauge",                   abbrev: 'psg' },
-        { code: "OVER_WINTER_PRECIP_ADJ_IND",   description: "Has Over Winter Precipitation Adjustment",abbrev: 'owpa' },
+        { code: "PLUVIOSNOWGAUGEIND",           description: "Pluvio snow gauge",                       abbrev: 'psg' },
+        { code: "OVER_WINTER_PRECIP_ADJ_IND",   description: "Overwinter precipitation gauge",          abbrev: 'opg' },
         { code: "LATITUDE",                     description: "Latitude",                                abbrev: 'lat',  style: 'numeric' },
         { code: "LONGITUDE",                    description: "Longitude",                               abbrev: 'long', style: 'numeric' },
     ])
