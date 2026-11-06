@@ -4,10 +4,19 @@ import { CodeTableService } from './code-table.service';
 import { ApplicationStateService } from './application-state.service';
 import { DailyWeather, DailyWeatherStation, HourlyWeather, HourlyWeatherStation } from '../api-types';
 
+export type GraphQlResult = {
+    data: any
+}
+
 export type Result<T> = {
     items: Partial<T>[]
     hasNextPage: boolean
     endCursor: string
+    groupBy?: {
+        aggregations: {
+            count: number
+        }
+    }[] 
 }
 
 @Injectable({
@@ -45,7 +54,11 @@ export class DatamartGraphqlApiService {
     }
 
     getHourlyWeather( startDate: string, endDate: string, stationCodes: number[], hourlyFields: string[], stationFields: string[], endCursor?: string ): Promise<Result<HourlyWeatherStation>> {
-        return this.fetchGraphQL<HourlyWeatherStation>( 'hourly_weathers',  this.makeHourlyWeatherQuery( startDate, endDate, stationCodes, hourlyFields, stationFields, endCursor, true ) )
+        return this.parseGraphQL<HourlyWeatherStation>( 'hourly_weathers', 
+            this.fetchGraphQL( 
+                this.makeHourlyWeatherQuery( startDate, endDate, stationCodes, hourlyFields, stationFields, endCursor, true ) 
+            ) 
+        )
     }
 
     makeDailyWeatherQuery( startDate: string, endDate: string, stationCodes: number[], dailyFields: string[], stationFields: string[], endCursor?: string, pagination = false ): string {
@@ -76,7 +89,11 @@ export class DatamartGraphqlApiService {
     }
 
     getDailyWeather( startDate: string, endDate: string, stationCodes: number[], dailyFields: string[], stationFields: string[], endCursor?: string ): Promise<Result<DailyWeatherStation>> {
-        return this.fetchGraphQL<DailyWeatherStation>( 'daily_weathers', this.makeDailyWeatherQuery( startDate, endDate, stationCodes, dailyFields, stationFields, endCursor, true ) )
+        return this.parseGraphQL<DailyWeatherStation>( 'daily_weathers', 
+            this.fetchGraphQL( 
+                this.makeDailyWeatherQuery( startDate, endDate, stationCodes, dailyFields, stationFields, endCursor, true ) 
+            )
+        )
     }
 
     getFireCentres() {
@@ -88,47 +105,51 @@ export class DatamartGraphqlApiService {
     getOrgUnits() {
     }
 
-    getDailyWeatherCount( startDate: string, endDate: string, stationCodes: number[] ) {
-        return this.fetchGraphQL<DailyWeather>( 'daily_weathers', `
-            query {
-                daily_weathers(
-                    filter: {
-                        WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
-                        station: { STATION_CODE: { in: [${ stationCodes.join(',')}] } }
-                    }
-                ) {               
-                    groupBy {
-                        aggregations {
-                            count: count(field: WEATHER_TIMESTAMP_MSEC)
+    getDailyWeatherCount( startDate: string, endDate: string, stationCodes: number[] ): Promise<number> {
+        return this.parseGraphQL<void>( 'daily_weathers', 
+            this.fetchGraphQL( `
+                query {
+                    daily_weathers(
+                        filter: {
+                            WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
+                            station: { STATION_CODE: { in: [${ stationCodes.join(',')}] } }
+                        }
+                    ) {               
+                        groupBy {
+                            aggregations {
+                                count: count(field: WEATHER_TIMESTAMP_MSEC)
+                            }
                         }
                     }
                 }
-            }
-        ` )
-            .then( (res: any) => {
-                return res.groupBy[0].aggregations.count
+            ` )
+        )
+            .then( res => {
+                return res.groupBy![0].aggregations.count
             } )
     }
 
-    getHourlyWeatherCount( startDate: string, endDate: string, stationCodes: number[] ) {
-        return this.fetchGraphQL<DailyWeather>( 'hourly_weathers', `
-            query {
-                hourly_weathers(
-                    filter: {
-                        WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
-                        station: { STATION_CODE: { in: [${ stationCodes.join(',')}] } }
-                    }
-                ) {               
-                    groupBy {
-                        aggregations {
-                            count: count(field: WEATHER_TIMESTAMP_MSEC)
+    getHourlyWeatherCount( startDate: string, endDate: string, stationCodes: number[] ): Promise<number> {
+        return this.parseGraphQL<void>( 'hourly_weathers', 
+            this.fetchGraphQL( `
+                query {
+                    hourly_weathers(
+                        filter: {
+                            WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
+                            station: { STATION_CODE: { in: [${ stationCodes.join(',')}] } }
+                        }
+                    ) {               
+                        groupBy {
+                            aggregations {
+                                count: count(field: WEATHER_TIMESTAMP_MSEC)
+                            }
                         }
                     }
                 }
-            }
-        ` )
-            .then( (res: any) => {
-                return res.groupBy[0].aggregations.count
+            ` )
+        )
+            .then( res => {
+                return res.groupBy![0].aggregations.count
             } )
     }
 
@@ -174,7 +195,7 @@ export class DatamartGraphqlApiService {
             } )
     }
 
-    fetchGraphQL<T>( queryName: string, query: string, body?: { [key: string]: string } ): Promise<Result<T>> {
+    fetchGraphQL( query: string, body?: { [key: string]: string } ): Promise<GraphQlResult> {
         return fetch( this.applicationStateService.environment.GRAPHQL_BASE_URL, {
             method: 'POST',
             headers: {
@@ -187,6 +208,13 @@ export class DatamartGraphqlApiService {
             } )
             .then( res => {
                 if ( res.errors ) throw res.errors
+                return res
+            } )
+    }
+
+    parseGraphQL<T>( queryName: string, graphQLResult: Promise<GraphQlResult> ): Promise<Result<T>> {
+        return graphQLResult
+            .then( res => {
                 return res.data[ queryName ]
             } )
     }
