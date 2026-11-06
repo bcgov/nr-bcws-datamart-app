@@ -21,8 +21,15 @@
 	rewrite @spa_router {http.matchers.file.relative}
 
 	# Download API
-	handle /api/downloads {
-		reverse_proxy {$VITE_DOWNLOAD_API_URL} {
+	handle /graphql {
+		reverse_proxy {$VITE_BACKEND_URL} {
+			header_up Host {http.reverse_proxy.upstream.hostport}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	handle /api* {
+		reverse_proxy {$VITE_BACKEND_URL} {
 			header_up Host {http.reverse_proxy.upstream.hostport}
 			header_up X-Real-IP {remote_host}
 		}
