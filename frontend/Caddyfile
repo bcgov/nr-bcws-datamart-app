@@ -14,6 +14,7 @@
 	file_server
 	@spa_router {
 		not path /api*
+		not path /graphql
 		file {
 			try_files {path} /index.html
 		}
@@ -29,6 +30,13 @@
 	}
 
 	# Datamart API / GraphQL
+	handle /graphql {
+		reverse_proxy {$VITE_BACKEND_URL} {
+			header_up Host {http.reverse_proxy.upstream.hostport}
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
 	handle /api* {
 		reverse_proxy {$VITE_BACKEND_URL} {
 			header_up Host {http.reverse_proxy.upstream.hostport}
