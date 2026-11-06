@@ -78,8 +78,8 @@ module "frontend_site" {
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES   = "2"
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY        = var.appinsights_instrumentation_key
-    VITE_BACKEND_URL                      = "${var.backend_url}/api"
-    VITE_DOWNLOAD_API_URL                 = "${var.backend_url}/download-api"
+    VITE_BACKEND_URL                      = coalesce(var.backend_url, "https://${var.repo_name}-${var.app_env}-api.azurewebsites.net")
+    VITE_DOWNLOAD_API_URL                 = "https://${var.repo_name}-${var.app_env}-download-api.azurewebsites.net"
     LOG_LEVEL                             = "info"
   }
 
