@@ -215,8 +215,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
             this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ),
             daily,
             hourly,
-            metadata,
-            'benjubb@gmail.com'
+            metadata
         )
     }
 
