@@ -11,7 +11,7 @@
         ></nrcl-button>
     </div>
 
-    <h3>{{ display(feature.properties.STATION_NAME) }}</h3>
+    <h3>{{ feature.properties.STATION_NAME }}</h3>
 
     <dl class="properties">
         <div>
@@ -23,67 +23,72 @@
 
         <div>
             <dt>Station code:</dt>
-            <dd>{{ display(feature.properties.STATION_CODE) }}</dd>
+            <dd>{{ feature.properties.STATION_CODE }}</dd>
         </div>
 
         <div>
             <dt>Station acronym:</dt>
-            <dd>{{ display(feature.properties.STATION_ACRONYM) }}</dd>
+            <dd>{{ feature.properties.STATION_ACRONYM }}</dd>
         </div>
 
         <div>
             <dt>Fire centre:</dt>
-            <dd>{{ display(feature.properties.FIRE_CENTRE) }}</dd>
+            <dd>{{ feature.properties.FIRE_CENTRE }}</dd>
         </div>
 
         <div>
             <dt>Fire zone:</dt>
-            <dd>{{ display(feature.properties.FIRE_ZONE) }}</dd>
+            <dd>{{ feature.properties.FIRE_ZONE }}</dd>
         </div>
 
         <div>
             <dt>Latitude:</dt>
-            <dd>{{ display(feature.properties.LATITUDE) }}</dd>
+            <dd>{{ formatNumber( feature.properties.LATITUDE, 4 ) }}</dd>
         </div>
 
         <div>
             <dt>Longitude:</dt>
-            <dd>{{ display(feature.properties.LONGITUDE) }}</dd>
+            <dd>{{ formatNumber( feature.properties.LONGITUDE, 4 ) }}</dd>
         </div>
 
         <div>
             <dt>Elevation:</dt>
-            <dd>{{ display(feature.properties.ELEVATION_M) }} m</dd>
+            <dd>{{ feature.properties.ELEVATION_M }} m</dd>
         </div>
 
         <div>
             <dt>Slope:</dt>
-            <dd>{{ display(feature.properties.INFLUENCING_SLOPE) }}</dd>
+            <dd>{{ feature.properties.INFLUENCING_SLOPE }}</dd>
         </div>
 
         <div>
             <dt>Aspect:</dt>
-            <dd>{{ display(feature.properties.INFLUENCING_ASPECT_DESC) }}</dd>
+            <dd>{{ feature.properties.INFLUENCING_ASPECT_DESC }}</dd>
         </div>
 
         <div>
             <dt>Windspeed height:</dt>
-            <dd>{{ display(feature.properties.WINDSPEED_ADJUSTMENT_HEIGHT) }}</dd>
+            <dd>{{ formatWindspeed( feature.properties.WINDSPEED_ADJUSTMENT_HEIGHT ) }}</dd>
         </div>
 
         <div>
             <dt>Adjusted roughness:</dt>
-            <dd>{{ display(feature.properties.WINDSPEED_ADJUSTMENT_ROUGHNESS) }}</dd>
+            <dd>{{ feature.properties.WINDSPEED_ADJUSTMENT_ROUGHNESS }}</dd>
         </div>
 
         <div>
-            <dt>Overwinter precipitation:</dt>
-            <dd>{{ display(feature.properties.OVER_WINTER_PRECIP_ADJ_IND) }}</dd>
+            <dt>Pluvio snow gauge:</dt>
+            <dd>{{ formatBoolean( feature.properties.PLUVIO_SNOW_GUAGE_IND ) }}</dd>
+        </div>
+
+        <div>
+            <dt>Overwinter precipitation gauge:</dt>
+            <dd>{{ formatBoolean( feature.properties.OVER_WINTER_PRECIP_ADJ_IND ) }}</dd>
         </div>
 
         <div>
             <dt>Install date:</dt>
-            <dd>{{ installationDate }}</dd>
+            <dd>{{ formatDate( feature.properties.INSTALLATION_TIMESTAMP_MSEC ) }}</dd>
         </div>
     </dl>
 

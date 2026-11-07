@@ -66,20 +66,22 @@ $color-status-ok: #2d2d2d;
                 white-space: nowrap;
 
                 .nrcl-indicator {
-                    &.status-future {
+                    &.status-active {
                         --nrcl-indicator-text-color: #{$color-status-active};
                         --nrcl-indicator-border-color: #{$color-status-active};
                     }
-
-                    &.status-active {
+                    &.status-archived, &.status-disabled {
                         --nrcl-indicator-text-color: #{$color-status-archived};
                         --nrcl-indicator-border-color: #{$color-status-archived};
                     }
-
-                    &.status-ok {
+                    &.status-project, &.status-test {
                         --nrcl-indicator-text-color: #{$color-status-ok};
                         --nrcl-indicator-border-color: #{$color-status-ok};
                     }
+                }
+
+                &:empty::after {
+                    content: '\2014'
                 }
             }
         }
