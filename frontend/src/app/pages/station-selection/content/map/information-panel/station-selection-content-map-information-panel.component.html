@@ -2,7 +2,7 @@
     <div class="station-information-panel">
         <div class="station-information-panel__title-row">
             <span class="station-information-panel__title">
-                Weather Station
+                Weather station
             </span>
 
             <nrcl-button
@@ -15,7 +15,7 @@
         <div class="station-information-panel__divider"></div>
 
         <h3 class="station-information-panel__station-name">
-            {{ display(feature.properties.station_name) }}
+            {{ display(feature.properties.STATION_NAME) }}
         </h3>
 
         <div class="station-information-panel__content">
@@ -25,72 +25,72 @@
                 </span>
 
                 <nrcl-indicator>
-                    {{ feature.properties.station_status_code }}
+                    {{ feature.properties.STATION_STATUS_CODE }}
                 </nrcl-indicator>
             </div>
 
             <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Station Code:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.station_code) }}</span>
+                <span class="station-information-panel__row-label">Station code:</span>
+                <span class="station-information-panel__row-value">{{ display(feature.properties.STATION_CODE) }}</span>
             </div>
 
             <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Station Acronym:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.station_acronym) }}</span>
+                <span class="station-information-panel__row-label">Station acronym:</span>
+                <span class="station-information-panel__row-value">{{ display(feature.properties.STATION_ACRONYM) }}</span>
             </div>
 
             <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Fire Centre:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.fire_centre_org_unit_ident) }}</span>
+                <span class="station-information-panel__row-label">Fire centre:</span>
+                <span class="station-information-panel__row-value">{{ display(feature.properties.FIRE_CENTRE_ORG_UNIT_IDENT) }}</span>
             </div>
 
             <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Fire Zone:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.zone_org_unit_identifier) }}</span>
+                <span class="station-information-panel__row-label">Fire zone:</span>
+                <span class="station-information-panel__row-value">{{ display(feature.properties.ZONE_ORG_UNIT_IDENTIFIER) }}</span>
             </div>
 
             <div class="station-information-panel__row">
                 <span class="station-information-panel__row-label">Latitude:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.latitude) }}</span>
+                <span class="station-information-panel__row-value">{{ display(feature.properties.LATITUDE) }}</span>
             </div>
 
             <div class="station-information-panel__row">
                 <span class="station-information-panel__row-label">Longitude:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.longitude) }}</span>
+                <span class="station-information-panel__row-value">{{ display(feature.properties.LONGITUDE) }}</span>
             </div>
 
             <div class="station-information-panel__row">
                 <span class="station-information-panel__row-label">Elevation:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.elevation_m) }} m</span>
+                <span class="station-information-panel__row-value">{{ display(feature.properties.ELEVATION_M) }} m</span>
             </div>
 
             <div class="station-information-panel__row">
                 <span class="station-information-panel__row-label">Slope:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.influencing_slope) }}</span>
+                <span class="station-information-panel__row-value">{{ display(feature.properties.INFLUENCING_SLOPE) }}</span>
             </div>
 
             <div class="station-information-panel__row">
                 <span class="station-information-panel__row-label">Aspect:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.influencing_aspect_desc) }}</span>
+                <span class="station-information-panel__row-value">{{ display(feature.properties.INFLUENCING_ASPECT_DESC) }}</span>
             </div>
 
             <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Windspeed Height:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.windspeed_adjustment_height) }}</span>
+                <span class="station-information-panel__row-label">Windspeed height:</span>
+                <span class="station-information-panel__row-value">{{ display(feature.properties.WINDSPEED_ADJUSTMENT_HEIGHT) }}</span>
             </div>
 
             <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Adjusted Roughness:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.windspeed_adjustment_roughness) }}</span>
+                <span class="station-information-panel__row-label">Adjusted roughness:</span>
+                <span class="station-information-panel__row-value">{{ display(feature.properties.WINDSPEED_ADJUSTMENT_ROUGHNESS) }}</span>
             </div>
 
             <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Overwinter Precipitation:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.over_winter_precip_adj_ind) }}</span>
+                <span class="station-information-panel__row-label">Overwinter precipitation:</span>
+                <span class="station-information-panel__row-value">{{ display(feature.properties.OVER_WINTER_PRECIP_ADJ_IND) }}</span>
             </div>
 
             <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Install Date:</span>
+                <span class="station-information-panel__row-label">Install date:</span>
                 <span class="station-information-panel__row-value">{{ installationDate }}</span>
             </div>
         </div>
@@ -98,12 +98,12 @@
         <div class="station-information-panel__actions">
             @if (!isSelected) {
                 <nrcl-button primary
-                    label="Select Station"
+                    label="Select station"
                     (click)="onSelectStation()">
                 </nrcl-button>
             } @else {
                 <nrcl-button secondary
-                    label="Remove Station"
+                    label="Remove station"
                     (click)="onRemoveStation()">
                 </nrcl-button>
             }
