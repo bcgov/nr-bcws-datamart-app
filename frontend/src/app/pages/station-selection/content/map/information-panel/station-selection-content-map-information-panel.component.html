@@ -1,112 +1,104 @@
 @if (feature) {
-    <div class="station-information-panel">
-        <div class="station-information-panel__title-row">
-            <span class="station-information-panel__title">
-                Weather station
-            </span>
-
-            <nrcl-button
-                [anchor]="{ href: 'about-weather-stations', target: 'about-weather-stations' }"
-                icon='info;{"fill":false,"large":true}'
-                tooltip="About weather stations"                
-            ></nrcl-button>
-        </div>
-
-        <div class="station-information-panel__divider"></div>
-
-        <h3 class="station-information-panel__station-name">
-            {{ display(feature.properties.STATION_NAME) }}
+    <div class="title">
+        <h3>
+            Weather station
         </h3>
 
-        <div class="station-information-panel__content">
-            <div class="station-information-panel__row station-information-panel__row--status">
-                <span class="station-information-panel__row-label">
-                    Status:
-                </span>
+        <nrcl-button
+            [anchor]="{ href: 'about-weather-stations', target: 'about-weather-stations' }"
+            icon='info;{"fill":false,"large":true}'
+            tooltip="About weather stations"                
+        ></nrcl-button>
+    </div>
 
-                <nrcl-indicator>
-                    {{ feature.properties.STATION_STATUS_CODE }}
-                </nrcl-indicator>
-            </div>
+    <h3>{{ display(feature.properties.STATION_NAME) }}</h3>
 
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Station code:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.STATION_CODE) }}</span>
-            </div>
-
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Station acronym:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.STATION_ACRONYM) }}</span>
-            </div>
-
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Fire centre:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.FIRE_CENTRE_ORG_UNIT_IDENT) }}</span>
-            </div>
-
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Fire zone:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.ZONE_ORG_UNIT_IDENTIFIER) }}</span>
-            </div>
-
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Latitude:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.LATITUDE) }}</span>
-            </div>
-
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Longitude:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.LONGITUDE) }}</span>
-            </div>
-
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Elevation:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.ELEVATION_M) }} m</span>
-            </div>
-
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Slope:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.INFLUENCING_SLOPE) }}</span>
-            </div>
-
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Aspect:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.INFLUENCING_ASPECT_DESC) }}</span>
-            </div>
-
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Windspeed height:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.WINDSPEED_ADJUSTMENT_HEIGHT) }}</span>
-            </div>
-
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Adjusted roughness:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.WINDSPEED_ADJUSTMENT_ROUGHNESS) }}</span>
-            </div>
-
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Overwinter precipitation:</span>
-                <span class="station-information-panel__row-value">{{ display(feature.properties.OVER_WINTER_PRECIP_ADJ_IND) }}</span>
-            </div>
-
-            <div class="station-information-panel__row">
-                <span class="station-information-panel__row-label">Install date:</span>
-                <span class="station-information-panel__row-value">{{ installationDate }}</span>
-            </div>
+    <dl class="properties">
+        <div>
+            <dt>Status:</dt>
+            <dd>
+                <nrcl-indicator>{{ feature.properties.STATION_STATUS_CODE }}</nrcl-indicator>
+            </dd>
         </div>
 
-        <div class="station-information-panel__actions">
-            @if (!isSelected) {
-                <nrcl-button primary
-                    label="Select station"
-                    (click)="onSelectStation()">
-                </nrcl-button>
-            } @else {
-                <nrcl-button secondary
-                    label="Remove station"
-                    (click)="onRemoveStation()">
-                </nrcl-button>
-            }
+        <div>
+            <dt>Station code:</dt>
+            <dd>{{ display(feature.properties.STATION_CODE) }}</dd>
         </div>
+
+        <div>
+            <dt>Station acronym:</dt>
+            <dd>{{ display(feature.properties.STATION_ACRONYM) }}</dd>
+        </div>
+
+        <div>
+            <dt>Fire centre:</dt>
+            <dd>{{ display(feature.properties.FIRE_CENTRE) }}</dd>
+        </div>
+
+        <div>
+            <dt>Fire zone:</dt>
+            <dd>{{ display(feature.properties.FIRE_ZONE) }}</dd>
+        </div>
+
+        <div>
+            <dt>Latitude:</dt>
+            <dd>{{ display(feature.properties.LATITUDE) }}</dd>
+        </div>
+
+        <div>
+            <dt>Longitude:</dt>
+            <dd>{{ display(feature.properties.LONGITUDE) }}</dd>
+        </div>
+
+        <div>
+            <dt>Elevation:</dt>
+            <dd>{{ display(feature.properties.ELEVATION_M) }} m</dd>
+        </div>
+
+        <div>
+            <dt>Slope:</dt>
+            <dd>{{ display(feature.properties.INFLUENCING_SLOPE) }}</dd>
+        </div>
+
+        <div>
+            <dt>Aspect:</dt>
+            <dd>{{ display(feature.properties.INFLUENCING_ASPECT_DESC) }}</dd>
+        </div>
+
+        <div>
+            <dt>Windspeed height:</dt>
+            <dd>{{ display(feature.properties.WINDSPEED_ADJUSTMENT_HEIGHT) }}</dd>
+        </div>
+
+        <div>
+            <dt>Adjusted roughness:</dt>
+            <dd>{{ display(feature.properties.WINDSPEED_ADJUSTMENT_ROUGHNESS) }}</dd>
+        </div>
+
+        <div>
+            <dt>Overwinter precipitation:</dt>
+            <dd>{{ display(feature.properties.OVER_WINTER_PRECIP_ADJ_IND) }}</dd>
+        </div>
+
+        <div>
+            <dt>Install date:</dt>
+            <dd>{{ installationDate }}</dd>
+        </div>
+    </dl>
+
+    <div class="actions">
+        @if ( !isSelected ) {
+            <nrcl-button primary
+                label="Select station"
+                (click)="onSelectStation()">
+            </nrcl-button>
+        } 
+        @else {
+            <nrcl-button secondary
+                label="Remove station"
+                (click)="onRemoveStation()">
+            </nrcl-button>
+        }
     </div>
 }
