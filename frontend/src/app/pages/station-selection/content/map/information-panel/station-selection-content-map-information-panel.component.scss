@@ -40,45 +40,39 @@ $color-status-ok: #2d2d2d;
         }
     }
 
+    .station {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
     dl.properties {
         margin: 0;
+        display: grid;
+        grid-template-columns: calc( 50% - 4px ) calc( 50% - 4px );
+        gap: 8px;
 
         div {
             display: flex;
-            gap: 16px;         
-            align-items: center;
+            flex-direction: column;
             font-size: 14px;
             color: $color-text-secondary;
             line-height: 1.5;
+
+            &.full-width {
+                grid-column: span 2;
+            }
 
             dt, dd {
                 margin: 0;
             }
 
-            dt {
-                white-space: nowrap;
+            dt::after {
+                // content: ':';
             }
 
             dd {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                vertical-align: middle;
-                white-space: nowrap;
-
-                .nrcl-indicator {
-                    &.status-active {
-                        --nrcl-indicator-text-color: #{$color-status-active};
-                        --nrcl-indicator-border-color: #{$color-status-active};
-                    }
-                    &.status-archived, &.status-disabled {
-                        --nrcl-indicator-text-color: #{$color-status-archived};
-                        --nrcl-indicator-border-color: #{$color-status-archived};
-                    }
-                    &.status-project, &.status-test {
-                        --nrcl-indicator-text-color: #{$color-status-ok};
-                        --nrcl-indicator-border-color: #{$color-status-ok};
-                    }
-                }
+                font-weight: bold;
 
                 &:empty::after {
                     content: '\2014'
@@ -94,6 +88,21 @@ $color-status-ok: #2d2d2d;
         .nrcl-button {
             width: 100%;
             --nrcl-button-width: 100%;
+        }
+    }
+
+    .nrcl-indicator {
+        &.status-active {
+            --nrcl-indicator-text-color: #{$color-status-active};
+            --nrcl-indicator-border-color: #{$color-status-active};
+        }
+        &.status-archived, &.status-disabled {
+            --nrcl-indicator-text-color: #{$color-status-archived};
+            --nrcl-indicator-border-color: #{$color-status-archived};
+        }
+        &.status-project, &.status-test {
+            --nrcl-indicator-text-color: #{$color-status-ok};
+            --nrcl-indicator-border-color: #{$color-status-ok};
         }
     }
 }
