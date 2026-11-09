@@ -45,6 +45,12 @@ variable "download_queue_visibility_timeout_seconds" {
 }
 
 
+variable "bc_notify_api_key" {
+  description = "BC Notify API key passed to the Download API as the BC_NOTIFY_API_KEY app setting."
+  type        = string
+  default     = ""
+}
+
 
 variable "datamart_timeout_seconds" {
   description = "Timeout in seconds for calls to Datamart API."

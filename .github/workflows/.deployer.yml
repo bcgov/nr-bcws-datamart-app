@@ -139,6 +139,8 @@ jobs:
           echo "TF_VAR_download_scheduler_cron=${{ vars.DOWNLOAD_SCHEDULER_CRON }}" >> "$GITHUB_ENV"
           echo "TF_VAR_download_queue_visibility_timeout_seconds=${{ vars.DOWNLOAD_QUEUE_VISIBILITY_TIMEOUT_SECONDS }}" >> "$GITHUB_ENV"
           
+          echo "TF_VAR_bc_notify_api_key=${{ secrets.BC_NOTIFY_API_KEY }}" >> "$GITHUB_ENV"
+
           echo "TF_VAR_frontend_image=ghcr.io/${{ github.repository }}/frontend:${{ inputs.tag }}" >> "$GITHUB_ENV"
           echo "TF_VAR_fabric_sql_connection_string=${{ secrets.FABRIC_SQL_CONNECTION_STRING }}" >> "$GITHUB_ENV"
           echo "TF_VAR_fabric_sql_connection_string_2=${{ secrets.FABRIC_SQL_CONNECTION_STRING_2 }}" >> "$GITHUB_ENV"

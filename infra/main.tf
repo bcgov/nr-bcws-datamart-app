@@ -168,6 +168,7 @@ module "backend" {
   datamart_timeout_seconds = var.datamart_timeout_seconds
   download_sync_threshold  = var.download_sync_threshold
   download_page_size = var.download_page_size
+  bc_notify_api_key  = var.bc_notify_api_key
 
   storage_account_name = module.storage.storage_account_name
   download_queue_name  = module.storage.download_queue_name

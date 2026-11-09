@@ -46,6 +46,11 @@ variable "download_queue_visibility_timeout_seconds" {
 }
 
 
+variable "bc_notify_api_key" {
+  description = "GC Notify (BC Notify) API key used by the Download API. Supplied from the BC_NOTIFY_API_KEY GitHub environment secret."
+  type        = string
+  default     = ""
+}
 
 variable "app_env" {
   description = "Application environment (dev, test, prod)"
