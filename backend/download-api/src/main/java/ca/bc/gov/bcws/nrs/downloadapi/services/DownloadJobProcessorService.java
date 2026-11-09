@@ -32,19 +32,22 @@ public class DownloadJobProcessorService {
     private final DatamartQueryService datamartQueryService;
     private final ZipService zipService;
     private final BlobStorageService blobStorageService;
+    private final EmailService emailService;
 
     public DownloadJobProcessorService(
         DatamartApiClient datamartApiClient,
         CsvService csvService,
         DatamartQueryService datamartQueryService,
         ZipService zipService,
-        BlobStorageService blobStorageService) {
+        BlobStorageService blobStorageService,
+        EmailService emailService) {
 
         this.datamartApiClient = datamartApiClient;
         this.csvService = csvService;
         this.datamartQueryService = datamartQueryService;
         this.zipService = zipService;
         this.blobStorageService = blobStorageService;
+        this.emailService = emailService;
     }
 
     public void process(QueuedDownloadJob queuedJob) {
@@ -88,26 +91,36 @@ public class DownloadJobProcessorService {
 
             }
 
-        String zipFileName = Utils.generateZipFileName(
-            Utils.determineSuffix(hasDaily, hasHourly),
-            queuedJob.getJob().getStartDate(),
-            queuedJob.getJob().getEndDate());
+            String zipFileName = Utils.generateZipFileName(
+                Utils.determineSuffix(hasDaily, hasHourly),
+                queuedJob.getJob().getStartDate(),
+                queuedJob.getJob().getEndDate());
 
-        Path zipFile = workingDirectory.resolve(zipFileName);
+            Path zipFile = workingDirectory.resolve(zipFileName);
 
-        zipService.createZipFile(csvFiles, zipFile);
+            zipService.createZipFile(csvFiles, zipFile);
 
-        logger.info("Created ZIP file {} ({} bytes) containing {} CSV files", zipFile, Files.size(zipFile), csvFiles.size());
+            logger.info("Created ZIP file {} ({} bytes) containing {} CSV files", zipFile, Files.size(zipFile), csvFiles.size());
 
-        String downloadUrl = blobStorageService.uploadFile(zipFile);
+            String downloadUrl = blobStorageService.uploadFile(zipFile);
 
-        logger.info("Uploaded ZIP {}. Download URL: {}", zipFile.getFileName(), downloadUrl);
+            logger.info("Uploaded ZIP {}. Download URL: {}", zipFile.getFileName(), downloadUrl);
+
+            emailService.sendDownloadReadyEmail(queuedJob.getJob().getEmailAddress(), downloadUrl);
+
+            logger.info("Sent download email for job {}", queuedJob.getJob().getJobId());
+
         } catch (IOException e) {
 
             logger.error(
                 "Failed processing job {} due to file system error",
                 queuedJob.getJob().getJobId(),
                 e);
+
+            if (queuedJob.getJob().getEmailAddress() != null && !queuedJob.getJob().getEmailAddress().isBlank()) {
+
+                emailService.sendDownloadFailedEmail(queuedJob.getJob().getEmailAddress(), e.getMessage());
+                }
 
             throw new IllegalStateException(
                 "Failed processing download job",
