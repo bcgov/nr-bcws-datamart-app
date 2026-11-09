@@ -5,6 +5,8 @@ $color-border-default: #d8d8d8;
 $color-status-active: #42814a;
 $color-status-archived: #d8292f;
 $color-status-ok: #2d2d2d;
+$color-background-color: white;
+$color-alternate-background-color: #f2f2f2;
 
 :host {
     display: flex;
@@ -40,16 +42,16 @@ $color-status-ok: #2d2d2d;
 
     dl.properties {
         margin: 0;
-        display: grid;
-        grid-template-columns: calc( 50% - 4px ) calc( 50% - 4px );
-        gap: 8px;
+        display: flex;
+        flex-direction: column;
+        font-size: 14px;
+        color: $color-text-secondary;
+        line-height: 1.5;
 
         div {
-            display: flex;
-            flex-direction: column;
-            font-size: 14px;
-            color: $color-text-secondary;
-            line-height: 1.5;
+            display: grid;
+            grid-template-columns: calc( 50% - 4px ) calc( 50% - 4px );
+            padding: 2px 0;
 
             &.full-width {
                 grid-column: span 2;
@@ -59,16 +61,20 @@ $color-status-ok: #2d2d2d;
                 margin: 0;
             }
 
-            dt::after {
-                // content: ':';
-            }
-
             dd {
                 font-weight: bold;
 
                 &:empty::after {
                     content: '\2014'
                 }
+            }
+
+            &:nth-child(odd) {
+                background-color: $color-alternate-background-color;
+            }
+        
+            &:nth-child(even) {
+                background-color: $color-background-color;
             }
         }
     }
