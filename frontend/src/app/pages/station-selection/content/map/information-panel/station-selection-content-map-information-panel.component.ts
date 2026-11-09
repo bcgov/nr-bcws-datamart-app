@@ -32,7 +32,7 @@ export class StationSelectionContentMapInformationPanelComponent {
     formatWindspeed( val: any ): string|undefined {
         if ( val == null ) return
         let ws = String( val ).split( '_' )
-        return `${ ws[ 0 ] } m .. ${ ws[ 1 ] } m`
+        return `${ ws[ 0 ] } m - ${ ws[ 1 ] } m`
     }
 
     formatBoolean( val: any ): string|undefined {
