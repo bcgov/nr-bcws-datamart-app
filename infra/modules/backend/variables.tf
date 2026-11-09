@@ -44,6 +44,14 @@ variable "download_queue_visibility_timeout_seconds" {
   type = number
 }
 
+variable "download_queue_retry_count" {
+  type = number
+}
+
+variable "download_queue_retry_backoff_minutes" {
+  type = number
+}
+
 variable "download_blob_container_name" {
   type = string
 }

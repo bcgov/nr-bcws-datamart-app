@@ -20,14 +20,18 @@ public class DownloadJobScheduler {
 
     private final DownloadJobProcessorService downloadJobProcessorService;
 
+    private final EmailService emailService;
+
     public DownloadJobScheduler(
             DownloadSchedulerProperties properties,
             QueueService queueService,
-            DownloadJobProcessorService downloadJobProcessorService) {
+            DownloadJobProcessorService downloadJobProcessorService,
+            EmailService emailService) {
 
         this.properties = properties;
         this.queueService = queueService;
         this.downloadJobProcessorService = downloadJobProcessorService;
+        this.emailService = emailService;
     }
 
     @Scheduled(cron = "${download.scheduler.cron}")
@@ -48,19 +52,27 @@ public class DownloadJobScheduler {
                 logger.info( "{} messages on queue",
                 queueService.totalMessages());
 
-                QueuedDownloadJob queuedJob = queueService.dequeueMessage();
+                QueuedDownloadJob queuedJob = queueService.dequeueMessage(properties.getVisibilityTimeoutSeconds());
+
+                if (queuedJob == null) {
+                    continue;
+                }
             
                 logger.info("Retrieved queued job {}", queuedJob.getMessageId());
 
-                downloadJobProcessorService.process(queuedJob);
+                try {
 
-                queueService.deleteMessage(
-                    queuedJob.getMessageId(),
-                    queuedJob.getPopReceipt());
+                    downloadJobProcessorService.process(queuedJob);
 
-                processedMessageCount += 1;
+                    queueService.deleteMessage(
+                        queuedJob.getMessageId(),
+                        queuedJob.getPopReceipt());
 
-                logger.info("Removed queued job {}", queuedJob.getMessageId());
+                    processedMessageCount += 1;
+                    logger.info("Removed queued job {}", queuedJob.getMessageId());
+                } catch (Exception e) {
+                    handleRetry(queuedJob, e);
+                }
             }
         } catch (Exception e) {
                 logger.error(
@@ -75,6 +87,49 @@ public class DownloadJobScheduler {
         }
 
 
+    }
+
+    private void handleRetry(QueuedDownloadJob queuedJob, Exception exception) {
+
+        logger.error(
+            "Failed processing job {} on attempt {}",
+            queuedJob.getJob().getJobId(),
+            queuedJob.getDequeueCount(),
+            exception);
+
+        if (queuedJob.getDequeueCount() >= properties.getRetryCount()) {
+
+            logger.error(
+                "Job {} exceeded maximum retry count of {}. Removing message from queue.",
+                queuedJob.getJob().getJobId(),
+                properties.getRetryCount());
+
+            queueService.deleteMessage(
+                queuedJob.getMessageId(),
+                queuedJob.getPopReceipt());
+
+            if (queuedJob.getJob().getEmailAddress() != null
+                    && !queuedJob.getJob().getEmailAddress().isBlank()) {
+
+                emailService.sendDownloadFailedEmail(queuedJob.getJob().getEmailAddress(),
+                    "Download processing failed after " + properties.getRetryCount() + " attempts.");
+            }
+
+            return;
+        }
+
+        long retryDelayMinutes = properties.getRetryBackoffMinutes() * (long) Math.pow(2, queuedJob.getDequeueCount() - 1);
+
+        logger.warn(
+            "Job {} scheduled for retry {} in {} minute(s)",
+            queuedJob.getJob().getJobId(),
+            queuedJob.getDequeueCount() + 1,
+            retryDelayMinutes);
+
+        queueService.updateVisibilityTimeout(
+            queuedJob.getMessageId(),
+            queuedJob.getPopReceipt(),
+            retryDelayMinutes);
     }
 
 }

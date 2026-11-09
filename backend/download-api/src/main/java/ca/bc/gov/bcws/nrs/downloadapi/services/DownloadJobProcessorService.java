@@ -117,11 +117,6 @@ public class DownloadJobProcessorService {
                 queuedJob.getJob().getJobId(),
                 e);
 
-            if (queuedJob.getJob().getEmailAddress() != null && !queuedJob.getJob().getEmailAddress().isBlank()) {
-
-                emailService.sendDownloadFailedEmail(queuedJob.getJob().getEmailAddress(), e.getMessage());
-                }
-
             throw new IllegalStateException(
                 "Failed processing download job",
                 e);

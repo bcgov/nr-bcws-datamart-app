@@ -1,13 +1,17 @@
 package ca.bc.gov.bcws.nrs.downloadapi.services;
 
+import com.azure.core.util.Context;
 import com.azure.storage.queue.QueueClient;
 import com.azure.storage.queue.models.PeekedMessageItem;
 import com.azure.storage.queue.models.QueueMessageItem;
 import com.azure.storage.queue.models.QueueProperties;
+import com.azure.storage.queue.models.UpdateMessageResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +57,18 @@ public class QueueService {
         }
     }
 
-    public QueuedDownloadJob dequeueMessage() {
+    public QueuedDownloadJob dequeueMessage( int visibilityTimeoutSeconds) {
 
         try {
 
-            QueueMessageItem message = queueClient.receiveMessage();
+            QueueMessageItem message = queueClient.receiveMessages(
+                1,
+                Duration.ofSeconds(visibilityTimeoutSeconds),
+                null,
+                Context.NONE)
+            .stream()
+            .findFirst()
+            .orElse(null);
 
             if (message == null) {
                 return null;
@@ -121,6 +132,19 @@ public class QueueService {
        QueueProperties properties = queueClient.getProperties();
        int messageCount = properties.getApproximateMessagesCount();
        return messageCount;
+    }
+
+    public void  updateVisibilityTimeout(
+            String messageId,
+            String popReceipt,
+            long visibilityTimeoutMinutes) {
+
+        UpdateMessageResult result = queueClient.updateMessage(
+            messageId,
+            popReceipt,
+            null,
+            Duration.ofMinutes(visibilityTimeoutMinutes));
+
     }
 
     

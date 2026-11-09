@@ -186,6 +186,9 @@ module "download_api_site" {
     DOWNLOAD_SCHEDULER_ENABLED = tostring(var.download_scheduler_enabled)
     DOWNLOAD_SCHEDULER_CRON = var.download_scheduler_cron
     DOWNLOAD_QUEUE_VISIBILITY_TIMEOUT_SECONDS = tostring(var.download_queue_visibility_timeout_seconds)
+    DOWNLOAD_QUEUE_RETRY_COUNT = tostring(var.download_queue_retry_count)
+    DOWNLOAD_QUEUE_RETRY_BACKOFF_MINUTES = tostring(var.download_queue_retry_backoff_minutes)
+
   }
 
   logs = {

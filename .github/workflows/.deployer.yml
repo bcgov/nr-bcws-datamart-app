@@ -138,6 +138,8 @@ jobs:
           echo "TF_VAR_download_scheduler_enabled=${{ vars.DOWNLOAD_SCHEDULER_ENABLED }}" >> "$GITHUB_ENV"
           echo "TF_VAR_download_scheduler_cron=${{ vars.DOWNLOAD_SCHEDULER_CRON }}" >> "$GITHUB_ENV"
           echo "TF_VAR_download_queue_visibility_timeout_seconds=${{ vars.DOWNLOAD_QUEUE_VISIBILITY_TIMEOUT_SECONDS }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_download_queue_retry_count=${{ vars.DOWNLOAD_QUEUE_RETRY_COUNT }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_download_queue_retry_backoff_minutes=${{ vars.DOWNLOAD_QUEUE_RETRY_BACKOFF_MINUTES }}" >> "$GITHUB_ENV"
           
           echo "TF_VAR_bc_notify_api_key=${{ secrets.BC_NOTIFY_API_KEY }}" >> "$GITHUB_ENV"
           echo "TF_VAR_bc_notify_download_success_template_id=${{ vars.BC_NOTIFY_DOWNLOAD_SUCCESS_TEMPLATE_ID }}" >> "$GITHUB_ENV"

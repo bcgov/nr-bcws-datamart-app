@@ -45,6 +45,16 @@ variable "download_queue_visibility_timeout_seconds" {
   default = 300
 }
 
+variable "download_queue_retry_count" {
+  type    = number
+  default = 5
+}
+
+variable "download_queue_retry_backoff_minutes" {
+  type    = number
+  default = 5
+}
+
 
 variable "bc_notify_api_key" {
   description = "GC Notify (BC Notify) API key used by the Download API. Supplied from the BC_NOTIFY_API_KEY GitHub environment secret."

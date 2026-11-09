@@ -185,6 +185,8 @@ module "backend" {
   download_scheduler_enabled                  = var.download_scheduler_enabled
   download_scheduler_cron                     = var.download_scheduler_cron
   download_queue_visibility_timeout_seconds   = var.download_queue_visibility_timeout_seconds
+  download_queue_retry_count                  = var.download_queue_retry_count
+  download_queue_retry_backoff_minutes        = var.download_queue_retry_backoff_minutes
 
   depends_on = [module.frontend]
 }
