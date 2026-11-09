@@ -36,7 +36,7 @@ export class DatamartGraphqlApiService {
                     ${ after }
                     filter: {
                         WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
-                        station: { STATION_CODE: { in: [${ stationCodes.join(',')}] } }
+                        ${ makeInFilter( stationCodes, ( cl ) => `{ station: { STATION_CODE: { ${ cl } } } }` ) }
                     }
                     orderBy: {
                         WEATHER_TIMESTAMP: ASC,
@@ -71,7 +71,7 @@ export class DatamartGraphqlApiService {
                     ${ after }
                     filter: {
                         WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
-                        station: { STATION_CODE: { in: [${ stationCodes.join(',')}] } }
+                        ${ makeInFilter( stationCodes, ( cl ) => `{ station: { STATION_CODE: { ${ cl } } } }` ) }
                     }
                     orderBy: {
                         WEATHER_TIMESTAMP: ASC,
@@ -112,7 +112,7 @@ export class DatamartGraphqlApiService {
                     daily_weathers(
                         filter: {
                             WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
-                            station: { STATION_CODE: { in: [${ stationCodes.join(',')}] } }
+                            ${ makeInFilter( stationCodes, ( cl ) => `{ station: { STATION_CODE: { ${ cl } } } }` ) }
                         }
                     ) {               
                         groupBy {
@@ -136,7 +136,7 @@ export class DatamartGraphqlApiService {
                     hourly_weathers(
                         filter: {
                             WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
-                            station: { STATION_CODE: { in: [${ stationCodes.join(',')}] } }
+                            ${ makeInFilter( stationCodes, ( cl ) => `{ station: { STATION_CODE: { ${ cl } } } }` ) }
                         }
                     ) {               
                         groupBy {
@@ -222,4 +222,24 @@ export class DatamartGraphqlApiService {
 
 export function compact( s: string ): string {
     return s.replace( /\s+/g, ' ' )
+}
+
+export function makeInFilter( vals: any[], wrapper: ( s: string ) => string  ) {
+    let c = vals.length 
+    let bs = Math.floor( c / Math.ceil( c / 100 ) )
+    let blk: any[] = []
+    let blks: any[] = [ blk ]
+    vals.forEach( v => {
+        if ( blk.length < bs ) {
+            blk.push( v )
+            return
+        }
+
+        blk = [ v ]
+        blks.push( blk )
+    } )
+
+    if ( blks.length == 1 ) return wrapper( `in: [${ blks[0].join(',')}]` )
+
+    return 'or: [' + blks.map( bl => wrapper( `in: [${ bl.join(',')}]` ) ).join( ' ' ) + ']'
 }
