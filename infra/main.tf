@@ -180,6 +180,7 @@ module "backend" {
   download_queue_identity_client_id = module.storage.download_queue_identity_client_id
   download_blob_identity_id        = module.storage.download_blob_identity_id
   download_blob_identity_client_id = module.storage.download_blob_identity_client_id
+  download_blob_container_name     = module.storage.download_blob_container_name
 
   download_scheduler_enabled                  = var.download_scheduler_enabled
   download_scheduler_cron                     = var.download_scheduler_cron

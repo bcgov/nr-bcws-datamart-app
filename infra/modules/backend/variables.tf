@@ -44,6 +44,10 @@ variable "download_queue_visibility_timeout_seconds" {
   type = number
 }
 
+variable "download_blob_container_name" {
+  type = string
+}
+
 
 variable "bc_notify_api_key" {
   description = "BC Notify API key passed to the Download API as the BC_NOTIFY_API_KEY app setting."
