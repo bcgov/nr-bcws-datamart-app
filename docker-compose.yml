@@ -17,6 +17,7 @@ services:
     environment:
       DATAMART_GRAPHQL_URL: http://backend:5000/graphql
       DOWNLOAD_QUEUE_NAME: downloads
+      BC_NOTIFY_API_KEY: ${BC_NOTIFY_API_KEY:-}
       DOWNLOAD_QUEUE_CONNECTION_STRING: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;"
       
     ports:
