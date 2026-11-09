@@ -32,7 +32,7 @@
             "isQueryable": true,
             "useClustering": false,
             "isInternal": true,
-            "titleAttribute": "station_name",
+            "titleAttribute": "STATION_NAME",
             "popupTemplate": "<div id='weatherStationPopup'>{{ window.weatherStationPopup( feature ) }}</div>",
             "opacity": 0.85,    
             "style": {
@@ -79,7 +79,8 @@
             "showWidget": true,
             "command": {
                 "select": false,
-                "nearBy": false
+                "nearBy": false,
+                "zoom": false
             },
             "radius": 20,
             "radiusUnit": "px",

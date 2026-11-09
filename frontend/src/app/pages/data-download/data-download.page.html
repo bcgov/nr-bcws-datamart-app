@@ -45,7 +45,7 @@
         }
 
         @if ( filter.dailyColumns.length > 0 ) {
-            <nrcl-tab label="Daily Weather Data">
+            <nrcl-tab label="Daily weather data">
                 <ng-template nrclTabContent>
                     <data-download-list-daily #list
                         [startDate]="filter.startDate"
@@ -59,7 +59,7 @@
         }
 
         @if ( filter.hourlyColumns.length > 0 ) {
-            <nrcl-tab label="Hourly Weather Data">
+            <nrcl-tab label="Hourly weather data">
                 <ng-template nrclTabContent>
                     <data-download-list-hourly #list
                         [startDate]="filter.startDate"
