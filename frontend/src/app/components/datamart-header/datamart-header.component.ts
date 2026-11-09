@@ -30,6 +30,7 @@ export class DataMartHeaderComponent implements OnInit, OnDestroy {
     router = inject( Router )
     changeDetectorRef = inject( ChangeDetectorRef )
 
+    @Input() showSelectedStations = true
     @Input() isLoading = false
 
     selectedCount = 0;
