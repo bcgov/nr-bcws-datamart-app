@@ -9,7 +9,6 @@ import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.s
 type Example = {
     label: string
     query: string
-    name: string
 }
 
 @Component( {
@@ -38,7 +37,6 @@ export class GraphqlExplorerPage implements OnInit {
     examples: Example[] = [
         {
             label: 'Daily Weather, first 5',
-            name: 'daily_weathers',
             query: `
                 query {
                     daily_weathers(first: 5) {
@@ -62,7 +60,6 @@ export class GraphqlExplorerPage implements OnInit {
         },
         {
             label: 'Hourly Weather, first 5',
-            name: 'hourly_weathers',
             query: `
                 query {
                     hourly_weathers(first: 5) {
@@ -86,41 +83,41 @@ export class GraphqlExplorerPage implements OnInit {
         },
         {
             label: 'Weather Stations, first 10',
-            name: 'weather_stations',
             query: `
                 query {
                     weather_stations(first: 10) {
                         items {
-                            weather_station_guid
-                            station_name
-                            station_acronym
-                            station_status_code
-                            site_type_desc
-                            weather_zone_desc
-                            latitude
-                            longitude
-                            elevation_m
+                            WEATHER_STATION_GUID
+                            STATION_NAME
+                            STATION_ACRONYM
+                            STATION_STATUS_CODE
+                            SITE_TYPE_DESC
+                            WEATHER_ZONE_DESC
+                            LATITUDE
+                            LONGITUDE
+                            ELEVATION_M
                         }
                     }
                 }
             `
         },
         {
-            label: 'Org Units, first 10',
-            name: 'org_units',
+            label: 'Org Units type information',
             query: `
-                query {
-                    org_units(first: 10) {
-                        items {
-                            FIRE_ZONE_ORG_UNIT_IDENTIFIER
-                        }
-                    }
+                query Inspect { 
+                    __type(name: "org_units") { 
+                        fields { 
+                            name 
+                            type { 
+                                name                                
+                            } 
+                        } 
+                    } 
                 }
             `
         },
         {
             label: 'Daily Weather, first 10, filtered',
-            name: 'daily_weathers',
             query: `
                 query {
                     daily_weathers(
@@ -143,7 +140,6 @@ export class GraphqlExplorerPage implements OnInit {
     ]
 
     query = ''
-    queryName = ''
     result = ''
     wide = true
 
@@ -152,18 +148,15 @@ export class GraphqlExplorerPage implements OnInit {
     }
 
     onExampleClick( ex: Example ) {
-        // this.query = '# ' + ex.label + '\n\n' + format( ex.query )
         this.query = format( ex.query )
-        this.queryName = ex.name
     }
 
     onRunQueryClick() {
         this.result = 'Working...'
         this.changeDetectorRef.detectChanges()
 
-        this.datamartGraphqlApiService.fetchGraphQL<any>( this.queryName, this.query )
+        this.datamartGraphqlApiService.fetchGraphQL( this.query )
             .then( res => {
-                console.log(res)
                 this.result = JSON.stringify( res, null, '  ' )
             } )
             .catch( err => {
@@ -186,8 +179,6 @@ export class GraphqlExplorerPage implements OnInit {
 
         this.wide = width > height
     }
-
-
 }
 
 function format( text: string ): string {
