@@ -34,6 +34,10 @@ export class StationSelectionPage implements OnInit {
     dialogService = inject(DialogService)
     router = inject(Router)
 
+    get isLoading() {
+        return this.weatherStationService.isLoading
+    }
+    
     ngOnInit(): void {
         // hack to make page load properly
         setTimeout(() => {

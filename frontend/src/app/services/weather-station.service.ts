@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { ChangeDetectorRef, inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Filter } from '../pages/station-selection/filters/station-selection-filters.component';
 import { DatamartRestApiService } from './datamart-rest-api.service';
@@ -22,6 +22,7 @@ export type WeatherStationFeature = GeoJsonPoint<WeatherStation>
 export class WeatherStationService {
     datamartRestApiService = inject( DatamartRestApiService )
     snackbarUtilService = inject( SnackbarUtilService )
+    changeDetectorRef = inject( ChangeDetectorRef )
 
     private readonly stationsSubject = new BehaviorSubject<any[]>([]);
     
@@ -33,6 +34,8 @@ export class WeatherStationService {
 
     private _stations?: GeoJsonPoint<WeatherStation>[]
 
+    isLoading = false
+
     get totalCount() {
         return this._totalCount
     }
@@ -42,6 +45,9 @@ export class WeatherStationService {
     }
 
     initialize() {
+        this.isLoading = true
+        this.changeDetectorRef.detectChanges()
+
         this.loadStations()
             .then( stations => {
                 this._totalCount = stations.length
@@ -50,6 +56,10 @@ export class WeatherStationService {
             } )
             .catch( err => {
                 this.snackbarUtilService.error( err )
+            } )
+            .finally( () => {
+                this.isLoading = false
+                this.changeDetectorRef.detectChanges()
             } )
     }
 
