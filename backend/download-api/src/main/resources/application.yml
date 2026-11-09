@@ -27,6 +27,14 @@ download:
     cron: ${DOWNLOAD_SCHEDULER_CRON:0 */5 * * * *}
     visibility-timeout-seconds: ${DOWNLOAD_QUEUE_VISIBILITY_TIMEOUT_SECONDS:300}
 
+bc:
+  notify:
+    api-key: ${BC_NOTIFY_API_KEY:}
+    email-endpoint: ${BC_NOTIFY_EMAIL_ENDPOINT:https://notify.digital.gov.bc.ca/api/v1/notifysimple/email}
+    templates:
+      download-success: ${BC_NOTIFY_DOWNLOAD_SUCCESS_TEMPLATE_ID:}
+      download-failure: ${BC_NOTIFY_DOWNLOAD_FAILURE_TEMPLATE_ID:}
+
 management:
   endpoints:
     web:

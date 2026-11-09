@@ -51,6 +51,26 @@ variable "bc_notify_api_key" {
   default     = ""
 }
 
+variable "bc_notify_email_endpoint" {
+  description = "BC Notify email endpoint URL."
+  type        = string
+  default     = "https://notify.digital.gov.bc.ca/api/v1/notifysimple/email"
+}
+
+variable "bc_notify_download_success_template_id" {
+  description = "Template ID to be provided to BC notify for use in selecting which success email wording to send."
+  type        = string
+  default     = ""
+}
+
+
+variable "bc_notify_download_failure_template_id" {
+  description = "Template ID to be provided to BC notify for use in selecting which failure email wording to send."
+  type        = string
+  default     = ""
+}
+
+
 
 variable "datamart_timeout_seconds" {
   description = "Timeout in seconds for calls to Datamart API."

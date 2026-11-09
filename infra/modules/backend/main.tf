@@ -165,6 +165,10 @@ module "download_api_site" {
     DOWNLOAD_SYNC_THRESHOLD  = tostring(var.download_sync_threshold)
     DOWNLOAD_PAGE_SIZE       = tostring(var.download_page_size)
     BC_NOTIFY_API_KEY        = var.bc_notify_api_key
+    BC_NOTIFY_EMAIL_ENDPOINT = var.bc_notify_email_endpoint
+    BC_NOTIFY_DOWNLOAD_SUCCESS_TEMPLATE_ID = var.bc_notify_download_success_template_id
+    BC_NOTIFY_DOWNLOAD_FAILURE_TEMPLATE_ID = var.bc_notify_download_failure_template_id
+
 
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY        = var.appinsights_instrumentation_key

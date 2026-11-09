@@ -169,6 +169,10 @@ module "backend" {
   download_sync_threshold  = var.download_sync_threshold
   download_page_size = var.download_page_size
   bc_notify_api_key  = var.bc_notify_api_key
+  bc_notify_email_endpoint = var.bc_notify_email_endpoint
+  bc_notify_download_success_template_id = var.bc_notify_download_success_template_id
+  bc_notify_download_failure_template_id = var.bc_notify_download_failure_template_id
+  
 
   storage_account_name = module.storage.storage_account_name
   download_queue_name  = module.storage.download_queue_name

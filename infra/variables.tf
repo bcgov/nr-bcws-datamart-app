@@ -52,6 +52,24 @@ variable "bc_notify_api_key" {
   default     = ""
 }
 
+variable "bc_notify_email_endpoint" {
+  description = "BC Notify email endpoint URL."
+  type        = string
+  default     = "https://notify.digital.gov.bc.ca/api/v1/notifysimple/email"
+}
+
+variable "bc_notify_download_success_template_id" {
+  description = "The BC_NOTIFY_DOWNLOAD_SUCCESS_TEMPLATE_ID GITHUB environment variable of the success template ID used by the Download API."
+  type        = string
+  default     = ""
+}
+
+variable "bc_notify_download_failure_template_id" {
+  description = "The BC_NOTIFY_DOWNLOAD_FAILURE_TEMPLATE_ID GITHUB environment variable of the failure template ID used by the Download API."
+  type        = string
+  default     = ""
+}
+
 variable "app_env" {
   description = "Application environment (dev, test, prod)"
   type        = string
