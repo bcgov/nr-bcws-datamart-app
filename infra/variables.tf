@@ -207,7 +207,7 @@ variable "enable_frontdoor" {
 variable "frontdoor_sku_name" {
   description = "SKU name for the Front Door"
   type        = string
-  default     = "Standard_AzureFrontDoor"
+  default     = "Premium_AzureFrontDoor"
 
   validation {
     condition     = contains(["Standard_AzureFrontDoor", "Premium_AzureFrontDoor"], var.frontdoor_sku_name)
