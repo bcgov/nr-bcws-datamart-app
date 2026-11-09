@@ -183,8 +183,8 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "unified_firewall_policy" {
   dynamic "managed_rule" {
     for_each = var.frontdoor_sku_name == "Premium_AzureFrontDoor" ? [
       {
-        type    = "DefaultRuleSet"
-        version = "1.0"
+        type    = "Microsoft_DefaultRuleSet"
+        version = "2.1"
         action  = "Log"
       },
       {
