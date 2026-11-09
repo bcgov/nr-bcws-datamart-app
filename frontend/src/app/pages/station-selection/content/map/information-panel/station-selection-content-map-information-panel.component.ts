@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { ButtonComponent, IndicatorComponent } from '@bcgov/nr-ngx-component-lib';
 import { SelectedWeatherStationsService } from '../../../../../services/selected-weather-stations.service';
+import { formatTableDate } from '../../../../../util';
 
 @Component({
     selector: 'station-selection-content-map-information-panel',
@@ -22,10 +23,27 @@ export class StationSelectionContentMapInformationPanelComponent {
 
     @Input() feature: any;
 
-    display(value: any): string {
-        return value === null || value === undefined || value === ''
-            ? '–'
-            : String(value);
+    formatNumber( val: any, decimals: number ): string|undefined {
+        if ( val == null ) return
+        let n = Number( val )
+        return n.toFixed( decimals )
+    }
+
+    formatWindspeed( val: any ): string|undefined {
+        if ( val == null ) return
+        let ws = String( val ).split( '_' )
+        return `${ ws[ 0 ] } m - ${ ws[ 1 ] } m`
+    }
+
+    formatBoolean( val: any ): string|undefined {
+        if ( val == null ) return
+        if ( val == 'N' ) return 'No'
+        if ( val == 'Y' ) return 'Yes'
+        return val
+    }
+
+    formatDate( val: any ): string|undefined {
+        return formatTableDate( val )
     }
 
     get isSelected(): boolean {
@@ -38,33 +56,5 @@ export class StationSelectionContentMapInformationPanelComponent {
 
     onRemoveStation(): void {
         this.selectedWeatherStationsService.removeStation(this.feature);
-    }
-
-    get installationDate(): string {
-        if (!this.feature.properties?.INSTALLATION_TIMESTAMP_MSEC) {
-            return '–';
-        }
-
-        return new Date(
-            this.feature.properties.INSTALLATION_TIMESTAMP_MSEC,
-        ).toLocaleDateString();
-    }
-
-    get indicatorClass(): string {
-        switch (this.feature.properties?.STATION_STATUS_CODE) {
-            case 'ACTIVE':
-                return 'future';
-
-            case 'ARCHIVED':
-            case 'DISABLED':
-                return 'active';
-
-            case 'PROJECT':
-            case 'TEST':
-                return 'ok';
-
-            default:
-                return 'none';
-        }
     }
 }
