@@ -68,7 +68,8 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     dailyReportColumns: CodeDescriptionHeading[] = []
     metadataColumns: CodeDescriptionHeading[] = []
     selectedStationsSubscription?: Subscription
-    totalRowCount = 0
+    dailyRowCount = 0
+    hourlyRowCount = 0
 
     showDownloadWarning = false
 
@@ -196,7 +197,8 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     }
 
     get enableDownload() {
-        return this.totalRowCount > 0 && this.totalRowCount < this.MAX_TOTAL_ROW_COUNT
+        let t = this.dailyRowCount + this.hourlyRowCount
+        return t > 0 && t < this.MAX_TOTAL_ROW_COUNT
     }
 
     onDownloadClick() {
@@ -260,31 +262,28 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
     updateTotalRowCount() {
         let stationCodes = this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE )
-        this.totalRowCount = 0
+        this.dailyRowCount = 0
+        this.hourlyRowCount = 0
         this.showDownloadWarning = false
         this.startLoading()
-        this.changeDetectorRef.detectChanges()
 
-        return Promise.resolve( 0 )
-            .then( ( sum ) => {
-                if ( this.filter.dailyColumns.length == 0 ) return sum
+        return Promise.resolve()
+            .then( () => {
+                if ( this.filter.dailyColumns.length == 0 ) return 
                 return this.datamartGraphqlApiService.getDailyWeatherCount( this.filter.startDate!, this.filter.endDate!, stationCodes )
                     .then( res => {
-                        return sum + res
+                        this.dailyRowCount = res
                     } )
             } )
-            .then( ( sum ) => {
-                if ( this.filter.hourlyColumns.length == 0 ) return sum
+            .then( () => {
+                if ( this.filter.hourlyColumns.length == 0 ) return 
                 return this.datamartGraphqlApiService.getHourlyWeatherCount( this.filter.startDate!, this.filter.endDate!, stationCodes )
                     .then( res => {
-                        return sum + res
+                        this.hourlyRowCount = res
                     } )
             } )
             .then( ( sum ) => {
-                this.totalRowCount = sum
-                this.showDownloadWarning = this.totalRowCount > this.MAX_TOTAL_ROW_COUNT 
-
-                this.changeDetectorRef.detectChanges()
+                this.showDownloadWarning = ( this.dailyRowCount + this.hourlyRowCount ) > this.MAX_TOTAL_ROW_COUNT 
             } )
             .catch( err => {
                 console.warn( JSON.stringify( err, null, '  ' ) )
@@ -297,5 +296,15 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     
     onCloseWarningClick() {
         this.showDownloadWarning = false
+    }
+
+    get dailyTabHeader() {
+        let c = this.dailyRowCount
+        return `Daily weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : c + ' records' })`
+    }
+
+    get hourlyTabHeader() {
+        let c = this.hourlyRowCount
+        return `Hourly weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : c + ' records' })`
     }
 }
