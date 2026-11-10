@@ -45,7 +45,7 @@
         }
 
         @if ( filter.dailyColumns.length > 0 ) {
-            <nrcl-tab label="Daily weather data">
+            <nrcl-tab [label]="dailyTabHeader">
                 <ng-template nrclTabContent>
                     <data-download-list-daily #list
                         [startDate]="filter.startDate"
@@ -59,7 +59,7 @@
         }
 
         @if ( filter.hourlyColumns.length > 0 ) {
-            <nrcl-tab label="Hourly weather data">
+            <nrcl-tab [label]="hourlyTabHeader">
                 <ng-template nrclTabContent>
                     <data-download-list-hourly #list
                         [startDate]="filter.startDate"
@@ -74,7 +74,7 @@
     </nrcl-tab-group>
 
     <div class="actions">
-        <nrcl-filter-container
+        <!-- <nrcl-filter-container
             label="Row Count"            
             wide="1"
         >
@@ -84,7 +84,7 @@
                 {{ totalRowCount }}
             </div>
         </nrcl-filter-container>
-
+ -->
         <nrcl-button primary
             label="Download"
             icon="download"
