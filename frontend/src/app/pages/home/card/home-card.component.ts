@@ -14,8 +14,6 @@ import { IconComponent } from '@bcgov/nr-ngx-component-lib';
 })
 export class HomeCardComponent {
     @Input() title = '';
-    @Input() description = '';
     @Input() icon = '';
     @Input() route?: string;
-    @Input() externalUrl?: string;
 }
