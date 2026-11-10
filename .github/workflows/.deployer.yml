@@ -145,6 +145,7 @@ jobs:
           echo "TF_VAR_bc_notify_download_success_template_id=${{ vars.BC_NOTIFY_DOWNLOAD_SUCCESS_TEMPLATE_ID }}" >> "$GITHUB_ENV"
           echo "TF_VAR_bc_notify_download_failure_template_id=${{ vars.BC_NOTIFY_DOWNLOAD_FAILURE_TEMPLATE_ID }}" >> "$GITHUB_ENV"
           echo "TF_VAR_bc_notify_email_endpoint=${{ vars.BC_NOTIFY_EMAIL_ENDPOINT }}" >> "$GITHUB_ENV"
+          echo "TF_VAR_bc_notify_admin_email=${{ vars.BC_NOTIFY_ADMIN_EMAIL }}" >> "$GITHUB_ENV"
           
           echo "TF_VAR_frontend_image=ghcr.io/${{ github.repository }}/frontend:${{ inputs.tag }}" >> "$GITHUB_ENV"
           echo "TF_VAR_fabric_sql_connection_string=${{ secrets.FABRIC_SQL_CONNECTION_STRING }}" >> "$GITHUB_ENV"

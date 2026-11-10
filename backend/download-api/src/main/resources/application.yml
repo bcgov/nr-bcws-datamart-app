@@ -33,6 +33,7 @@ bc:
   notify:
     api-key: ${BC_NOTIFY_API_KEY:}
     email-endpoint: ${BC_NOTIFY_EMAIL_ENDPOINT:https://notify.digital.gov.bc.ca/api/v1/notifysimple/email}
+    admin-email: ${BC_NOTIFY_ADMIN_EMAIL:wfwx_team@vividsolutions.microsoftonline.com}
     templates:
       download-success: ${BC_NOTIFY_DOWNLOAD_SUCCESS_TEMPLATE_ID:9f259dcf-92c9-4254-b2dd-6eb175126805}
       download-failure: ${BC_NOTIFY_DOWNLOAD_FAILURE_TEMPLATE_ID:8d7c10f8-431e-4b31-91ae-aacafa758566}

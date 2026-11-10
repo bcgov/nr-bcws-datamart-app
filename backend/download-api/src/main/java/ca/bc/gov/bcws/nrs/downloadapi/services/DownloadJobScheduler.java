@@ -108,12 +108,33 @@ public class DownloadJobScheduler {
                 queuedJob.getMessageId(),
                 queuedJob.getPopReceipt());
 
-            if (queuedJob.getJob().getEmailAddress() != null
-                    && !queuedJob.getJob().getEmailAddress().isBlank()) {
+            if (queuedJob.getJob().getEmailAddress() != null && !queuedJob.getJob().getEmailAddress().isBlank()) {
 
                 emailService.sendDownloadFailedEmail(queuedJob.getJob().getEmailAddress(),
                     "Download processing failed after " + properties.getRetryCount() + " attempts.");
             }
+
+            emailService.sendAdminFailureEmail(
+                String.format(
+                    """
+                    Download job failed permanently.
+
+                    Job ID: %s
+                    User Email: %s
+                    Queue Message ID: %s
+                    Dequeue Count: %d
+                    Retry Limit: %d
+                    Exception Type: %s
+                    Error: %s
+                    """,
+                    queuedJob.getJob().getJobId(),
+                    queuedJob.getJob().getEmailAddress(),
+                    queuedJob.getMessageId(),
+                    queuedJob.getDequeueCount(),
+                    properties.getRetryCount(),
+                    exception.getClass().getSimpleName(),
+                    exception.getMessage()));
+                        
 
             return;
         }

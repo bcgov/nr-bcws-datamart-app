@@ -31,6 +31,9 @@ public class NotifyEmailService implements EmailService {
     @Value("${bc.notify.templates.download-failure}")
     private String downloadFailureTemplateId;
 
+    @Value("${bc.notify.admin-email}")
+    private String adminEmail;
+
     public NotifyEmailService(RestClient restClient) {
         this.restClient = restClient;
     }
@@ -91,5 +94,15 @@ public class NotifyEmailService implements EmailService {
             .body(request)
             .retrieve()
             .toBodilessEntity();
+    }
+
+    @Override
+    public void sendAdminFailureEmail(String reason) {
+
+        if (adminEmail == null || adminEmail.isBlank()) {
+            return;
+        }
+
+        sendDownloadFailedEmail(adminEmail, reason);
     }
 }

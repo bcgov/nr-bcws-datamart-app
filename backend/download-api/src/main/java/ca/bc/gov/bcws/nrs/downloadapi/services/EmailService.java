@@ -9,4 +9,7 @@ public interface EmailService {
     void sendDownloadFailedEmail(
         String emailAddress,
         String reason);
+
+    void sendAdminFailureEmail(
+        String reason);
 }

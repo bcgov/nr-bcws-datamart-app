@@ -69,6 +69,12 @@ variable "bc_notify_email_endpoint" {
   default     = "https://notify.digital.gov.bc.ca/api/v1/notifysimple/email"
 }
 
+variable "bc_notify_admin_email" {
+  description = "Admin email address for datamart download failures."
+  type        = string
+  default     = "wfwx_team@vividsolutions.microsoftonline.com"
+}
+
 variable "bc_notify_download_success_template_id" {
   description = "Template ID to be provided to BC notify for use in selecting which success email wording to send."
   type        = string

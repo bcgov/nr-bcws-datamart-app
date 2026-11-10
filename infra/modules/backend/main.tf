@@ -168,6 +168,7 @@ module "download_api_site" {
     BC_NOTIFY_EMAIL_ENDPOINT = var.bc_notify_email_endpoint
     BC_NOTIFY_DOWNLOAD_SUCCESS_TEMPLATE_ID = var.bc_notify_download_success_template_id
     BC_NOTIFY_DOWNLOAD_FAILURE_TEMPLATE_ID = var.bc_notify_download_failure_template_id
+    BC_NOTIFY_ADMIN_EMAIL   = var.bc_notify_admin_email
 
 
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
