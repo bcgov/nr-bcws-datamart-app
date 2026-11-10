@@ -99,6 +99,8 @@ public class NotifyEmailService implements EmailService {
     @Override
     public void sendAdminFailureEmail(String reason) {
 
+        logger.error("ADMIN ALERT - DOWNLOAD JOB FAILED\n{}", reason);
+
         if (adminEmail == null || adminEmail.isBlank()) {
             return;
         }
