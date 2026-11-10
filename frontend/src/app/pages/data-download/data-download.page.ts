@@ -13,6 +13,7 @@ import { DownloadList } from './list/data-download-list.base';
 import { ApplicationStateService } from '../../services/application-state.service';
 import { Subscription } from 'rxjs';
 import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
+import { GENERIC_FAILURE } from '../../util';
 
 @Component({
     selector: 'data-download-page',
@@ -223,7 +224,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
         )
             .catch( err => {
                 console.warn( JSON.stringify( err, null, '  ' ) )
-                this.snackbarUtilService.error( 'Failed to download data' )
+                this.snackbarUtilService.error( GENERIC_FAILURE )
             } )
             .finally( () => {
                 this.stopLoading()
@@ -287,7 +288,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
             } )
             .catch( err => {
                 console.warn( JSON.stringify( err, null, '  ' ) )
-                this.snackbarUtilService.error( 'Failed to get row count' )
+                this.snackbarUtilService.error( GENERIC_FAILURE )
             } )            
             .finally( () => {
                 this.stopLoading()

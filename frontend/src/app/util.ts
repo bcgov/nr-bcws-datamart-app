@@ -1,6 +1,8 @@
 import moment from "moment"
 import { Moment } from "moment"
 
+export const GENERIC_FAILURE = "We couldn't complete your request. Please try again later."
+
 export function formatApiDate( val: Moment|string|undefined ): string|undefined {
     if ( !val ) return
 
