@@ -36,7 +36,7 @@ export class DatamartGraphqlApiService {
                     ${ after }
                     filter: {
                         WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
-                        ${ makeInFilter( stationCodes, ( cl ) => `{ station: { STATION_CODE: { ${ cl } } } }` ) }
+                        ${ makeInFilter( stationCodes, ( cl ) => `station: { STATION_CODE: { ${ cl } } }` ) }
                     }
                     orderBy: {
                         WEATHER_TIMESTAMP: ASC,
@@ -71,7 +71,7 @@ export class DatamartGraphqlApiService {
                     ${ after }
                     filter: {
                         WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
-                        ${ makeInFilter( stationCodes, ( cl ) => `{ station: { STATION_CODE: { ${ cl } } } }` ) }
+                        ${ makeInFilter( stationCodes, ( cl ) => `station: { STATION_CODE: { ${ cl } } }` ) }
                     }
                     orderBy: {
                         WEATHER_TIMESTAMP: ASC,
@@ -112,7 +112,7 @@ export class DatamartGraphqlApiService {
                     daily_weathers(
                         filter: {
                             WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
-                            ${ makeInFilter( stationCodes, ( cl ) => `{ station: { STATION_CODE: { ${ cl } } } }` ) }
+                            ${ makeInFilter( stationCodes, ( cl ) => `station: { STATION_CODE: { ${ cl } } }` ) }
                         }
                     ) {               
                         groupBy {
@@ -136,7 +136,7 @@ export class DatamartGraphqlApiService {
                     hourly_weathers(
                         filter: {
                             WEATHER_TIMESTAMP: { gte: "${ formatApiDate( startDate ) }", lt: "${ formatApiDate( endDate ) }" }
-                            ${ makeInFilter( stationCodes, ( cl ) => `{ station: { STATION_CODE: { ${ cl } } } }` ) }
+                            ${ makeInFilter( stationCodes, ( cl ) => `station: { STATION_CODE: { ${ cl } } }` ) }
                         }
                     ) {               
                         groupBy {
