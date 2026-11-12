@@ -14,6 +14,7 @@ import { ApplicationStateService } from '../../services/application-state.servic
 import { Subscription } from 'rxjs';
 import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
 import { GENERIC_FAILURE } from '../../util';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
     selector: 'data-download-page',
@@ -44,6 +45,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     applicationStateService = inject(ApplicationStateService)
     changeDetectorRef = inject(ChangeDetectorRef)
     datamartGraphqlApiService = inject( DatamartGraphqlApiService )
+    dialogService = inject(DialogService)
 
     readonly MAX_TOTAL_ROW_COUNT = 10000
 
@@ -203,6 +205,24 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     }
 
     onDownloadClick() {
+        this.downloadData()
+    }
+
+    get enableAsyncDownload() {
+        let t = this.dailyRowCount + this.hourlyRowCount
+        return t > 0 
+    }
+
+    onEmailClick() {
+        this.dialogService.openDataDownloadAsyncDownloadDialog({}).afterClosed().toPromise()
+            .then ( res => {
+                if ( res == 'cancel' ) return
+
+                return this.downloadData( res?.email )
+            } )
+    }
+
+    downloadData( email?: string ) {
         this.startLoading()
 
         let daily: string[] = []
@@ -220,7 +240,8 @@ export class DataDownloadPage implements OnInit, OnDestroy {
             this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ),
             daily,
             hourly,
-            metadata
+            metadata,
+            email
         )
             .catch( err => {
                 console.warn( JSON.stringify( err, null, '  ' ) )
@@ -231,9 +252,6 @@ export class DataDownloadPage implements OnInit, OnDestroy {
             } )
     }
 
-    onEmailClick() {
-
-    }
 
     getQueryParams(): Record<string,string> {
         return {

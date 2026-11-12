@@ -176,6 +176,12 @@ export class DatamartGraphqlApiService {
         } )
             .then( res => {
                 if ( !res.ok ) throw Error( 'HTTP error: ' + res.statusText )
+
+                if ( emailAddress ) {
+                    return res.json()
+                        .then( console.log )
+                }
+
                 let disposition = res.headers.get( 'content-disposition' )
                 let filename = disposition?.match( /filename="(.+)"/ )?.[1]
 

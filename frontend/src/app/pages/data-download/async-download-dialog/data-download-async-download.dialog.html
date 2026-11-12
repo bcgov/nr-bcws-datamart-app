@@ -1,0 +1,42 @@
+<nrcl-dialog
+    title="Email download link"
+    [showClose]="true"
+    [showWarning]="false"
+    saveLabel="Email download link"
+    [saveEnabled]="saveEnabled"
+    (saveClick)="onSaveClick()"
+    cancelLabel="Cancel"
+    [cancelEnabled]="true"
+    (cancelClick)="onCancelClick()"
+>
+    <p>
+        We'll prepare your results and email you a download link when they're ready. 
+        Large exports may take several minutes to prepare.
+    </p>
+
+    <nrcl-gap/>
+
+    <mat-form-field appearance="outline" class="email">
+        <mat-label>Email address</mat-label>
+        
+        <input matInput type="email" 
+            [formControl]="email"
+        >
+
+        @if ( email.hasError( 'email' ) ) {
+            <mat-error>
+                Invalid email address
+            </mat-error>
+        } 
+        @else if ( email.hasError( 'required' ) ) {
+            <mat-error>
+                Email address is required
+            </mat-error>
+        }
+    </mat-form-field>
+
+    <p>
+        We'll only use your email address to send the download link.
+        Your download link will expire after 7 days.
+    </p>
+</nrcl-dialog>
