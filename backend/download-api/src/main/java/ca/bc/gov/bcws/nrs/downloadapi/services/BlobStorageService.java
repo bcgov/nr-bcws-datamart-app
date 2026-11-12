@@ -39,6 +39,10 @@ public class BlobStorageService {
     }
 
     public String uploadFile(Path file) {
+        
+        logger.info("About to retrieve blobContainerClient name '{}' with container URL '{}'",
+            blobContainerClient.getBlobContainerName(),
+            blobContainerClient.getBlobContainerUrl());
 
         BlobClient blobClient = blobContainerClient.getBlobClient(file.getFileName().toString());
 
