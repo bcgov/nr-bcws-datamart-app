@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import ca.bc.gov.bcws.nrs.downloadapi.config.DownloadSchedulerProperties;
+import ca.bc.gov.bcws.nrs.downloadapi.exceptions.InvalidQueueMessageException;
 import ca.bc.gov.bcws.nrs.downloadapi.models.QueuedDownloadJob;
 
 
@@ -48,36 +49,63 @@ public class DownloadJobScheduler {
             
 
             while (queueService.messageAvailable()){
-
-                logger.info( "{} messages on queue",
-                queueService.totalMessages());
-
-                QueuedDownloadJob queuedJob = queueService.dequeueMessage(properties.getVisibilityTimeoutSeconds());
-
-                if (queuedJob == null) {
-                    continue;
-                }
-            
-                logger.info("Retrieved queued job {}", queuedJob.getMessageId());
-
                 try {
+                    logger.info( "{} messages on queue",
+                    queueService.totalMessages());
 
-                    downloadJobProcessorService.process(queuedJob);
+                    QueuedDownloadJob queuedJob = queueService.dequeueMessage(properties.getVisibilityTimeoutSeconds());
 
-                    queueService.deleteMessage(
-                        queuedJob.getMessageId(),
-                        queuedJob.getPopReceipt());
+                    if (queuedJob == null) {
+                        continue;
+                    }
+                
+                    logger.info("Retrieved queued job {}", queuedJob.getMessageId());
 
-                    processedMessageCount += 1;
-                    logger.info("Removed queued job {}", queuedJob.getMessageId());
-                } catch (Exception e) {
-                    handleRetry(queuedJob, e);
-                }
+                    try {
+
+                        downloadJobProcessorService.process(queuedJob);
+
+                    } catch (Exception e) {
+
+                        handleRetry(queuedJob, e);
+                        continue;
+                    }
+
+                    try {
+
+                        queueService.deleteMessage(queuedJob.getMessageId(), queuedJob.getPopReceipt());
+
+                    } catch (Exception e) {
+
+                        logger.error( "Successfully processed job {} but failed to delete queue message {}",
+                            queuedJob.getJob().getJobId(),
+                            queuedJob.getMessageId(),
+                            e);
+                    }
+                } catch (InvalidQueueMessageException e) {
+
+                    logger.error("Deleting invalid queue message {}",
+                        e.getMessageId(),
+                        e);
+
+                    try {
+
+                        queueService.deleteMessage(e.getMessageId(),e.getPopReceipt());
+
+                    } catch (Exception deleteException) {
+
+                        logger.error(
+                            "Failed deleting invalid queue message {}",
+                            e.getMessageId(),
+                            deleteException);
+                    }
             }
+                            }
         } catch (Exception e) {
-                logger.error(
-                    "Failed processing queued job",
-                    e);
+
+            logger.error(
+                "Unexpected scheduler failure",
+                e);
         }
 
         finally {
@@ -104,37 +132,51 @@ public class DownloadJobScheduler {
                 queuedJob.getJob().getJobId(),
                 properties.getRetryCount());
 
-            queueService.deleteMessage(
-                queuedJob.getMessageId(),
-                queuedJob.getPopReceipt());
+            try {
+                queueService.deleteMessage(queuedJob.getMessageId(), queuedJob.getPopReceipt());
 
-            if (queuedJob.getJob().getEmailAddress() != null && !queuedJob.getJob().getEmailAddress().isBlank()) {
+            } catch (Exception e) {
 
-                emailService.sendDownloadFailedEmail(queuedJob.getJob().getEmailAddress(),
-                    "Download processing failed after " + properties.getRetryCount() + " attempts.");
+                logger.error(
+                    "Failed deleting exhausted queue message {}",
+                    queuedJob.getMessageId(),
+                    e);
             }
 
-            emailService.sendAdminFailureEmail(
-                String.format(
-                    """
-                    Download job failed permanently.
+            if (queuedJob.getJob().getEmailAddress() != null && !queuedJob.getJob().getEmailAddress().isBlank()) {
+                try {
+                    emailService.sendDownloadFailedEmail(queuedJob.getJob().getEmailAddress(),
+                    "Download processing failed after " + properties.getRetryCount() + " attempts.");
+                    } catch (Exception e) {
+                        logger.error(  "Failed sending user failure email",e);
+                    }
+            }
+            try {
+                emailService.sendAdminFailureEmail(
+                    String.format(
+                        """
+                        Download job failed permanently.
 
-                    Job ID: %s
-                    User Email: %s
-                    Queue Message ID: %s
-                    Dequeue Count: %d
-                    Retry Limit: %d
-                    Exception Type: %s
-                    Error: %s
-                    """,
-                    queuedJob.getJob().getJobId(),
-                    queuedJob.getJob().getEmailAddress(),
-                    queuedJob.getMessageId(),
-                    queuedJob.getDequeueCount(),
-                    properties.getRetryCount(),
-                    exception.getClass().getSimpleName(),
-                    exception.getMessage()));
-                        
+                        Job ID: %s
+                        User Email: %s
+                        Queue Message ID: %s
+                        Dequeue Count: %d
+                        Retry Limit: %d
+                        Exception Type: %s
+                        Error: %s
+                        """,
+                        queuedJob.getJob().getJobId(),
+                        queuedJob.getJob().getEmailAddress(),
+                        queuedJob.getMessageId(),
+                        queuedJob.getDequeueCount(),
+                        properties.getRetryCount(),
+                        exception.getClass().getSimpleName(),
+                        exception.getMessage()));
+            } catch (Exception e) {
+                logger.error(
+                    "Failed sending admin failure email",
+                    e);
+            }  
 
             return;
         }
@@ -146,11 +188,17 @@ public class DownloadJobScheduler {
             queuedJob.getJob().getJobId(),
             queuedJob.getDequeueCount() + 1,
             retryDelayMinutes);
-
-        queueService.updateVisibilityTimeout(
-            queuedJob.getMessageId(),
-            queuedJob.getPopReceipt(),
-            retryDelayMinutes);
+        try {
+            queueService.updateVisibilityTimeout(
+                queuedJob.getMessageId(),
+                queuedJob.getPopReceipt(),
+                retryDelayMinutes);
+        } catch (Exception e) {
+            logger.error(
+                "Failed updating visibility timeout for job {}",
+                queuedJob.getJob().getJobId(),
+                e);
+        }
     }
 
 }

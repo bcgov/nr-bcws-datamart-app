@@ -170,6 +170,11 @@ public class DownloadService {
                 items.size(),
                 queryRowCount);
 
+            if (queryRowCount > maxSyncRows) {
+                throw new DownloadLimitExceededException(maxSyncRows);
+            }
+
+
             hasNextPage = connection.path("hasNextPage").asBoolean();
 
 

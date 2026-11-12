@@ -16,6 +16,7 @@ import java.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.bc.gov.bcws.nrs.downloadapi.exceptions.InvalidQueueMessageException;
 import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadJobMessage;
 import ca.bc.gov.bcws.nrs.downloadapi.models.QueuedDownloadJob;
 
@@ -59,9 +60,11 @@ public class QueueService {
 
     public QueuedDownloadJob dequeueMessage( int visibilityTimeoutSeconds) {
 
+        QueueMessageItem message = null;
+
         try {
 
-            QueueMessageItem message = queueClient.receiveMessages(
+            message = queueClient.receiveMessages(
                 1,
                 Duration.ofSeconds(visibilityTimeoutSeconds),
                 null,
@@ -91,9 +94,10 @@ public class QueueService {
 
         } catch (JsonProcessingException e) {
 
-            throw new IllegalStateException(
-                "Failed to deserialize queue message",
-                e);
+            throw new InvalidQueueMessageException(
+            message.getMessageId(),
+            message.getPopReceipt(),
+            e);
 
         } catch (Exception e) {
 
