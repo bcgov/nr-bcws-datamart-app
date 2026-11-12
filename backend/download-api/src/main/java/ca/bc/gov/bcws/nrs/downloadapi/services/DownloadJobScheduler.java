@@ -37,6 +37,10 @@ public class DownloadJobScheduler {
 
     @Scheduled(cron = "${download.scheduler.cron}")
     public void processQueue() {
+        // If we add an additional consumer of this queue,
+        //  and the original message becomes visible due to taking longer than 300 seconds
+        // Then we will need to update this method to get the most recent pop receipt to delete it
+        
 
         logger.info("Download scheduler started");
         if (!properties.isEnabled()) {
