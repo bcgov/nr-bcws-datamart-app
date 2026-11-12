@@ -30,7 +30,11 @@ variable "download_page_size" {
   default     = 1000
 }
 
-
+variable "bc_notify_api_key" {
+  description = "GC Notify (BC Notify) API key used by the Download API. Supplied from the BC_NOTIFY_API_KEY GitHub environment secret."
+  type        = string
+  default     = ""
+}
 
 variable "app_env" {
   description = "Application environment (dev, test, prod)"
@@ -203,7 +207,7 @@ variable "enable_frontdoor" {
 variable "frontdoor_sku_name" {
   description = "SKU name for the Front Door"
   type        = string
-  default     = "Standard_AzureFrontDoor"
+  default     = "Premium_AzureFrontDoor"
 
   validation {
     condition     = contains(["Standard_AzureFrontDoor", "Premium_AzureFrontDoor"], var.frontdoor_sku_name)

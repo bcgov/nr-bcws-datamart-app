@@ -117,6 +117,10 @@ CI also sets container image variables (all using GHCR):
 CI also passes the connection string of the Microsoft Fabric SQL analytics endpoint, which the backend (Data API builder) reads from:
 - `TF_VAR_fabric_sql_connection_string=${{ secrets.FABRIC_SQL_CONNECTION_STRING }}` (create the `FABRIC_SQL_CONNECTION_STRING` secret in each GitHub environment)
 
+CI also passes the BC Notify API key, which the Download API reads from the `BC_NOTIFY_API_KEY` app setting:
+- `TF_VAR_bc_notify_api_key=${{ secrets.BC_NOTIFY_API_KEY }}` (create the `BC_NOTIFY_API_KEY` secret in each GitHub environment; Terraform sets it as an app setting on the Download API App Service)
+- For local runs with `docker-compose.yml`, export `BC_NOTIFY_API_KEY` in your shell or a root `.env` file.
+
 ## Auto-import behavior for "already exists" errors
 
 When `terraform apply` fails with an Azure error like “a resource with the ID ... already exists”, `infra/deploy-terraform.sh`:

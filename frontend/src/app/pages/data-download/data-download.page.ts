@@ -13,6 +13,8 @@ import { DownloadList } from './list/data-download-list.base';
 import { ApplicationStateService } from '../../services/application-state.service';
 import { Subscription } from 'rxjs';
 import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
+import { GENERIC_FAILURE } from '../../util';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
     selector: 'data-download-page',
@@ -43,6 +45,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     applicationStateService = inject(ApplicationStateService)
     changeDetectorRef = inject(ChangeDetectorRef)
     datamartGraphqlApiService = inject( DatamartGraphqlApiService )
+    dialogService = inject(DialogService)
 
     readonly MAX_TOTAL_ROW_COUNT = 10000
 
@@ -68,7 +71,8 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     dailyReportColumns: CodeDescriptionHeading[] = []
     metadataColumns: CodeDescriptionHeading[] = []
     selectedStationsSubscription?: Subscription
-    totalRowCount = 0
+    dailyRowCount = 0
+    hourlyRowCount = 0
 
     showDownloadWarning = false
 
@@ -196,10 +200,29 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     }
 
     get enableDownload() {
-        return this.totalRowCount > 0 && this.totalRowCount < this.MAX_TOTAL_ROW_COUNT
+        let t = this.dailyRowCount + this.hourlyRowCount
+        return t > 0 && t < this.MAX_TOTAL_ROW_COUNT
     }
 
     onDownloadClick() {
+        this.downloadData()
+    }
+
+    get enableAsyncDownload() {
+        let t = this.dailyRowCount + this.hourlyRowCount
+        return t > 0 
+    }
+
+    onEmailClick() {
+        this.dialogService.openDataDownloadAsyncDownloadDialog({}).afterClosed().toPromise()
+            .then ( res => {
+                if ( res == 'cancel' ) return
+
+                return this.downloadData( res?.email )
+            } )
+    }
+
+    downloadData( email?: string ) {
         this.startLoading()
 
         let daily: string[] = []
@@ -217,20 +240,18 @@ export class DataDownloadPage implements OnInit, OnDestroy {
             this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ),
             daily,
             hourly,
-            metadata
+            metadata,
+            email
         )
             .catch( err => {
                 console.warn( JSON.stringify( err, null, '  ' ) )
-                this.snackbarUtilService.error( 'Failed to download data' )
+                this.snackbarUtilService.error( GENERIC_FAILURE )
             } )
             .finally( () => {
                 this.stopLoading()
             } )
     }
 
-    onEmailClick() {
-
-    }
 
     getQueryParams(): Record<string,string> {
         return {
@@ -260,35 +281,32 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
     updateTotalRowCount() {
         let stationCodes = this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE )
-        this.totalRowCount = 0
+        this.dailyRowCount = 0
+        this.hourlyRowCount = 0
         this.showDownloadWarning = false
         this.startLoading()
-        this.changeDetectorRef.detectChanges()
 
-        return Promise.resolve( 0 )
-            .then( ( sum ) => {
-                if ( this.filter.dailyColumns.length == 0 ) return sum
+        return Promise.resolve()
+            .then( () => {
+                if ( this.filter.dailyColumns.length == 0 ) return 
                 return this.datamartGraphqlApiService.getDailyWeatherCount( this.filter.startDate!, this.filter.endDate!, stationCodes )
                     .then( res => {
-                        return sum + res
+                        this.dailyRowCount = res
                     } )
             } )
-            .then( ( sum ) => {
-                if ( this.filter.hourlyColumns.length == 0 ) return sum
+            .then( () => {
+                if ( this.filter.hourlyColumns.length == 0 ) return 
                 return this.datamartGraphqlApiService.getHourlyWeatherCount( this.filter.startDate!, this.filter.endDate!, stationCodes )
                     .then( res => {
-                        return sum + res
+                        this.hourlyRowCount = res
                     } )
             } )
             .then( ( sum ) => {
-                this.totalRowCount = sum
-                this.showDownloadWarning = this.totalRowCount > this.MAX_TOTAL_ROW_COUNT 
-
-                this.changeDetectorRef.detectChanges()
+                this.showDownloadWarning = ( this.dailyRowCount + this.hourlyRowCount ) > this.MAX_TOTAL_ROW_COUNT 
             } )
             .catch( err => {
                 console.warn( JSON.stringify( err, null, '  ' ) )
-                this.snackbarUtilService.error( 'Failed to get row count' )
+                this.snackbarUtilService.error( GENERIC_FAILURE )
             } )            
             .finally( () => {
                 this.stopLoading()
@@ -297,5 +315,15 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     
     onCloseWarningClick() {
         this.showDownloadWarning = false
+    }
+
+    get dailyTabHeader() {
+        let c = this.dailyRowCount
+        return `Daily weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : c + ' records' })`
+    }
+
+    get hourlyTabHeader() {
+        let c = this.hourlyRowCount
+        return `Hourly weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : c + ' records' })`
     }
 }

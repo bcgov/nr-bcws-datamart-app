@@ -179,26 +179,36 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "unified_firewall_policy" {
       selector       = "api-key"
     }
   }
-  # the 'managed_rule' code block is only supported with the "Premium_AzureFrontDoor" sku
-  dynamic "managed_rule" {
-    for_each = var.frontdoor_sku_name == "Premium_AzureFrontDoor" ? [
-      {
-        type    = "DefaultRuleSet"
-        version = "1.0"
+  # Note: the 'managed_rule' code block is only supported with the "Premium_AzureFrontDoor" sku
+  managed_rule {
+    type    = "Microsoft_DefaultRuleSet"
+    version = "2.1"
+    action  = "Log"
+    
+    override {
+      rule_group_name = "MS-ThreatIntel-SQLI"
+
+      rule {
+        # Rule 99031001 blocks characters used in SQL injections
+        # We pass those through for the filter in queries, so we must disable rule on queries with the filter argument
+        rule_id = "99031001"
         action  = "Log"
-      },
-      {
-        type    = "Microsoft_BotManagerRuleSet"
-        version = "1.1"
-        action  = "Block"
+
+        exclusion {
+          match_variable = "QueryStringArgNames"
+          operator       = "Equals"
+          selector       = "$filter"
+        }
       }
-    ] : []
-    content {
-      type    = managed_rule.value.type
-      version = managed_rule.value.version
-      action  = managed_rule.value.action
     }
   }
+
+  managed_rule {
+    type    = "Microsoft_BotManagerRuleSet"
+    version = "1.1"
+    action  = "Block"
+  }
+
   # Simple baseline rate limiter
   # Covers both IPv4 (0.0.0.0/0) and IPv6 (::/0) — Azure WAF IPMatch treats
   # these as separate address families; omitting ::/0 silently skips all IPv6

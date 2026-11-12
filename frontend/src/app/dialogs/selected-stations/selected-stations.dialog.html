@@ -1,5 +1,5 @@
 <nrcl-dialog
-    title="Selected Stations"
+    title="Selected stations"
     [showClose]="true"
     [showWarning]="false"
     [saveEnabled]="null"
@@ -9,7 +9,7 @@
 >
     @if (selectedCount === 0) {
         <div class="empty-state">
-            <h3>No Stations Selected</h3>
+            <h3>No stations selected</h3>
 
             <p class="dialog-message">
                 Select stations from the map or station list.
@@ -21,12 +21,12 @@
         <div class="header">
             <h3>
                 {{ selectedCount }}
-                {{ selectedCount === 1 ? 'Station' : 'Stations' }}
-                Selected
+                {{ selectedCount === 1 ? 'station' : 'stations' }}
+                selected
             </h3>
 
             <nrcl-button class="remove-action"
-                label="Remove All"
+                label="Remove all"
                 (click)="onRemoveAllClick(); list.refreshRowList()"
             ></nrcl-button>
         </div>

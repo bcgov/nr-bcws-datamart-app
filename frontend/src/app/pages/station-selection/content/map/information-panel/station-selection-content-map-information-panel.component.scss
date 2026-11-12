@@ -1,132 +1,106 @@
 $color-black: #000000;
-
 $color-text-primary: #2d2d2d;
 $color-text-secondary: #474543;
-
 $color-border-default: #d8d8d8;
-
 $color-status-active: #42814a;
 $color-status-archived: #d8292f;
 $color-status-ok: #2d2d2d;
+$color-background-color: white;
+$color-alternate-background-color: #f2f2f2;
 
-.station-information-panel {
+:host {
     display: flex;
     flex-direction: column;
     gap: 8px;
-
-    width: 100%;
-    min-width: 280px;
-
     font-family: var( --nrcl-font-family );
-}
 
-.station-information-panel__title-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    h3 {
+        color: $color-black;
+        margin: 0;
+        font-weight: 700;
+        line-height: 27px;
+    }
 
-    margin-bottom: -2px;
-}
+    .title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid $color-border-default;
 
-.station-information-panel__title {
-    color: $color-black;
+        .nrcl-button {
+            width: 30px;
+        }
+    }
 
-    font-family: var( --nrcl-font-family );
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 27px;
-}
+    .station {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
 
-.station-information-panel__divider {
-    width: 100%;
-    height: 1px;
+    dl.properties {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        font-size: 14px;
+        color: $color-text-secondary;
+        line-height: 1.5;
 
-    background-color: $color-border-default;
+        div {
+            display: grid;
+            grid-template-columns: calc( 50% - 4px ) calc( 50% - 4px );
+            padding: 2px 0;
 
-    margin-bottom: -2px;
-}
+            &.full-width {
+                grid-column: span 2;
+            }
 
-.station-information-panel__station-name {
-    margin: 0;
+            dt, dd {
+                margin: 0;
+            }
 
-    color: $color-text-primary;
+            dd {
+                font-weight: bold;
 
-    font-family: var( --nrcl-font-family );
-    font-size: 18px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 30.6px;
+                &:empty::after {
+                    content: '\2014'
+                }
+            }
 
-    font-feature-settings:
-        'liga' off,
-        'clig' off;
-}
+            &:nth-child(odd) {
+                background-color: $color-alternate-background-color;
+            }
+        
+            &:nth-child(even) {
+                background-color: $color-background-color;
+            }
+        }
+    }
 
-.station-information-panel__content {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
+    .actions {
+        display: flex;
+        justify-content: stretch;
 
-.station-information-panel__row {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
+        .nrcl-button {
+            width: 100%;
+            --nrcl-button-width: 100%;
+        }
+    }
 
-.station-information-panel__row--status {
-    gap: 8px;
-}
-
-.station-information-panel__row-label {
-    color: $color-text-secondary;
-
-    font-family: var( --nrcl-font-family );
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 21px;
-}
-
-.station-information-panel__row-value {
-    color: $color-text-secondary;
-
-    font-family: var( --nrcl-font-family );
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 21px;
-}
-
-.station-information-panel__actions {
-    display: flex;
-    justify-content: center;
-
-    width: 100%;
-    margin-top: 8px;
-}
-
-.station-information-panel__actions nrcl-button {
-    display: block;
-    width: 100%;
-}
-
-.station-information-panel__actions ::ng-deep button {
-    width: 100%;
-}
-
-:host ::ng-deep .status-future {
-    --nrcl-indicator-text-color: #{$color-status-active};
-    --nrcl-indicator-border-color: #{$color-status-active};
-}
-
-:host ::ng-deep .status-active {
-    --nrcl-indicator-text-color: #{$color-status-archived};
-    --nrcl-indicator-border-color: #{$color-status-archived};
-}
-
-:host ::ng-deep .status-ok {
-    --nrcl-indicator-text-color: #{$color-status-ok};
-    --nrcl-indicator-border-color: #{$color-status-ok};
+    .nrcl-indicator {
+        &.status-active {
+            --nrcl-indicator-text-color: #{$color-status-active};
+            --nrcl-indicator-border-color: #{$color-status-active};
+        }
+        &.status-archived, &.status-disabled {
+            --nrcl-indicator-text-color: #{$color-status-archived};
+            --nrcl-indicator-border-color: #{$color-status-archived};
+        }
+        &.status-project, &.status-test {
+            --nrcl-indicator-text-color: #{$color-status-ok};
+            --nrcl-indicator-border-color: #{$color-status-ok};
+        }
+    }
 }

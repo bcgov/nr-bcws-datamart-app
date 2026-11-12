@@ -1,6 +1,10 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { HomeCardComponent } from './card/home-card.component';
 import { AppFooterComponent } from '../../components/app-footer/app-footer.component';
+import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
+import { ButtonComponent } from '@bcgov/nr-ngx-component-lib';
+import { Router } from '@angular/router';
+import { ROUTE } from '../../bcws-datamart-app.routes';
 
 @Component( {
     selector: 'home-page',
@@ -9,7 +13,15 @@ import { AppFooterComponent } from '../../components/app-footer/app-footer.compo
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
         AppFooterComponent,
-        HomeCardComponent
+        HomeCardComponent,
+        DataMartHeaderComponent,
+        ButtonComponent,
     ]
 } )
-export class HomePage {}
+export class HomePage {
+    router = inject( Router )
+
+    onFindWeatherDataClick() {
+        this.router.navigate( [ ROUTE.STATION_SELECTION ] )
+    }
+}

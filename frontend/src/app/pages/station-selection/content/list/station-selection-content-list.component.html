@@ -6,7 +6,7 @@
         [checked]="areAllSelected"
         (change)="onSelectAllClick()"
     >
-        Select All
+        Select all
     </mat-checkbox>
 
     <nrcl-button tertiary
@@ -49,18 +49,22 @@
             ></mat-checkbox>
 
             <div class="content">
-                <nrcl-button anchor
-                    [label]="station.properties.STATION_NAME"
-                    [attr.aria-label]="'View details for station ' + station.properties.STATION_NAME"
-                ></nrcl-button>
+                <span>
+                    <nrcl-button anchor tabindex="0"
+                        [label]="station.properties.STATION_NAME"
+                        [attr.aria-label]="'View details for station ' + station.properties.STATION_NAME"
+                        (click)="onStationNameClick( station ); $event.stopPropagation()"
+                        (keyup.enter)="onStationNameClick( station ); $event.stopPropagation()"
+                    ></nrcl-button>
+                </span>
 
                 <div class="details">
                     <span>
-                        Station Code: {{ station.properties.STATION_CODE || '-' }}
+                        Station code: {{ station.properties.STATION_CODE || '\u2014' }}
                     </span>
 
                     <span>
-                        Acronym: {{ station.properties.STATION_ACRONYM || '-' }}
+                        Acronym: {{ station.properties.STATION_ACRONYM || '\u2014' }}
                     </span>
                 </div>
             </div>

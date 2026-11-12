@@ -14,7 +14,7 @@ import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 import { Subscription } from 'rxjs';
 import { StationSelectionContentMapInformationPanelComponent } from './information-panel/station-selection-content-map-information-panel.component';
 import { SelectedWeatherStationsService } from '../../../../services/selected-weather-stations.service';
-import { WeatherStationService } from '../../../../services/weather-station.service';
+import { WeatherStationFeature, WeatherStationService } from '../../../../services/weather-station.service';
 
 declare const SMK: any;
 
@@ -214,5 +214,15 @@ export class StationSelectionContentMapComponent implements AfterViewInit, OnDes
         this.monitorPopupHost(popupHost);
 
         popupHost.appendChild(componentRef.location.nativeElement);
+    }
+
+    identifyStation( station: WeatherStationFeature ) {
+        this.smk.$tool.IdentifyFeatureTool.active = true            
+        this.smk.$viewer.identified.clear()
+        let ids = this.smk.$viewer.identified.add( "weather-stations", [ station ] )
+        this.smk.$viewer.identified.pick( ids[ 0 ] )
+        this.smk.$viewer.identified.highlight( ids )
+        this.smk.$tool.IdentifyListTool.searchLocation = { map: { latitude: station.properties.LATITUDE, longitude: station.properties.LONGITUDE } }
+        this.smk.$tool.IdentifyListTool.displaySearchArea()
     }
 }

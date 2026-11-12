@@ -30,6 +30,7 @@ export class DataMartHeaderComponent implements OnInit, OnDestroy {
     router = inject( Router )
     changeDetectorRef = inject( ChangeDetectorRef )
 
+    @Input() showSelectedStations = true
     @Input() isLoading = false
 
     selectedCount = 0;
@@ -63,7 +64,7 @@ export class DataMartHeaderComponent implements OnInit, OnDestroy {
     onStationsSelectedClick() {        
         if (this.selectedCount == 0) {
             this.dialogService.openMessageDialog( {
-                title: 'No Stations Selected',
+                title: 'No stations selected',
                 message: 'Select stations from the map or station list. Your selections will appear here.'
             } )
             return;

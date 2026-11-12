@@ -4,6 +4,7 @@ import { Filter } from '../pages/station-selection/filters/station-selection-fil
 import { DatamartRestApiService } from './datamart-rest-api.service';
 import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 import { WeatherStation } from '../api-types';
+import { GENERIC_FAILURE } from '../util';
 
 export type GeoJsonPoint<P> = {
     type: 'Feature',
@@ -49,7 +50,8 @@ export class WeatherStationService {
                 this._stations = stations
             } )
             .catch( err => {
-                this.snackbarUtilService.error( err )
+                console.warn( JSON.stringify( err, null, '  ' ) )
+                this.snackbarUtilService.error( GENERIC_FAILURE )
             } )
     }
 

@@ -46,7 +46,7 @@ export class StationSelectionPage implements OnInit {
     onViewDataClick() {
         if ( this.selectedWeatherStationsService.count == 0 ) {
             this.dialogService.openMessageDialog( {
-                title: 'Select a Weather Station',
+                title: 'Select a weather station',
                 message: 'To view data, select at least one weather station from the map or list.'
             } )
             return;

@@ -1,43 +1,94 @@
-<section class="hero">
-    <h1 id="main-content" tabindex="-1">BC Wildfire Service Weather DataMart</h1>
-    <p>View and download hourly weather observations from more than 280 weather stations across B.C.</p>
-</section>
+<datamart-header
+    [showSelectedStations]="false"
+>
+    <section title>
+        <h1>BC Wildfire Service Weather DataMart</h1>
+        <p>Find, view and download weather observations from weather stations across B.C.</p>
+    </section>
 
-<section class="card-grid">
-    <home-card 
-        title="Search and download"
-        description="Select the weather stations you want data from, a date range, and the data you want to download."
-        icon="download"
-        route="/station-selection"
-    ></home-card>
+    <section actions>
+        <nrcl-button primary
+            label="Find weather data"
+            (click)="onFindWeatherDataClick()"
+            iconRight="arrow_forward"
+        ></nrcl-button>
+    </section>
+</datamart-header>
 
-    <home-card 
-        title="API options"
-        description="Available in GraphQL and REST API."
-        icon="api"
-        route="/api"
-    ></home-card>
+<article>
+    <section class="access">
+        <h2>Access weather data programmatically</h2>
+        <p>Use BC Wildfire Service weather data in your own applications, systems and tools.</p>
 
-    <home-card 
-        title="MCP server"
-        description="Use your own AI tools to ask for things and get answers."
-        icon="mcp-server"
-        route="/mcp-server"
-    ></home-card>
+        <div class="cards">
+            <home-card 
+                title="REST API"
+                icon="code_xml"
+                route="/about-rest"
+            >
+                <p>Retrieve weather station information and weather data using REST API endpoints.</p>
 
-    <home-card 
-        title="Weather stations"
-        description="Explore the list of weather stations across British Columbia."
-        icon="format_list_bulleted"
-        route="/weather-stations"
-    ></home-card>
+                <nrcl-button anchor
+                    label="REST API documentation"
+                ></nrcl-button>
+            </home-card>
 
-    <home-card 
-        title="Data limitations"
-        description="Important limitations, assumptions, and interpretation notes for BC Wildfire Service weather station data."
-        icon="info"
-        route="/data-limitations"
-    ></home-card>
-</section>
+            <home-card 
+                title="GraphQL API"
+                icon="api"
+                route="/about-graphql"
+            >
+                <p>Query weather stations and weather data using GraphQL and request only the information you need.</p>
+
+                <nrcl-button anchor
+                    label="GraphQL API documentation"
+                ></nrcl-button>
+            </home-card>
+
+            <home-card 
+                title="MCP server"
+                icon="mcp-server"
+                route="/about-mcp"
+            >
+                <p>Connect support AI tools to BC Wildfire Service Weather data using the Model Context Protocol (MCP).</p>
+
+                <nrcl-button anchor
+                    label="MCP server documentation"
+                ></nrcl-button>
+            </home-card>
+        </div>    
+    </section>
+
+    <section class="understand">
+        <h2>Understand the data</h2>
+        <p>Learn more about the weather stations and data available through the Weather DataMart.</p>
+
+        <div class="cards">
+            <home-card 
+                title="About weather stations"
+                icon="weather-station"
+                route="/about-weather-stations"
+            >
+                <p>Learn about BC Wildfire Service weather stations, including station locations, station types, Quick Deploy stations and data availability.</p>
+
+                <nrcl-button anchor
+                    label="About weather stations"
+                ></nrcl-button>
+            </home-card>
+
+            <home-card 
+                title="About weather data"
+                icon="bar_chart"
+                route="/about-weather-data"
+            >
+                <p>Learn what weather observations, measurements and fire weather indices mean, including units and important considerations when interpreting the data.</p>
+
+                <nrcl-button anchor
+                    label="About weather data"
+                ></nrcl-button>
+            </home-card>
+        </div>
+    </section>
+</article>
 
 <app-footer></app-footer>

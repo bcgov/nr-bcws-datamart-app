@@ -7,6 +7,7 @@ import { SelectedStationsDialog, SelectedStationsDialogConfig, SelectedStationsD
 import { DataDownloadFilterDailyWeatherDialog, DataDownloadFilterDailyWeatherDialogConfig, DataDownloadFilterDailyWeatherDialogResult } from '../pages/data-download/filters/daily-weather-dialog/data-download-filter-daily-weather.dialog';
 import { DataDownloadFilterHourlyWeatherDialogConfig, DataDownloadFilterHourlyWeatherDialog, DataDownloadFilterHourlyWeatherDialogResult } from '../pages/data-download/filters/hourly-weather-dialog/data-download-filter-hourly-weather.dialog';
 import { DataDownloadFilterStationMetadataDialogConfig, DataDownloadFilterStationMetadataDialog, DataDownloadFilterStationMetadataDialogResult } from '../pages/data-download/filters/station-metadata-dialog/data-download-filter-station-metadata.dialog';
+import { DataDownloadAsyncDownloadDialogConfig, DataDownloadAsyncDownloadDialog, DataDownloadAsyncDownloadDialogResult } from '../pages/data-download/async-download-dialog/data-download-async-download.dialog';
 
 @Injectable({
     providedIn: 'root',
@@ -81,5 +82,16 @@ export class DialogService {
             maxHeight: '95vh',
         } )
     }       
+
+    openDataDownloadAsyncDownloadDialog( data: DataDownloadAsyncDownloadDialogConfig ) {
+        return this.nrclDialogService.openDialog<
+            DataDownloadAsyncDownloadDialog,
+            DataDownloadAsyncDownloadDialogConfig,
+            DataDownloadAsyncDownloadDialogResult
+        >( DataDownloadAsyncDownloadDialog, data, {            
+            maxWidth: '600px'
+        } )
+    }       
+    
 }
 
