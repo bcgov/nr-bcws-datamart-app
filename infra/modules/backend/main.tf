@@ -165,6 +165,11 @@ module "download_api_site" {
     DOWNLOAD_SYNC_THRESHOLD  = tostring(var.download_sync_threshold)
     DOWNLOAD_PAGE_SIZE       = tostring(var.download_page_size)
     BC_NOTIFY_API_KEY        = var.bc_notify_api_key
+    BC_NOTIFY_EMAIL_ENDPOINT = var.bc_notify_email_endpoint
+    BC_NOTIFY_DOWNLOAD_SUCCESS_TEMPLATE_ID = var.bc_notify_download_success_template_id
+    BC_NOTIFY_DOWNLOAD_FAILURE_TEMPLATE_ID = var.bc_notify_download_failure_template_id
+    BC_NOTIFY_ADMIN_EMAIL   = var.bc_notify_admin_email
+
 
     APPLICATIONINSIGHTS_CONNECTION_STRING = var.appinsights_connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY        = var.appinsights_instrumentation_key
@@ -177,6 +182,14 @@ module "download_api_site" {
     DOWNLOAD_STORAGE_ACCOUNT_NAME = var.storage_account_name
     DOWNLOAD_QUEUE_CLIENT_ID = var.download_queue_identity_client_id
     DOWNLOAD_BLOB_CLIENT_ID = var.download_blob_identity_client_id
+    DOWNLOAD_BLOB_CONTAINER_NAME = var.download_blob_container_name
+
+    DOWNLOAD_SCHEDULER_ENABLED = tostring(var.download_scheduler_enabled)
+    DOWNLOAD_SCHEDULER_CRON = var.download_scheduler_cron
+    DOWNLOAD_QUEUE_VISIBILITY_TIMEOUT_SECONDS = tostring(var.download_queue_visibility_timeout_seconds)
+    DOWNLOAD_QUEUE_RETRY_COUNT = tostring(var.download_queue_retry_count)
+    DOWNLOAD_QUEUE_RETRY_BACKOFF_MINUTES = tostring(var.download_queue_retry_backoff_minutes)
+
   }
 
   logs = {

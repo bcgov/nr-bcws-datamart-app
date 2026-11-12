@@ -14,12 +14,24 @@ services:
     container_name: download-api
     build:
       context: ./backend/download-api
+    env_file:
+      - ./backend/download-api/.env
     environment:
       DATAMART_GRAPHQL_URL: http://backend:5000/graphql
       DOWNLOAD_QUEUE_NAME: downloads
-      BC_NOTIFY_API_KEY: ${BC_NOTIFY_API_KEY:-}
+      BC_NOTIFY_EMAIL_ENDPOINT: https://notify.digital.gov.bc.ca/api/v1/notifysimple/email
+      BC_NOTIFY_ADMIN_EMAIL: wfwx_team@vividsolutions.microsoftonline.com
+      BC_NOTIFY_DOWNLOAD_SUCCESS_TEMPLATE_ID: 9f259dcf-92c9-4254-b2dd-6eb175126805
+      BC_NOTIFY_DOWNLOAD_FAILURE_TEMPLATE_ID: 8d7c10f8-431e-4b31-91ae-aacafa758566
       DOWNLOAD_QUEUE_CONNECTION_STRING: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;"
-      
+      DOWNLOAD_SCHEDULER_ENABLED: "true"
+      DOWNLOAD_SCHEDULER_CRON: "*/30 * * * * *"
+      DOWNLOAD_QUEUE_VISIBILITY_TIMEOUT_SECONDS: "300"
+      DOWNLOAD_QUEUE_RETRY_COUNT: "5"
+      DOWNLOAD_QUEUE_RETRY_BACKOFF_MINUTES: "5"
+      DOWNLOAD_BLOB_CONTAINER_NAME: downloads
+      DOWNLOAD_BLOB_CONNECTION_STRING: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"
+
     ports:
       - "8080:8080"
     depends_on:
@@ -46,7 +58,7 @@ services:
       VITE_BACKEND_URL: http://backend:5000
       VITE_DOWNLOAD_API_URL: http://download-api:8080
       VITE_PORT: 3000
-      NODE_ENV: development
+      NODE_ENV: production
       LOG_LEVEL: debug
     image: ${FRONTEND_IMAGE:-frontend}
     ports:
@@ -72,3 +84,6 @@ services:
         az storage queue create \
           --name downloads \
           --connection-string "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azurite:10001/devstoreaccount1;"
+        az storage container create \
+          --name downloads \
+          --connection-string "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"
