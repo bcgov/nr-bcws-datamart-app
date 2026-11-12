@@ -2,10 +2,7 @@ package ca.bc.gov.bcws.nrs.downloadapi.services;
 
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,15 +26,7 @@ import ca.bc.gov.bcws.nrs.downloadapi.models.DownloadRequest;
 import ca.bc.gov.bcws.nrs.downloadapi.utils.Utils;
 import ca.bc.gov.bcws.nrs.downloadapi.exceptions.DownloadLimitExceededException;
 import ca.bc.gov.bcws.nrs.downloadapi.exceptions.InvalidQueryException;
-import graphql.language.Argument;
-import graphql.language.Selection;
-import graphql.language.Document;
-import graphql.language.Field;
-import graphql.language.IntValue;
-import graphql.language.OperationDefinition;
-import graphql.language.StringValue;
-import graphql.parser.Parser;
-import graphql.language.AstPrinter;
+
 
 @Service
 public class DownloadService {
@@ -47,9 +36,7 @@ public class DownloadService {
     private final CsvService csvService;
     private final ZipService zipService;
     private final QueueService queueService;
-
-    @Value("${download.page-size:1000}")
-    private int pageSize;
+    private final DatamartQueryService datamartQueryService;
 
     @Value("${download.sync-threshold:10000}")
     private int maxSyncRows;
@@ -58,12 +45,14 @@ public class DownloadService {
             DatamartApiClient datamartApiClient,
             CsvService csvService,
             ZipService zipService,
-            QueueService queueService) {
+            QueueService queueService,
+            DatamartQueryService datamartQueryService) {
 
         this.datamartApiClient = datamartApiClient;
         this.csvService = csvService;
         this.zipService = zipService;
         this.queueService = queueService;
+        this.datamartQueryService = datamartQueryService;
     }
 
     public DownloadFile createDownload(DownloadRequest request) throws IOException {
@@ -111,15 +100,10 @@ public class DownloadService {
 
             byte[] csv = csvService.generateCsv(items);
 
-            csvFiles.put( String.format(
-                        "bcws-weather-datamart_%s_%s_%s.csv",
-                        downloadQuery.getName(),
-                        request.getStartDate(),
-                        request.getEndDate()),
-                csv);
+            csvFiles.put(Utils.generateCsvFileName(downloadQuery.getName(), request.getStartDate(), request.getEndDate()), csv);
         }
 
-        String suffix = determineSuffix(hasDaily, hasHourly);
+        String suffix = Utils.determineSuffix(hasDaily, hasHourly);
 
         String zipFileName = Utils.generateZipFileName(suffix, request.getStartDate(),request.getEndDate());
 
@@ -137,20 +121,6 @@ public class DownloadService {
     }
 
 
-    private String determineSuffix(boolean hasDaily, boolean hasHourly) {
-
-        if (hasDaily && hasHourly)
-            return "daily-hourly";
-
-        if (hasDaily)
-            return "daily";
-
-        if (hasHourly)
-            return "hourly";
-
-        return "download";
-    }
-
     private JsonNode fetchAllItems(String query) {
         logger.info("Original GraphQL query: {}", query);
 
@@ -165,7 +135,7 @@ public class DownloadService {
 
         do {
 
-            String pagedQuery = applyPaging(query, cursor);
+            String pagedQuery = datamartQueryService.applyPaging(query, cursor);
 
             JsonNode response;
 
@@ -175,7 +145,7 @@ public class DownloadService {
 
             } catch (HttpClientErrorException.BadRequest ex) {
 
-                String message = extractGraphQlError(ex.getResponseBodyAsString());
+                String message = datamartQueryService.extractGraphQlError(ex.getResponseBodyAsString());
 
                 logger.warn("GraphQL query failed: {}", message);
 
@@ -200,6 +170,11 @@ public class DownloadService {
                 items.size(),
                 queryRowCount);
 
+            if (queryRowCount > maxSyncRows) {
+                throw new DownloadLimitExceededException(maxSyncRows);
+            }
+
+
             hasNextPage = connection.path("hasNextPage").asBoolean();
 
 
@@ -214,105 +189,8 @@ public class DownloadService {
         return allItems;
     }
 
-    private String applyPaging(String query, String cursor) {
+   
 
-        Document document;
-
-        try {
-            document = Parser.parse(query);
-        } catch (Exception e) {
-
-            logger.warn("Invalid GraphQL query provided", e);
-
-            throw new InvalidQueryException(
-                    "Invalid GraphQL query.");
-        }
-
-        OperationDefinition operation = (OperationDefinition) document.getDefinitions().get(0);
-
-        Field field = (Field) operation.getSelectionSet().getSelections().get(0);
-
-        List<Argument> arguments = new ArrayList<>(field.getArguments());
-
-        arguments.removeIf(arg ->
-                "first".equals(arg.getName())
-                        || "after".equals(arg.getName()));
-
-        arguments.add(
-                Argument.newArgument()
-                        .name("first")
-                        .value(IntValue.newIntValue(BigInteger.valueOf(pageSize)).build())
-                        .build());
-
-        if (cursor != null)
-            arguments.add(
-                    Argument.newArgument()
-                            .name("after")
-                            .value(StringValue.newStringValue(cursor).build())
-                            .build());
-
-        List<Selection> selections = new ArrayList<>(field.getSelectionSet().getSelections());
-
-        boolean hasNextPage = selections.stream()
-                .filter(Field.class::isInstance)
-                .map(Field.class::cast)
-                .anyMatch(f -> "hasNextPage".equals(f.getName()));
-
-        boolean hasEndCursor = selections.stream()
-                .filter(Field.class::isInstance)
-                .map(Field.class::cast)
-                .anyMatch(f -> "endCursor".equals(f.getName()));
-
-        if (!hasNextPage)
-            selections.add(Field.newField("hasNextPage").build());
-
-        if (!hasEndCursor)
-            selections.add(Field.newField("endCursor").build());
-
-        Field updatedField = field.transform(builder ->
-                builder.arguments(arguments)
-                        .selectionSet(
-                                field.getSelectionSet()
-                                        .transform(selectionBuilder ->
-                                                selectionBuilder.selections(selections))));
-
-        OperationDefinition updatedOperation = operation.transform(builder ->
-                builder.selectionSet(
-                        operation.getSelectionSet()
-                                .transform(selectionBuilder ->
-                                        selectionBuilder.selections(List.of(updatedField)))));
-
-        Document updatedDocument = document.transform(builder ->
-                builder.definitions(List.of(updatedOperation)));
-
-        String updatedQuery = AstPrinter.printAst(updatedDocument);
-
-        if (cursor == null) logger.info("Paged GraphQL query: {}", updatedQuery);
-
-        return updatedQuery;
-    }
-
-    private String extractGraphQlError(String responseBody) {
-
-        try {
-
-            JsonNode response =
-                    new ObjectMapper().readTree(responseBody);
-
-            JsonNode errors = response.path("errors");
-
-            if (errors.isArray() && !errors.isEmpty()) {
-
-                return errors.get(0)
-                        .path("message")
-                        .asText("Invalid GraphQL query.");
-            }
-
-        } catch (Exception ignored) {
-        }
-
-        return "Invalid GraphQL query.";
-    }
 
     public DownloadJobResponse submitDownloadJob(DownloadRequest request) {
 

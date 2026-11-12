@@ -30,8 +30,59 @@ variable "download_page_size" {
   default     = 1000
 }
 
+variable "download_scheduler_enabled" {
+  type    = bool
+  default = true
+}
+
+variable "download_scheduler_cron" {
+  type    = string
+  default = "0 0 7 * * *"
+}
+
+variable "download_queue_visibility_timeout_seconds" {
+  type    = number
+  default = 300
+}
+
+variable "download_queue_retry_count" {
+  type    = number
+  default = 5
+}
+
+variable "download_queue_retry_backoff_minutes" {
+  type    = number
+  default = 5
+}
+
+
 variable "bc_notify_api_key" {
   description = "GC Notify (BC Notify) API key used by the Download API. Supplied from the BC_NOTIFY_API_KEY GitHub environment secret."
+  type        = string
+  default     = ""
+}
+
+variable "bc_notify_email_endpoint" {
+  description = "BC Notify email endpoint URL."
+  type        = string
+  default     = "https://notify.digital.gov.bc.ca/api/v1/notifysimple/email"
+}
+
+variable "bc_notify_admin_email" {
+  description = "Admin email address for datamart download failures."
+  type        = string
+  default     = "wfwx_team@vividsolutions.microsoftonline.com"
+}
+
+
+variable "bc_notify_download_success_template_id" {
+  description = "The BC_NOTIFY_DOWNLOAD_SUCCESS_TEMPLATE_ID GITHUB environment variable of the success template ID used by the Download API."
+  type        = string
+  default     = ""
+}
+
+variable "bc_notify_download_failure_template_id" {
+  description = "The BC_NOTIFY_DOWNLOAD_FAILURE_TEMPLATE_ID GITHUB environment variable of the failure template ID used by the Download API."
   type        = string
   default     = ""
 }

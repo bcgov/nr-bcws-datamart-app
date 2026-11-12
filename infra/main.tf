@@ -156,7 +156,7 @@ module "backend" {
   fabric_sql_connection_string_2          = local.fabric_sql_connection_string_2
   user_assigned_identity_id               = azurerm_user_assigned_identity.backend_user_assigned_identity.id
   backend_frontdoor_id                    = var.enable_frontdoor ? module.frontdoor[0].frontdoor_id : null
-  frontdoor_endpoint_id                 = var.enable_frontdoor ? module.frontdoor[0].endpoint_id : null
+  frontdoor_endpoint_id                   = var.enable_frontdoor ? module.frontdoor[0].endpoint_id : null
   backend_frontdoor_resource_guid         = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
   frontend_possible_outbound_ip_addresses = var.enable_app_service_frontend ? module.frontend[0].possible_outbound_ip_addresses : ""
   location                                = var.location
@@ -165,10 +165,15 @@ module "backend" {
   resource_group_name                     = azurerm_resource_group.main.name
   resource_group_id                       = azurerm_resource_group.main.id
 
-  datamart_timeout_seconds = var.datamart_timeout_seconds
-  download_sync_threshold  = var.download_sync_threshold
-  download_page_size = var.download_page_size
-  bc_notify_api_key  = var.bc_notify_api_key
+  datamart_timeout_seconds               = var.datamart_timeout_seconds
+  download_sync_threshold                = var.download_sync_threshold
+  download_page_size                     = var.download_page_size
+  bc_notify_api_key                      = var.bc_notify_api_key
+  bc_notify_email_endpoint               = var.bc_notify_email_endpoint
+  bc_notify_download_success_template_id = var.bc_notify_download_success_template_id
+  bc_notify_download_failure_template_id = var.bc_notify_download_failure_template_id
+  bc_notify_admin_email                  = var.bc_notify_admin_email
+  
 
   storage_account_name = module.storage.storage_account_name
   download_queue_name  = module.storage.download_queue_name
@@ -176,6 +181,13 @@ module "backend" {
   download_queue_identity_client_id = module.storage.download_queue_identity_client_id
   download_blob_identity_id        = module.storage.download_blob_identity_id
   download_blob_identity_client_id = module.storage.download_blob_identity_client_id
+  download_blob_container_name     = module.storage.download_blob_container_name
+
+  download_scheduler_enabled                  = var.download_scheduler_enabled
+  download_scheduler_cron                     = var.download_scheduler_cron
+  download_queue_visibility_timeout_seconds   = var.download_queue_visibility_timeout_seconds
+  download_queue_retry_count                  = var.download_queue_retry_count
+  download_queue_retry_backoff_minutes        = var.download_queue_retry_backoff_minutes
 
   depends_on = [module.frontend]
 }

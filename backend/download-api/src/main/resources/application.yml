@@ -14,9 +14,29 @@ download:
   # Azure deployment settings
   storage-account-name: ${DOWNLOAD_STORAGE_ACCOUNT_NAME:}
   queue-client-id: ${DOWNLOAD_QUEUE_CLIENT_ID:}
+  blob-client-id: ${DOWNLOAD_BLOB_CLIENT_ID:}
+  blob-container-name: ${DOWNLOAD_BLOB_CONTAINER_NAME:downloads}
+  sas-expiry-days: 7
 
   # Local development / Azurite
   queue-connection-string: ${DOWNLOAD_QUEUE_CONNECTION_STRING:}
+  blob-connection-string: ${DOWNLOAD_BLOB_CONNECTION_STRING:}
+
+  scheduler:
+    enabled: ${DOWNLOAD_SCHEDULER_ENABLED:true}
+    cron: ${DOWNLOAD_SCHEDULER_CRON:0 */5 * * * *}
+    visibility-timeout-seconds: ${DOWNLOAD_QUEUE_VISIBILITY_TIMEOUT_SECONDS:300}
+    retry-count: ${DOWNLOAD_QUEUE_RETRY_COUNT:5}
+    retry-backoff-minutes: ${DOWNLOAD_QUEUE_RETRY_BACKOFF_MINUTES:5}
+
+bc:
+  notify:
+    api-key: ${BC_NOTIFY_API_KEY:}
+    email-endpoint: ${BC_NOTIFY_EMAIL_ENDPOINT:https://notify.digital.gov.bc.ca/api/v1/notifysimple/email}
+    admin-email: ${BC_NOTIFY_ADMIN_EMAIL:wfwx_team@vividsolutions.microsoftonline.com}
+    templates:
+      download-success: ${BC_NOTIFY_DOWNLOAD_SUCCESS_TEMPLATE_ID:9f259dcf-92c9-4254-b2dd-6eb175126805}
+      download-failure: ${BC_NOTIFY_DOWNLOAD_FAILURE_TEMPLATE_ID:8d7c10f8-431e-4b31-91ae-aacafa758566}
 
 management:
   endpoints:

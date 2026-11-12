@@ -32,11 +32,62 @@ variable "download_page_size" {
   default     = 1000
 }
 
+variable "download_scheduler_enabled" {
+  type = bool
+}
+
+variable "download_scheduler_cron" {
+  type = string
+}
+
+variable "download_queue_visibility_timeout_seconds" {
+  type = number
+}
+
+variable "download_queue_retry_count" {
+  type = number
+}
+
+variable "download_queue_retry_backoff_minutes" {
+  type = number
+}
+
+variable "download_blob_container_name" {
+  type = string
+}
+
+
 variable "bc_notify_api_key" {
   description = "BC Notify API key passed to the Download API as the BC_NOTIFY_API_KEY app setting."
   type        = string
   default     = ""
 }
+
+variable "bc_notify_email_endpoint" {
+  description = "BC Notify email endpoint URL."
+  type        = string
+  default     = "https://notify.digital.gov.bc.ca/api/v1/notifysimple/email"
+}
+
+variable "bc_notify_admin_email" {
+  description = "Admin email address for datamart download failures."
+  type        = string
+  default     = "wfwx_team@vividsolutions.microsoftonline.com"
+}
+
+variable "bc_notify_download_success_template_id" {
+  description = "Template ID to be provided to BC notify for use in selecting which success email wording to send."
+  type        = string
+  default     = ""
+}
+
+
+variable "bc_notify_download_failure_template_id" {
+  description = "Template ID to be provided to BC notify for use in selecting which failure email wording to send."
+  type        = string
+  default     = ""
+}
+
 
 
 variable "datamart_timeout_seconds" {

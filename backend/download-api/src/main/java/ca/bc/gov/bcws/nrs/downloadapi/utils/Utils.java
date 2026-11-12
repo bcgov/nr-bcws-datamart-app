@@ -20,6 +20,22 @@ public final class Utils {
         return LocalDateTime.now().format(TIMESTAMP_FORMAT);
     }
 
+    public static String determineSuffix(
+            boolean hasDaily,
+            boolean hasHourly) {
+
+        if (hasDaily && hasHourly)
+            return "daily-hourly";
+
+        if (hasDaily)
+            return "daily";
+
+        if (hasHourly)
+            return "hourly";
+
+        return "download";
+    }
+
     public static String generateZipFileName(String suffix, String startDate, String endDate) {
 
         return String.format(
@@ -28,5 +44,17 @@ public final class Utils {
                 startDate,
                 endDate,
                 generateGuid());
+    }
+
+    public static String generateCsvFileName(
+        String queryName,
+        String startDate,
+        String endDate) {
+
+        return String.format(
+            "bcws-weather-datamart_%s_%s_%s.csv",
+            queryName,
+            startDate,
+            endDate);
     }
 }
