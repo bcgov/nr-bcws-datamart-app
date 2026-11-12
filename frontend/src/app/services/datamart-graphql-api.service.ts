@@ -247,5 +247,5 @@ export function makeInFilter( vals: any[], wrapper: ( s: string ) => string  ) {
 
     if ( blks.length == 1 ) return wrapper( `in: [${ blks[0].join(',')}]` )
 
-    return 'or: [' + blks.map( bl => wrapper( `in: [${ bl.join(',')}]` ) ).join( ' ' ) + ']'
+    return 'or: [' + blks.map( bl => `{ ${ wrapper( `in: [${ bl.join(',')}]` ) } }` ).join( ' ' ) + ']'
 }
