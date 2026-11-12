@@ -220,9 +220,14 @@ export class StationSelectionContentMapComponent implements AfterViewInit, OnDes
         this.smk.$tool.IdentifyFeatureTool.active = true            
         this.smk.$viewer.identified.clear()
         let ids = this.smk.$viewer.identified.add( "weather-stations", [ station ] )
+        // debugger
         this.smk.$viewer.identified.pick( ids[ 0 ] )
         this.smk.$viewer.identified.highlight( ids )
         this.smk.$tool.IdentifyListTool.searchLocation = { map: { latitude: station.properties.LATITUDE, longitude: station.properties.LONGITUDE } }
         this.smk.$tool.IdentifyListTool.displaySearchArea()
+        setTimeout(() => {
+            this.smk.$viewer.identified.zoomTo( ids[ 0 ] )
+            
+        }, 1000);
     }
 }

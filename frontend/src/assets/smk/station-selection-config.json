@@ -80,7 +80,7 @@
             "command": {
                 "select": false,
                 "nearBy": false,
-                "zoom": false
+                "zoom": true
             },
             "radius": 20,
             "radiusUnit": "px",
