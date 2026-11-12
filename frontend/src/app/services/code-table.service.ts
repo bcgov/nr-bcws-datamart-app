@@ -92,7 +92,7 @@ export class CodeTableService {
         { code: "ELEVATION_M",                  description: "Elevation (m)",                           abbrev: 'e',    style: 'numeric' },
         { code: "INFLUENCING_SLOPE",            description: "Slope",                                   abbrev: 's',    style: 'numeric' },
         { code: "INFLUENCING_ASPECT_DESC",      description: "Aspect",                                  abbrev: 'a',    style: 'numeric' },
-        { code: "PLUVIOSNOWGAUGEIND",           description: "Pluvio snow gauge",                       abbrev: 'psg' },
+        { code: "PLUVIO_SNOW_GUAGE_IND",        description: "Pluvio snow gauge",                       abbrev: 'psg' },
         { code: "OVER_WINTER_PRECIP_ADJ_IND",   description: "Overwinter precipitation gauge",          abbrev: 'opg' },
         { code: "LATITUDE",                     description: "Latitude",                                abbrev: 'lat',  style: 'numeric' },
         { code: "LONGITUDE",                    description: "Longitude",                               abbrev: 'long', style: 'numeric' },
