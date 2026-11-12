@@ -65,12 +65,12 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
         },
         {
             id: MENU.ABOUT_GRAPHQL,
-            label: 'Graph QL API',
+            label: 'GraphQL API',
             icon: 'api',
         },
         {
             id: MENU.ABOUT_MCP,
-            label: 'MCP Server',
+            label: 'MCP server',
             icon: 'mcp-server',
         },
         {

@@ -1,10 +1,11 @@
 <nrcl-device-view>
     <ng-template desktop-view>
         <section class="station-selection-content">
-            <station-selection-content-list>
-            </station-selection-content-list>
+            <station-selection-content-list
+                (identifyStation)="map.identifyStation( $event )"
+            ></station-selection-content-list>
 
-            <station-selection-content-map>
+            <station-selection-content-map #map>
             </station-selection-content-map>
         </section>
     </ng-template>
