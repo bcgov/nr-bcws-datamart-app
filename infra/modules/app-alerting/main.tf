@@ -180,7 +180,7 @@ resource "azurerm_monitor_metric_alert" "app_service_high_cpu" {
   tags = var.common_tags
 }
 
-resource "azurerm_monitor_metric_alert" "app_service_high_cpu" {
+resource "azurerm_monitor_metric_alert" "download_api_service_high_cpu" {
   count                    = local.alerts_enabled && var.enable_app_service_backend ? 1 : 0
   name                     = "${var.app_name}-downloadapi-high-cpu"
   resource_group_name      = var.resource_group_name
