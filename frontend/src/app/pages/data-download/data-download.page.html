@@ -74,17 +74,6 @@
     </nrcl-tab-group>
 
     <div class="actions">
-        <!-- <nrcl-filter-container
-            label="Row Count"            
-            wide="1"
-        >
-            <div style="text-align: right; width: 100%;"
-                title="Total row count for daily and hourly weather data"
-            >
-                {{ totalRowCount }}
-            </div>
-        </nrcl-filter-container>
- -->
         <nrcl-button primary
             label="Download"
             icon="download"
@@ -96,7 +85,7 @@
             label="Email download link"
             icon="email"
             (click)="onEmailClick()"
-            disabled
+            [disabled]="!enableAsyncDownload || isLoading"
         ></nrcl-button>
 
         <nrcl-button 
