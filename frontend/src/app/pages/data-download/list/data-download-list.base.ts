@@ -15,6 +15,7 @@ import { DatamartGraphqlApiService, Result } from '../../../services/datamart-gr
 import { DatamartRestApiService } from '../../../services/datamart-rest-api.service';
 import { SelectedWeatherStationsService } from '../../../services/selected-weather-stations.service';
 import { WeatherStationService } from '../../../services/weather-station.service';
+import { GENERIC_FAILURE } from '../../../util';
 
 export interface DownloadList {
     refreshList(): Promise<void>
@@ -96,7 +97,7 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
             } )
             .catch( err => {
                 console.warn( JSON.stringify(err, null, '  ') )
-                this.snackbarUtilService.error( 'Failed to get page' )
+                this.snackbarUtilService.error( GENERIC_FAILURE )
             } )
             .finally( () => {
                 this.isLoading = false

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
@@ -25,8 +25,11 @@ export class StationSelectionContentListComponent implements OnInit {
     selectedWeatherStationsService = inject( SelectedWeatherStationsService )
     changeDetectorRef = inject( ChangeDetectorRef )
 
+    @Output() identifyStation = new EventEmitter<WeatherStationFeature>()
+    
     sortOption: SortOption = 'nameAsc';
     stations: WeatherStationFeature[] = [];
+
 
     ngOnInit(): void {
         this.weatherStationService.stations$.subscribe( (stations) => {
@@ -112,5 +115,9 @@ export class StationSelectionContentListComponent implements OnInit {
             default:
                 return stations;
         }
+    }
+
+    onStationNameClick( station: WeatherStationFeature ) {
+        this.identifyStation.emit( station )
     }
 }
