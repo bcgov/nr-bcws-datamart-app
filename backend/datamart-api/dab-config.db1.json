@@ -117,6 +117,39 @@
         }
       ]
     },
+    "station_indices_period": {
+      "source": {
+        "object": "dbo.STATION_INDICES_PERIOD",
+        "type": "table",
+        "key-fields": [
+          "STATION_INDICES_PERIOD_GUID"
+        ]
+      },
+      "relationships": {
+        "station": {
+          "cardinality": "one",
+          "target.entity": "weather_stations",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "WEATHER_STATION_GUID"
+          ]
+        }
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 3600
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
     "daily_measurement_type_codes": {
       "source": {
         "object": "dbo.DAILY_MEASUREMENT_TYPE_CODE",
