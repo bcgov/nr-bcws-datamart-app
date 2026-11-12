@@ -65,6 +65,13 @@ variable "app_service_backend_id" {
   nullable    = true
 }
 
+variable "download_api_app_service_id" {
+  description = "Resource ID of the download API, if deployed."
+  type        = string
+  default     = null
+  nullable    = true
+}
+
 variable "container_app_id" {
   description = "Resource ID of the backend Container App, if deployed."
   type        = string
@@ -80,6 +87,18 @@ variable "runtime_issue_log_threshold" {
   validation {
     condition     = var.runtime_issue_log_threshold >= 1
     error_message = "runtime_issue_log_threshold must be greater than or equal to 1."
+  }
+}
+
+variable "cpu_time_threshold" {
+  description = "Average CPU time usage needed to trigger alert, in seconds."
+  type        = number
+  default     = 225
+  # 225 seconds is 75% usage across last five minutes
+
+  validation {
+    condition     = var.cpu_time_threshold >= 1
+    error_message = "cpu_time_threshold must be greater than or equal to 1."
   }
 }
 

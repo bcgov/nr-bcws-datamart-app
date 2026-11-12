@@ -262,6 +262,7 @@ module "app_alerting" {
   enable_container_apps_backend         = var.enable_container_apps
   app_service_backend_id                = try(module.backend[0].backend_app_service_id, null)
   container_app_id                      = try(module.container_apps[0].backend_container_app_id, null)
+  download_api_app_service_id           = try(module.backend[0].download_api_app_service_id, null)
   runtime_issue_log_threshold           = var.application_runtime_issue_alert_threshold
   database_connectivity_issue_threshold = var.application_database_issue_alert_threshold
   backend_http_5xx_threshold            = var.backend_http_5xx_alert_threshold
