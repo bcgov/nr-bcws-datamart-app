@@ -124,6 +124,90 @@ resource "azurerm_monitor_metric_alert" "app_service_http_5xx" {
   tags = var.common_tags
 }
 
+resource "azurerm_monitor_metric_alert" "download_api_service_http_5xx" {
+  count                    = local.alerts_enabled && var.enable_app_service_backend ? 1 : 0
+  name                     = "${var.app_name}-downloadapiservice-http5xx"
+  resource_group_name      = var.resource_group_name
+  scopes                   = [var.download_api_app_service_id]
+  description              = "Detect elevated server error volume on the download API Service."
+  severity                 = 2
+  frequency                = "PT1M"
+  window_size              = "PT5M"
+  auto_mitigate            = true
+  target_resource_type     = "Microsoft.Web/sites"
+  target_resource_location = var.location
+
+  criteria {
+    metric_namespace = "Microsoft.Web/sites"
+    metric_name      = "Http5xx"
+    aggregation      = "Total"
+    operator         = "GreaterThanOrEqual"
+    threshold        = var.app_service_http_5xx_threshold
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.application[0].id
+  }
+
+  tags = var.common_tags
+}
+
+resource "azurerm_monitor_metric_alert" "app_service_high_cpu" {
+  count                    = local.alerts_enabled && var.enable_app_service_backend ? 1 : 0
+  name                     = "${var.app_name}-appservice-high-cpu"
+  resource_group_name      = var.resource_group_name
+  scopes                   = [var.app_service_backend_id]
+  description              = "Detect elevated CPU usage on the backend App Services."
+  severity                 = 2
+  frequency                = "PT1M"
+  window_size              = "PT5M"
+  auto_mitigate            = true
+  target_resource_type     = "Microsoft.Web/sites"
+  target_resource_location = var.location
+
+  criteria {
+    metric_namespace = "Microsoft.Web/sites"
+    metric_name      = "CPUTime"
+    aggregation      = "Average"
+    operator         = "GreaterThanOrEqual"
+    threshold        = var.cpu_time_threshold
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.application[0].id
+  }
+
+  tags = var.common_tags
+}
+
+resource "azurerm_monitor_metric_alert" "download_api_service_high_cpu" {
+  count                    = local.alerts_enabled && var.enable_app_service_backend ? 1 : 0
+  name                     = "${var.app_name}-downloadapi-high-cpu"
+  resource_group_name      = var.resource_group_name
+  scopes                   = [var.download_api_app_service_id]
+  description              = "Detect elevated CPU usage on the download API Services."
+  severity                 = 2
+  frequency                = "PT1M"
+  window_size              = "PT5M"
+  auto_mitigate            = true
+  target_resource_type     = "Microsoft.Web/sites"
+  target_resource_location = var.location
+
+  criteria {
+    metric_namespace = "Microsoft.Web/sites"
+    metric_name      = "CPUTime"
+    aggregation      = "Average"
+    operator         = "GreaterThanOrEqual"
+    threshold        = var.cpu_time_threshold
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.application[0].id
+  }
+
+  tags = var.common_tags
+}
+
 resource "azurerm_monitor_metric_alert" "container_app_restarts" {
   count                    = local.alerts_enabled && var.enable_container_apps_backend ? 1 : 0
   name                     = "${var.app_name}-containerapp-restarts"
