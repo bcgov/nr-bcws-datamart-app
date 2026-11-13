@@ -58,7 +58,7 @@ export class WeatherStationService {
     loadStations(): Promise<WeatherStationFeature[]> {
         if ( this._stationsPromise ) return this._stationsPromise
 
-        this._stationsPromise = this.datamartRestApiService.getActiveWeatherStations( { filter: "STATION_STATUS_CODE eq 'ACTIVE'" } )
+        this._stationsPromise = this.datamartRestApiService.getActiveWeatherStations( { first: -1, filter: "STATION_STATUS_CODE eq 'ACTIVE'" } )
             .then( stations => {
                 return stations.map( ( s ) => {
                     return {
