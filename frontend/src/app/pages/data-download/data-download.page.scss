@@ -1,5 +1,7 @@
 :host {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
     data-download-filters {
         padding: 0 var( --nrcl-gutter-space );
@@ -21,9 +23,16 @@
     }
 
     .tabs-container {
-        padding: 0 var( --nrcl-gutter-space );
+        flex-grow: 0;
+        flex-shrink: 1;
+        min-height: 0;
+        padding-top: 0;
+        padding-left: var( --nrcl-gutter-space );
+        padding-right: var( --nrcl-gutter-space );
+        padding-bottom: var( --nrcl-gutter-space );
         position: relative;
-
+        height: calc( 100% - var( --nrcl-gutter-space ) );
+        
         .actions {
             position: absolute;
             top: 0;
@@ -34,6 +43,22 @@
             gap: var( --nrcl-gutter-space );
             align-items: center;
             z-index: 1;
+        }
+
+        .nrcl-tab-group {
+            height: 100%;
+
+            ::ng-deep .mat-mdc-tab-group {
+                height: 100%;
+
+                .mat-mdc-tab-body-wrapper {
+                    .mat-mdc-tab-body {
+                        .mat-mdc-tab-body-content {
+                            padding: 0;
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -55,4 +80,9 @@
             }
         }
     }
+}
+
+::ng-deep .nrcl-application main:has( data-download-page ) {
+    overflow: hidden !important;
+    // background-color: red;
 }
