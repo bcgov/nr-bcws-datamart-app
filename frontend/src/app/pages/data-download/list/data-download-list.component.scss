@@ -1,20 +1,24 @@
 :host {
-    padding: var( --nrcl-gutter-space ) 0;
+    display: block;
 
-    .mat-mdc-header-row, .mat-mdc-row {
-        border: none;
-    }
+    .nrcl-row-list-desktop {
+        overflow: visible;
 
-    .mat-mdc-table {
-        .mat-mdc-header-cell {
-            font-weight: 700;
-            align-items: flex-end;
-        }
+        .mat-mdc-table {
+            .mat-mdc-header-row, .mat-mdc-row {
+                border: none;
+            }
 
-        .mat-mdc-header-cell, .mat-mdc-cell,  {
-            flex-basis: 150px;
-            flex-shrink: 0;
-            flex-grow: 1;
+            .mat-mdc-header-cell {
+                font-weight: 700;
+                align-items: flex-end;
+            }
+
+            .mat-mdc-header-cell, .mat-mdc-cell,  {
+                flex-basis: 150px;
+                flex-shrink: 0;
+                flex-grow: 1;
+            }
         }
     }
 }
