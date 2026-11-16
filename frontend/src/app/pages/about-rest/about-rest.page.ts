@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { DataMartMarkdownComponent } from '../../components/datamart-markdown/datamart-markdown.component';
 import { ApplicationStateService } from '../../services/application-state.service';
-// @ts-ignore — `with { loader: 'text' }` is resolved by the bundler, not TypeScript.
-// import dailies from './section/dailies.md' with { loader: 'text' }
-import { AboutRestWeatherStationsComponent } from './section/about-rest-weather-stations.component';
+import { AboutRestDailyWeatherComponent } from './daily-weather/about-rest-daily-weather.component';
+import { AboutRestHourlyWeatherComponent } from './hourly-weather/about-rest-hourly-weather.component';
+import { AboutRestWeatherStationsComponent } from './weather-stations/about-rest-weather-stations.component';
 
 @Component( {
     selector: 'about-rest-page',
@@ -13,18 +13,16 @@ import { AboutRestWeatherStationsComponent } from './section/about-rest-weather-
     imports: [
         DataMartMarkdownComponent,
         AboutRestWeatherStationsComponent,
+        AboutRestDailyWeatherComponent,
+        AboutRestHourlyWeatherComponent,
     ]
 } )
 export class AboutRestPage {
     applicationStateService = inject( ApplicationStateService )
-    // dailies = dailies
 }
 
 
 /*
-
-curl --url 'https://nr-bcws-datamart-app-int-api.azurewebsites.net/api/weather_stations?$filter=STATION_STATUS_CODE%20eq%20%27ACTIVE%27&$after=W3siRW50aXR5TmFtZSI6IndlYXRoZXJfc3RhdGlvbnMiLCJGaWVsZE5hbWUiOiJXRUFUSEVSX1NUQVRJT05fR1VJRCIsIkZpZWxkVmFsdWUiOiIweEJBMjg5NzNBMDg1NDA0RUFFMDUzMUQwOTIyOEU4QzY0IiwiRGlyZWN0aW9uIjowfV0=' \
-  
 
 curl --url 'https://nr-bcws-datamart-app-int-api.azurewebsites.net/api/openapi'
 

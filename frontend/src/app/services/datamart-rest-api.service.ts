@@ -48,7 +48,7 @@ export class DatamartRestApiService {
         return fetchAllPages<DailyWeather>( url, [], 10, 'getDailyWeather' )
     }
 
-    getActiveWeatherStations( opt: RestOptions ): Promise<WeatherStation[]> {
+    getWeatherStations( opt: RestOptions ): Promise<WeatherStation[]> {
         let url = `${ this.applicationStateService.environment.REST_BASE_URL }/weather_stations?${ formatRestOptions( opt ) }`
 
         return fetchAllPages<WeatherStation>( url, [], 20, 'getActiveWeatherStations' )
