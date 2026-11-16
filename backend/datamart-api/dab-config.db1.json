@@ -11,11 +11,155 @@
     "daily_weather": {
       "source": {
         "object": "dbo.DAILY_WEATHER_MEASUREMENT",
-        "type": "table",
-        "key-fields": [
-          "DAILY_WEATHER_MEAS_GUID"
-        ]
+        "type": "table"
       },
+      "fields": [
+        {
+          "name": "DAILY_WEATHER_MEAS_GUID",
+          "description": "A unique identifier for the record.",
+          "primary-key": true
+        },
+        {
+          "name": "WEATHER_STATION_GUID",
+          "description": "A foreign key to WEATHER_STATION"
+        },
+        {
+          "name": "WEATHER_TIMESTAMP_MSEC",
+          "description": "The date and time a weather measurement is collected as measured by milliseconds since epoch"
+        },
+        {
+          "name": "WEATHER_TIMESTAMP",
+          "description": "The UTC timestamp of when the weather measurement was taken"
+        },
+        {
+          "name": "DAILY_MEASUREMENT_TYPE_CODE",
+          "description": "A foreign key to DAILY_MEASUREMENT_TYPE_CODE"
+        },
+        {
+          "name": "TEMPERATURE",
+          "description": "The temperature measured in degrees Celsius by the weather station"
+        },
+        {
+          "name": "TEMPERATURE_MIN",
+          "description": "The daily low (minimum) temperature for the day measured in degrees Celsius"
+        },
+        {
+          "name": "TEMPERATURE_MAX",
+          "description": "The daily high (maximum) temperature for the day measured in degrees Celsius"
+        },
+        {
+          "name": "RELATIVE_HUMIDITY",
+          "description": "A measure of the relative humidity by the weather station"
+        },
+        {
+          "name": "RELATIVE_HUMIDITY_MIN",
+          "description": "The daily low (minimum) Humidity measurement for the day"
+        },
+        {
+          "name": "RELATIVE_HUMIDITY_MAX",
+          "description": "The daily high (maximum) Humidity measurement for the day"
+        },
+        {
+          "name": "PRECIPITATION",
+          "description": "A measure of precipitation by the weather station"
+        },
+        {
+          "name": "WIND_SPEED",
+          "description": "A measure of wind speed in kilometres/hour by the weather station"
+        },
+        {
+          "name": "WIND_DIRECTION_DEGREES",
+          "description": "The direction the wind measured in degrees as measured by the weather station. Values fall within the range 0.0 - 359.0"
+        },
+        {
+          "name": "ADJUSTED_WIND_SPEED",
+          "description": "An adjusted measure of wind speed in kilometres/hour by the weather station"
+        },
+        {
+          "name": "DAILY_SEVERITY_RATING",
+          "description": "A numeric rating describing the difficulty of controlling fires"
+        },
+        {
+          "name": "DROUGHT_CODE",
+          "description": "A numerical rating of the moisture content of deep, compact, organic layers"
+        },
+        {
+          "name": "DUFF_MOISTURE_CODE",
+          "description": "A numerical rating of the average moisture content of loosely compacted organic layers of moderate depth"
+        },
+        {
+          "name": "FINE_FUEL_MOISTURE_CODE",
+          "description": "A measure of the moisture content (dryness) of the smallest forest fuels (surface litter, leaves, needles, small twigs, etc)"
+        },
+        {
+          "name": "GRASSLAND_CURING",
+          "description": "A numeric rating of the state of the grassland moisture levels"
+        },
+        {
+          "name": "BUILD_UP_INDEX",
+          "description": "The amount of fuel available for combustion, indicating how the fire will develop after initial spread"
+        },
+        {
+          "name": "DANGER_FOREST_INDEX",
+          "description": "An index calculation specific to BC that is based on location Build Up Index and Fire Weather Index. Values fall in the range of 1-5"
+        },
+        {
+          "name": "DANGER_GRASSLAND_INDEX",
+          "description": "An index calculation specific to BC that is based on location Initial Spread Index and Grass Curing. Values fall in the range of 1-5"
+        },
+        {
+          "name": "DANGER_SCRUB_INDEX",
+          "description": "An index calculation specific to BC that is based on location Initial Spread Index and Fine Fuel Moisture Code. Values fall in the range of 1-5"
+        },
+        {
+          "name": "FIRE_WEATHER_INDEX",
+          "description": "Fire Weather Index is calculated from the Initial Spread Index and a measure called BUI (Build-Up Index), and provides a numerical rating of the likely intensity of a fire. Values are: 0-4.5 : Low 4.5-10.5: Moderate 10.5-18.5: High 18.5-29.5: Very High 29.5+: Extreme"
+        },
+        {
+          "name": "INITIAL_SPREAD_INDEX",
+          "description": "Initial Spread Index indicates the rate fire will spread in its early stages. It is calculated from the FFMC rating and the wind factor. A high rating indicates a high rate of spread. Measured values translate as: 0-1.5 : Low 2-4: Moderate 5-8: High 9-15: Very High 16+: Extreme"
+        },
+        {
+          "name": "MISSING_HOURLY_DATA_IND",
+          "description": "Missing Hourly Data Ind indicates whether the measurements collected by this record are missing hourly data (Y) or not (N)"
+        },
+        {
+          "name": "OBSERVATION_VALID_IND",
+          "description": "Observation Valid Ind indicates whether one or more weather observations is within an acceptable range of values (Y) or is outside of a valid range (N)"
+        },
+        {
+          "name": "OBSERVATION_VALID_COMMENT",
+          "description": "Comments provided that describe issues with one or more sensors that are affecting observations"
+        },
+        {
+          "name": "ARCHIVED_IND",
+          "description": "Archived Ind indicates whether the measurement is archived (Y) or not (N)"
+        },
+        {
+          "name": "LAST_UPDATED_TIMESTAMP_MSEC",
+          "description": "The last date and time the record was updated as measured by milliseconds since epoch"
+        },
+        {
+          "name": "LAST_UPDATED_TIMESTAMP",
+          "description": "The UTC timestamp of when the record was last updated"
+        },
+        {
+          "name": "CREATE_USER",
+          "description": "An audit column that indicates the user that created the record"
+        },
+        {
+          "name": "CREATE_DATE",
+          "description": "The date and time the row of data was created"
+        },
+        {
+          "name": "UPDATE_USER",
+          "description": "An audit column that indicates the user that updated the record."
+        },
+        {
+          "name": "UPDATE_DATE",
+          "description": "The date and time the row of data was updated."
+        }
+      ],
       "relationships": {
         "station": {
           "cardinality": "one",
