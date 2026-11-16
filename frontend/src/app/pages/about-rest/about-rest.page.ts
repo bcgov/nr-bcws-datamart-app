@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { DataMartMarkdownComponent } from '../../components/datamart-markdown/datamart-markdown.component';
 import { ApplicationStateService } from '../../services/application-state.service';
 // @ts-ignore — `with { loader: 'text' }` is resolved by the bundler, not TypeScript.
-import dailies from './section/dailies.md' with { loader: 'text' }
+// import dailies from './section/dailies.md' with { loader: 'text' }
+import { AboutRestWeatherStationsComponent } from './section/about-rest-weather-stations.component';
 
 @Component( {
     selector: 'about-rest-page',
@@ -11,12 +12,14 @@ import dailies from './section/dailies.md' with { loader: 'text' }
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
         DataMartMarkdownComponent,
+        AboutRestWeatherStationsComponent,
     ]
 } )
 export class AboutRestPage {
     applicationStateService = inject( ApplicationStateService )
-    dailies = dailies
+    // dailies = dailies
 }
+
 
 /*
 

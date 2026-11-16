@@ -1,11 +1,10 @@
-## `/dailies` 
+## `/hourlies`
 
-Returns daily weather data derived from the noon hourly observation. 
-Daily data includes weather measurements, precipitation accumulated over the previous 24 hours, fire weather indices when available and danger class.
+Returns hourly weather observations for BC Wildfire Service weather stations.
 
 ### Request
 
-    GET /dailies
+    GET /hourlies
 
 ### Response attributes
 
@@ -23,20 +22,15 @@ Attribute | Type | Description
 `relativeHumidity` | Number | Relative humidity.
 `windSpeed` | Number | Wind speed.
 `windDirection` | Number | Wind direction in degrees.
-`precipitation` | Number | Precipitation.
-`dangerForest` | Number | Danger Forest Index associated with the observation.
+`windGust` | Number | Maximum wind gust during the previous hour.
+`precipitation` | Number | Precipitation accumulated over the previous hour.
 `fineFuelMoistureCode` | Number | Fine Fuel Moisture Code (FFMC).
-`duffMoistureCode` | Number | Duff Moisture Code (DMC).
-`droughtCode` | Number | Drought Code (DC).
 `initialSpreadIndex` | Number | Initial Spread Index (ISI).
-`buildUpIndex` | Number | Buildup Index (BUI).
 `fireWeatherIndex` | Number | Fire Weather Index (FWI).
-`grasslandCuring` | Number | Grassland curing value.
 `elevation` | Number | Elevation in metres above sea level.
 `geometry` | GeoJSON | Geographic location.
 
 For definitions of the measurements and fire weather indices returned by this endpoint, see [About weather data](about-weather-data).
-
 
 ### Query parameters
 
@@ -58,15 +52,14 @@ Parameter | Type | Description
 
 ### Example request
 
-Retrieve daily weather data for a station within a specified date range.
+Retrieve hourly weather data for a station within a specified date range.
 
-    GET /dailies?stationCode=790&from=2022080100&to=2022083023
+    GET /hourlies?stationCode=790&from=2022080100&to=2022080123
 
 ### Example response
 
-Retrieve daily weather data for a station within a specified date range.
+Retrieve hourly weather data for a station within a specified date range.
 
 {{'
     { ... }
 '}}
-
