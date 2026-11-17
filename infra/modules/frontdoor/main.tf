@@ -210,24 +210,26 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "unified_firewall_policy" {
   }
 
   # Simple baseline rate limiter
-  # Covers both IPv4 (0.0.0.0/0) and IPv6 (::/0) — Azure WAF IPMatch treats
-  # these as separate address families; omitting ::/0 silently skips all IPv6
-  # clients, which is the default for most modern dual-stack connections.
-  custom_rule {
-    action                         = "Block"
-    enabled                        = true
-    name                           = "RateLimitByIP"
-    priority                       = 100
-    rate_limit_duration_in_minutes = var.rate_limit_duration_in_minutes
-    rate_limit_threshold           = var.rate_limit_threshold
-    type                           = "RateLimitRule"
-    match_condition {
-      match_values       = ["0.0.0.0/0", "::/0"]
-      match_variable     = "RemoteAddr"
-      negation_condition = false
-      operator           = "IPMatch"
+  # Rate limits by endpoints, listed in locals.tf.
+  dynamic "custom_rule" {
+    for_each = local.waf_endpoints
+    content {
+      name                           = "Rate${custom_rule.key}"
+      enabled                        = true
+      priority                       = custom_rule.value.rate_priority
+      type                           = "RateLimitRule"
+      action                         = "Block"
+      rate_limit_duration_in_minutes = 1
+      rate_limit_threshold           = custom_rule.value.rate_limit
+
+      match_condition {
+        match_variable = "RequestUri"
+        operator       = "Contains"
+        match_values   = [custom_rule.value.path]
+      }
     }
   }
+
   # Block Non-Canadian requests
   custom_rule {
     action   = "Block"
