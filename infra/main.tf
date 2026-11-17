@@ -95,6 +95,12 @@ module "frontdoor" {
   resource_group_name            = azurerm_resource_group.main.name
   log_analytics_workspace_id     = module.monitoring.log_analytics_workspace_id
 
+  frontend_rate_limit_threshold = var.frontend_rate_limit_threshold
+  api_http_rate_limit_threshold = var.api_http_rate_limit_threshold
+  api_graphql_rate_limit_threshold = var.api_graphql_rate_limit_threshold
+  api_mcp_rate_limit_threshold = var.api_mcp_rate_limit_threshold
+  download_api_rate_limit_threshold = var.download_api_rate_limit_threshold
+
   depends_on = [azurerm_resource_group.main, module.network, module.monitoring]
 }
 

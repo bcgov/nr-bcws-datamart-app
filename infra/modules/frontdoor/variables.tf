@@ -42,29 +42,29 @@ variable "log_analytics_workspace_id" {
 
 #Rate Limits
 
-variable "frontend_rate_limit" {
+variable "frontend_rate_limit_threshold" {
   description = "Max requests to frontend from any given IP in one minute"
   type = number
   default = 300
 }
 
-variable "api_http_rate_limit" {
+variable "api_http_rate_limit_threshold" {
   description = "Max http requests to API from any given IP in one minute"
   type = number
   default = 300
 }
-variable "api_mcp_rate_limit" {
+variable "api_mcp_rate_limit_threshold" {
   description = "Max mcp requests to API from any given IP in one minute"
   type = number
   default = 120
 }
-variable "api_graphql_rate_limit" {
+variable "api_graphql_rate_limit_threshold" {
   description = "Max graphql requests to API from any given IP in one minute"
   type = number
   default = 300
 }
 
-variable "download_api_rate_limit" {
+variable "download_api_rate_limit_threshold" {
   description = "Max graphql requests to download api from any given IP in one minute"
   type = number
   default = 30

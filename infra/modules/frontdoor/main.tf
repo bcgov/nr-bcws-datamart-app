@@ -261,7 +261,7 @@ resource "azurerm_cdn_frontdoor_endpoint" "unified_fd_endpoint" {
 resource "azurerm_cdn_frontdoor_custom_domain" "vanity_url" {
   name = "${var.app_name}-vanity-url-domain"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.unified_frontdoor.id
-  host_name = "https://wildfiredatamart-${var.app_env}.nrs.gov.bc.ca/"
+  host_name = "wildfiredatamart-${var.app_env}.nrs.gov.bc.ca"
   tls {
     certificate_type = "ManagedCertificate"
   }

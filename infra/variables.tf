@@ -277,14 +277,50 @@ variable "rate_limit_duration_in_minutes" {
   }
 }
 
-variable "rate_limit_threshold" {
-  description = "Request threshold for Front Door rate limiting (requests per duration)"
-  type        = number
-  default     = 60
-
+variable "frontend_rate_limit_threshold" {
+  description = "Max requests to frontend from any given IP in one minute"
+  type = number
+  default = 300
   validation {
-    condition     = var.rate_limit_threshold >= 1 && var.rate_limit_threshold <= 2147483647
-    error_message = "rate_limit_threshold must be between 1 and 2147483647."
+    condition     = var.frontend_rate_limit_threshold >= 1 && var.frontend_rate_limit_threshold <= 2147483647
+    error_message = "frontend_rate_limit_threshold must be between 1 and 2147483647."
+  }
+}
+variable "api_http_rate_limit_threshold" {
+  description = "Max http requests to API from any given IP in one minute"
+  type = number
+  default = 300
+  validation {
+    condition     = var.api_http_rate_limit_threshold >= 1 && var.api_http_rate_limit_threshold <= 2147483647
+    error_message = "api_http_rate_limit_threshold must be between 1 and 2147483647."
+  }
+}
+variable "api_mcp_rate_limit_threshold" {
+  description = "Max mcp requests to API from any given IP in one minute"
+  type = number
+  default = 120
+  validation {
+    condition     = var.api_mcp_rate_limit_threshold >= 1 && var.api_mcp_rate_limit_threshold <= 2147483647
+    error_message = "api_mcp_rate_limit_threshold must be between 1 and 2147483647."
+  }
+}
+variable "api_graphql_rate_limit_threshold" {
+  description = "Max graphql requests to API from any given IP in one minute"
+  type = number
+  default = 300
+  validation {
+    condition     = var.api_graphql_rate_limit_threshold >= 1 && var.api_graphql_rate_limit_threshold <= 2147483647
+    error_message = "api_graphql_rate_limit_threshold must be between 1 and 2147483647."
+  }
+}
+
+variable "download_api_rate_limit_threshold" {
+  description = "Max graphql requests to download api from any given IP in one minute"
+  type = number
+  default = 30
+  validation {
+    condition     = var.download_api_rate_limit_threshold >= 1 && var.download_api_rate_limit_threshold <= 2147483647
+    error_message = "download_api_rate_limit_threshold must be between 1 and 2147483647."
   }
 }
 
