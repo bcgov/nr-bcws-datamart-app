@@ -17,7 +17,7 @@
 
     <nrcl-filter-container
         label="Daily weather data"
-        (click)="onDailyWeatherClick()"
+        (click)="onDailyWeatherClick(); $event.preventDefault()"
     >
         <label>{{ dailyWeatherFieldCount }}</label>
         <nrcl-icon>chevron_right</nrcl-icon>
@@ -25,7 +25,7 @@
 
     <nrcl-filter-container
         label="Hourly weather data"
-        (click)="onHourlyWeatherClick()"
+        (click)="onHourlyWeatherClick(); $event.preventDefault()"
     >
         <label>{{ hourlyWeatherFieldCount }}</label>
         <nrcl-icon>chevron_right</nrcl-icon>
@@ -33,7 +33,7 @@
 
     <nrcl-filter-container
         label="Station metadata"
-        (click)="onStationMetadataClick()"
+        (click)="onStationMetadataClick(); $event.preventDefault()"
     >
         <label>{{ stationMetadataFieldCount }}</label>
         <nrcl-icon>chevron_right</nrcl-icon>
