@@ -1,3 +1,6 @@
+$mobile-tab-active-color: #2d2d2d;
+$mobile-tab-divider-color: #d8d8d8;
+
 :host {
     display: flex;
     flex-direction: column;
@@ -10,3 +13,49 @@
         flex-grow: 1;
     }
 }
+
+
+.content {
+    display: block;
+    flex: 1;
+    min-height: 0;
+    padding-left: var( --nrcl-gutter-space );
+    padding-right: var( --nrcl-gutter-space );
+
+    .nrcl-tab-group {
+        height: 100%;
+
+        ::ng-deep .mat-mdc-tab-group {
+            height: 100%;
+
+            .mat-mdc-tab-body-wrapper {
+                height: 100%;
+
+                .smk-map-frame .smk-viewer {
+                    height: 100%;
+                }
+            }
+        }   
+    }
+
+    .station-selection-content {
+        display: grid;
+
+        grid-template-columns: 400px 1fr;
+
+        gap: 16px;
+
+        height: 100%;
+        min-height: 0;
+
+        align-items: stretch;
+    }
+
+    .station-selection-mobile {
+        display: flex;
+        flex-direction: column;
+
+        height: 100%;
+    }
+}
+

@@ -5,11 +5,13 @@ import {
     EventEmitter,
     inject,
     Input,
+    OnInit,
     Output
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ButtonComponent, FilterSearchComponent, FilterSelectComponent, FiltersPanelComponent, IconComponent } from "@bcgov/nr-ngx-component-lib";
+import { ButtonComponent, FilterContainerComponent, FilterSearchComponent, FilterSelectComponent, FiltersPanelComponent, IconComponent } from "@bcgov/nr-ngx-component-lib";
 import { WeatherStationService } from "../../../services/weather-station.service";
+import { CodeDescription, CodeTableService } from "../../../services/code-table.service";
 
 export type Filter = {
 	search: string
@@ -54,13 +56,15 @@ export function initialFilter(): Filter {
         FilterSearchComponent,
         FiltersPanelComponent,
         FilterSelectComponent,
+        FilterContainerComponent,
         FormsModule,
         ButtonComponent
     ]
 })
-export class StationSelectionFiltersComponent {
-	// codeTableService = inject(CodeTableService)
+export class StationSelectionFiltersComponent implements OnInit {
+	codeTableService = inject(CodeTableService)
     weatherStationService = inject(WeatherStationService)
+    changeDetectorRef = inject(ChangeDetectorRef)
 
     @Input() filter: Filter = emptyFilter()
 	@Output() filterChange = new EventEmitter<Filter>()
@@ -68,7 +72,16 @@ export class StationSelectionFiltersComponent {
 	private _filterChangeTimeout: any
     filtersExpanded = false;
 
-	// fireZoneOptions = this.codeTableService.fireZoneWithNotAssigned.items
+    fireZoneOptions?: CodeDescription[]
+
+    ngOnInit(): void {
+        this.codeTableService.FIRE_ZONES.isLoading
+            .then( () => {
+            	this.fireZoneOptions = this.codeTableService.FIRE_ZONES.items!
+                console.log(this.fireZoneOptions)
+                this.changeDetectorRef.detectChanges()
+            } )
+    }
 
     onSearchTextChange( ev: any ) {
         if ( !this.filter ) return
@@ -114,7 +127,7 @@ export class StationSelectionFiltersComponent {
 		this.emitFilterChange()
 	}
 
-	onClearSearchAndFilters() {
+	onClearFilters() {
 		this.filter = emptyFilter()
 	    // this.fireZoneOptions = this.codeTableService.fireZoneWithNotAssigned.items;
 		this.emitFilterChange()

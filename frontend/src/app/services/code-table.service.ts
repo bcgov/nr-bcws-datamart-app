@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { DatamartRestApiService } from './datamart-rest-api.service';
+import { DatamartRestApiService, FireZone } from './datamart-rest-api.service';
 
 @Injectable({
     providedIn: 'root',
@@ -103,29 +103,45 @@ export class CodeTableService {
         ...this.METADATA_COLUMNS.items, 
     ])
 
-    // FIRE_CENTRES = new CodeTable( [], () => {
-    //     return this.datamartRestApiService.getFireCentres()
-    //         .then( fcs => {
-    //             return fcs.map( fc => {
-    //                 return {
-    //                     code: String(fc.FIRE_ZONE_ORG_UNIT_IDENTIFIER),
-    //                     description: fc.FIRE_ZONE_ORG_UNIT_NAME
-    //                 }
-    //             } )
-    //         } )
-    // } )
-    
-    // FIRE_ZONES = new CodeTable( [], () => {
-    //     return this.datamartRestApiService.getFireZones()
-    //         .then( fcs => {
-    //             return fcs.map( fc => {
-    //                 return {
-    //                     code: String(fc.FIRE_ZONE_ORG_UNIT_IDENTIFIER),
-    //                     description: fc.FIRE_ZONE_ORG_UNIT_NAME
-    //                 }
-    //             } )
-    //         } )
-    // } )
+    FIRE_CENTRES = new CodeTable( [], () => {
+        return this.datamartRestApiService.getFireCentres()
+            .then( fcs => {
+                return fcs.map( fc => {
+                    return {
+                        code: fc.FIRE_CENTRE_CODE,
+                        description: fc.DESCRIPTION
+                    }
+                } )
+            } )
+    } )
+        
+    private _zones = this.datamartRestApiService.getFireZones()
+
+    FIRE_ZONES = new CodeTable( [], () => {
+        return this._zones
+            .then( fzs => {
+                return fzs.map( fz => {
+                    return {
+                        code: fz.FIRE_ZONE_CODE,
+                        description: fz.DESCRIPTION
+                    }
+                } )
+            } )
+    } )
+
+    zonesForCentres = (()=>{
+        let zones: FireZone[] = []
+        this._zones.then( res => zones = res )
+
+        return ( centres: string[] ): string[] => {
+            return zones
+                .filter( z => {
+                    if ( centres.length == 0 ) return true
+                    return centres.includes( z.FIRE_CENTRE_CODE )
+                } )
+                .map( z => z.FIRE_ZONE_CODE )
+        }
+    })() 
 
     // ORG_UNITS = new CodeTable( [], () => {
     //     return this.datamartRestApiService.getOrgUnits()
@@ -147,29 +163,41 @@ export type CodeDescription = {
 }
 
 export class CodeTable {
+    private _loading?: Promise<void>
+
     constructor( 
         protected _items: ( CodeDescription )[], 
         protected _reload?: () => Promise<CodeDescription[]> 
     ) {
-        if ( _items.length == 0 ) this.reload()
+        if ( _items.length == 0 ) {
+            this.reload()
+        }
+        else {
+            this._loading = Promise.resolve()
+        }
     }
 
     get items(): CodeDescription[] {
         return this._items
     }
 
+    get isLoading(): Promise<void> {
+        return this._loading!
+    }
+
     forCode( code: string ): CodeDescription|undefined {
         return this._items.find( o => o.code == code )
     }
 
-    reload(): Promise<void> {
-        if ( !this._reload ) return Promise.reject( 'no reload defined' )
+    reload() {
+        this._loading = (() => {
+            if ( !this._reload ) return Promise.reject( 'no reload defined' )
 
-        return this._reload()
-            .then( res => {
-                console.log(res)
-                this._items = res
-            } )
+            return this._reload()
+                .then( res => {
+                    this._items = res
+                } )
+        })()
     }
 }
 

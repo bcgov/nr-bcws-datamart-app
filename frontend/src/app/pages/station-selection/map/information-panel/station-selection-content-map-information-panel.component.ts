@@ -5,8 +5,8 @@ import {
     Input,
 } from '@angular/core';
 import { ButtonComponent, IndicatorComponent } from '@bcgov/nr-ngx-component-lib';
-import { SelectedWeatherStationsService } from '../../../../../services/selected-weather-stations.service';
-import { formatTableDate } from '../../../../../util';
+import { SelectedWeatherStationsService } from '../../../../services/selected-weather-stations.service';
+import { formatTableDate } from '../../../../util';
 
 @Component({
     selector: 'station-selection-content-map-information-panel',

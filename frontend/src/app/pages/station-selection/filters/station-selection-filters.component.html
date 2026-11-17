@@ -1,3 +1,106 @@
+<nrcl-filters-panel 
+    (clearFilters)="onClearFilters()"
+    [hasAdvancedFilters]="true"
+>
+    <nrcl-filter-search
+        placeholder="Search stations"
+        [value]="filter.search"
+        (valueChange)="onSearchTextChange($event)">
+    </nrcl-filter-search>
+
+    <nrcl-filter-select
+        label="Fire centre"
+        [value]="filter.fireCentre"
+        [options]="codeTableService.FIRE_CENTRES.items"
+        [summary]="false"
+    ></nrcl-filter-select>
+
+    <nrcl-filter-select
+        label="Fire zone"
+        [value]="filter.fireZone"
+        [options]="fireZoneOptions!"
+        [summary]="false"
+    ></nrcl-filter-select>
+
+    <nrcl-filter-select
+        label="Station status"
+        [value]="filter.stationStatus"
+    ></nrcl-filter-select>
+
+    <nrcl-filter-container advanced wide="4"
+        label="Elevation (m)"
+    >
+        <label>Min
+            <input type="number"
+                placeholder="e.g. 500"
+                [value]="filter.elevation[0]"
+                (change)="onElevationChange( $event?.target?.value, filter.elevation[1] )"
+                (blur)="applyFilters()"
+                (keydown.enter)="applyFilters()"
+            >
+        </label>
+
+        <label>Max
+            <input type="number"
+                placeholder="e.g. 1,500"
+                [value]="filter.elevation[1]"
+                (change)="onElevationChange( filter.elevation[0], $event?.target?.value )"
+                (blur)="applyFilters()"
+                (keydown.enter)="applyFilters()"
+            >
+        </label>
+    </nrcl-filter-container>
+
+    <nrcl-filter-container advanced wide="4"
+        label="Latitude (degrees)"
+    >
+        <label>Min
+            <input type="number"
+                placeholder="e.g. 500"
+                [value]="filter.latitude[0]"
+                (change)="onElevationChange( $event?.target?.value, filter.latitude[1] )"
+                (blur)="applyFilters()"
+                (keydown.enter)="applyFilters()"
+            >
+        </label>
+
+        <label>Max
+            <input type="number"
+                placeholder="e.g. 1,500"
+                [value]="filter.latitude[1]"
+                (change)="onElevationChange( filter.latitude[0], $event?.target?.value )"
+                (blur)="applyFilters()"
+                (keydown.enter)="applyFilters()"
+            >
+        </label>
+    </nrcl-filter-container>
+
+    <nrcl-filter-container advanced wide="4"
+        label="Longitude (degrees)"
+    >
+        <label>Min
+            <input type="number"
+                placeholder="e.g. 500"
+                [value]="filter.longitude[0]"
+                (change)="onElevationChange( $event?.target?.value, filter.longitude[1] )"
+                (blur)="applyFilters()"
+                (keydown.enter)="applyFilters()"
+            >
+        </label>
+
+        <label>Max
+            <input type="number"
+                placeholder="e.g. 1,500"
+                [value]="filter.longitude[1]"
+                (change)="onElevationChange( filter.longitude[0], $event?.target?.value )"
+                (blur)="applyFilters()"
+                (keydown.enter)="applyFilters()"
+            >
+        </label>
+    </nrcl-filter-container>
+</nrcl-filters-panel>
+
+<!--
 <section class="station-selection-filters">
     <div class="filter-toolbar">
         @if ( filtersExpanded ) {
@@ -175,3 +278,5 @@
         </div>
     }
 </section>
+
+-->
