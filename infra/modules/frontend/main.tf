@@ -324,6 +324,9 @@ resource "azurerm_cdn_frontdoor_route" "frontend_route" {
   cdn_frontdoor_endpoint_id     = var.frontdoor_endpoint_id
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.frontend_origin_group[0].id
   cdn_frontdoor_origin_ids      = [azurerm_cdn_frontdoor_origin.frontend_app_service_origin[0].id]
+  cdn_frontdoor_custom_domain_ids = [
+    var.frontdoor_custom_domain_id
+  ]
 
   supported_protocols    = ["Http", "Https"]
   patterns_to_match      = ["/*"]

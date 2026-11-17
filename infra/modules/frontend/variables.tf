@@ -85,6 +85,12 @@ variable "frontdoor_endpoint_id" {
   nullable = true
 }
 
+variable "frontdoor_custom_domain_id" {
+  description = "ID for frontdoor custom domain"
+  type = string
+  nullable = true
+}
+
 variable "location" {
   description = "The Azure region where resources will be created."
   type        = string

@@ -23,3 +23,8 @@ output "endpoint_hostname" {
   description = "ID for frontdoor endpoint"
   value =  azurerm_cdn_frontdoor_endpoint.unified_fd_endpoint.host_name
 }
+
+output "frontdoor_custom_domain_id" {
+  description = "ID for the custom domain"
+  value = azurerm_cdn_frontdoor_custom_domain.vanity_url.id
+}

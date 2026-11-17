@@ -4,6 +4,12 @@ variable "app_name" {
   nullable    = false
 }
 
+variable "app_env" {
+  description = "Name of environment"
+  type = string
+  nullable = false
+}
+
 variable "common_tags" {
   description = "Common tags to apply to all resources"
   type        = map(string)
