@@ -12,7 +12,7 @@ import { DataMartHeaderComponent } from '../../components/datamart-header/datama
 import { DialogService } from '../../services/dialog.service';
 import { SelectedWeatherStationsService } from '../../services/selected-weather-stations.service';
 import { StationSelectionContentComponent } from './content/station-selection-content.component';
-import { StationSelectionFiltersComponent } from './filters/station-selection-filters.component';
+import { emptyFilter, StationSelectionFiltersComponent } from './filters/station-selection-filters.component';
 import { WeatherStationService } from '../../services/weather-station.service';
 
 @Component({
@@ -40,7 +40,7 @@ export class StationSelectionPage implements OnInit {
             this.changeDetectorRef.detectChanges()
         }, 1000);
 
-        // this.weatherStationService.initialize()
+        this.weatherStationService.filterStations(emptyFilter())
     }    
 
     onViewDataClick() {
