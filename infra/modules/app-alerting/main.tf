@@ -168,7 +168,7 @@ resource "azurerm_monitor_metric_alert" "app_service_high_cpu" {
   criteria {
     metric_namespace = "Microsoft.Web/sites"
     metric_name      = "CPUTime"
-    aggregation      = "Average"
+    aggregation      = "Total"
     operator         = "GreaterThanOrEqual"
     threshold        = var.cpu_time_threshold
   }
@@ -196,7 +196,7 @@ resource "azurerm_monitor_metric_alert" "download_api_service_high_cpu" {
   criteria {
     metric_namespace = "Microsoft.Web/sites"
     metric_name      = "CPUTime"
-    aggregation      = "Average"
+    aggregation      = "Total"
     operator         = "GreaterThanOrEqual"
     threshold        = var.cpu_time_threshold
   }
