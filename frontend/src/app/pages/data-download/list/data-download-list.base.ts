@@ -55,7 +55,6 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
     ngOnChanges( changes: SimpleChanges ): void {}
 
     ngOnInit(): void {
-        this.refreshList()
     }
 
     refreshList(): Promise<void> {
