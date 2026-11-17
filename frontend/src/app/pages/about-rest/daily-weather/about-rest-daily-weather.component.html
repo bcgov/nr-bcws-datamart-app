@@ -1,0 +1,37 @@
+<datamart-markdown ngPreserveWhitespaces>
+
+## `/daily_weather` 
+
+Returns daily weather data derived from the noon hourly observation. 
+Daily data includes weather measurements, precipitation accumulated over the previous 24 hours, fire weather indices when available and danger class.
+
+### Request
+
+    GET /daily_weather
+
+
+### Attributes
+
+This endpoint returns records containing these attributes.
+These attributes can also be used to filter the records in the request.
+
+Attribute | Type | Description
+-- | - | ----
+{{ attributes }}
+
+
+### Example 
+
+This request will retrieve daily weather data for a station within a specified date range.
+
+    GET /daily_weather?$filter=WEATHER_STATION_GUID eq '0xBA28973A0BC804EAE0531D09228E8C64' and WEATHER_TIMESTAMP ge 2026-11-15T07:00:00.000Z and WEATHER_TIMESTAMP le 2026-11-16T07:00:00.000Z
+
+The result of the request will be something like this.
+
+{{ example | json | indent }}
+
+</datamart-markdown>
+
+
+
+

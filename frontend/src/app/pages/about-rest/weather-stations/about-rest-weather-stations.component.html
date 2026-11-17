@@ -1,0 +1,72 @@
+<datamart-markdown ngPreserveWhitespaces>
+
+## `/weather-stations`
+
+Returns information about BC Wildfire Service weather stations.
+
+### Request
+
+    GET /weather-stations
+
+
+### Attributes
+
+This endpoint returns records containing these attributes.
+These attributes can also be used to filter the records in the request.
+
+Attribute | Type | Description
+-- | - | ----
+{{ attributes }}
+
+
+### Example requests
+
+Retrieve station information for stations within a fire centre.
+
+    GET /weather_stations?$filter=FIRE_CENTRE_ORG_UNIT_IDENT eq 6
+
+Retrieve station information for active stations
+
+    GET /weather_stations?$filter=STATION_STATUS_CODE eq 'ACTIVE'
+
+Retrieve station information for specific station
+
+    GET /weather_stations?$filter=STATION_CODE eq 1142
+
+
+### Example response
+
+This request...
+
+    GET /weather_stations?$filter=STATION_CODE eq 1142
+
+...will produce something like this response:
+
+{{ example | json | indent }}
+
+
+## `/weather-stations/WEATHER_STATION_GUID/[station-id]`
+
+Returns information about a specific BC Wildfire Service weather station.
+
+### Path parameter
+
+Parameter | Type | Description
+-- | - | ----
+`station-id` | String | The globally unique identifier (GUID) for the weather station.
+
+### Example
+
+This request...
+
+    GET /weather_stations/WEATHER_STATION_GUID/0xBA28973A0BC804EAE0531D09228E8C64
+
+...will produce something like this response:
+
+{{ example | json | indent }}
+
+</datamart-markdown>
+
+
+
+

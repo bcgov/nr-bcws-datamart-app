@@ -31,7 +31,6 @@ import { DialogService } from '../../services/dialog.service';
         DataDownloadFiltersComponent,
         DataDownloadListDailyComponent,
         DataDownloadListHourlyComponent,
-        FilterContainerComponent,
         IconComponent,
     ]
 })

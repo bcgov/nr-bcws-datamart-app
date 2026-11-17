@@ -1,0 +1,34 @@
+<datamart-markdown ngPreserveWhitespaces>
+
+## `/hourly_weather` 
+
+Returns hourly weather observations for BC Wildfire Service weather stations.
+
+### Request
+
+    GET /hourly_weather
+
+
+### Attributes
+
+This endpoint returns records containing these attributes.
+These attributes can also be used to filter the records in the request.
+
+Attribute | Type | Description
+-- | - | ----
+{{ attributes }}
+
+
+### Example 
+
+This request will retrieve hourly weather data for a station within a specified date range.
+
+    GET /hourly_weather?$filter=WEATHER_STATION_GUID eq '0xBA28973A0BC804EAE0531D09228E8C64' and WEATHER_TIMESTAMP ge 2026-11-15T07:00:00.000Z and WEATHER_TIMESTAMP le 2026-11-16T07:00:00.000Z
+
+The result of the request will be something like this.
+
+{{ example | json | indent }}
+
+</datamart-markdown>
+
+
