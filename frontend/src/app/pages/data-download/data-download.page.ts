@@ -46,7 +46,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     datamartGraphqlApiService = inject( DatamartGraphqlApiService )
     dialogService = inject(DialogService)
 
-    readonly MAX_TOTAL_ROW_COUNT = 10000
+    readonly MAX_TOTAL_ROW_COUNT = this.applicationStateService.environment.MAX_DOWNLOAD_ROW_COUNT
 
     @ViewChild( 'list' ) downloadList?: DownloadList
 
