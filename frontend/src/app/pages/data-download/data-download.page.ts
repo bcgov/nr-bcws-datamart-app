@@ -325,4 +325,8 @@ export class DataDownloadPage implements OnInit, OnDestroy {
         let c = this.hourlyRowCount
         return `Hourly weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : c + ' records' })`
     }
+
+    onSelectedTabChange( ev:any ) {
+        this.downloadList?.refreshList()
+    }
 }

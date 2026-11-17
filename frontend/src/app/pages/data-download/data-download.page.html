@@ -38,7 +38,9 @@
 }
 
 <div class="tabs-container">
-    <nrcl-tab-group standard>
+    <nrcl-tab-group standard
+        (selectedTabChange)="onSelectedTabChange( $event )"
+    >
         @if ( filter.dailyColumns.length == 0 && filter.hourlyColumns.length == 0 ) {
             <nrcl-tab label="Please select data columns" disabled>
             </nrcl-tab>
