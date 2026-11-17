@@ -20,13 +20,15 @@ export type RestOptions = {
     filter?: string,
     orderby?: string,
     select?: string[]
+    first?: number
 }
 
 function formatRestOptions( opt: RestOptions ): string {
     let out = []
     if ( opt.filter ) out.push( `$filter=${ opt.filter }` )
     if ( opt.orderby ) out.push( `$orderby=${ opt.orderby }` )
-    if ( opt.select ) out.push( `$filter=${ opt.select.join( ',' ) }` )
+    if ( opt.select ) out.push( `$select=${ opt.select.join( ',' ) }` )
+    if ( opt.first ) out.push( `$first=${ opt.first }` )
     return out.join( '&' )
 }
  
