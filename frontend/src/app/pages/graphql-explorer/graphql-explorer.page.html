@@ -9,8 +9,8 @@
 
 <p>
     View the 
-    <nrcl-button 
-        [anchor]="{ href: 'about-graphql', target: 'about-graphql' }"
+    <nrcl-button anchor
+        (click)="this.router.navigate( [ ROUTE.ABOUT_GRAPHQL ] )"
         label="GraphQL API documentation"
         iconRight="open_in_new"
     ></nrcl-button>
