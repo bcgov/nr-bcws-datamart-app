@@ -327,7 +327,9 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     }
 
     onSelectedTabChange( ev:any ) {
-        this.downloadList?.refreshList()
+        setTimeout(() => {
+            this.downloadList?.refreshList()        
+        },1000)
     }
 
     formatNumber( v: number ): string {
