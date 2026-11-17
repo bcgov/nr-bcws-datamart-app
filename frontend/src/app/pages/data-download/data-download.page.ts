@@ -318,15 +318,25 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
     get dailyTabHeader() {
         let c = this.dailyRowCount
-        return `Daily weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : c + ' records' })`
+        return `Daily weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : this.formatNumber(c) + ' records' })`
     }
 
     get hourlyTabHeader() {
         let c = this.hourlyRowCount
-        return `Hourly weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : c + ' records' })`
+        return `Hourly weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : this.formatNumber(c) + ' records' })`
     }
 
     onSelectedTabChange( ev:any ) {
         this.downloadList?.refreshList()
+    }
+
+    formatNumber( v: number ): string {
+        let sv = String( v )
+        let c = Math.floor( (sv.length - 1) / 3 )         
+        for ( let i = c; i > 0; i -= 1 ) {
+            let st = sv.length - i * 3 
+            sv = sv.substring( 0, st ) + ',' + sv.substring( st )
+        }
+        return sv
     }
 }
