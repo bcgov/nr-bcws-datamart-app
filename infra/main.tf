@@ -92,7 +92,6 @@ module "frontdoor" {
   common_tags                    = var.common_tags
   frontdoor_sku_name             = var.frontdoor_sku_name
   rate_limit_duration_in_minutes = var.rate_limit_duration_in_minutes
-  rate_limit_threshold           = var.rate_limit_threshold
   resource_group_name            = azurerm_resource_group.main.name
   log_analytics_workspace_id     = module.monitoring.log_analytics_workspace_id
 

@@ -219,7 +219,7 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "unified_firewall_policy" {
       priority                       = custom_rule.value.rate_priority
       type                           = "RateLimitRule"
       action                         = "Block"
-      rate_limit_duration_in_minutes = 1
+      rate_limit_duration_in_minutes = var.rate_limit_duration_in_minutes
       rate_limit_threshold           = custom_rule.value.rate_limit
 
       match_condition {

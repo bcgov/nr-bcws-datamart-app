@@ -28,12 +28,6 @@ variable "rate_limit_duration_in_minutes" {
   nullable    = false
 }
 
-variable "rate_limit_threshold" {
-  description = "Request threshold for rate limiting."
-  type        = number
-  nullable    = false
-}
-
 variable "resource_group_name" {
   description = "The name of the resource group to create."
   type        = string
