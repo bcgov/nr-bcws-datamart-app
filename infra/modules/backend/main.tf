@@ -304,7 +304,7 @@ resource "azurerm_cdn_frontdoor_route" "backend_download_route" {
   ]
 
   supported_protocols    = ["Http", "Https"]
-  patterns_to_match      = ["/api/download/"]
+  patterns_to_match      = ["/data-export"]
   forwarding_protocol    = "HttpsOnly"
   link_to_default_domain = true
   https_redirect_enabled = true
