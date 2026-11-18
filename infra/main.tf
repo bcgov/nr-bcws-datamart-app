@@ -88,12 +88,18 @@ module "frontdoor" {
   count                          = var.enable_frontdoor ? 1 : 0
   
   app_name                       = var.app_name
+  app_env                        = var.app_env
   common_tags                    = var.common_tags
   frontdoor_sku_name             = var.frontdoor_sku_name
   rate_limit_duration_in_minutes = var.rate_limit_duration_in_minutes
-  rate_limit_threshold           = var.rate_limit_threshold
   resource_group_name            = azurerm_resource_group.main.name
   log_analytics_workspace_id     = module.monitoring.log_analytics_workspace_id
+
+  frontend_rate_limit_threshold = var.frontend_rate_limit_threshold
+  api_http_rate_limit_threshold = var.api_http_rate_limit_threshold
+  api_graphql_rate_limit_threshold = var.api_graphql_rate_limit_threshold
+  api_mcp_rate_limit_threshold = var.api_mcp_rate_limit_threshold
+  download_api_rate_limit_threshold = var.download_api_rate_limit_threshold
 
   depends_on = [azurerm_resource_group.main, module.network, module.monitoring]
 }
@@ -117,6 +123,7 @@ module "frontend" {
   frontend_image                        = var.frontend_image
   frontend_subnet_id                    = module.network.app_service_subnet_id
   frontdoor_frontend_firewall_policy_id = var.enable_frontdoor ? module.frontdoor[0].firewall_policy_id : null
+  frontdoor_custom_domain_id            = var.enable_frontdoor ? module.frontdoor[0].frontdoor_custom_domain_id : null
   location                              = var.location
   log_analytics_workspace_id            = module.monitoring.log_analytics_workspace_id
   repo_name                             = var.repo_name
@@ -158,6 +165,7 @@ module "backend" {
   backend_frontdoor_id                    = var.enable_frontdoor ? module.frontdoor[0].frontdoor_id : null
   frontdoor_endpoint_id                   = var.enable_frontdoor ? module.frontdoor[0].endpoint_id : null
   backend_frontdoor_resource_guid         = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
+  frontdoor_custom_domain_id              = var.enable_frontdoor ? module.frontdoor[0].frontdoor_custom_domain_id : null
   frontend_possible_outbound_ip_addresses = var.enable_app_service_frontend ? module.frontend[0].possible_outbound_ip_addresses : ""
   location                                = var.location
   log_analytics_workspace_id              = module.monitoring.log_analytics_workspace_id

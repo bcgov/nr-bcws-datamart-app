@@ -198,7 +198,13 @@ variable "backend_frontdoor_resource_guid" {
 variable "frontdoor_endpoint_id" {
   description = "ID for frontdoor endpoint"
   type = string
-  nullable = true
+  nullable = false
+}
+
+variable "frontdoor_custom_domain_id" {
+  description = "ID for frontdoor custom domain"
+  type = string
+  nullable = false
 }
 
 variable "frontend_possible_outbound_ip_addresses" {

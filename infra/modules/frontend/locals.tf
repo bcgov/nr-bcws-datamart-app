@@ -36,15 +36,6 @@ locals {
       headers = {
         x_azure_fdid      = [var.frontend_frontdoor_resource_guid]
       }
-    },
-    {
-      action                    = "Allow"
-      name                      = "AllowVivid"
-      priority                  = 200
-      ip_address                = var.vivid_cidr
-      service_tag               = null
-      virtual_network_subnet_id = null
-      headers                   = {}
     }
     ] : [
     {
@@ -58,7 +49,7 @@ locals {
     },
     {
       action                    = "Deny"
-      name                      = "AllowVivid"
+      name                      = "DenyAll"
       priority                  = 300
       ip_address                = "0.0.0.0/0"
       service_tag               = null
