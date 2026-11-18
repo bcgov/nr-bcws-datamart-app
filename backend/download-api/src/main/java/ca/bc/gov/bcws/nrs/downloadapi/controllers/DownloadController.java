@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/downloads")
+@RequestMapping("/data-export")
 @RequiredArgsConstructor
 public class DownloadController {
 

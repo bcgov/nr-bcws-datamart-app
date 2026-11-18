@@ -22,7 +22,7 @@
 	rewrite @spa_router {http.matchers.file.relative}
 
 	# Download API
-	handle /api/downloads {
+	handle /data-export {
 		reverse_proxy {$VITE_DOWNLOAD_API_URL} {
 			header_up Host {http.reverse_proxy.upstream.hostport}
 			header_up X-Real-IP {remote_host}
