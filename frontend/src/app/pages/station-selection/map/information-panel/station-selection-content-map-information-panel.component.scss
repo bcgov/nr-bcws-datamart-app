@@ -13,6 +13,15 @@ $color-alternate-background-color: #f2f2f2;
     flex-direction: column;
     gap: 8px;
     font-family: var( --nrcl-font-family );
+    // fill .smk-body (a flex column, see below) but never grow past it
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+
+    // everything except the property list keeps its natural height
+    > * {
+        flex-shrink: 0;
+    }
 
     h3 {
         color: $color-black;
@@ -41,6 +50,10 @@ $color-alternate-background-color: #f2f2f2;
     }
 
     dl.properties {
+        // the only part of the panel that scrolls
+        flex: 0 1 auto;
+        min-height: 0;
+        overflow-y: auto;
         margin: 0;
         display: flex;
         flex-direction: column;
@@ -80,6 +93,8 @@ $color-alternate-background-color: #f2f2f2;
     }
 
     .actions {
+        // pin to the bottom of the panel even when the list is short
+        margin-top: auto;
         display: flex;
         justify-content: stretch;
 
@@ -101,6 +116,23 @@ $color-alternate-background-color: #f2f2f2;
         &.status-project, &.status-test {
             --nrcl-indicator-text-color: #{$color-status-ok};
             --nrcl-indicator-border-color: #{$color-status-ok};
+        }
+    }
+}
+
+::ng-deep {
+    // SMK's .smk-body is a block with height:100% and overflow-y:auto. Turn it
+    // into a flex column so the panel component gets a definite height to fit
+    // into, and let the component handle scrolling.
+    .smk-body:has( #weatherStationPopup ) {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-sizing: border-box;
+        min-height: 0;
+
+        #weatherStationPopup {
+            display: contents;
         }
     }
 }
