@@ -79,7 +79,7 @@ export class WeatherStationService {
         return this.loadStations()
             .then( stations => {
                 let filteredStations = stations.filter( s => {
-                    return textFilter( s.properties.STATION_NAME, filter.search )
+                    return ( textFilter( s.properties.STATION_NAME, filter.search ) || textFilter( s.properties.STATION_ACRONYM, filter.search ) )
                         && rangeFilter( s.properties.ELEVATION_M, filter.elevation )
                         && rangeFilter( s.properties.LATITUDE, filter.latitude )
                         && rangeFilter( s.properties.LONGITUDE, filter.longitude )
@@ -121,6 +121,7 @@ export class WeatherStationService {
 
 function textFilter( text: string, filter: string ): boolean {
     if ( !filter ) return true
+    if ( !text ) return false
     return text.toLowerCase().includes( filter.toLowerCase().trim() )
 }
 
