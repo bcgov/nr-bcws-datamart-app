@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
 import { GENERIC_FAILURE } from '../../util';
 import { DialogService } from '../../services/dialog.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'data-download-page',
@@ -32,6 +33,7 @@ import { DialogService } from '../../services/dialog.service';
         DataDownloadListDailyComponent,
         DataDownloadListHourlyComponent,
         IconComponent,
+        MatTooltipModule,
     ]
 })
 export class DataDownloadPage implements OnInit, OnDestroy {
@@ -205,6 +207,11 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
     onDownloadClick() {
         this.downloadData()
+    }
+
+    get noResultsTooltip(): string {
+        if ( this.isLoading ) return ''
+        return ( this.dailyRowCount + this.hourlyRowCount ) == 0 ? 'No data to download' : ''
     }
 
     get enableAsyncDownload() {

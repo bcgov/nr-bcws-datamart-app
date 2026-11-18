@@ -76,19 +76,24 @@
     </nrcl-tab-group>
 
     <div class="actions">
-        <nrcl-button primary
-            label="Download"
-            icon="download"
-            (click)="onDownloadClick()"
-            [disabled]="!enableDownload || isLoading"
-        ></nrcl-button>
+        <!-- tooltip on wrapper, since disabled buttons don't receive hover events -->
+        <span class="tooltip-wrapper" [matTooltip]="noResultsTooltip">
+            <nrcl-button primary
+                label="Download"
+                icon="download"
+                (click)="onDownloadClick()"
+                [disabled]="!enableDownload || isLoading"
+            ></nrcl-button>
+        </span>
 
-        <nrcl-button 
-            label="Email download link"
-            icon="email"
-            (click)="onEmailClick()"
-            [disabled]="!enableAsyncDownload || isLoading"
-        ></nrcl-button>
+        <span class="tooltip-wrapper" [matTooltip]="noResultsTooltip">
+            <nrcl-button 
+                label="Email download link"
+                icon="email"
+                (click)="onEmailClick()"
+                [disabled]="!enableAsyncDownload || isLoading"
+            ></nrcl-button>
+        </span>
 
         <nrcl-button 
             label="Copy link"
