@@ -519,32 +519,32 @@
       "fields": [
         {
           "name": "WEATHER_STATION_GUID",
-          "description": "A unique identifier for the record.",
+          "description": "WEATHER_STATION_GUID is a unique identifier for the record.",
           "primary-key": true
         },
         {
           "name": "STATION_STATUS_CODE",
-          "description": ""
+          "description": "STATION_STATUS_CODE: Is a foreign key to STATION_STATUS_CODE: Station Status Code describes the status of a weather station. Values are: - Active - Disabled - Archived - Test - Project"
         },
         {
           "name": "STATION_STATUS_DESC",
-          "description": ""
+          "description": "STATION_STATUS_DESC is the display quality description of the code value."
         },
         {
           "name": "STATION_CODE",
-          "description": ""
+          "description": "Station Code is a unique number that has been assigned to the station as a means of identifying the station."
         },
         {
           "name": "STATION_ACRONYM",
-          "description": ""
+          "description": "Station Acronym is a set of characters that have been assigned to a station. The acronym uniquely identifies the weather station and is analogous to a radio call sign."
         },
         {
           "name": "STATION_NAME",
-          "description": ""
+          "description": "Station Name is the name assigned to a weather station, and may be descriptive of the geographical area it is located in. IE Sechelt Orchard, or Goldstream Park"
         },
         {
           "name": "STATION_COMMENT",
-          "description": ""
+          "description": "Station Comment contains comments regarding the weather station."
         },
         {
           "name": "CRD_STATION_NAME",
@@ -552,35 +552,35 @@
         },
         {
           "name": "STATION_RANKING",
-          "description": ""
+          "description": "Station Ranking is a user defined value from 1-10 which is used to determine in what order stations are shown in the mapping screen in situations where they overlap. One is the most important, 10 the least. 99 is used to simulate an unranked station in the UI."
         },
         {
           "name": "STATION_ACCESS_TYPE_CODE",
-          "description": ""
+          "description": "STATION_ACCESS_TYPE_CODE: Is a foreign key to STATION_ACCESS_TYPE_CODE: Station Access Type Code is a list of ways a worker can use to access a weather station. - 2WD - 2 Wheel Drive - 4WD - 4 Wheel Drive - AIR - Helicopter - SNOW - Snow Mobile"
         },
         {
           "name": "STATION_ACCESS_TYPE_DESC",
-          "description": ""
+          "description": "STATION_ACCESS_TYPE_DESC is the display quality description of the code value."
         },
         {
           "name": "SITE_TYPE_CODE",
-          "description": ""
+          "description": "SITE_TYPE_CODE: Is a foreign key to SITE_TYPE_CODE: Site Type Code describes the type of weather station site. This in turn determines how the weather measurements are accessed for transmission. This list is maintained by administrators Values are: - Download - this is cell connected to a radio but no station - External - Used for ECCC/CRD stations - Hub Station – connected to radio and cell but has a station - Store Forward – radio modem only - wx stn (GOES) - wx stn (cell) - wx stn (UHF) – Weather station with a radio modem - Manual (retired) - Undetermined (retired) - wx stn (MB) (retired) - wx stn (telephone) (retired)"
         },
         {
           "name": "SITE_TYPE_DESC",
-          "description": ""
+          "description": "SITE_TYPE_DESC is the display quality description of the code value."
         },
         {
           "name": "INFLUENCING_ASPECT_CODE",
-          "description": ""
+          "description": "INFLUENCING_ASPECT_CODE: Is a foreign key to INFLUENCING_ASPECT_CODE: Influencing Aspect refers to the influencing cardinal direction the weather station is exposed to. Values are: - N - NE - E - SE - S - SW - W - NW - Varies - Flat Flat refers to equal influence from all cardinal directions. Varies means the influence by cardinal direction may vary based on other factors."
         },
         {
           "name": "INFLUENCING_ASPECT_DESC",
-          "description": ""
+          "description": "INFLUENCING_ASPECT_DESC is the display quality description of the code value."
         },
         {
           "name": "WEATHER_STATION_OWNER_GUID",
-          "description": ""
+          "description": "WEATHER_STATION_OWNER_GUID: Is a foreign key to WEATHER_STATION_OWNER: Weather Station Owner is the name of the agency or organization that owns one or more weather stations. A weather station owner can be an outside agency. This table stores very basic details about the owner. Values are - BCWF - BC Wildfire - Environment Canada - GVWD - Greater Vancouver Water District - CRD - Capital Region District - UBC - University of BC - Yukon FS - Yukon Forest Service - MOT - Ministry of Transportation"
         },
         {
           "name": "OWNER_NAME",
@@ -596,19 +596,19 @@
         },
         {
           "name": "DATA_LOGGER_TYPE_CODE",
-          "description": ""
+          "description": "DATA_LOGGER_TYPE_CODE: Is a foreign key to DATA_LOGGER_TYPE_CODE: Data Logger Type Code describes the types of data loggers that can be used by a weather station. This is a list maintained by administrators Values are: - None - Undetermined - CR10 - FWS11 - FWS12S - MCC550C - WR62 - WR62A"
         },
         {
           "name": "DATA_LOGGER_TYPE_DESC",
-          "description": ""
+          "description": "DATA_LOGGER_TYPE_DESC is the display quality description of the code value."
         },
         {
           "name": "WEATHER_ZONE",
-          "description": ""
+          "description": "WEATHER_ZONEis a foreign key to WEATHER_ZONE. Weather_zone is a geographic area that is assigned by the weather technicians. Weather zone is a value from 1 - 30."
         },
         {
           "name": "WEATHER_ZONE_DESC",
-          "description": ""
+          "description": "WEATHER_ZONE_DESC is the display quality description for the zone."
         },
         {
           "name": "DANGER_REGION",
@@ -616,11 +616,11 @@
         },
         {
           "name": "STATION_ACCESS_DESCRIPTION",
-          "description": ""
+          "description": "Station Access Description is used to provide a description of how to access a station. IE provides directions."
         },
         {
           "name": "FIRE_CENTRE_ORG_UNIT_IDENT",
-          "description": ""
+          "description": "Fire Centre Org Unit Identifier describes the fire centre the weather station is located in. Fire Centre Org Unit Identifier is a unique number assigned to the org unit that remains consistent across temporal periods. The geographic boundary of the org unit may change a bit over time, and the name of the org unit may change over time, but the business are still recognizes the org unit as being the same regardless of these minor changes. Thus the Org Unit Key is used to create a consistent key to reference the org unit across temporal periods, that does not change over time."
         },
         {
           "name": "FIRE_CENTRE",
@@ -628,7 +628,7 @@
         },
         {
           "name": "ZONE_ORG_UNIT_IDENTIFIER",
-          "description": ""
+          "description": "Zone Org Unit Identifier describes the zone the weather station is located in. Zone Org Unit Identifier is a unique number assigned to the org unit that remains consistent across temporal periods. The geographic boundary of the org unit may change a bit over time, and the name of the org unit may change over time, but the business are still recognizes the org unit as being the same regardless of these minor changes. Thus the Org Unit Key is used to create a consistent key to reference the org unit across temporal periods, that does not change over time."
         },
         {
           "name": "FIRE_ZONE",
@@ -640,51 +640,51 @@
         },
         {
           "name": "INSTALLATION_TIMESTAMP_MSEC",
-          "description": ""
+          "description": "Installation Timestamp MSec is the date and time the weather station was installed at it's geographical location as measured by milliseconds since epoch."
         },
         {
           "name": "DECOMMISSION_TIMESTAMP_MSEC",
-          "description": ""
+          "description": "Decommission Timestamp MSec is the date and time the weather station was decommissioned and is no longer providing weather measurements as measured by milliseconds since epoch."
         },
         {
           "name": "HOURLY_IND",
-          "description": ""
+          "description": "Hourly Ind indicates whether the station reports hourly (Y) or not (N)."
         },
         {
           "name": "OVER_WINTER_PRECIP_ADJ_IND",
-          "description": ""
+          "description": "Over Winter Precipitation Adjustment Ind indicates whether an adjustment is made to measurements to account for precipitation over winter (Y) or not (N)."
         },
         {
           "name": "PLUVIO_SNOW_GUAGE_IND",
-          "description": ""
+          "description": "Pluvio Snow Guage Ind indicates whether the station is equipped with a pluvio snow guage (Y) or not (N)."
         },
         {
           "name": "AUTO_UPDATE_LAT_LON_IND",
-          "description": ""
+          "description": "Specifies whether the stations latitude and longitude may be automatically updated when new coordinate data is provided through DataWriter. A value of Y enables automatic updates; a value of N disables them."
         },
         {
           "name": "LATITUDE",
-          "description": ""
+          "description": "Latitude is the latitudinal position of the weather station."
         },
         {
           "name": "LONGITUDE",
-          "description": ""
+          "description": "Longitude is the longitudinal position of the weather station."
         },
         {
           "name": "ELEVATION_M",
-          "description": ""
+          "description": "Elevation is the elevation of the station above sea level as measured in metres."
         },
         {
           "name": "INFLUENCING_SLOPE",
-          "description": ""
+          "description": "Influencing Slope is an approximate measurement of the grade of a slope that may influence the weather. The grade of a physical feature, landform or constructed line refers to the tangent of the angle of that surface to the horizontal. It is a special case of the slope, where zero indicates horizontality. A larger number indicates higher or steeper degree of \"tilt\""
         },
         {
           "name": "SURFACE_TYPE_CODE",
-          "description": ""
+          "description": "SURFACE_TYPE_CODE: Is a foreign key to SURFACE_TYPE_CODE: Surface Type Code describes the types of surfaces around the weather station, which can affect the weather measurements. Values are: - Rough - Smooth"
         },
         {
           "name": "SURFACE_TYPE_DESC",
-          "description": ""
+          "description": "SURFACE_TYPE_DESC is the display quality description of the code value."
         },
         {
           "name": "WINDSPEED_ADJUSTMENT_HEIGHT",
@@ -696,31 +696,31 @@
         },
         {
           "name": "ECCC_FILE_BASE_URL_TEMPLATE",
-          "description": ""
+          "description": "ECCC File Base URL Template is a template of a URL used to access files from the Environment Canada Climate Change data mart."
         },
         {
           "name": "LAST_PROCESSED_SOURCE_TIME",
-          "description": ""
+          "description": "ECCC File Last Processed Time is the date and time a file stored in the Environment Canada Climate Change (ECCC) data mart was last processed by the system. It is a local time field."
         },
         {
           "name": "LAST_UPDATED_TIMESTAMP_MSEC",
-          "description": ""
+          "description": "Last Updated Timestamp MSec is the last date and time the record was updated as measured by milliseconds since epoch."
         },
         {
           "name": "CREATE_USER",
-          "description": ""
+          "description": "CREATE_USER is an audit column that indicates the user that created the record."
         },
         {
           "name": "CREATE_DATE",
-          "description": ""
+          "description": "CREATE_DATE is the date and time the row of data was created."
         },
         {
           "name": "UPDATE_USER",
-          "description": ""
+          "description": "UPDATE_USER is an audit column that indicates the user that updated the record."
         },
         {
           "name": "UPDATE_DATE",
-          "description": ""
+          "description": "UPDATE_DATE is the date and time the row of data was updated."
         }
       ],
       "relationships": {
