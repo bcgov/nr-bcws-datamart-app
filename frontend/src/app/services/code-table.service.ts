@@ -106,12 +106,19 @@ export class CodeTableService {
     FIRE_CENTRES = new CodeTable( [], () => {
         return this.datamartRestApiService.getFireCentres()
             .then( fcs => {
-                return fcs.map( fc => {
-                    return {
-                        code: fc.FIRE_CENTRE_CODE,
-                        description: fc.DESCRIPTION
-                    }
-                } )
+                return fcs
+                    .filter( fc => {
+                        return fc.FIRE_CENTRE_CODE != '0'
+                    } )
+                    .map( fc => {
+                        return {
+                            code: fc.FIRE_CENTRE_CODE,
+                            description: fc.DESCRIPTION
+                        }
+                    } )
+                    .sort( ( a, b ) => {
+                        return a.description.localeCompare( b.description )
+                    } )
             } )
     } )
         
@@ -120,12 +127,19 @@ export class CodeTableService {
     FIRE_ZONES = new CodeTable( [], () => {
         return this._zones
             .then( fzs => {
-                return fzs.map( fz => {
-                    return {
-                        code: fz.FIRE_ZONE_CODE,
-                        description: fz.DESCRIPTION
-                    }
-                } )
+                return fzs
+                    .filter( fz => {
+                        return fz.FIRE_ZONE_CODE != '0'
+                    } )
+                    .map( fz => {
+                        return {
+                            code: fz.FIRE_ZONE_CODE,
+                            description: fz.DESCRIPTION
+                        }
+                    } )
+                    .sort( ( a, b ) => {
+                        return a.description.localeCompare( b.description )
+                    } )
             } )
     } )
 
@@ -133,13 +147,21 @@ export class CodeTableService {
         let zones: FireZone[] = []
         this._zones.then( res => zones = res )
 
-        return ( centres: string[] ): string[] => {
+        return ( centres: string[] ): CodeDescription[] => {
             return zones
                 .filter( z => {
                     if ( centres.length == 0 ) return true
                     return centres.includes( z.FIRE_CENTRE_CODE )
                 } )
-                .map( z => z.FIRE_ZONE_CODE )
+                .map( fz => {
+                    return {
+                        code: fz.FIRE_ZONE_CODE,
+                        description: fz.DESCRIPTION
+                    }
+                } )
+                .sort( ( a, b ) => {
+                    return a.description.localeCompare( b.description )
+                } )
         }
     })() 
 
@@ -154,6 +176,14 @@ export class CodeTableService {
     //             } )
     //         } )
     // } )
+
+    WEATHER_STATION_STATUS = new CodeTable([
+        { code: "ACTIVE",       description: "Active" },
+        { code: "ARCHIVED",     description: "Archived" },
+        { code: "DISABLED",     description: "Disabled" },
+        { code: "PROJECT",      description: "Project" },
+        { code: "TEST",         description: "Test" },
+    ])
 }
 
 
