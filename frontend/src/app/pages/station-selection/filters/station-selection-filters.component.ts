@@ -30,7 +30,7 @@ export function emptyFilter(): Filter {
 		search: '',
         fireCentre: [],
         fireZone: [],
-        stationStatus: [],
+        stationStatus: ['ACTIVE'],
         elevation: [],
         latitude: [],
 		longitude: [],
@@ -42,7 +42,7 @@ export function initialFilter(): Filter {
 		search: '',
         fireCentre: [],
         fireZone: [],
-        stationStatus: [],
+        stationStatus: ['ACTIVE'],
         elevation: [],
         latitude: [],
 		longitude: [],
@@ -82,7 +82,6 @@ export class StationSelectionFiltersComponent implements OnInit {
         this.codeTableService.FIRE_ZONES.isLoading
             .then( () => {
             	this.fireZoneOptions = this.codeTableService.FIRE_ZONES.items!
-                console.log(this.fireZoneOptions)
                 this.changeDetectorRef.detectChanges()
             } )
     }
