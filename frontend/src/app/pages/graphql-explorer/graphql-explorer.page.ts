@@ -5,6 +5,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { ButtonComponent, GapComponent, SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
+import { Router } from '@angular/router';
+import { ROUTE } from '../../bcws-datamart-app.routes';
 
 type Example = {
     label: string
@@ -33,7 +35,10 @@ export class GraphqlExplorerPage implements OnInit {
     snackbarUtilService = inject(SnackbarUtilService)
     datamartGraphqlApiService = inject( DatamartGraphqlApiService )
     changeDetectorRef = inject(ChangeDetectorRef)
+    router = inject(Router)
 
+    ROUTE = ROUTE
+    
     examples: Example[] = [
         {
             label: 'Daily Weather, first 5',

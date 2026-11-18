@@ -2,7 +2,9 @@ import {
     ChangeDetectionStrategy,
     Component,
     inject,
-    OnInit
+    OnInit,
+    Pipe,
+    PipeTransform
 } from '@angular/core';
 import { Parser } from 'marked';
 import { MarkdownComponent, MarkdownService } from 'ngx-markdown';
@@ -54,5 +56,15 @@ export class DataMartMarkdownComponent implements OnInit {
 
             return '<tr>' + tokens.text + '</tr>\n'
         }
+    }
+}
+
+
+@Pipe({
+    name: 'indent'
+})
+export class IndentPipe implements PipeTransform {
+    transform( value: string, ...args: any[] ): string {
+        return value.split( '\n' ).map( v => `    ${ v }` ).join( '\n' )
     }
 }

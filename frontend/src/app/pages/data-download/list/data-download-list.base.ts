@@ -55,7 +55,6 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
     ngOnChanges( changes: SimpleChanges ): void {}
 
     ngOnInit(): void {
-        this.refreshList()
     }
 
     refreshList(): Promise<void> {
@@ -86,7 +85,12 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
             this.endCursor
         )
             .then( res => {
-                this.rows = this.rows.concat( res.items )
+                if ( first ) {
+                    this.rows = res.items
+                }
+                else {
+                    this.rows = this.rows.concat( res.items )
+                }
 
                 this.isMoreAvailable = res.hasNextPage
                 this.endCursor = res.endCursor 
