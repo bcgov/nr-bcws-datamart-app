@@ -2,12 +2,12 @@ locals {
   waf_endpoints = {
     api = {
       path = "/api", exclude = null
-      methods = ["GET"]
+      methods = ["GET", "POST"]
       method_priority = 110, rate_priority = 200, rate_limit = var.api_http_rate_limit_threshold
     }
     download = {
       path = "/data-export", exclude = null
-      methods = ["GET"]
+      methods = ["GET", "POST"]
       method_priority = 100, rate_priority = 210, rate_limit = var.download_api_rate_limit_threshold
     }
     graphql = {
