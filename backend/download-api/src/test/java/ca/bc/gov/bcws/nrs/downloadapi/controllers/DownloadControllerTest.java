@@ -59,7 +59,7 @@ class DownloadControllerTest {
             """;
 
         mockMvc.perform(
-                post("/api/downloads")
+                post("/data-export")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk())
@@ -93,7 +93,7 @@ class DownloadControllerTest {
             """;
 
         mockMvc.perform(
-                post("/api/downloads")
+                post("/data-export")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -128,7 +128,7 @@ class DownloadControllerTest {
             """;
 
         mockMvc.perform(
-                post("/api/downloads")
+                post("/data-export")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -162,7 +162,7 @@ class DownloadControllerTest {
             """;
 
         mockMvc.perform(
-                post("/api/downloads")
+                post("/data-export")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
