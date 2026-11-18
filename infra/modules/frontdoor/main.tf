@@ -227,6 +227,19 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "unified_firewall_policy" {
         operator       = "Contains"
         match_values   = [custom_rule.value.path]
       }
+
+      dynamic "match_condition" {
+         for_each = contains(["frontend", "api"], custom_rule.key) ? [custom_rule.key] : []
+         content {
+           match_variable     = "RequestUri"
+           operator           = "Contains"
+           negation_condition = true
+           match_values = match_condition.value == "frontend" ? [
+             for endpoint_name, endpoint in local.waf_endpoints : endpoint.path
+             if endpoint_name != "frontend"
+           ] : [local.waf_endpoints.download.path]
+         }
+       }
     }
   }
 

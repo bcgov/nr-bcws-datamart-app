@@ -347,6 +347,9 @@ resource "azurerm_cdn_frontdoor_security_policy" "frontend_fd_security_policy" {
         domain {
           cdn_frontdoor_domain_id = var.frontdoor_endpoint_id
         }
+        domain {
+          cdn_frontdoor_domain_id = var.frontdoor_custom_domain_id
+        }
         patterns_to_match = ["/*"]
       }
     }

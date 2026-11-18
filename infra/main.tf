@@ -123,7 +123,7 @@ module "frontend" {
   frontend_image                        = var.frontend_image
   frontend_subnet_id                    = module.network.app_service_subnet_id
   frontdoor_frontend_firewall_policy_id = var.enable_frontdoor ? module.frontdoor[0].firewall_policy_id : null
-  frontdoor_custom_domain_id            = module.frontdoor[0].frontdoor_custom_domain_id
+  frontdoor_custom_domain_id            = var.enable_frontdoor ? module.frontdoor[0].frontdoor_custom_domain_id : null
   location                              = var.location
   log_analytics_workspace_id            = module.monitoring.log_analytics_workspace_id
   repo_name                             = var.repo_name
@@ -165,7 +165,7 @@ module "backend" {
   backend_frontdoor_id                    = var.enable_frontdoor ? module.frontdoor[0].frontdoor_id : null
   frontdoor_endpoint_id                   = var.enable_frontdoor ? module.frontdoor[0].endpoint_id : null
   backend_frontdoor_resource_guid         = var.enable_frontdoor ? module.frontdoor[0].frontdoor_resource_guid : null
-  frontdoor_custom_domain_id              = module.frontdoor[0].frontdoor_custom_domain_id
+  frontdoor_custom_domain_id              = var.enable_frontdoor ? module.frontdoor[0].frontdoor_custom_domain_id : null
   frontend_possible_outbound_ip_addresses = var.enable_app_service_frontend ? module.frontend[0].possible_outbound_ip_addresses : ""
   location                                = var.location
   log_analytics_workspace_id              = module.monitoring.log_analytics_workspace_id

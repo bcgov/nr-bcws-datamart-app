@@ -2,7 +2,7 @@ locals {
   waf_endpoints = {
     api = {
       path = "/api", exclude = null
-      methods = ["GET", "POST"]
+      methods = ["GET"]
       method_priority = 110, rate_priority = 200, rate_limit = var.api_http_rate_limit_threshold
     }
     download = {
