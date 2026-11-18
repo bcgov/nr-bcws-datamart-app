@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
 import { GENERIC_FAILURE } from '../../util';
 import { DialogService } from '../../services/dialog.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'data-download-page',
@@ -32,6 +33,7 @@ import { DialogService } from '../../services/dialog.service';
         DataDownloadListDailyComponent,
         DataDownloadListHourlyComponent,
         IconComponent,
+        MatTooltipModule,
     ]
 })
 export class DataDownloadPage implements OnInit, OnDestroy {
@@ -207,6 +209,11 @@ export class DataDownloadPage implements OnInit, OnDestroy {
         this.downloadData()
     }
 
+    get noResultsTooltip(): string {
+        if ( this.isLoading ) return ''
+        return ( this.dailyRowCount + this.hourlyRowCount ) == 0 ? 'No data to download' : ''
+    }
+
     get enableAsyncDownload() {
         let t = this.dailyRowCount + this.hourlyRowCount
         return t > 0 
@@ -219,9 +226,12 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
                 return this.downloadData( res?.email )
             } )
+            .then( () => {
+                this.snackbarUtilService.successful( "We're preparing your download. We'll email you a link when it's ready" )
+            } )
     }
 
-    downloadData( email?: string ) {
+    downloadData( email?: string ): Promise<void> {
         this.startLoading()
 
         let daily: string[] = []
@@ -233,7 +243,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
         let metadata: string[] = []
         if ( this.filter.metadataColumns.length > 0 ) metadata = this.metadataColumns.map( c => c.code )
 
-        this.datamartGraphqlApiService.downloadWeatherData( 
+        return this.datamartGraphqlApiService.downloadWeatherData( 
             this.filter.startDate!, 
             this.filter.endDate!, 
             this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ),
@@ -245,6 +255,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
             .catch( err => {
                 console.warn( JSON.stringify( err, null, '  ' ) )
                 this.snackbarUtilService.error( GENERIC_FAILURE )
+                throw err
             } )
             .finally( () => {
                 this.stopLoading()

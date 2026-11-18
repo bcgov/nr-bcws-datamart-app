@@ -45,6 +45,16 @@
             z-index: 1;
         }
 
+        .tooltip-wrapper {
+            display: inline-flex;
+
+            // disabled buttons swallow mouse events, so let them pass
+            // through to the wrapper where the tooltip is attached
+            nrcl-button.disabled {
+                pointer-events: none;
+            }
+        }
+
         .nrcl-tab-group {
             height: 100%;
 
