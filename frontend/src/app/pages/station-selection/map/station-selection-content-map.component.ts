@@ -13,8 +13,8 @@ import {
 import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 import { Subscription } from 'rxjs';
 import { StationSelectionContentMapInformationPanelComponent } from './information-panel/station-selection-content-map-information-panel.component';
-import { SelectedWeatherStationsService } from '../../../../services/selected-weather-stations.service';
-import { WeatherStationFeature, WeatherStationService } from '../../../../services/weather-station.service';
+import { SelectedWeatherStationsService } from '../../../services/selected-weather-stations.service';
+import { WeatherStationFeature, WeatherStationService } from '../../../services/weather-station.service';
 
 declare const SMK: any;
 

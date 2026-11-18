@@ -83,6 +83,9 @@ export class WeatherStationService {
                         && rangeFilter( s.properties.ELEVATION_M, filter.elevation )
                         && rangeFilter( s.properties.LATITUDE, filter.latitude )
                         && rangeFilter( s.properties.LONGITUDE, filter.longitude )
+                        && setFilter( s.properties.FIRE_CENTRE_ORG_UNIT_IDENT, filter.fireCentre )
+                        && setFilter( s.properties.ZONE_ORG_UNIT_IDENTIFIER, filter.fireZone )
+                        && setFilter( s.properties.STATION_STATUS_CODE, filter.stationStatus )
                 } )
 
                 this.stationsSubject.next( filteredStations )
@@ -123,7 +126,21 @@ function textFilter( text: string, filter: string ): boolean {
 
 function rangeFilter( value: number, range: string[] ): boolean {
     if ( !range[ 0 ] && !range[ 1 ] ) return true
-    let min = Number( range[ 0 ] )
-    let max = Number( range[ 1 ] )
-    return value >= min && value <= max
+
+    if ( range[ 0 ] ) {
+        let min = Number( range[ 0 ] )
+        if ( value < min ) return false
+    }
+
+    if ( range[ 1 ] ) {
+        let max = Number( range[ 1 ] )
+        if ( value > max ) return false
+    }
+
+    return true
+}
+
+function setFilter( value: number|string, set: string[] ): boolean {
+    if ( !set || set.length == 0 ) return true
+    return set.some( v => v == value )
 }

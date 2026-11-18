@@ -1,177 +1,111 @@
-<section class="station-selection-filters">
-    <div class="filter-toolbar">
-        @if ( filtersExpanded ) {
-            <nrcl-button tertiary
-                [label]="'Filters ' + (activeFilterCount ? ' (' + activeFilterCount + ')' : '')"            
-                (click)="onFiltersClick()"
-                iconRight="expand_less"
-            ></nrcl-button>
-        }
-        @else {
-            <nrcl-button tertiary
-                [label]="'Filters ' + (activeFilterCount ? ' (' + activeFilterCount + ')' : '')"            
-                (click)="onFiltersClick()"
-                iconRight="expand_more"
-            ></nrcl-button>
-        }
+<nrcl-filters-panel 
+    (clearFilters)="onClearFilters()"
+    [hasAdvancedFilters]="true"
+    [showAdvancedFilters]="false"
+    [moreFiltersLabels]="['Show Filters','Hide Filters']"
+>
+    <nrcl-filter-search
+        placeholder="Search stations"
+        [value]="filter.search"
+        (valueChange)="onSearchTextChange($event)">
+    </nrcl-filter-search>
 
-        <nrcl-filter-search
-            placeholder="Search stations"
-            [value]="filter.search"
-            (valueChange)="onSearchTextChange($event)">
-        </nrcl-filter-search>
-    </div>
+    <nrcl-filter-select advanced 
+        label="Fire centre"
+        [value]="filter.fireCentre"
+        [options]="codeTableService.FIRE_CENTRES.items"
+        [summary]="false"
+        (valueChange)="onFireCentreChange( $event )"
+    ></nrcl-filter-select>
 
-    @if (filtersExpanded) {
-        <div class="filters-outer-container">
-            <div class="filters-inner-container">
-                <nrcl-filters-panel class="filters-panel" [showClear]="false">
-                    <nrcl-filter-select
-                        label="Fire centre"
-                        [value]="filter.fireCentre"
-                    ></nrcl-filter-select>
+    <nrcl-filter-select advanced 
+        label="Fire zone"
+        [value]="filter.fireZone"
+        [options]="fireZoneOptions!"
+        [summary]="false"
+        (valueChange)="onFireZoneChange( $event )"
+    ></nrcl-filter-select>
 
-                    <nrcl-filter-select
-                        label="Fire zone"
-                        [value]="filter.fireZone"
-                    ></nrcl-filter-select>
+    <nrcl-filter-select advanced 
+        label="Station status"
+        [value]="filter.stationStatus"
+        [options]="codeTableService.WEATHER_STATION_STATUS.items"
+        [summary]="false"
+        [filter]="false"
+        (valueChange)="onStationStatusChange( $event )"
+    ></nrcl-filter-select>
 
-                    <nrcl-filter-select
-                        label="Station status"
-                        [value]="filter.stationStatus"
-                    ></nrcl-filter-select>
+    <div advanced style="width:100%"></div>
 
-                    <div class="range-filter-group">
-                        <div class="range-filter-title">
-                            Elevation (m)
-                        </div>
+    <nrcl-filter-container advanced wide="3"
+        label="Elevation (m)"
+    >
+        <label>Min:
+            <input type="number" matInput
+                placeholder="e.g. 500"
+                [value]="filter.elevation[0]"
+                (change)="onElevationChange( $event?.target?.value, filter.elevation[1] )"
+                (blur)="applyFilters()"
+                (keydown.enter)="applyFilters()"
+            >
+        </label>
 
-                        <div class="range-filter-row">
-                            <div class="range-filter-field">
-                                <label class="range-filter-label">
-                                    Min
-                                </label>
+        <label>Max:
+            <input type="number"
+                placeholder="e.g. 1,500"
+                [value]="filter.elevation[1]"
+                (change)="onElevationChange( filter.elevation[0], $event?.target?.value )"
+                (blur)="applyFilters()"
+                (keydown.enter)="applyFilters()"
+            >
+        </label>
+    </nrcl-filter-container>
 
-                                <input
-                                    type="number"
-                                    placeholder="e.g. 500"
-                                    [value]="filter.elevation[0]"
-                                    (change)="onElevationChange( $event?.target?.value, filter.elevation[1] )"
-                                    (blur)="applyFilters()"
-                                    (keydown.enter)="applyFilters()"
-                                >
-                            </div>
+    <nrcl-filter-container advanced wide="3"
+        label="Latitude (degrees)"
+    >
+        <label>Min:
+            <input type="number"
+                placeholder="e.g. 49.25"
+                [value]="filter.latitude[0]"
+                (change)="onLatitudeChange( $event?.target?.value, filter.latitude[1] )"
+                (blur)="applyFilters()"
+                (keydown.enter)="applyFilters()"
+            >
+        </label>
 
-                            <div class="range-filter-field">
-                                <label class="range-filter-label">
-                                    Max
-                                </label>
+        <label>Max:
+            <input type="number"
+                placeholder="e.g. 55.00"
+                [value]="filter.latitude[1]"
+                (change)="onLatitudeChange( filter.latitude[0], $event?.target?.value )"
+                (blur)="applyFilters()"
+                (keydown.enter)="applyFilters()"
+            >
+        </label>
+    </nrcl-filter-container>
 
-                                <input
-                                    type="number"
-                                    placeholder="e.g. 1,500"
-                                    [value]="filter.elevation[1]"
-                                    (change)="onElevationChange( filter.elevation[0], $event?.target?.value )"
-                                    (blur)="applyFilters()"
-                                    (keydown.enter)="applyFilters()"
-                                >
-                            </div>
-                        </div>
-                    </div>
+    <nrcl-filter-container advanced wide="3"
+        label="Longitude (degrees)"
+    >
+        <label>Min:
+            <input type="number"
+                placeholder="e.g. -130.00"
+                [value]="filter.longitude[0]"
+                (change)="onLongitudeChange( $event?.target?.value, filter.longitude[1] )"
+                (blur)="applyFilters()"
+                (keydown.enter)="applyFilters()"
+            >
+        </label>
 
-                    <div class="range-filter-group">
-                        <div class="range-filter-title">
-                            Latitude (decimal degrees)
-                        </div>
-
-                        <div class="range-filter-row">
-                            <div class="range-filter-field">
-                                <label class="range-filter-label">
-                                    Min
-                                </label>
-
-                                <input
-                                    type="number"
-                                    placeholder="e.g. 49.25"
-                                    [value]="filter.latitude[0]"
-                                    (change)="onLatitudeChange( $event?.target?.value, filter.latitude[1] )"
-
-                                    (blur)="applyFilters()"
-                                    (keydown.enter)="applyFilters()"
-                                >
-                            </div>
-
-                            <div class="range-filter-field">
-                                <label class="range-filter-label">
-                                    Max
-                                </label>
-
-                                <input
-                                    type="number"
-                                    placeholder="e.g. 55.00"
-                                    [value]="filter.latitude[1]"
-                                    (change)="onLatitudeChange( filter.latitude[0], $event?.target?.value )"
-                                    (blur)="applyFilters()"
-                                    (keydown.enter)="applyFilters()"
-                                >
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="range-filter-group">
-                        <div class="range-filter-title">
-                            Longitude (decimal degrees)
-                        </div>
-
-                        <div class="range-filter-row">
-                            <div class="range-filter-field">
-                                <label class="range-filter-label">
-                                    Min
-                                </label>
-
-                                <input
-                                    type="number"
-                                    placeholder="e.g. -130.00"
-                                    [value]="filter.longitude[0]"
-                                    (change)="onLongitudeChange( $event?.target?.value, filter.longitude[1] )"
-                                    (blur)="applyFilters()"
-                                    (keydown.enter)="applyFilters()"
-                                >
-                            </div>
-
-                            <div class="range-filter-field">
-                                <label class="range-filter-label">
-                                    Max
-                                </label>
-
-                                <input
-                                    type="number"
-                                    placeholder="e.g. -120.00"
-                                    [value]="filter.longitude[1]"
-                                    (change)="onLongitudeChange( filter.longitude[0], $event?.target?.value )"
-                                    (blur)="applyFilters()"
-                                    (keydown.enter)="applyFilters()"
-                                >
-                            </div>
-                        </div>
-                    </div>
-                </nrcl-filters-panel>
-
-                <div class="filter-actions">
-                    @if (isMobileView) {
-                        <nrcl-button primary
-                            (click)="onFiltersClick()">
-                            Apply filters
-                        </nrcl-button>
-                    }
-    
-                    <button type="button"
-                        class="clear-filters-button"
-                        (click)="onClearSearchAndFilters()">
-                        Clear filters
-                    </button>
-                </div>
-            </div>
-        </div>
-    }
-</section>
+        <label>Max:
+            <input type="number"
+                placeholder="e.g. -120.00"
+                [value]="filter.longitude[1]"
+                (change)="onLongitudeChange( filter.longitude[0], $event?.target?.value )"
+                (blur)="applyFilters()"
+                (keydown.enter)="applyFilters()"
+            >
+        </label>
+    </nrcl-filter-container>
+</nrcl-filters-panel>

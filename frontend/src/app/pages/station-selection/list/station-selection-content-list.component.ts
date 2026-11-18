@@ -3,8 +3,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { ButtonComponent } from '@bcgov/nr-ngx-component-lib';
-import { SelectedWeatherStationsService } from '../../../../services/selected-weather-stations.service';
-import { WeatherStationFeature, WeatherStationService } from '../../../../services/weather-station.service';
+import { SelectedWeatherStationsService } from '../../../services/selected-weather-stations.service';
+import { WeatherStationFeature, WeatherStationService } from '../../../services/weather-station.service';
 
 type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
 
