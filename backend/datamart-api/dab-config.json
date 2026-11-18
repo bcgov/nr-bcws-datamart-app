@@ -69,100 +69,100 @@
       "fields": [
         {
           "name": "DAILY_WEATHER_MEAS_GUID",
-          "description": "A unique identifier for the record.",
+          "description": "DAILY_WEATHER_MEAS_GUID is a unique identifier for the record.",
           "primary-key": true
         },
         {
           "name": "WEATHER_STATION_GUID",
-          "description": "A foreign key to WEATHER_STATION"
+          "description": "WEATHER_STATION_GUID: Is a foreign key to WEATHER_STATION: Weather Station is a list of weather stations setup and maintained across the province of BC. The weather stations contain multiple instruments for measuring varying aspects of meteorology used to produce weather forecasts."
         },
         {
           "name": "WEATHER_TIMESTAMP_MSEC",
-          "description": "The date and time a weather measurement is collected as measured by milliseconds since epoch"
+          "description": "Weather Timestamp MSec is the date and time a weather measurement is collected as measured by milliseconds since epoch."
         },
         {
           "name": "WEATHER_TIMESTAMP",
-          "description": "The UTC timestamp of when the weather measurement was taken"
+          "description": "Weather Timestamp is the UTC timestamp of when the weather measurement was taken. The Weather Timestamp MSec column is the source of truth for the Weather Timestamp column. The UTC Timestamp is needed for compatibility with Jaspersoft reporting and GeoServer which cannot handle milliseconds past epoch."
         },
         {
           "name": "DAILY_MEASUREMENT_TYPE_CODE",
-          "description": "A foreign key to DAILY_MEASUREMENT_TYPE_CODE"
+          "description": "DAILY_MEASUREMENT_TYPE_CODE: Is a foreign key to DAILY_MEASUREMENT_TYPE_CODE: Measurement Type Code describes the types of measurements that can be collected. It correlates to the original Data Status Code in the old system. Values are: - Actual - Forecast - Estimate - Edited Actual - Test - Startup - Deleted - Manual - Substitution - missing - Substitution - invalid - Substitution - partial"
         },
         {
           "name": "TEMPERATURE",
-          "description": "The temperature measured in degrees Celsius by the weather station"
+          "description": "Temperature is the temperature measured in degrees Celsius by the weather station."
         },
         {
           "name": "TEMPERATURE_MIN",
-          "description": "The daily low (minimum) temperature for the day measured in degrees Celsius"
+          "description": "Temperature Min is the daily low (minimum) temperature for the day measured in degrees Celsius. This is based on a roll up values from the last 24 hours of hourly measurements. A daily record comes from the 12-noon hourly observation. The max/min values come from a roll up of data in the last 24 hours."
         },
         {
           "name": "TEMPERATURE_MAX",
-          "description": "The daily high (maximum) temperature for the day measured in degrees Celsius"
+          "description": "Temperature Min is the daily high (maximum) temperature for the day measured in degrees Celsius. This is based on a roll up values from the last 24 hours of hourly measurements. A daily record comes from the 12-noon hourly observation. The max/min values come from a roll up of data in the last 24 hours."
         },
         {
           "name": "RELATIVE_HUMIDITY",
-          "description": "A measure of the relative humidity by the weather station"
+          "description": "Relative Humidity is a measure of the relative humidity by the weather station."
         },
         {
           "name": "RELATIVE_HUMIDITY_MIN",
-          "description": "The daily low (minimum) Humidity measurement for the day"
+          "description": "Relative Humidity is the daily low (minimum) Humidity measurement for the day. This is based on a roll up values from the last 24 hours of hourly measurements. A daily record comes from the 12-noon hourly observation. The max/min values come from a roll up of data in the last 24 hours."
         },
         {
           "name": "RELATIVE_HUMIDITY_MAX",
-          "description": "The daily high (maximum) Humidity measurement for the day"
+          "description": "Relative Humidity is the daily high (maximum) Humidity measurement for the day. This is based on a roll up values from the last 24 hours of hourly measurements. A daily record comes from the 12-noon hourly observation. The max/min values come from a roll up of data in the last 24 hours."
         },
         {
           "name": "PRECIPITATION",
-          "description": "A measure of precipitation by the weather station"
+          "description": "Precipitation is a measure of precipitation by the weather station. In meteorology, precipitation is any product of the condensation of atmospheric water vapour that falls under gravity. The main forms of precipitation include drizzle, rain, sleet, snow, graupel and hail."
         },
         {
           "name": "WIND_SPEED",
-          "description": "A measure of wind speed in kilometres/hour by the weather station"
+          "description": "Wind Speed is a measure of wind speed in kilometres/hour by the weather station."
         },
         {
           "name": "WIND_DIRECTION_DEGREES",
-          "description": "The direction the wind measured in degrees as measured by the weather station. Values fall within the range 0.0 - 359.0"
+          "description": "Wind Direction Degrees is the direction the wind measured in degrees as measured by the weather station. Values fall within the range 0.0 - 359.0"
         },
         {
           "name": "ADJUSTED_WIND_SPEED",
-          "description": "An adjusted measure of wind speed in kilometres/hour by the weather station"
+          "description": "Adjusted Wind Speed is an adjusted measure of wind speed in kilometres/hour by the weather station. The measurement is adjusted by the mast height of the wind measuring sensor on the weather station."
         },
         {
           "name": "DAILY_SEVERITY_RATING",
-          "description": "A numeric rating describing the difficulty of controlling fires"
+          "description": "Daily Severity Rating is a numeric rating describing the difficulty of controlling fires. It is calculated from the Initial Spread Index and Build Up Index."
         },
         {
           "name": "DROUGHT_CODE",
-          "description": "A numerical rating of the moisture content of deep, compact, organic layers"
+          "description": "Drought Code is a numerical rating of the moisture content of deep, compact, organic layers. It is a useful indicator of seasonal drought and shows the likelihood of fire involving the deep duff layers and large logs. A long period of dry weather (the system uses 52 days) is needed to dry out these fuels and affect the Drought Code. A DC rating of 200 is high, and 300 or more is extreme indicating that fire will involve deep sub-surface and heavy fuels. Burning off should not be permitted when the DC rating is above 300. Note: Drought Code is a meteorological business term and is not a true code that is looked up in a code table."
         },
         {
           "name": "DUFF_MOISTURE_CODE",
-          "description": "A numerical rating of the average moisture content of loosely compacted organic layers of moderate depth"
+          "description": "Duff Moisture Code is a numerical rating of the average moisture content of loosely compacted organic layers of moderate depth. The code indicates the depth that fire will burn in moderate duff layers and medium size woody material. Duff layers take longer than surface fuels to dry out but weather conditions over the past couple of weeks will significantly affect the DMC. The system applies a time lag of 12 days to calculate the DMC. A DMC rating of more than 30 is dry, and above 40 indicates that intensive burning will occur in the duff and medium fuels. Burning off operations should not be carried out when the DMC rating is above 40. Note: Duff Moisture Code is a meteorological business term and is not a true code that is looked up in a code table."
         },
         {
           "name": "FINE_FUEL_MOISTURE_CODE",
-          "description": "A measure of the moisture content (dryness) of the smallest forest fuels (surface litter, leaves, needles, small twigs, etc)"
+          "description": "Fine Fuel Moisture Code (FFMC) is a measure of the moisture content (dryness) of the smallest forest fuels (surface litter, leaves, needles, small twigs, etc). It shows the relative ease of ignition and flammability of fine fuels. The moisture content of the fine fuels is very sensitive to the weather. Even a day of rain, or of fine and windy weather, will significantly affect the FFMC rating. Measured values translate as: 0-76 : Low 77-84: Moderate 85-88: High 89-91: Very High 92+: Extreme"
         },
         {
           "name": "GRASSLAND_CURING",
-          "description": "A numeric rating of the state of the grassland moisture levels"
+          "description": "Grassland Curing is a numeric rating of the state of the grassland moisture levels."
         },
         {
           "name": "BUILD_UP_INDEX",
-          "description": "The amount of fuel available for combustion, indicating how the fire will develop after initial spread"
+          "description": "Build Up Index shows the amount of fuel available for combustion, indicating how the fire will develope after initial spread. It is calculated from the Duff Moisture Code and Drought Code. The BUI Scale starts at 0 and is open-ended. A rating above 40 is high, and above 60 is extreme."
         },
         {
           "name": "DANGER_FOREST_INDEX",
-          "description": "An index calculation specific to BC that is based on location Build Up Index and Fire Weather Index. Values fall in the range of 1-5"
+          "description": "Danger Forest Index is an index calculation specific to BC that is based on location Build Up Index and Fire Weather Index. Values fall in the range of 1-5."
         },
         {
           "name": "DANGER_GRASSLAND_INDEX",
-          "description": "An index calculation specific to BC that is based on location Initial Spread Index and Grass Curing. Values fall in the range of 1-5"
+          "description": "Danger Grassland Index is an index calculation specific to BC that is based on location Initial Spread Index and Grass Curing. Values fall in the range of 1-5."
         },
         {
           "name": "DANGER_SCRUB_INDEX",
-          "description": "An index calculation specific to BC that is based on location Initial Spread Index and Fine Fuel Moisture Code. Values fall in the range of 1-5"
+          "description": "Danger Scrub Index is an index calculation specific to BC that is based on location Initial Spread Index and Fine Fuel Moisture Code. Values fall in the range of 1-5."
         },
         {
           "name": "FIRE_WEATHER_INDEX",
@@ -174,43 +174,43 @@
         },
         {
           "name": "MISSING_HOURLY_DATA_IND",
-          "description": "Missing Hourly Data Ind indicates whether the measurements collected by this record are missing hourly data (Y) or not (N)"
+          "description": "Missing Hourly Data Ind indicates whether the measurements collected by this record are missing hourly data (Y) or not (N). This field references whether the roll up values (Precipitation, Temperature_max/min, RH max/min) might be based on incomplete data. IE if hourly data is missing from 4am to 7am then the precipitation measurement may be missing some precipitation that occurred during that window."
         },
         {
           "name": "OBSERVATION_VALID_IND",
-          "description": "Observation Valid Ind indicates whether one or more weather observations is within an acceptable range of values (Y) or is outside of a valid range (N)"
+          "description": "Observation Valid Ind indicates whether one or more weather observations is within an acceptable range of values (Y) or is outside of a valid range (N). Observations outside of an acceptable range indicate that one or more sensors are not working properly."
         },
         {
           "name": "OBSERVATION_VALID_COMMENT",
-          "description": "Comments provided that describe issues with one or more sensors that are affecting observations"
+          "description": "Observation Valid Comment are comments provided that describe issues with one or more sensors that are affecting observations."
         },
         {
           "name": "ARCHIVED_IND",
-          "description": "Archived Ind indicates whether the measurement is archived (Y) or not (N)"
+          "description": "Archived Ind indicates whether the measurement is archived (Y) or not (N). Archived records are not to be used for any operational purpose after the fact. It allows for external model data to be added that the forecasters can utilize or dismiss as needed."
         },
         {
           "name": "LAST_UPDATED_TIMESTAMP_MSEC",
-          "description": "The last date and time the record was updated as measured by milliseconds since epoch"
+          "description": "Last Updated Timestamp MSec is the last date and time the record was updated as measured by milliseconds since epoch."
         },
         {
           "name": "LAST_UPDATED_TIMESTAMP",
-          "description": "The UTC timestamp of when the record was last updated"
+          "description": "Last Updated Timestamp is the UTC timestamp of when the record was last updated. The Last Updated Timestamp MSec column is the source of truth for the Last Updated Timestamp column. The UTC Timestamp is needed for compatibility with Jaspersoft reporting and GeoServer which cannot handle milliseconds past epoch."
         },
         {
           "name": "CREATE_USER",
-          "description": "An audit column that indicates the user that created the record"
+          "description": "CREATE_USER is an audit column that indicates the user that created the record."
         },
         {
           "name": "CREATE_DATE",
-          "description": "The date and time the row of data was created"
+          "description": "CREATE_DATE is the date and time the row of data was created."
         },
         {
           "name": "UPDATE_USER",
-          "description": "An audit column that indicates the user that updated the record."
+          "description": "UPDATE_USER is an audit column that indicates the user that updated the record."
         },
         {
           "name": "UPDATE_DATE",
-          "description": "The date and time the row of data was updated."
+          "description": "UPDATE_DATE is the date and time the row of data was updated."
         }
       ],
       "relationships": {
