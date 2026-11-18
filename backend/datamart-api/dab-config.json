@@ -8,7 +8,6 @@
     }
   },
   "data-source-files": [
-    "dab-config.db1.json",
     "dab-config.db2.json"
   ],
   "runtime": {
@@ -61,5 +60,845 @@
       "mode": "@env('DAB_RUNTIME_MODE')"
     }
   },
-  "entities": {}
+  "entities": {
+    "daily_weather": {
+      "source": {
+        "object": "dbo.DAILY_WEATHER_MEASUREMENT",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "DAILY_WEATHER_MEAS_GUID",
+          "description": "DAILY_WEATHER_MEAS_GUID is a unique identifier for the record.",
+          "primary-key": true
+        },
+        {
+          "name": "WEATHER_STATION_GUID",
+          "description": "WEATHER_STATION_GUID: Is a foreign key to WEATHER_STATION: Weather Station is a list of weather stations setup and maintained across the province of BC. The weather stations contain multiple instruments for measuring varying aspects of meteorology used to produce weather forecasts."
+        },
+        {
+          "name": "WEATHER_TIMESTAMP_MSEC",
+          "description": "Weather Timestamp MSec is the date and time a weather measurement is collected as measured by milliseconds since epoch."
+        },
+        {
+          "name": "WEATHER_TIMESTAMP",
+          "description": "Weather Timestamp is the UTC timestamp of when the weather measurement was taken. The Weather Timestamp MSec column is the source of truth for the Weather Timestamp column. The UTC Timestamp is needed for compatibility with Jaspersoft reporting and GeoServer which cannot handle milliseconds past epoch."
+        },
+        {
+          "name": "DAILY_MEASUREMENT_TYPE_CODE",
+          "description": "DAILY_MEASUREMENT_TYPE_CODE: Is a foreign key to DAILY_MEASUREMENT_TYPE_CODE: Measurement Type Code describes the types of measurements that can be collected. It correlates to the original Data Status Code in the old system. Values are: - Actual - Forecast - Estimate - Edited Actual - Test - Startup - Deleted - Manual - Substitution - missing - Substitution - invalid - Substitution - partial"
+        },
+        {
+          "name": "TEMPERATURE",
+          "description": "Temperature is the temperature measured in degrees Celsius by the weather station."
+        },
+        {
+          "name": "TEMPERATURE_MIN",
+          "description": "Temperature Min is the daily low (minimum) temperature for the day measured in degrees Celsius. This is based on a roll up values from the last 24 hours of hourly measurements. A daily record comes from the 12-noon hourly observation. The max/min values come from a roll up of data in the last 24 hours."
+        },
+        {
+          "name": "TEMPERATURE_MAX",
+          "description": "Temperature Min is the daily high (maximum) temperature for the day measured in degrees Celsius. This is based on a roll up values from the last 24 hours of hourly measurements. A daily record comes from the 12-noon hourly observation. The max/min values come from a roll up of data in the last 24 hours."
+        },
+        {
+          "name": "RELATIVE_HUMIDITY",
+          "description": "Relative Humidity is a measure of the relative humidity by the weather station."
+        },
+        {
+          "name": "RELATIVE_HUMIDITY_MIN",
+          "description": "Relative Humidity is the daily low (minimum) Humidity measurement for the day. This is based on a roll up values from the last 24 hours of hourly measurements. A daily record comes from the 12-noon hourly observation. The max/min values come from a roll up of data in the last 24 hours."
+        },
+        {
+          "name": "RELATIVE_HUMIDITY_MAX",
+          "description": "Relative Humidity is the daily high (maximum) Humidity measurement for the day. This is based on a roll up values from the last 24 hours of hourly measurements. A daily record comes from the 12-noon hourly observation. The max/min values come from a roll up of data in the last 24 hours."
+        },
+        {
+          "name": "PRECIPITATION",
+          "description": "Precipitation is a measure of precipitation by the weather station. In meteorology, precipitation is any product of the condensation of atmospheric water vapour that falls under gravity. The main forms of precipitation include drizzle, rain, sleet, snow, graupel and hail."
+        },
+        {
+          "name": "WIND_SPEED",
+          "description": "Wind Speed is a measure of wind speed in kilometres/hour by the weather station."
+        },
+        {
+          "name": "WIND_DIRECTION_DEGREES",
+          "description": "Wind Direction Degrees is the direction the wind measured in degrees as measured by the weather station. Values fall within the range 0.0 - 359.0"
+        },
+        {
+          "name": "ADJUSTED_WIND_SPEED",
+          "description": "Adjusted Wind Speed is an adjusted measure of wind speed in kilometres/hour by the weather station. The measurement is adjusted by the mast height of the wind measuring sensor on the weather station."
+        },
+        {
+          "name": "DAILY_SEVERITY_RATING",
+          "description": "Daily Severity Rating is a numeric rating describing the difficulty of controlling fires. It is calculated from the Initial Spread Index and Build Up Index."
+        },
+        {
+          "name": "DROUGHT_CODE",
+          "description": "Drought Code is a numerical rating of the moisture content of deep, compact, organic layers. It is a useful indicator of seasonal drought and shows the likelihood of fire involving the deep duff layers and large logs. A long period of dry weather (the system uses 52 days) is needed to dry out these fuels and affect the Drought Code. A DC rating of 200 is high, and 300 or more is extreme indicating that fire will involve deep sub-surface and heavy fuels. Burning off should not be permitted when the DC rating is above 300. Note: Drought Code is a meteorological business term and is not a true code that is looked up in a code table."
+        },
+        {
+          "name": "DUFF_MOISTURE_CODE",
+          "description": "Duff Moisture Code is a numerical rating of the average moisture content of loosely compacted organic layers of moderate depth. The code indicates the depth that fire will burn in moderate duff layers and medium size woody material. Duff layers take longer than surface fuels to dry out but weather conditions over the past couple of weeks will significantly affect the DMC. The system applies a time lag of 12 days to calculate the DMC. A DMC rating of more than 30 is dry, and above 40 indicates that intensive burning will occur in the duff and medium fuels. Burning off operations should not be carried out when the DMC rating is above 40. Note: Duff Moisture Code is a meteorological business term and is not a true code that is looked up in a code table."
+        },
+        {
+          "name": "FINE_FUEL_MOISTURE_CODE",
+          "description": "Fine Fuel Moisture Code (FFMC) is a measure of the moisture content (dryness) of the smallest forest fuels (surface litter, leaves, needles, small twigs, etc). It shows the relative ease of ignition and flammability of fine fuels. The moisture content of the fine fuels is very sensitive to the weather. Even a day of rain, or of fine and windy weather, will significantly affect the FFMC rating. Measured values translate as: 0-76 : Low 77-84: Moderate 85-88: High 89-91: Very High 92+: Extreme"
+        },
+        {
+          "name": "GRASSLAND_CURING",
+          "description": "Grassland Curing is a numeric rating of the state of the grassland moisture levels."
+        },
+        {
+          "name": "BUILD_UP_INDEX",
+          "description": "Build Up Index shows the amount of fuel available for combustion, indicating how the fire will develope after initial spread. It is calculated from the Duff Moisture Code and Drought Code. The BUI Scale starts at 0 and is open-ended. A rating above 40 is high, and above 60 is extreme."
+        },
+        {
+          "name": "DANGER_FOREST_INDEX",
+          "description": "Danger Forest Index is an index calculation specific to BC that is based on location Build Up Index and Fire Weather Index. Values fall in the range of 1-5."
+        },
+        {
+          "name": "DANGER_GRASSLAND_INDEX",
+          "description": "Danger Grassland Index is an index calculation specific to BC that is based on location Initial Spread Index and Grass Curing. Values fall in the range of 1-5."
+        },
+        {
+          "name": "DANGER_SCRUB_INDEX",
+          "description": "Danger Scrub Index is an index calculation specific to BC that is based on location Initial Spread Index and Fine Fuel Moisture Code. Values fall in the range of 1-5."
+        },
+        {
+          "name": "FIRE_WEATHER_INDEX",
+          "description": "Fire Weather Index is calculated from the Initial Spread Index and a measure called BUI (Build-Up Index), and provides a numerical rating of the likely intensity of a fire. Values are: 0-4.5 : Low 4.5-10.5: Moderate 10.5-18.5: High 18.5-29.5: Very High 29.5+: Extreme"
+        },
+        {
+          "name": "INITIAL_SPREAD_INDEX",
+          "description": "Initial Spread Index indicates the rate fire will spread in its early stages. It is calculated from the FFMC rating and the wind factor. A high rating indicates a high rate of spread. Measured values translate as: 0-1.5 : Low 2-4: Moderate 5-8: High 9-15: Very High 16+: Extreme"
+        },
+        {
+          "name": "MISSING_HOURLY_DATA_IND",
+          "description": "Missing Hourly Data Ind indicates whether the measurements collected by this record are missing hourly data (Y) or not (N). This field references whether the roll up values (Precipitation, Temperature_max/min, RH max/min) might be based on incomplete data. IE if hourly data is missing from 4am to 7am then the precipitation measurement may be missing some precipitation that occurred during that window."
+        },
+        {
+          "name": "OBSERVATION_VALID_IND",
+          "description": "Observation Valid Ind indicates whether one or more weather observations is within an acceptable range of values (Y) or is outside of a valid range (N). Observations outside of an acceptable range indicate that one or more sensors are not working properly."
+        },
+        {
+          "name": "OBSERVATION_VALID_COMMENT",
+          "description": "Observation Valid Comment are comments provided that describe issues with one or more sensors that are affecting observations."
+        },
+        {
+          "name": "ARCHIVED_IND",
+          "description": "Archived Ind indicates whether the measurement is archived (Y) or not (N). Archived records are not to be used for any operational purpose after the fact. It allows for external model data to be added that the forecasters can utilize or dismiss as needed."
+        },
+        {
+          "name": "LAST_UPDATED_TIMESTAMP_MSEC",
+          "description": "Last Updated Timestamp MSec is the last date and time the record was updated as measured by milliseconds since epoch."
+        },
+        {
+          "name": "LAST_UPDATED_TIMESTAMP",
+          "description": "Last Updated Timestamp is the UTC timestamp of when the record was last updated. The Last Updated Timestamp MSec column is the source of truth for the Last Updated Timestamp column. The UTC Timestamp is needed for compatibility with Jaspersoft reporting and GeoServer which cannot handle milliseconds past epoch."
+        },
+        {
+          "name": "CREATE_USER",
+          "description": "CREATE_USER is an audit column that indicates the user that created the record."
+        },
+        {
+          "name": "CREATE_DATE",
+          "description": "CREATE_DATE is the date and time the row of data was created."
+        },
+        {
+          "name": "UPDATE_USER",
+          "description": "UPDATE_USER is an audit column that indicates the user that updated the record."
+        },
+        {
+          "name": "UPDATE_DATE",
+          "description": "UPDATE_DATE is the date and time the row of data was updated."
+        }
+      ],
+      "relationships": {
+        "station": {
+          "cardinality": "one",
+          "target.entity": "weather_stations",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "WEATHER_STATION_GUID"
+          ]
+        }
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 3600
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "hourly_weather": {
+      "source": {
+        "object": "dbo.HOURLY_WEATHER_MEASUREMENT",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "HOURLY_WEATHER_MEAS_GUID",
+          "description": "HOURLY_WEATHER_MEAS_GUID is a unique identifier for the record.",
+          "primary-key": true
+        },
+        {
+          "name": "WEATHER_STATION_GUID",
+          "description": "WEATHER_STATION_GUID: Is a foreign key to WEATHER_STATION: Weather Station is a list of weather stations setup and maintained across the province of BC. The weather stations contain multiple instruments for measuring varying aspects of meteorology used to produce weather forecasts."
+        },
+        {
+          "name": "WEATHER_TIMESTAMP_MSEC",
+          "description": "Weather Timestamp MSec is the date and time a weather measurement is collected as measured by milliseconds since epoch."
+        },
+        {
+          "name": "WEATHER_TIMESTAMP",
+          "description": "Weather Timestamp is the UTC timestamp of when the weather measurement was taken. The Weather Timestamp MSec column is the source of truth for the Weather Timestamp column. The UTC Timestamp is needed for compatibility with Jaspersoft reporting and GeoServer which cannot handle milliseconds past epoch."
+        },
+        {
+          "name": "HOURLY_MEASUREMENT_TYPE_CODE",
+          "description": "HOURLY_MEASUREMENT_TYPE_CODE: Is a foreign key to HOURLY_MEASUREMENT_TYPE_CODE: Measurement Type Code describes the types of measurements that can be collected. It correlates to the original Data Status Code in the old system. Values are: - Actual - Forecast - Estimate - Edited Actual - Test - Startup - Deleted - Manual - Substitution - missing - Substitution - invalid - Substitution - partial"
+        },
+        {
+          "name": "HOURLY_MEASUREMENT_TYPE_DESC",
+          "description": "HOURLY_MEASUREMENT_TYPE_DESC is the display quality description of the code value."
+        },
+        {
+          "name": "TEMPERATURE",
+          "description": "Temperature is the temperature measured in degrees Celsius by the weather station."
+        },
+        {
+          "name": "BAROMETRIC_PRESSURE",
+          "description": "Barometric Pressure is a measure of barometric pressure by the weather station. Atmospheric pressure, sometimes also called barometric pressure (after the sensor), is the pressure within the atmosphere of Earth (or that of another planet). The standard atmosphere (symbol: atm) is a unit of pressure defined as 1013.25 mbar (101325 Pa), equivalent to 760 mm Hg (torr), 29.9212 inches Hg, or 14.696 psi.[1] The atm unit is roughly equivalent to the mean sea-level atmospheric pressure on Earth, that is, the Earth's atmospheric pressure at sea level is approximately 1 atm. In most circumstances atmospheric pressure is closely approximated by the hydrostatic pressure caused by the weight of air above the measurement point. As elevation increases, there is less overlying atmospheric mass, so that atmospheric pressure decreases with increasing elevation. Pressure measures force per unit area, with SI units of Pascals (1 pascal = 1 newton per square metre, 1 N/m2)."
+        },
+        {
+          "name": "RELATIVE_HUMIDITY",
+          "description": "Relative Humidity is a measure of the relative humidity by the weather station."
+        },
+        {
+          "name": "PRECIPITATION",
+          "description": "Precipitation is a measure of precipitation by the weather station. In meteorology, precipitation is any product of the condensation of atmospheric water vapour that falls under gravity. The main forms of precipitation include drizzle, rain, sleet, snow, graupel and hail."
+        },
+        {
+          "name": "WIND_SPEED",
+          "description": "Wind Speed is a measure of wind speed in kilometres/hour by the weather station."
+        },
+        {
+          "name": "WIND_DIRECTION_DEGREES",
+          "description": "Wind Direction Degrees is the direction the wind measured in degrees as measured by the weather station. Values fall within the range 0.0 - 359.0"
+        },
+        {
+          "name": "FINE_FUEL_MOISTURE_CODE",
+          "description": "Fine Fuel Moisture Code (FFMC) is a measure of the moisture content (dryness) of the smallest forest fuels (surface litter, leaves, needles, small twigs, etc). It shows the relative ease of ignition and flammability of fine fuels. The moisture content of the fine fuels is very sensitive to the weather. Even a day of rain, or of fine and windy weather, will significantly affect the FFMC rating. Measured values translate as: 0-76 : Low 77-84: Moderate 85-88: High 89-91: Very High 92+: Extreme"
+        },
+        {
+          "name": "FIRE_WEATHER_INDEX",
+          "description": "Fire Weather Index is calculated from the Initial Spread Index and a measure called BUI (Build-Up Index), and provides a numerical rating of the likely intensity of a fire. Values are: 0-4.5 : Low 4.5-10.5: Moderate 10.5-18.5: High 18.5-29.5: Very High 29.5+: Extreme"
+        },
+        {
+          "name": "INITIAL_SPREAD_INDEX",
+          "description": "Initial Spread Index indicates the rate fire will spread in its early stages. It is calculated from the FFMC rating and the wind factor. A high rating indicates a high rate of spread. Measured values translate as: 0-1.5 : Low 2-4: Moderate 5-8: High 9-15: Very High 16+: Extreme"
+        },
+        {
+          "name": "OBSERVATION_VALID_IND",
+          "description": "Observation Valid Ind indicates whether one or more weather observations is within an acceptable range of values (Y) or is outside of a valid range (N). Observations outside of an acceptable range indicate that one or more sensors are not working properly."
+        },
+        {
+          "name": "OBSERVATION_VALID_COMMENT",
+          "description": "Observation Valid Comment are comments provided that describe issues with one or more sensors that are affecting observations."
+        },
+        {
+          "name": "ADJUSTED_WIND_SPEED",
+          "description": "Adjusted Wind Speed is an adjusted measure of wind speed in kilometres/hour by the weather station. The measurement is adjusted by the mast height of the wind measuring sensor on the weather station."
+        },
+        {
+          "name": "BATTERY_SUPPLY_CURRENT",
+          "description": "Battery Supply Current (lbat) is a measure of the supply current for the weather station battery."
+        },
+        {
+          "name": "BATTERY_SUPPLY_VOLTAGE",
+          "description": "Battery Supply Voltage (Vbat) is a measure of the supply voltage for the weather station battery."
+        },
+        {
+          "name": "FUEL_STICK_MOISTURE",
+          "description": "Fuel Stick Moisture is a measure of the amount of water in a fuel available."
+        },
+        {
+          "name": "FUEL_STICK_TEMPERATURE",
+          "description": "Fuel Stick Temperature is a measure of the temperature of available fuel sources."
+        },
+        {
+          "name": "PRECIP_PLUVIO_1_STATUS",
+          "description": "Precip Pluvio 1 Status measurement"
+        },
+        {
+          "name": "PRECIP_PLUVIO_1_TOTAL",
+          "description": "Precip Pluvio 1 Total measurement"
+        },
+        {
+          "name": "PRECIP_PLUVIO_2_STATUS",
+          "description": "Precip Pluvio 2 Status measurement"
+        },
+        {
+          "name": "PRECIP_PLUVIO_2_TOTAL",
+          "description": "Precip Pluvio 2 Total measurement"
+        },
+        {
+          "name": "PRECIP_RIT_STATUS",
+          "description": "Precip RIT Status Measurement"
+        },
+        {
+          "name": "PRECIP_RIT_TOTAL",
+          "description": "Precip RIT Total Measurement"
+        },
+        {
+          "name": "PRECIP_RGT",
+          "description": "Precip RGT measurement"
+        },
+        {
+          "name": "PRECIP_PC2_STATUS",
+          "description": "Precip PC2 Status is the status of the PC2 (Campbell Scientific) weather sensor."
+        },
+        {
+          "name": "PRECIP_PC2_TOTAL",
+          "description": "Precip PC2 Total is a precipitation sensor made by Campbell Scientific. The new sensor will replace existing RIT (Ritmeyer) precipitation sensors in weather stations."
+        },
+        {
+          "name": "RELATIVE_HUMIDITY_HOURLY_AVG",
+          "description": "Relative Humidity Hourly Average is the average of measured humidity over the hour."
+        },
+        {
+          "name": "RN_1_PLUVIO_1",
+          "description": "RN 1 Pluvio 1 measurement"
+        },
+        {
+          "name": "RN_1_PLUVIO_2",
+          "description": "RN 1 Pluvio 2 Measurement"
+        },
+        {
+          "name": "RN_1_RIT",
+          "description": "RN 1 RIT measurement"
+        },
+        {
+          "name": "RN_1_PC2",
+          "description": "RN 1 PC2 is a Rainfall Now sensor made by Campbell Scientific. The new sensor will replace existing RIT (Ritmeyer) RN sensors in weather stations."
+        },
+        {
+          "name": "SNOW_DEPTH",
+          "description": "Snow Depth is a measurement of the depth of the snow."
+        },
+        {
+          "name": "SNOW_DEPTH_QUALITY",
+          "description": "Snow Depth Quality is a measurement of the snow depth quality."
+        },
+        {
+          "name": "SOLAR_RADIATION_CM3",
+          "description": "Solar Radiation CM3 is a CM3 measure of solar radiation measured"
+        },
+        {
+          "name": "SOLAR_RADIATION_LICOR",
+          "description": "Solar Radiation LICOR is a LICOR measure of solar radiation measured"
+        },
+        {
+          "name": "SOLAR_SUPPLY_CURRENT",
+          "description": "Solar Supply Current (Vslr) is a measure of the supply current for the weather station solar panel."
+        },
+        {
+          "name": "SOLAR_SUPPLY_VOLTAGE",
+          "description": "Solar Supply Voltage (Vslr) is a measure of the supply voltage for the weather station solar panel."
+        },
+        {
+          "name": "TEMPERATURE_HOURLY_AVERAGE",
+          "description": "Temperature Hourly Average is the average of temperatures measured over the hour."
+        },
+        {
+          "name": "WIND_SPEED_HOURLY_AVERAGE",
+          "description": "Wind Speed Hourly Average is the average of measured wind speed over the hour."
+        },
+        {
+          "name": "WIND_DIRECTION_HOURLY_AVERAGE",
+          "description": "Wind Direction Hourly Average is the average of measured wind directions over the hour."
+        },
+        {
+          "name": "WIND_SPEED_MAX_10_MINUTE",
+          "description": "Wind Speed Max 10 Minute is the maximum measure wind speed over a 10 minute period for the hour."
+        },
+        {
+          "name": "WIND_GUST",
+          "description": "Wind Gust is a measurement of wind gusts."
+        },
+        {
+          "name": "SOIL_MOISTURE_PROBE_1",
+          "description": "Soil Moisture Probe 1 is a probe sensor inserted into the soil that measures moisture."
+        },
+        {
+          "name": "SOIL_MOISTURE_PROBE_2",
+          "description": "Soil Moisture Probe 2 is a probe sensor inserted into the soil that measures moisture."
+        },
+        {
+          "name": "SOIL_MOISTURE_PROBE_3",
+          "description": "Soil Moisture Probe 3 is a probe sensor inserted into the soil that measures moisture."
+        },
+        {
+          "name": "SOIL_TEMPERATURE_PROBE_1",
+          "description": "Soil Temperature Probe 1 is a probe sensor inserted into the soil that measures the temperature of the soil at a predetermined depth."
+        },
+        {
+          "name": "SOIL_TEMPERATURE_PROBE_2",
+          "description": "Soil Temperature Probe 2 is a probe sensor inserted into the soil that measures the temperature of the soil at a predetermined depth."
+        },
+        {
+          "name": "SOIL_TEMPERATURE_PROBE_3",
+          "description": "Soil Temperature Probe 3 is a probe sensor inserted into the soil that measures the temperature of the soil at a predetermined depth."
+        },
+        {
+          "name": "ARCHIVED_IND",
+          "description": "Archived Ind indicates whether the measurement is archived (Y) or not (N). Archived records are not to be used for any operational purpose after the fact. It allows for external model data to be added that the forecasters can utilize or dismiss as needed."
+        },
+        {
+          "name": "LAST_UPDATED_TIMESTAMP_MSEC",
+          "description": "Last Updated Timestamp MSec is the last date and time the record was updated as measured by milliseconds since epoch."
+        },
+        {
+          "name": "LAST_UPDATED_TIMESTAMP",
+          "description": "Last Updated Timestamp is the UTC timestamp of when the record was last updated. The Last Updated Timestamp MSec column is the source of truth for the Last Updated Timestamp column. The UTC Timestamp is needed for compatibility with Jaspersoft reporting and GeoServer which cannot handle milliseconds past epoch."
+        },
+        {
+          "name": "CREATE_USER",
+          "description": "CREATE_USER is an audit column that indicates the user that created the record."
+        },
+        {
+          "name": "CREATE_DATE",
+          "description": "CREATE_DATE is the date and time the row of data was created."
+        },
+        {
+          "name": "UPDATE_USER",
+          "description": "UPDATE_USER is an audit column that indicates the user that updated the record."
+        },
+        {
+          "name": "UPDATE_DATE",
+          "description": "UPDATE_DATE is the date and time the row of data was updated."
+        }
+      ],
+      "relationships": {
+        "station": {
+          "cardinality": "one",
+          "target.entity": "weather_stations",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "WEATHER_STATION_GUID"
+          ]
+        }
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 3600
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "weather_stations": {
+      "source": {
+        "object": "dbo.WEATHER_STATION",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "WEATHER_STATION_GUID",
+          "description": "WEATHER_STATION_GUID is a unique identifier for the record.",
+          "primary-key": true
+        },
+        {
+          "name": "STATION_STATUS_CODE",
+          "description": "STATION_STATUS_CODE: Is a foreign key to STATION_STATUS_CODE: Station Status Code describes the status of a weather station. Values are: - Active - Disabled - Archived - Test - Project"
+        },
+        {
+          "name": "STATION_STATUS_DESC",
+          "description": "STATION_STATUS_DESC is the display quality description of the code value."
+        },
+        {
+          "name": "STATION_CODE",
+          "description": "Station Code is a unique number that has been assigned to the station as a means of identifying the station."
+        },
+        {
+          "name": "STATION_ACRONYM",
+          "description": "Station Acronym is a set of characters that have been assigned to a station. The acronym uniquely identifies the weather station and is analogous to a radio call sign."
+        },
+        {
+          "name": "STATION_NAME",
+          "description": "Station Name is the name assigned to a weather station, and may be descriptive of the geographical area it is located in. IE Sechelt Orchard, or Goldstream Park"
+        },
+        {
+          "name": "STATION_COMMENT",
+          "description": "Station Comment contains comments regarding the weather station."
+        },
+        {
+          "name": "CRD_STATION_NAME",
+          "description": ""
+        },
+        {
+          "name": "STATION_RANKING",
+          "description": "Station Ranking is a user defined value from 1-10 which is used to determine in what order stations are shown in the mapping screen in situations where they overlap. One is the most important, 10 the least. 99 is used to simulate an unranked station in the UI."
+        },
+        {
+          "name": "STATION_ACCESS_TYPE_CODE",
+          "description": "STATION_ACCESS_TYPE_CODE: Is a foreign key to STATION_ACCESS_TYPE_CODE: Station Access Type Code is a list of ways a worker can use to access a weather station. - 2WD - 2 Wheel Drive - 4WD - 4 Wheel Drive - AIR - Helicopter - SNOW - Snow Mobile"
+        },
+        {
+          "name": "STATION_ACCESS_TYPE_DESC",
+          "description": "STATION_ACCESS_TYPE_DESC is the display quality description of the code value."
+        },
+        {
+          "name": "SITE_TYPE_CODE",
+          "description": "SITE_TYPE_CODE: Is a foreign key to SITE_TYPE_CODE: Site Type Code describes the type of weather station site. This in turn determines how the weather measurements are accessed for transmission. This list is maintained by administrators Values are: - Download - this is cell connected to a radio but no station - External - Used for ECCC/CRD stations - Hub Station – connected to radio and cell but has a station - Store Forward – radio modem only - wx stn (GOES) - wx stn (cell) - wx stn (UHF) – Weather station with a radio modem - Manual (retired) - Undetermined (retired) - wx stn (MB) (retired) - wx stn (telephone) (retired)"
+        },
+        {
+          "name": "SITE_TYPE_DESC",
+          "description": "SITE_TYPE_DESC is the display quality description of the code value."
+        },
+        {
+          "name": "INFLUENCING_ASPECT_CODE",
+          "description": "INFLUENCING_ASPECT_CODE: Is a foreign key to INFLUENCING_ASPECT_CODE: Influencing Aspect refers to the influencing cardinal direction the weather station is exposed to. Values are: - N - NE - E - SE - S - SW - W - NW - Varies - Flat Flat refers to equal influence from all cardinal directions. Varies means the influence by cardinal direction may vary based on other factors."
+        },
+        {
+          "name": "INFLUENCING_ASPECT_DESC",
+          "description": "INFLUENCING_ASPECT_DESC is the display quality description of the code value."
+        },
+        {
+          "name": "WEATHER_STATION_OWNER_GUID",
+          "description": "WEATHER_STATION_OWNER_GUID: Is a foreign key to WEATHER_STATION_OWNER: Weather Station Owner is the name of the agency or organization that owns one or more weather stations. A weather station owner can be an outside agency. This table stores very basic details about the owner. Values are - BCWF - BC Wildfire - Environment Canada - GVWD - Greater Vancouver Water District - CRD - Capital Region District - UBC - University of BC - Yukon FS - Yukon Forest Service - MOT - Ministry of Transportation"
+        },
+        {
+          "name": "OWNER_NAME",
+          "description": ""
+        },
+        {
+          "name": "OWNER_DISPLAY_NAME",
+          "description": ""
+        },
+        {
+          "name": "OWNER_COMMENT",
+          "description": ""
+        },
+        {
+          "name": "DATA_LOGGER_TYPE_CODE",
+          "description": "DATA_LOGGER_TYPE_CODE: Is a foreign key to DATA_LOGGER_TYPE_CODE: Data Logger Type Code describes the types of data loggers that can be used by a weather station. This is a list maintained by administrators Values are: - None - Undetermined - CR10 - FWS11 - FWS12S - MCC550C - WR62 - WR62A"
+        },
+        {
+          "name": "DATA_LOGGER_TYPE_DESC",
+          "description": "DATA_LOGGER_TYPE_DESC is the display quality description of the code value."
+        },
+        {
+          "name": "WEATHER_ZONE",
+          "description": "WEATHER_ZONEis a foreign key to WEATHER_ZONE. Weather_zone is a geographic area that is assigned by the weather technicians. Weather zone is a value from 1 - 30."
+        },
+        {
+          "name": "WEATHER_ZONE_DESC",
+          "description": "WEATHER_ZONE_DESC is the display quality description for the zone."
+        },
+        {
+          "name": "DANGER_REGION",
+          "description": ""
+        },
+        {
+          "name": "STATION_ACCESS_DESCRIPTION",
+          "description": "Station Access Description is used to provide a description of how to access a station. IE provides directions."
+        },
+        {
+          "name": "FIRE_CENTRE_ORG_UNIT_IDENT",
+          "description": "Fire Centre Org Unit Identifier describes the fire centre the weather station is located in. Fire Centre Org Unit Identifier is a unique number assigned to the org unit that remains consistent across temporal periods. The geographic boundary of the org unit may change a bit over time, and the name of the org unit may change over time, but the business are still recognizes the org unit as being the same regardless of these minor changes. Thus the Org Unit Key is used to create a consistent key to reference the org unit across temporal periods, that does not change over time."
+        },
+        {
+          "name": "FIRE_CENTRE",
+          "description": ""
+        },
+        {
+          "name": "ZONE_ORG_UNIT_IDENTIFIER",
+          "description": "Zone Org Unit Identifier describes the zone the weather station is located in. Zone Org Unit Identifier is a unique number assigned to the org unit that remains consistent across temporal periods. The geographic boundary of the org unit may change a bit over time, and the name of the org unit may change over time, but the business are still recognizes the org unit as being the same regardless of these minor changes. Thus the Org Unit Key is used to create a consistent key to reference the org unit across temporal periods, that does not change over time."
+        },
+        {
+          "name": "FIRE_ZONE",
+          "description": ""
+        },
+        {
+          "name": "DATA_SOURCE",
+          "description": ""
+        },
+        {
+          "name": "INSTALLATION_TIMESTAMP_MSEC",
+          "description": "Installation Timestamp MSec is the date and time the weather station was installed at it's geographical location as measured by milliseconds since epoch."
+        },
+        {
+          "name": "DECOMMISSION_TIMESTAMP_MSEC",
+          "description": "Decommission Timestamp MSec is the date and time the weather station was decommissioned and is no longer providing weather measurements as measured by milliseconds since epoch."
+        },
+        {
+          "name": "HOURLY_IND",
+          "description": "Hourly Ind indicates whether the station reports hourly (Y) or not (N)."
+        },
+        {
+          "name": "OVER_WINTER_PRECIP_ADJ_IND",
+          "description": "Over Winter Precipitation Adjustment Ind indicates whether an adjustment is made to measurements to account for precipitation over winter (Y) or not (N)."
+        },
+        {
+          "name": "PLUVIO_SNOW_GUAGE_IND",
+          "description": "Pluvio Snow Guage Ind indicates whether the station is equipped with a pluvio snow guage (Y) or not (N)."
+        },
+        {
+          "name": "AUTO_UPDATE_LAT_LON_IND",
+          "description": "Specifies whether the stations latitude and longitude may be automatically updated when new coordinate data is provided through DataWriter. A value of Y enables automatic updates; a value of N disables them."
+        },
+        {
+          "name": "LATITUDE",
+          "description": "Latitude is the latitudinal position of the weather station."
+        },
+        {
+          "name": "LONGITUDE",
+          "description": "Longitude is the longitudinal position of the weather station."
+        },
+        {
+          "name": "ELEVATION_M",
+          "description": "Elevation is the elevation of the station above sea level as measured in metres."
+        },
+        {
+          "name": "INFLUENCING_SLOPE",
+          "description": "Influencing Slope is an approximate measurement of the grade of a slope that may influence the weather. The grade of a physical feature, landform or constructed line refers to the tangent of the angle of that surface to the horizontal. It is a special case of the slope, where zero indicates horizontality. A larger number indicates higher or steeper degree of \"tilt\""
+        },
+        {
+          "name": "SURFACE_TYPE_CODE",
+          "description": "SURFACE_TYPE_CODE: Is a foreign key to SURFACE_TYPE_CODE: Surface Type Code describes the types of surfaces around the weather station, which can affect the weather measurements. Values are: - Rough - Smooth"
+        },
+        {
+          "name": "SURFACE_TYPE_DESC",
+          "description": "SURFACE_TYPE_DESC is the display quality description of the code value."
+        },
+        {
+          "name": "WINDSPEED_ADJUSTMENT_HEIGHT",
+          "description": ""
+        },
+        {
+          "name": "WINDSPEED_ADJUSTMENT_ROUGHNESS",
+          "description": ""
+        },
+        {
+          "name": "ECCC_FILE_BASE_URL_TEMPLATE",
+          "description": "ECCC File Base URL Template is a template of a URL used to access files from the Environment Canada Climate Change data mart."
+        },
+        {
+          "name": "LAST_PROCESSED_SOURCE_TIME",
+          "description": "ECCC File Last Processed Time is the date and time a file stored in the Environment Canada Climate Change (ECCC) data mart was last processed by the system. It is a local time field."
+        },
+        {
+          "name": "LAST_UPDATED_TIMESTAMP_MSEC",
+          "description": "Last Updated Timestamp MSec is the last date and time the record was updated as measured by milliseconds since epoch."
+        },
+        {
+          "name": "CREATE_USER",
+          "description": "CREATE_USER is an audit column that indicates the user that created the record."
+        },
+        {
+          "name": "CREATE_DATE",
+          "description": "CREATE_DATE is the date and time the row of data was created."
+        },
+        {
+          "name": "UPDATE_USER",
+          "description": "UPDATE_USER is an audit column that indicates the user that updated the record."
+        },
+        {
+          "name": "UPDATE_DATE",
+          "description": "UPDATE_DATE is the date and time the row of data was updated."
+        }
+      ],
+      "relationships": {
+        "daily_weather": {
+          "cardinality": "many",
+          "target.entity": "daily_weather",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "WEATHER_STATION_GUID"
+          ]
+        },
+        "hourly_weather": {
+          "cardinality": "many",
+          "target.entity": "hourly_weather",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "WEATHER_STATION_GUID"
+          ]
+        }
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "station_indices_period": {
+      "source": {
+        "object": "dbo.STATION_INDICES_PERIOD",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "STATION_INDICES_PERIOD_GUID",
+          "description": "STATION_INDICES_PERIOD_GUID is a unique identifier for the record.",
+          "primary-key": true
+        },
+        {
+          "name": "WEATHER_STATION_GUID",
+          "description": "WEATHER_STATION_GUID: Is a foreign key to WEATHER_STATION: Weather Station is a list of weather stations setup and maintained across the province of BC. The weather stations contain multiple instruments for measuring varying aspects of meteorology used to produce weather forecasts."
+        },
+        {
+          "name": "PERIOD_START_DATE",
+          "description": "Period Start Date is the date that the period start on."
+        },
+        {
+          "name": "PERIOD_END_DATE",
+          "description": "Period End Date is the date the period ends on. Typically the period end date will be October 31st for the given year."
+        },
+        {
+          "name": "ACTIVE_IND",
+          "description": "Active Ind indicates whether the defined station indices period is active (Y) or not (N). This allows a period to be disabled or allows for future period to be planned."
+        },
+        {
+          "name": "OVER_WINTER_PRECIPITATION",
+          "description": ""
+        },
+        {
+          "name": "FINE_FUEL_MOISTURE_CODE",
+          "description": "Fine Fuel Moisture Code (FFMC) is a measure of the moisture content (dryness) of the smallest forest fuels (surface litter, leaves, needles, small twigs, etc). It shows the relative ease of ignition and flammability of fine fuels. The moisture content of the fine fuels is very sensitive to the weather. Even a day of rain, or of fine and windy weather, will significantly affect the FFMC rating. Measured values translate as: 0-76 : Low 77-84: Moderate 85-88: High 89-91: Very High 92+: Extreme"
+        },
+        {
+          "name": "DROUGHT_CODE",
+          "description": "Drought Code is a numerical rating of the moisture content of deep, compact, organic layers. It is a useful indicator of seasonal drought and shows the likelihood of fire involving the deep duff layers and large logs. A long period of dry weather (the system uses 52 days) is needed to dry out these fuels and affect the Drought Code. A DC rating of 200 is high, and 300 or more is extreme indicating that fire will involve deep sub-surface and heavy fuels. Burning off should not be permitted when the DC rating is above 300. Note: Drought Code is a meteorological business term and is not a true code that is looked up in a code table."
+        },
+        {
+          "name": "DUFF_MOISTURE_CODE",
+          "description": "Duff Moisture Code is a numerical rating of the average moisture content of loosely compacted organic layers of moderate depth. The code indicates the depth that fire will burn in moderate duff layers and medium size woody material. Duff layers take longer than surface fuels to dry out but weather conditions over the past couple of weeks will significantly affect the DMC. The system applies a time lag of 12 days to calculate the DMC. A DMC rating of more than 30 is dry, and above 40 indicates that intensive burning will occur in the duff and medium fuels. Burning off operations should not be carried out when the DMC rating is above 40. Note: Duff Moisture Code is a meteorological business term and is not a true code that is looked up in a code table."
+        },
+        {
+          "name": "CREATE_USER",
+          "description": "CREATE_USER is an audit column that indicates the user that created the record."
+        },
+        {
+          "name": "CREATE_DATE",
+          "description": "CREATE_DATE is the date and time the row of data was created."
+        },
+        {
+          "name": "UPDATE_USER",
+          "description": "UPDATE_USER is an audit column that indicates the user that updated the record."
+        },
+        {
+          "name": "UPDATE_DATE",
+          "description": "UPDATE_DATE is the date and time the row of data was updated."
+        }
+      ],
+      "relationships": {
+        "station": {
+          "cardinality": "one",
+          "target.entity": "weather_stations",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "WEATHER_STATION_GUID"
+          ]
+        }
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 3600
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "daily_measurement_type_codes": {
+      "source": {
+        "object": "dbo.DAILY_MEASUREMENT_TYPE_CODE",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "DAILY_MEASUREMENT_TYPE_CODE",
+          "description": "DAILY_MEASUREMENT_TYPE_CODE: Measurement Type Code describes the types of measurements that can be collected. It correlates to the original Data Status Code in the old system. Values are: - Actual - Forecast - Estimate - Edited Actual - Test - Startup - Deleted - Manual - Substitution - missing - Substitution - invalid - Substitution - partial",
+          "primary-key": true
+        },
+        {
+          "name": "DESCRIPTION",
+          "description": "DESCRIPTION is the display quality description of the code value."
+        },
+        {
+          "name": "DISPLAY_ORDER",
+          "description": "DISPLAY ORDER is to allow non alphabetic sorting e.g. M T W Th F S S."
+        },
+        {
+          "name": "EFFECTIVE_DATE",
+          "description": "EFFECTIVE_DATE is the date code value becomes effective."
+        },
+        {
+          "name": "EXPIRY_DATE",
+          "description": "EXPIRY_DATE is the date code value expires."
+        },
+        {
+          "name": "CREATE_USER",
+          "description": "CREATE_USER is an audit column that indicates the user that created the record."
+        },
+        {
+          "name": "CREATE_DATE",
+          "description": "CREATE_DATE is the date and time the row of data was created."
+        },
+        {
+          "name": "UPDATE_USER",
+          "description": "UPDATE_USER is an audit column that indicates the user that updated the record."
+        },
+        {
+          "name": "UPDATE_DATE",
+          "description": "UPDATE_DATE is the date and time the row of data was updated."
+        }
+      ],
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    }
+  }
 }

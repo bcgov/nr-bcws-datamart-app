@@ -15,7 +15,7 @@ FROM mcr.microsoft.com/azure-databases/data-api-builder:${DAB_VERSION}
 LABEL app="datamart-dab"
 
 # dab-config.json lists the additional data source files in data-source-files.
-COPY dab-config.json dab-config.db1.json dab-config.db2.json /App/
+COPY dab-config.json dab-config.db2.json /App/
 
 # "production" hides development-only features. Override with -e DAB_RUNTIME_MODE=development locally.
 ENV DAB_RUNTIME_MODE=production
