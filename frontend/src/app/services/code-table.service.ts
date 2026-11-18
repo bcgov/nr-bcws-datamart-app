@@ -165,18 +165,6 @@ export class CodeTableService {
         }
     })() 
 
-    // ORG_UNITS = new CodeTable( [], () => {
-    //     return this.datamartRestApiService.getOrgUnits()
-    //         .then( fcs => {
-    //             return fcs.map( fc => {
-    //                 return {
-    //                     code: String(fc.FIRE_ZONE_ORG_UNIT_IDENTIFIER),
-    //                     description: fc.FIRE_ZONE_ORG_UNIT_NAME
-    //                 }
-    //             } )
-    //         } )
-    // } )
-
     WEATHER_STATION_STATUS = new CodeTable([
         { code: "ACTIVE",       description: "Active" },
         { code: "ARCHIVED",     description: "Archived" },

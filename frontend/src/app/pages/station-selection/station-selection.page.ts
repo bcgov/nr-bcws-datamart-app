@@ -13,6 +13,7 @@ import { DialogService } from '../../services/dialog.service';
 import { SelectedWeatherStationsService } from '../../services/selected-weather-stations.service';
 import { emptyFilter, StationSelectionFiltersComponent } from './filters/station-selection-filters.component';
 import { WeatherStationService } from '../../services/weather-station.service';
+import { CodeTableService } from '../../services/code-table.service';
 import { StationSelectionContentMapComponent } from './map/station-selection-content-map.component';
 import { StationSelectionContentListComponent } from './list/station-selection-content-list.component';
 
@@ -43,6 +44,41 @@ export class StationSelectionPage implements OnInit {
     selectedWeatherStationsService = inject( SelectedWeatherStationsService )
     dialogService = inject(DialogService)
     router = inject(Router)
+    codeTableService = inject(CodeTableService)
+
+    loadingCount = 0
+
+    get isLoading() {
+        return this.loadingCount > 0
+    }
+
+    startLoading() {
+        this.loadingCount += 1
+        this.changeDetectorRef.detectChanges()
+    }
+
+    stopLoading() {
+        this.loadingCount -= 1
+        this.changeDetectorRef.detectChanges()
+    }
+
+    onIsLoadingChange( ev: boolean ) {
+        if ( ev ) {
+            this.startLoading()
+        }
+        else {
+            this.stopLoading()
+        }
+    }
+
+    // keeps the spinner visible until the promise settles (resolved or rejected)
+    trackLoading<T>( promise: Promise<T> ): Promise<T> {
+        this.startLoading()
+        promise
+            .catch( () => {} )
+            .finally( () => this.stopLoading() )
+        return promise
+    }
 
     ngOnInit(): void {
         // hack to make page load properly
@@ -50,8 +86,10 @@ export class StationSelectionPage implements OnInit {
             this.changeDetectorRef.detectChanges()
         }, 1000);
 
-        this.weatherStationService.filterStations(emptyFilter())
-    }    
+        this.trackLoading( this.weatherStationService.filterStations(emptyFilter()) )
+        this.trackLoading( this.codeTableService.FIRE_CENTRES.isLoading )
+        this.trackLoading( this.codeTableService.FIRE_ZONES.isLoading )
+    }
 
     onViewDataClick() {
         if ( this.selectedWeatherStationsService.count == 0 ) {
