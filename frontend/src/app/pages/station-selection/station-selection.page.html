@@ -15,4 +15,41 @@
     
 <station-selection-filters></station-selection-filters>
 
-<station-selection-content></station-selection-content>
+<nrcl-device-view class="content">
+    <ng-template desktop-view>
+        <section class="station-selection-content">
+            <station-selection-content-list
+                (identifyStation)="map.identifyStation( $event )"
+            ></station-selection-content-list>
+
+            <station-selection-content-map #map>
+            </station-selection-content-map>
+        </section>
+    </ng-template>
+
+    <ng-template mobile-view>
+        <section class="station-selection-mobile">
+            <nrcl-tab-group standard stretched>
+                <nrcl-tab label="Find in List">
+                    <ng-template nrclTabLabel>
+                        <nrcl-icon>list</nrcl-icon>
+                        Find in List
+                    </ng-template>
+
+                    <station-selection-content-list></station-selection-content-list>
+                </nrcl-tab>
+                
+                <nrcl-tab label="Find in Map">
+                    <ng-template nrclTabLabel>
+                        <nrcl-icon>location_on</nrcl-icon>
+                        Find in Map
+                    </ng-template>
+
+                    <ng-template nrclTabContent>
+                        <station-selection-content-map></station-selection-content-map>
+                    </ng-template>
+                </nrcl-tab>
+            </nrcl-tab-group>
+        </section>
+    </ng-template>
+</nrcl-device-view>

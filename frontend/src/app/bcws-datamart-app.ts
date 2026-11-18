@@ -7,6 +7,7 @@ import { DialogService } from './services/dialog.service';
 import { WeatherStationService } from './services/weather-station.service';
 import { DatamartRestApiService } from './services/datamart-rest-api.service';
 import { ApplicationStateService } from './services/application-state.service';
+import { CodeTableService } from './services/code-table.service';
 
 const MENU = {
     HOME: 'home',
@@ -42,6 +43,7 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
     datamartRestApiService = inject(DatamartRestApiService)
     applicationStateService = inject(ApplicationStateService)
     iconService = inject(IconService)
+    codeTableService = inject(CodeTableService)
 
     title = 'Wildfire DataMart';
     logoAriaLabel = 'BC Wildfire Service logo';

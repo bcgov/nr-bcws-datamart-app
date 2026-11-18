@@ -5,11 +5,15 @@ import {
     EventEmitter,
     inject,
     Input,
+    OnInit,
     Output
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ButtonComponent, FilterSearchComponent, FilterSelectComponent, FiltersPanelComponent, IconComponent } from "@bcgov/nr-ngx-component-lib";
+import { ButtonComponent, FilterContainerComponent, FilterSearchComponent, FilterSelectComponent, FiltersPanelComponent, IconComponent } from "@bcgov/nr-ngx-component-lib";
 import { WeatherStationService } from "../../../services/weather-station.service";
+import { CodeDescription, CodeTableService } from "../../../services/code-table.service";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 export type Filter = {
 	search: string
@@ -54,13 +58,17 @@ export function initialFilter(): Filter {
         FilterSearchComponent,
         FiltersPanelComponent,
         FilterSelectComponent,
+        FilterContainerComponent,
         FormsModule,
-        ButtonComponent
+        ButtonComponent,
+        MatInputModule,
+        MatFormFieldModule,
     ]
 })
-export class StationSelectionFiltersComponent {
-	// codeTableService = inject(CodeTableService)
+export class StationSelectionFiltersComponent implements OnInit {
+	codeTableService = inject(CodeTableService)
     weatherStationService = inject(WeatherStationService)
+    changeDetectorRef = inject(ChangeDetectorRef)
 
     @Input() filter: Filter = emptyFilter()
 	@Output() filterChange = new EventEmitter<Filter>()
@@ -68,31 +76,33 @@ export class StationSelectionFiltersComponent {
 	private _filterChangeTimeout: any
     filtersExpanded = false;
 
-	// fireZoneOptions = this.codeTableService.fireZoneWithNotAssigned.items
+    fireZoneOptions?: CodeDescription[]
+
+    ngOnInit(): void {
+        this.codeTableService.FIRE_ZONES.isLoading
+            .then( () => {
+            	this.fireZoneOptions = this.codeTableService.FIRE_ZONES.items!
+                console.log(this.fireZoneOptions)
+                this.changeDetectorRef.detectChanges()
+            } )
+    }
 
     onSearchTextChange( ev: any ) {
-        if ( !this.filter ) return
 		this.filter.search = ev
 		this.emitFilterChange()
 	}
 
-	// onFireCentreChange(ev) {
-	// 	this.filter.fireCentre = ev;
+    onFireCentreChange( ev: any ) {
+		this.filter.fireCentre = ev
+		this.emitFilterChange()
+        this.fireZoneOptions = this.codeTableService.zonesForCentres( this.filter.fireCentre )
+        this.changeDetectorRef.detectChanges()
+    }
 
-	// 	if (this.filter.fireCentre?.length > 0) {
-	// 		this.fireZoneOptions = this.codeTableService.fireZone.forCentre( this.filter.fireCentre[0] )
-	// 	} 
-    //     else {
-	// 		this.fireZoneOptions = this.codeTableService.fireZoneWithNotAssigned.items;
-	// 	}
-
-	// 	this.emitFilterChange();
-	// }
-
-	// onFireZoneChange(ev) {
-	// 	this.filter.fireZone = ev
-	// 	this.emitFilterChange()
-	// }
+    onFireZoneChange( ev: any ) {
+		this.filter.fireZone = ev
+		this.emitFilterChange()
+    }
 
 	onStationStatusChange( ev:any ) {
 		this.filter.stationStatus = ev
@@ -114,9 +124,9 @@ export class StationSelectionFiltersComponent {
 		this.emitFilterChange()
 	}
 
-	onClearSearchAndFilters() {
+	onClearFilters() {
 		this.filter = emptyFilter()
-	    // this.fireZoneOptions = this.codeTableService.fireZoneWithNotAssigned.items;
+        this.fireZoneOptions = this.codeTableService.zonesForCentres( [] )
 		this.emitFilterChange()
 	}
 

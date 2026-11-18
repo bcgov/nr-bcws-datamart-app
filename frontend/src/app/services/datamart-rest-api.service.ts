@@ -3,17 +3,23 @@ import { ApplicationStateService } from './application-state.service';
 import { DailyWeather, HourlyWeather, WeatherStation } from '../api-types';
 
 export type FireCentre = {
-    FIRE_ZONE_ORG_UNIT_IDENTIFIER: number       // 2,
-    FIRE_ZONE_INTEGER_ALIAS: number             // 7,
-    FIRE_ZONE_ORG_UNIT_NAME: string             // "Cariboo Fire Centre",
-    FIRE_ZONE_ORG_UNIT_TYPE_DESC: string        // "Fire Centre"
+    FIRE_CENTRE_CODE: string        // "0",
+    FIRE_CENTRE_CODE_VW: string     // "0",
+    DESCRIPTION: string             // "Out Of Province",
+    DISPLAY_ORDER: number           // 5,
+    EFFECTIVE_DATE: string          // "1999-01-01 00:00:00.000000",
+    EXPIRY_DATE: string             // "9999-12-31 00:00:00.000000",
 }
 
 export type FireZone = {
-    FIRE_ZONE_ORG_UNIT_IDENTIFIER: number       // 2,
-    FIRE_ZONE_INTEGER_ALIAS: number             // 7,
-    FIRE_ZONE_ORG_UNIT_NAME: string             // "Cariboo Fire Centre",
-    FIRE_ZONE_ORG_UNIT_TYPE_DESC: string        // "Fire Centre"
+    FIRE_ZONE_CODE: string          // "10",
+    FIRE_ZONE_CODE_VW: string       // "10",
+    DESCRIPTION: string             // "Robson Valley Zone",
+    FIRE_CENTRE_CODE: string        // "8",
+    FIRE_CENTRE_CODE_VW: string     // "8",
+    DISPLAY_ORDER: number           // 33,
+    EFFECTIVE_DATE: string          // "1999-01-01 00:00:00.000000",
+    EXPIRY_DATE: string             // "9999-12-31 00:00:00.000000",
 }
 
 export type RestOptions = {
