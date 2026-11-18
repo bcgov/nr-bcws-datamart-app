@@ -246,244 +246,244 @@
       "fields": [
         {
           "name": "HOURLY_WEATHER_MEAS_GUID",
-          "description": "A unique identifier for the record.",
+          "description": "HOURLY_WEATHER_MEAS_GUID is a unique identifier for the record.",
           "primary-key": true
         },
         {
           "name": "WEATHER_STATION_GUID",
-          "description": ""
+          "description": "WEATHER_STATION_GUID: Is a foreign key to WEATHER_STATION: Weather Station is a list of weather stations setup and maintained across the province of BC. The weather stations contain multiple instruments for measuring varying aspects of meteorology used to produce weather forecasts."
         },
         {
           "name": "WEATHER_TIMESTAMP_MSEC",
-          "description": ""
+          "description": "Weather Timestamp MSec is the date and time a weather measurement is collected as measured by milliseconds since epoch."
         },
         {
           "name": "WEATHER_TIMESTAMP",
-          "description": ""
+          "description": "Weather Timestamp is the UTC timestamp of when the weather measurement was taken. The Weather Timestamp MSec column is the source of truth for the Weather Timestamp column. The UTC Timestamp is needed for compatibility with Jaspersoft reporting and GeoServer which cannot handle milliseconds past epoch."
         },
         {
           "name": "HOURLY_MEASUREMENT_TYPE_CODE",
-          "description": ""
+          "description": "HOURLY_MEASUREMENT_TYPE_CODE: Is a foreign key to HOURLY_MEASUREMENT_TYPE_CODE: Measurement Type Code describes the types of measurements that can be collected. It correlates to the original Data Status Code in the old system. Values are: - Actual - Forecast - Estimate - Edited Actual - Test - Startup - Deleted - Manual - Substitution - missing - Substitution - invalid - Substitution - partial"
         },
         {
           "name": "HOURLY_MEASUREMENT_TYPE_DESC",
-          "description": ""
+          "description": "HOURLY_MEASUREMENT_TYPE_DESC is the display quality description of the code value."
         },
         {
           "name": "TEMPERATURE",
-          "description": ""
+          "description": "Temperature is the temperature measured in degrees Celsius by the weather station."
         },
         {
           "name": "BAROMETRIC_PRESSURE",
-          "description": ""
+          "description": "Barometric Pressure is a measure of barometric pressure by the weather station. Atmospheric pressure, sometimes also called barometric pressure (after the sensor), is the pressure within the atmosphere of Earth (or that of another planet). The standard atmosphere (symbol: atm) is a unit of pressure defined as 1013.25 mbar (101325 Pa), equivalent to 760 mm Hg (torr), 29.9212 inches Hg, or 14.696 psi.[1] The atm unit is roughly equivalent to the mean sea-level atmospheric pressure on Earth, that is, the Earth's atmospheric pressure at sea level is approximately 1 atm. In most circumstances atmospheric pressure is closely approximated by the hydrostatic pressure caused by the weight of air above the measurement point. As elevation increases, there is less overlying atmospheric mass, so that atmospheric pressure decreases with increasing elevation. Pressure measures force per unit area, with SI units of Pascals (1 pascal = 1 newton per square metre, 1 N/m2)."
         },
         {
           "name": "RELATIVE_HUMIDITY",
-          "description": ""
+          "description": "Relative Humidity is a measure of the relative humidity by the weather station."
         },
         {
           "name": "PRECIPITATION",
-          "description": ""
+          "description": "Precipitation is a measure of precipitation by the weather station. In meteorology, precipitation is any product of the condensation of atmospheric water vapour that falls under gravity. The main forms of precipitation include drizzle, rain, sleet, snow, graupel and hail."
         },
         {
           "name": "WIND_SPEED",
-          "description": ""
+          "description": "Wind Speed is a measure of wind speed in kilometres/hour by the weather station."
         },
         {
           "name": "WIND_DIRECTION_DEGREES",
-          "description": ""
+          "description": "Wind Direction Degrees is the direction the wind measured in degrees as measured by the weather station. Values fall within the range 0.0 - 359.0"
         },
         {
           "name": "FINE_FUEL_MOISTURE_CODE",
-          "description": ""
+          "description": "Fine Fuel Moisture Code (FFMC) is a measure of the moisture content (dryness) of the smallest forest fuels (surface litter, leaves, needles, small twigs, etc). It shows the relative ease of ignition and flammability of fine fuels. The moisture content of the fine fuels is very sensitive to the weather. Even a day of rain, or of fine and windy weather, will significantly affect the FFMC rating. Measured values translate as: 0-76 : Low 77-84: Moderate 85-88: High 89-91: Very High 92+: Extreme"
         },
         {
           "name": "FIRE_WEATHER_INDEX",
-          "description": ""
+          "description": "Fire Weather Index is calculated from the Initial Spread Index and a measure called BUI (Build-Up Index), and provides a numerical rating of the likely intensity of a fire. Values are: 0-4.5 : Low 4.5-10.5: Moderate 10.5-18.5: High 18.5-29.5: Very High 29.5+: Extreme"
         },
         {
           "name": "INITIAL_SPREAD_INDEX",
-          "description": ""
+          "description": "Initial Spread Index indicates the rate fire will spread in its early stages. It is calculated from the FFMC rating and the wind factor. A high rating indicates a high rate of spread. Measured values translate as: 0-1.5 : Low 2-4: Moderate 5-8: High 9-15: Very High 16+: Extreme"
         },
         {
           "name": "OBSERVATION_VALID_IND",
-          "description": ""
+          "description": "Observation Valid Ind indicates whether one or more weather observations is within an acceptable range of values (Y) or is outside of a valid range (N). Observations outside of an acceptable range indicate that one or more sensors are not working properly."
         },
         {
           "name": "OBSERVATION_VALID_COMMENT",
-          "description": ""
+          "description": "Observation Valid Comment are comments provided that describe issues with one or more sensors that are affecting observations."
         },
         {
           "name": "ADJUSTED_WIND_SPEED",
-          "description": ""
+          "description": "Adjusted Wind Speed is an adjusted measure of wind speed in kilometres/hour by the weather station. The measurement is adjusted by the mast height of the wind measuring sensor on the weather station."
         },
         {
           "name": "BATTERY_SUPPLY_CURRENT",
-          "description": ""
+          "description": "Battery Supply Current (lbat) is a measure of the supply current for the weather station battery."
         },
         {
           "name": "BATTERY_SUPPLY_VOLTAGE",
-          "description": ""
+          "description": "Battery Supply Voltage (Vbat) is a measure of the supply voltage for the weather station battery."
         },
         {
           "name": "FUEL_STICK_MOISTURE",
-          "description": ""
+          "description": "Fuel Stick Moisture is a measure of the amount of water in a fuel available."
         },
         {
           "name": "FUEL_STICK_TEMPERATURE",
-          "description": ""
+          "description": "Fuel Stick Temperature is a measure of the temperature of available fuel sources."
         },
         {
           "name": "PRECIP_PLUVIO_1_STATUS",
-          "description": ""
+          "description": "Precip Pluvio 1 Status measurement"
         },
         {
           "name": "PRECIP_PLUVIO_1_TOTAL",
-          "description": ""
+          "description": "Precip Pluvio 1 Total measurement"
         },
         {
           "name": "PRECIP_PLUVIO_2_STATUS",
-          "description": ""
+          "description": "Precip Pluvio 2 Status measurement"
         },
         {
           "name": "PRECIP_PLUVIO_2_TOTAL",
-          "description": ""
+          "description": "Precip Pluvio 2 Total measurement"
         },
         {
           "name": "PRECIP_RIT_STATUS",
-          "description": ""
+          "description": "Precip RIT Status Measurement"
         },
         {
           "name": "PRECIP_RIT_TOTAL",
-          "description": ""
+          "description": "Precip RIT Total Measurement"
         },
         {
           "name": "PRECIP_RGT",
-          "description": ""
+          "description": "Precip RGT measurement"
         },
         {
           "name": "PRECIP_PC2_STATUS",
-          "description": ""
+          "description": "Precip PC2 Status is the status of the PC2 (Campbell Scientific) weather sensor."
         },
         {
           "name": "PRECIP_PC2_TOTAL",
-          "description": ""
+          "description": "Precip PC2 Total is a precipitation sensor made by Campbell Scientific. The new sensor will replace existing RIT (Ritmeyer) precipitation sensors in weather stations."
         },
         {
           "name": "RELATIVE_HUMIDITY_HOURLY_AVG",
-          "description": ""
+          "description": "Relative Humidity Hourly Average is the average of measured humidity over the hour."
         },
         {
           "name": "RN_1_PLUVIO_1",
-          "description": ""
+          "description": "RN 1 Pluvio 1 measurement"
         },
         {
           "name": "RN_1_PLUVIO_2",
-          "description": ""
+          "description": "RN 1 Pluvio 2 Measurement"
         },
         {
           "name": "RN_1_RIT",
-          "description": ""
+          "description": "RN 1 RIT measurement"
         },
         {
           "name": "RN_1_PC2",
-          "description": ""
+          "description": "RN 1 PC2 is a Rainfall Now sensor made by Campbell Scientific. The new sensor will replace existing RIT (Ritmeyer) RN sensors in weather stations."
         },
         {
           "name": "SNOW_DEPTH",
-          "description": ""
+          "description": "Snow Depth is a measurement of the depth of the snow."
         },
         {
           "name": "SNOW_DEPTH_QUALITY",
-          "description": ""
+          "description": "Snow Depth Quality is a measurement of the snow depth quality."
         },
         {
           "name": "SOLAR_RADIATION_CM3",
-          "description": ""
+          "description": "Solar Radiation CM3 is a CM3 measure of solar radiation measured"
         },
         {
           "name": "SOLAR_RADIATION_LICOR",
-          "description": ""
+          "description": "Solar Radiation LICOR is a LICOR measure of solar radiation measured"
         },
         {
           "name": "SOLAR_SUPPLY_CURRENT",
-          "description": ""
+          "description": "Solar Supply Current (Vslr) is a measure of the supply current for the weather station solar panel."
         },
         {
           "name": "SOLAR_SUPPLY_VOLTAGE",
-          "description": ""
+          "description": "Solar Supply Voltage (Vslr) is a measure of the supply voltage for the weather station solar panel."
         },
         {
           "name": "TEMPERATURE_HOURLY_AVERAGE",
-          "description": ""
+          "description": "Temperature Hourly Average is the average of temperatures measured over the hour."
         },
         {
           "name": "WIND_SPEED_HOURLY_AVERAGE",
-          "description": ""
+          "description": "Wind Speed Hourly Average is the average of measured wind speed over the hour."
         },
         {
           "name": "WIND_DIRECTION_HOURLY_AVERAGE",
-          "description": ""
+          "description": "Wind Direction Hourly Average is the average of measured wind directions over the hour."
         },
         {
           "name": "WIND_SPEED_MAX_10_MINUTE",
-          "description": ""
+          "description": "Wind Speed Max 10 Minute is the maximum measure wind speed over a 10 minute period for the hour."
         },
         {
           "name": "WIND_GUST",
-          "description": ""
+          "description": "Wind Gust is a measurement of wind gusts."
         },
         {
           "name": "SOIL_MOISTURE_PROBE_1",
-          "description": ""
+          "description": "Soil Moisture Probe 1 is a probe sensor inserted into the soil that measures moisture."
         },
         {
           "name": "SOIL_MOISTURE_PROBE_2",
-          "description": ""
+          "description": "Soil Moisture Probe 2 is a probe sensor inserted into the soil that measures moisture."
         },
         {
           "name": "SOIL_MOISTURE_PROBE_3",
-          "description": ""
+          "description": "Soil Moisture Probe 3 is a probe sensor inserted into the soil that measures moisture."
         },
         {
           "name": "SOIL_TEMPERATURE_PROBE_1",
-          "description": ""
+          "description": "Soil Temperature Probe 1 is a probe sensor inserted into the soil that measures the temperature of the soil at a predetermined depth."
         },
         {
           "name": "SOIL_TEMPERATURE_PROBE_2",
-          "description": ""
+          "description": "Soil Temperature Probe 2 is a probe sensor inserted into the soil that measures the temperature of the soil at a predetermined depth."
         },
         {
           "name": "SOIL_TEMPERATURE_PROBE_3",
-          "description": ""
+          "description": "Soil Temperature Probe 3 is a probe sensor inserted into the soil that measures the temperature of the soil at a predetermined depth."
         },
         {
           "name": "ARCHIVED_IND",
-          "description": ""
+          "description": "Archived Ind indicates whether the measurement is archived (Y) or not (N). Archived records are not to be used for any operational purpose after the fact. It allows for external model data to be added that the forecasters can utilize or dismiss as needed."
         },
         {
           "name": "LAST_UPDATED_TIMESTAMP_MSEC",
-          "description": ""
+          "description": "Last Updated Timestamp MSec is the last date and time the record was updated as measured by milliseconds since epoch."
         },
         {
           "name": "LAST_UPDATED_TIMESTAMP",
-          "description": ""
+          "description": "Last Updated Timestamp is the UTC timestamp of when the record was last updated. The Last Updated Timestamp MSec column is the source of truth for the Last Updated Timestamp column. The UTC Timestamp is needed for compatibility with Jaspersoft reporting and GeoServer which cannot handle milliseconds past epoch."
         },
         {
           "name": "CREATE_USER",
-          "description": ""
+          "description": "CREATE_USER is an audit column that indicates the user that created the record."
         },
         {
           "name": "CREATE_DATE",
-          "description": ""
+          "description": "CREATE_DATE is the date and time the row of data was created."
         },
         {
           "name": "UPDATE_USER",
-          "description": ""
+          "description": "UPDATE_USER is an audit column that indicates the user that updated the record."
         },
         {
           "name": "UPDATE_DATE",
-          "description": ""
+          "description": "UPDATE_DATE is the date and time the row of data was updated."
         }
       ],
       "relationships": {
