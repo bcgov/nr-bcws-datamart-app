@@ -5,6 +5,7 @@ import { DatamartRestApiService } from './datamart-rest-api.service';
 import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 import { WeatherStation } from '../api-types';
 import { GENERIC_FAILURE } from '../util';
+import { CodeTableService } from './code-table.service';
 
 export type GeoJsonPoint<P> = {
     type: 'Feature',
@@ -23,6 +24,7 @@ export type WeatherStationFeature = GeoJsonPoint<WeatherStation>
 export class WeatherStationService {
     datamartRestApiService = inject( DatamartRestApiService )
     snackbarUtilService = inject( SnackbarUtilService )
+    codeTableService = inject( CodeTableService )
 
     private readonly stationsSubject = new BehaviorSubject<any[]>([]);
     
@@ -58,7 +60,12 @@ export class WeatherStationService {
     loadStations(): Promise<WeatherStationFeature[]> {
         if ( this._stationsPromise ) return this._stationsPromise
 
-        this._stationsPromise = this.datamartRestApiService.getWeatherStations( { filter: "STATION_STATUS_CODE eq 'ACTIVE'" } )
+        // fetch stations for every status the user can filter on
+        let statusFilter = this.codeTableService.WEATHER_STATION_STATUS.items
+            .map( s => `STATION_STATUS_CODE eq '${ s.code }'` )
+            .join( ' or ' )
+
+        this._stationsPromise = this.datamartRestApiService.getWeatherStations( { filter: statusFilter, first: -1 } )
             .then( stations => {
                 return stations.map( ( s ) => {
                     return {
