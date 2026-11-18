@@ -181,8 +181,8 @@ export class CodeTableService {
         { code: "ACTIVE",       description: "Active" },
         { code: "ARCHIVED",     description: "Archived" },
         { code: "DISABLED",     description: "Disabled" },
-        { code: "PROJECT",      description: "Project" },
-        { code: "TEST",         description: "Test" },
+        // { code: "PROJECT",      description: "Project" },
+        // { code: "TEST",         description: "Test" },
     ])
 }
 
