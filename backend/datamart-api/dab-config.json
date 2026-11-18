@@ -766,24 +766,24 @@
       "fields": [
         {
           "name": "STATION_INDICES_PERIOD_GUID",
-          "description": "",
+          "description": "STATION_INDICES_PERIOD_GUID is a unique identifier for the record.",
           "primary-key": true
         },
         {
           "name": "WEATHER_STATION_GUID",
-          "description": ""
+          "description": "WEATHER_STATION_GUID: Is a foreign key to WEATHER_STATION: Weather Station is a list of weather stations setup and maintained across the province of BC. The weather stations contain multiple instruments for measuring varying aspects of meteorology used to produce weather forecasts."
         },
         {
           "name": "PERIOD_START_DATE",
-          "description": ""
+          "description": "Period Start Date is the date that the period start on."
         },
         {
           "name": "PERIOD_END_DATE",
-          "description": ""
+          "description": "Period End Date is the date the period ends on. Typically the period end date will be October 31st for the given year."
         },
         {
           "name": "ACTIVE_IND",
-          "description": ""
+          "description": "Active Ind indicates whether the defined station indices period is active (Y) or not (N). This allows a period to be disabled or allows for future period to be planned."
         },
         {
           "name": "OVER_WINTER_PRECIPITATION",
@@ -791,31 +791,31 @@
         },
         {
           "name": "FINE_FUEL_MOISTURE_CODE",
-          "description": ""
+          "description": "Fine Fuel Moisture Code (FFMC) is a measure of the moisture content (dryness) of the smallest forest fuels (surface litter, leaves, needles, small twigs, etc). It shows the relative ease of ignition and flammability of fine fuels. The moisture content of the fine fuels is very sensitive to the weather. Even a day of rain, or of fine and windy weather, will significantly affect the FFMC rating. Measured values translate as: 0-76 : Low 77-84: Moderate 85-88: High 89-91: Very High 92+: Extreme"
         },
         {
           "name": "DROUGHT_CODE",
-          "description": ""
+          "description": "Drought Code is a numerical rating of the moisture content of deep, compact, organic layers. It is a useful indicator of seasonal drought and shows the likelihood of fire involving the deep duff layers and large logs. A long period of dry weather (the system uses 52 days) is needed to dry out these fuels and affect the Drought Code. A DC rating of 200 is high, and 300 or more is extreme indicating that fire will involve deep sub-surface and heavy fuels. Burning off should not be permitted when the DC rating is above 300. Note: Drought Code is a meteorological business term and is not a true code that is looked up in a code table."
         },
         {
           "name": "DUFF_MOISTURE_CODE",
-          "description": ""
+          "description": "Duff Moisture Code is a numerical rating of the average moisture content of loosely compacted organic layers of moderate depth. The code indicates the depth that fire will burn in moderate duff layers and medium size woody material. Duff layers take longer than surface fuels to dry out but weather conditions over the past couple of weeks will significantly affect the DMC. The system applies a time lag of 12 days to calculate the DMC. A DMC rating of more than 30 is dry, and above 40 indicates that intensive burning will occur in the duff and medium fuels. Burning off operations should not be carried out when the DMC rating is above 40. Note: Duff Moisture Code is a meteorological business term and is not a true code that is looked up in a code table."
         },
         {
           "name": "CREATE_USER",
-          "description": ""
+          "description": "CREATE_USER is an audit column that indicates the user that created the record."
         },
         {
           "name": "CREATE_DATE",
-          "description": ""
+          "description": "CREATE_DATE is the date and time the row of data was created."
         },
         {
           "name": "UPDATE_USER",
-          "description": ""
+          "description": "UPDATE_USER is an audit column that indicates the user that updated the record."
         },
         {
           "name": "UPDATE_DATE",
-          "description": ""
+          "description": "UPDATE_DATE is the date and time the row of data was updated."
         }
       ],
       "relationships": {
@@ -851,40 +851,40 @@
       "fields": [
         {
           "name": "DAILY_MEASUREMENT_TYPE_CODE",
-          "description": "",
+          "description": "DAILY_MEASUREMENT_TYPE_CODE: Measurement Type Code describes the types of measurements that can be collected. It correlates to the original Data Status Code in the old system. Values are: - Actual - Forecast - Estimate - Edited Actual - Test - Startup - Deleted - Manual - Substitution - missing - Substitution - invalid - Substitution - partial",
           "primary-key": true
         },
         {
           "name": "DESCRIPTION",
-          "description": ""
+          "description": "DESCRIPTION is the display quality description of the code value."
         },
         {
           "name": "DISPLAY_ORDER",
-          "description": ""
+          "description": "DISPLAY ORDER is to allow non alphabetic sorting e.g. M T W Th F S S."
         },
         {
           "name": "EFFECTIVE_DATE",
-          "description": ""
+          "description": "EFFECTIVE_DATE is the date code value becomes effective."
         },
         {
           "name": "EXPIRY_DATE",
-          "description": ""
+          "description": "EXPIRY_DATE is the date code value expires."
         },
         {
           "name": "CREATE_USER",
-          "description": ""
+          "description": "CREATE_USER is an audit column that indicates the user that created the record."
         },
         {
           "name": "CREATE_DATE",
-          "description": ""
+          "description": "CREATE_DATE is the date and time the row of data was created."
         },
         {
           "name": "UPDATE_USER",
-          "description": ""
+          "description": "UPDATE_USER is an audit column that indicates the user that updated the record."
         },
         {
           "name": "UPDATE_DATE",
-          "description": ""
+          "description": "UPDATE_DATE is the date and time the row of data was updated."
         }
       ],
       "cache": {
