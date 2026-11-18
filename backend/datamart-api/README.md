@@ -4,8 +4,7 @@ This API lives in `backend/datamart-api`. Each API of the backend has its own fo
 
 | File | Purpose |
 | --- | --- |
-| `dab-config.json` | Runtime settings (REST, GraphQL, MCP, CORS, authentication, log level), a default data source and the list of database files in `data-source-files`. It has no entities. Reads its settings from environment variables. |
-| `dab-config.db1.json` | Data source and entities of the first database. |
+| `dab-config.json` | Runtime settings (REST, GraphQL, MCP, CORS, authentication, log level), the default data source with the entities of the first database, and the list of additional database files in `data-source-files`. Reads its settings from environment variables. |
 | `dab-config.db2.json` | Data source and entities of the second database. |
 | `Dockerfile` | Builds the image: the official DAB image plus the `dab-config*.json` files. |
 | `.env.example` | Template for the local `.env` file (git-ignored). |
@@ -14,7 +13,7 @@ This API lives in `backend/datamart-api`. Each API of the backend has its own fo
 
 | Environment variable | Required | Description |
 | --- | --- | --- |
-| `FABRIC_SQL_CONNECTION_STRING` | Yes | Connection string of the first Fabric SQL analytics endpoint (`dab-config.db1.json`). |
+| `FABRIC_SQL_CONNECTION_STRING` | Yes | Connection string of the first Fabric SQL analytics endpoint (the default data source in `dab-config.json`). |
 | `FABRIC_SQL_CONNECTION_STRING_2` | Yes | Connection string of the second Fabric SQL analytics endpoint (`dab-config.db2.json`). |
 | `DAB_RUNTIME_MODE` | Yes for the DAB CLI, defaults to `production` in the image | `development` or `production`. |
 | `DAB_CORS_ORIGIN` | Yes for the DAB CLI, defaults to `*` in the image | Browser origin allowed to call the API. |
@@ -41,7 +40,7 @@ Whichever identity you use must have access to the Fabric workspace (Viewer or h
 
 ## Several databases
 
-DAB supports one data source per configuration file. `dab-config.json` contains the shared runtime settings and lists the database files in `data-source-files`. It must also declare a `data-source` (it reuses `FABRIC_SQL_CONNECTION_STRING`) and an empty `entities` object. Data API builder 2.0.12 answers every REST request with `Invalid Entity path` when the top-level file has no `data-source`, even though the child files load. Each database file (`dab-config.db1.json`, `dab-config.db2.json`) has its own `data-source` and `entities`. Entity names must be unique across all files. The runtime settings come only from `dab-config.json`. To expose a table, add it to `entities` of the file of its database. `dab-config.db2.json` ships with no entities. To add a third database, create `dab-config.db3.json`, list it in `data-source-files`, copy it in the `Dockerfile`, and add a connection string variable. DAB reads the schema of every entity when it starts, so a wrong table name stops the service.
+DAB supports one data source per configuration file. `dab-config.json` contains the shared runtime settings and lists the additional database files in `data-source-files`. It also declares the default `data-source` (`FABRIC_SQL_CONNECTION_STRING`) and the `entities` of the first database. Data API builder 2.0.12 answers every REST request with `Invalid Entity path` when the top-level file has no `data-source`, even though the child files load. The generated OpenAPI document appears to list paths only for the default data source, so the entities of the first database live in `dab-config.json` itself. Each additional database file (`dab-config.db2.json`) has its own `data-source` and `entities`. Entity names must be unique across all files. The runtime settings come only from `dab-config.json`. To expose a table, add it to `entities` of the file of its database. To add a third database, create `dab-config.db3.json`, list it in `data-source-files`, copy it in the `Dockerfile`, and add a connection string variable. DAB reads the schema of every entity when it starts, so a wrong table name stops the service.
 
 ## Endpoints
 

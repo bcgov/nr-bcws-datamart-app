@@ -8,7 +8,6 @@
     }
   },
   "data-source-files": [
-    "dab-config.db1.json",
     "dab-config.db2.json"
   ],
   "runtime": {
@@ -61,5 +60,845 @@
       "mode": "@env('DAB_RUNTIME_MODE')"
     }
   },
-  "entities": {}
+  "entities": {
+    "daily_weather": {
+      "source": {
+        "object": "dbo.DAILY_WEATHER_MEASUREMENT",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "DAILY_WEATHER_MEAS_GUID",
+          "description": "A unique identifier for the record.",
+          "primary-key": true
+        },
+        {
+          "name": "WEATHER_STATION_GUID",
+          "description": "A foreign key to WEATHER_STATION"
+        },
+        {
+          "name": "WEATHER_TIMESTAMP_MSEC",
+          "description": "The date and time a weather measurement is collected as measured by milliseconds since epoch"
+        },
+        {
+          "name": "WEATHER_TIMESTAMP",
+          "description": "The UTC timestamp of when the weather measurement was taken"
+        },
+        {
+          "name": "DAILY_MEASUREMENT_TYPE_CODE",
+          "description": "A foreign key to DAILY_MEASUREMENT_TYPE_CODE"
+        },
+        {
+          "name": "TEMPERATURE",
+          "description": "The temperature measured in degrees Celsius by the weather station"
+        },
+        {
+          "name": "TEMPERATURE_MIN",
+          "description": "The daily low (minimum) temperature for the day measured in degrees Celsius"
+        },
+        {
+          "name": "TEMPERATURE_MAX",
+          "description": "The daily high (maximum) temperature for the day measured in degrees Celsius"
+        },
+        {
+          "name": "RELATIVE_HUMIDITY",
+          "description": "A measure of the relative humidity by the weather station"
+        },
+        {
+          "name": "RELATIVE_HUMIDITY_MIN",
+          "description": "The daily low (minimum) Humidity measurement for the day"
+        },
+        {
+          "name": "RELATIVE_HUMIDITY_MAX",
+          "description": "The daily high (maximum) Humidity measurement for the day"
+        },
+        {
+          "name": "PRECIPITATION",
+          "description": "A measure of precipitation by the weather station"
+        },
+        {
+          "name": "WIND_SPEED",
+          "description": "A measure of wind speed in kilometres/hour by the weather station"
+        },
+        {
+          "name": "WIND_DIRECTION_DEGREES",
+          "description": "The direction the wind measured in degrees as measured by the weather station. Values fall within the range 0.0 - 359.0"
+        },
+        {
+          "name": "ADJUSTED_WIND_SPEED",
+          "description": "An adjusted measure of wind speed in kilometres/hour by the weather station"
+        },
+        {
+          "name": "DAILY_SEVERITY_RATING",
+          "description": "A numeric rating describing the difficulty of controlling fires"
+        },
+        {
+          "name": "DROUGHT_CODE",
+          "description": "A numerical rating of the moisture content of deep, compact, organic layers"
+        },
+        {
+          "name": "DUFF_MOISTURE_CODE",
+          "description": "A numerical rating of the average moisture content of loosely compacted organic layers of moderate depth"
+        },
+        {
+          "name": "FINE_FUEL_MOISTURE_CODE",
+          "description": "A measure of the moisture content (dryness) of the smallest forest fuels (surface litter, leaves, needles, small twigs, etc)"
+        },
+        {
+          "name": "GRASSLAND_CURING",
+          "description": "A numeric rating of the state of the grassland moisture levels"
+        },
+        {
+          "name": "BUILD_UP_INDEX",
+          "description": "The amount of fuel available for combustion, indicating how the fire will develop after initial spread"
+        },
+        {
+          "name": "DANGER_FOREST_INDEX",
+          "description": "An index calculation specific to BC that is based on location Build Up Index and Fire Weather Index. Values fall in the range of 1-5"
+        },
+        {
+          "name": "DANGER_GRASSLAND_INDEX",
+          "description": "An index calculation specific to BC that is based on location Initial Spread Index and Grass Curing. Values fall in the range of 1-5"
+        },
+        {
+          "name": "DANGER_SCRUB_INDEX",
+          "description": "An index calculation specific to BC that is based on location Initial Spread Index and Fine Fuel Moisture Code. Values fall in the range of 1-5"
+        },
+        {
+          "name": "FIRE_WEATHER_INDEX",
+          "description": "Fire Weather Index is calculated from the Initial Spread Index and a measure called BUI (Build-Up Index), and provides a numerical rating of the likely intensity of a fire. Values are: 0-4.5 : Low 4.5-10.5: Moderate 10.5-18.5: High 18.5-29.5: Very High 29.5+: Extreme"
+        },
+        {
+          "name": "INITIAL_SPREAD_INDEX",
+          "description": "Initial Spread Index indicates the rate fire will spread in its early stages. It is calculated from the FFMC rating and the wind factor. A high rating indicates a high rate of spread. Measured values translate as: 0-1.5 : Low 2-4: Moderate 5-8: High 9-15: Very High 16+: Extreme"
+        },
+        {
+          "name": "MISSING_HOURLY_DATA_IND",
+          "description": "Missing Hourly Data Ind indicates whether the measurements collected by this record are missing hourly data (Y) or not (N)"
+        },
+        {
+          "name": "OBSERVATION_VALID_IND",
+          "description": "Observation Valid Ind indicates whether one or more weather observations is within an acceptable range of values (Y) or is outside of a valid range (N)"
+        },
+        {
+          "name": "OBSERVATION_VALID_COMMENT",
+          "description": "Comments provided that describe issues with one or more sensors that are affecting observations"
+        },
+        {
+          "name": "ARCHIVED_IND",
+          "description": "Archived Ind indicates whether the measurement is archived (Y) or not (N)"
+        },
+        {
+          "name": "LAST_UPDATED_TIMESTAMP_MSEC",
+          "description": "The last date and time the record was updated as measured by milliseconds since epoch"
+        },
+        {
+          "name": "LAST_UPDATED_TIMESTAMP",
+          "description": "The UTC timestamp of when the record was last updated"
+        },
+        {
+          "name": "CREATE_USER",
+          "description": "An audit column that indicates the user that created the record"
+        },
+        {
+          "name": "CREATE_DATE",
+          "description": "The date and time the row of data was created"
+        },
+        {
+          "name": "UPDATE_USER",
+          "description": "An audit column that indicates the user that updated the record."
+        },
+        {
+          "name": "UPDATE_DATE",
+          "description": "The date and time the row of data was updated."
+        }
+      ],
+      "relationships": {
+        "station": {
+          "cardinality": "one",
+          "target.entity": "weather_stations",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "WEATHER_STATION_GUID"
+          ]
+        }
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 3600
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "hourly_weather": {
+      "source": {
+        "object": "dbo.HOURLY_WEATHER_MEASUREMENT",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "HOURLY_WEATHER_MEAS_GUID",
+          "description": "A unique identifier for the record.",
+          "primary-key": true
+        },
+        {
+          "name": "WEATHER_STATION_GUID",
+          "description": ""
+        },
+        {
+          "name": "WEATHER_TIMESTAMP_MSEC",
+          "description": ""
+        },
+        {
+          "name": "WEATHER_TIMESTAMP",
+          "description": ""
+        },
+        {
+          "name": "HOURLY_MEASUREMENT_TYPE_CODE",
+          "description": ""
+        },
+        {
+          "name": "HOURLY_MEASUREMENT_TYPE_DESC",
+          "description": ""
+        },
+        {
+          "name": "TEMPERATURE",
+          "description": ""
+        },
+        {
+          "name": "BAROMETRIC_PRESSURE",
+          "description": ""
+        },
+        {
+          "name": "RELATIVE_HUMIDITY",
+          "description": ""
+        },
+        {
+          "name": "PRECIPITATION",
+          "description": ""
+        },
+        {
+          "name": "WIND_SPEED",
+          "description": ""
+        },
+        {
+          "name": "WIND_DIRECTION_DEGREES",
+          "description": ""
+        },
+        {
+          "name": "FINE_FUEL_MOISTURE_CODE",
+          "description": ""
+        },
+        {
+          "name": "FIRE_WEATHER_INDEX",
+          "description": ""
+        },
+        {
+          "name": "INITIAL_SPREAD_INDEX",
+          "description": ""
+        },
+        {
+          "name": "OBSERVATION_VALID_IND",
+          "description": ""
+        },
+        {
+          "name": "OBSERVATION_VALID_COMMENT",
+          "description": ""
+        },
+        {
+          "name": "ADJUSTED_WIND_SPEED",
+          "description": ""
+        },
+        {
+          "name": "BATTERY_SUPPLY_CURRENT",
+          "description": ""
+        },
+        {
+          "name": "BATTERY_SUPPLY_VOLTAGE",
+          "description": ""
+        },
+        {
+          "name": "FUEL_STICK_MOISTURE",
+          "description": ""
+        },
+        {
+          "name": "FUEL_STICK_TEMPERATURE",
+          "description": ""
+        },
+        {
+          "name": "PRECIP_PLUVIO_1_STATUS",
+          "description": ""
+        },
+        {
+          "name": "PRECIP_PLUVIO_1_TOTAL",
+          "description": ""
+        },
+        {
+          "name": "PRECIP_PLUVIO_2_STATUS",
+          "description": ""
+        },
+        {
+          "name": "PRECIP_PLUVIO_2_TOTAL",
+          "description": ""
+        },
+        {
+          "name": "PRECIP_RIT_STATUS",
+          "description": ""
+        },
+        {
+          "name": "PRECIP_RIT_TOTAL",
+          "description": ""
+        },
+        {
+          "name": "PRECIP_RGT",
+          "description": ""
+        },
+        {
+          "name": "PRECIP_PC2_STATUS",
+          "description": ""
+        },
+        {
+          "name": "PRECIP_PC2_TOTAL",
+          "description": ""
+        },
+        {
+          "name": "RELATIVE_HUMIDITY_HOURLY_AVG",
+          "description": ""
+        },
+        {
+          "name": "RN_1_PLUVIO_1",
+          "description": ""
+        },
+        {
+          "name": "RN_1_PLUVIO_2",
+          "description": ""
+        },
+        {
+          "name": "RN_1_RIT",
+          "description": ""
+        },
+        {
+          "name": "RN_1_PC2",
+          "description": ""
+        },
+        {
+          "name": "SNOW_DEPTH",
+          "description": ""
+        },
+        {
+          "name": "SNOW_DEPTH_QUALITY",
+          "description": ""
+        },
+        {
+          "name": "SOLAR_RADIATION_CM3",
+          "description": ""
+        },
+        {
+          "name": "SOLAR_RADIATION_LICOR",
+          "description": ""
+        },
+        {
+          "name": "SOLAR_SUPPLY_CURRENT",
+          "description": ""
+        },
+        {
+          "name": "SOLAR_SUPPLY_VOLTAGE",
+          "description": ""
+        },
+        {
+          "name": "TEMPERATURE_HOURLY_AVERAGE",
+          "description": ""
+        },
+        {
+          "name": "WIND_SPEED_HOURLY_AVERAGE",
+          "description": ""
+        },
+        {
+          "name": "WIND_DIRECTION_HOURLY_AVERAGE",
+          "description": ""
+        },
+        {
+          "name": "WIND_SPEED_MAX_10_MINUTE",
+          "description": ""
+        },
+        {
+          "name": "WIND_GUST",
+          "description": ""
+        },
+        {
+          "name": "SOIL_MOISTURE_PROBE_1",
+          "description": ""
+        },
+        {
+          "name": "SOIL_MOISTURE_PROBE_2",
+          "description": ""
+        },
+        {
+          "name": "SOIL_MOISTURE_PROBE_3",
+          "description": ""
+        },
+        {
+          "name": "SOIL_TEMPERATURE_PROBE_1",
+          "description": ""
+        },
+        {
+          "name": "SOIL_TEMPERATURE_PROBE_2",
+          "description": ""
+        },
+        {
+          "name": "SOIL_TEMPERATURE_PROBE_3",
+          "description": ""
+        },
+        {
+          "name": "ARCHIVED_IND",
+          "description": ""
+        },
+        {
+          "name": "LAST_UPDATED_TIMESTAMP_MSEC",
+          "description": ""
+        },
+        {
+          "name": "LAST_UPDATED_TIMESTAMP",
+          "description": ""
+        },
+        {
+          "name": "CREATE_USER",
+          "description": ""
+        },
+        {
+          "name": "CREATE_DATE",
+          "description": ""
+        },
+        {
+          "name": "UPDATE_USER",
+          "description": ""
+        },
+        {
+          "name": "UPDATE_DATE",
+          "description": ""
+        }
+      ],
+      "relationships": {
+        "station": {
+          "cardinality": "one",
+          "target.entity": "weather_stations",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "WEATHER_STATION_GUID"
+          ]
+        }
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 3600
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "weather_stations": {
+      "source": {
+        "object": "dbo.WEATHER_STATION",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "WEATHER_STATION_GUID",
+          "description": "A unique identifier for the record.",
+          "primary-key": true
+        },
+        {
+          "name": "STATION_STATUS_CODE",
+          "description": ""
+        },
+        {
+          "name": "STATION_STATUS_DESC",
+          "description": ""
+        },
+        {
+          "name": "STATION_CODE",
+          "description": ""
+        },
+        {
+          "name": "STATION_ACRONYM",
+          "description": ""
+        },
+        {
+          "name": "STATION_NAME",
+          "description": ""
+        },
+        {
+          "name": "STATION_COMMENT",
+          "description": ""
+        },
+        {
+          "name": "CRD_STATION_NAME",
+          "description": ""
+        },
+        {
+          "name": "STATION_RANKING",
+          "description": ""
+        },
+        {
+          "name": "STATION_ACCESS_TYPE_CODE",
+          "description": ""
+        },
+        {
+          "name": "STATION_ACCESS_TYPE_DESC",
+          "description": ""
+        },
+        {
+          "name": "SITE_TYPE_CODE",
+          "description": ""
+        },
+        {
+          "name": "SITE_TYPE_DESC",
+          "description": ""
+        },
+        {
+          "name": "INFLUENCING_ASPECT_CODE",
+          "description": ""
+        },
+        {
+          "name": "INFLUENCING_ASPECT_DESC",
+          "description": ""
+        },
+        {
+          "name": "WEATHER_STATION_OWNER_GUID",
+          "description": ""
+        },
+        {
+          "name": "OWNER_NAME",
+          "description": ""
+        },
+        {
+          "name": "OWNER_DISPLAY_NAME",
+          "description": ""
+        },
+        {
+          "name": "OWNER_COMMENT",
+          "description": ""
+        },
+        {
+          "name": "DATA_LOGGER_TYPE_CODE",
+          "description": ""
+        },
+        {
+          "name": "DATA_LOGGER_TYPE_DESC",
+          "description": ""
+        },
+        {
+          "name": "WEATHER_ZONE",
+          "description": ""
+        },
+        {
+          "name": "WEATHER_ZONE_DESC",
+          "description": ""
+        },
+        {
+          "name": "DANGER_REGION",
+          "description": ""
+        },
+        {
+          "name": "STATION_ACCESS_DESCRIPTION",
+          "description": ""
+        },
+        {
+          "name": "FIRE_CENTRE_ORG_UNIT_IDENT",
+          "description": ""
+        },
+        {
+          "name": "FIRE_CENTRE",
+          "description": ""
+        },
+        {
+          "name": "ZONE_ORG_UNIT_IDENTIFIER",
+          "description": ""
+        },
+        {
+          "name": "FIRE_ZONE",
+          "description": ""
+        },
+        {
+          "name": "DATA_SOURCE",
+          "description": ""
+        },
+        {
+          "name": "INSTALLATION_TIMESTAMP_MSEC",
+          "description": ""
+        },
+        {
+          "name": "DECOMMISSION_TIMESTAMP_MSEC",
+          "description": ""
+        },
+        {
+          "name": "HOURLY_IND",
+          "description": ""
+        },
+        {
+          "name": "OVER_WINTER_PRECIP_ADJ_IND",
+          "description": ""
+        },
+        {
+          "name": "PLUVIO_SNOW_GUAGE_IND",
+          "description": ""
+        },
+        {
+          "name": "AUTO_UPDATE_LAT_LON_IND",
+          "description": ""
+        },
+        {
+          "name": "LATITUDE",
+          "description": ""
+        },
+        {
+          "name": "LONGITUDE",
+          "description": ""
+        },
+        {
+          "name": "ELEVATION_M",
+          "description": ""
+        },
+        {
+          "name": "INFLUENCING_SLOPE",
+          "description": ""
+        },
+        {
+          "name": "SURFACE_TYPE_CODE",
+          "description": ""
+        },
+        {
+          "name": "SURFACE_TYPE_DESC",
+          "description": ""
+        },
+        {
+          "name": "WINDSPEED_ADJUSTMENT_HEIGHT",
+          "description": ""
+        },
+        {
+          "name": "WINDSPEED_ADJUSTMENT_ROUGHNESS",
+          "description": ""
+        },
+        {
+          "name": "ECCC_FILE_BASE_URL_TEMPLATE",
+          "description": ""
+        },
+        {
+          "name": "LAST_PROCESSED_SOURCE_TIME",
+          "description": ""
+        },
+        {
+          "name": "LAST_UPDATED_TIMESTAMP_MSEC",
+          "description": ""
+        },
+        {
+          "name": "CREATE_USER",
+          "description": ""
+        },
+        {
+          "name": "CREATE_DATE",
+          "description": ""
+        },
+        {
+          "name": "UPDATE_USER",
+          "description": ""
+        },
+        {
+          "name": "UPDATE_DATE",
+          "description": ""
+        }
+      ],
+      "relationships": {
+        "daily_weather": {
+          "cardinality": "many",
+          "target.entity": "daily_weather",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "WEATHER_STATION_GUID"
+          ]
+        },
+        "hourly_weather": {
+          "cardinality": "many",
+          "target.entity": "hourly_weather",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "WEATHER_STATION_GUID"
+          ]
+        }
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "station_indices_period": {
+      "source": {
+        "object": "dbo.STATION_INDICES_PERIOD",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "STATION_INDICES_PERIOD_GUID",
+          "description": "",
+          "primary-key": true
+        },
+        {
+          "name": "WEATHER_STATION_GUID",
+          "description": ""
+        },
+        {
+          "name": "PERIOD_START_DATE",
+          "description": ""
+        },
+        {
+          "name": "PERIOD_END_DATE",
+          "description": ""
+        },
+        {
+          "name": "ACTIVE_IND",
+          "description": ""
+        },
+        {
+          "name": "OVER_WINTER_PRECIPITATION",
+          "description": ""
+        },
+        {
+          "name": "FINE_FUEL_MOISTURE_CODE",
+          "description": ""
+        },
+        {
+          "name": "DROUGHT_CODE",
+          "description": ""
+        },
+        {
+          "name": "DUFF_MOISTURE_CODE",
+          "description": ""
+        },
+        {
+          "name": "CREATE_USER",
+          "description": ""
+        },
+        {
+          "name": "CREATE_DATE",
+          "description": ""
+        },
+        {
+          "name": "UPDATE_USER",
+          "description": ""
+        },
+        {
+          "name": "UPDATE_DATE",
+          "description": ""
+        }
+      ],
+      "relationships": {
+        "station": {
+          "cardinality": "one",
+          "target.entity": "weather_stations",
+          "source.fields": [
+            "WEATHER_STATION_GUID"
+          ],
+          "target.fields": [
+            "WEATHER_STATION_GUID"
+          ]
+        }
+      },
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 3600
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "daily_measurement_type_codes": {
+      "source": {
+        "object": "dbo.DAILY_MEASUREMENT_TYPE_CODE",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "DAILY_MEASUREMENT_TYPE_CODE",
+          "description": "",
+          "primary-key": true
+        },
+        {
+          "name": "DESCRIPTION",
+          "description": ""
+        },
+        {
+          "name": "DISPLAY_ORDER",
+          "description": ""
+        },
+        {
+          "name": "EFFECTIVE_DATE",
+          "description": ""
+        },
+        {
+          "name": "EXPIRY_DATE",
+          "description": ""
+        },
+        {
+          "name": "CREATE_USER",
+          "description": ""
+        },
+        {
+          "name": "CREATE_DATE",
+          "description": ""
+        },
+        {
+          "name": "UPDATE_USER",
+          "description": ""
+        },
+        {
+          "name": "UPDATE_DATE",
+          "description": ""
+        }
+      ],
+      "cache": {
+        "enabled": true,
+        "ttl-seconds": 86400
+      },
+      "permissions": [
+        {
+          "actions": [
+            "read"
+          ],
+          "role": "anonymous"
+        }
+      ]
+    }
+  }
 }
