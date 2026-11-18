@@ -226,9 +226,12 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
                 return this.downloadData( res?.email )
             } )
+            .then( () => {
+                this.snackbarUtilService.successful( "We're preparing your download. We'll email you a link when it's ready" )
+            } )
     }
 
-    downloadData( email?: string ) {
+    downloadData( email?: string ): Promise<void> {
         this.startLoading()
 
         let daily: string[] = []
@@ -240,7 +243,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
         let metadata: string[] = []
         if ( this.filter.metadataColumns.length > 0 ) metadata = this.metadataColumns.map( c => c.code )
 
-        this.datamartGraphqlApiService.downloadWeatherData( 
+        return this.datamartGraphqlApiService.downloadWeatherData( 
             this.filter.startDate!, 
             this.filter.endDate!, 
             this.selectedWeatherStationsService.selectedStations.map( s => s.properties.STATION_CODE ),
@@ -252,6 +255,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
             .catch( err => {
                 console.warn( JSON.stringify( err, null, '  ' ) )
                 this.snackbarUtilService.error( GENERIC_FAILURE )
+                throw err
             } )
             .finally( () => {
                 this.stopLoading()
