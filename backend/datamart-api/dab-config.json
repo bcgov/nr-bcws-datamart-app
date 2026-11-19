@@ -832,7 +832,7 @@
       },
       "cache": {
         "enabled": true,
-        "ttl-seconds": 3600
+        "ttl-seconds": 7200
       },
       "permissions": [
         {
