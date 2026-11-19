@@ -24,7 +24,7 @@ export class DialogService {
         >( DisclaimerDialogComponent, data, {
             width: '600px',
             maxWidth: '95vw',
-            maxHeight: '95vh',
+            maxHeight: '85vh',
         } )
     }   
 

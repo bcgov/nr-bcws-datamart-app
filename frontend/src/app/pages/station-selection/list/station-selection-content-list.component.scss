@@ -91,6 +91,17 @@ $color-hover-background-color: #d7d7d7;
     }
 }
 
+// On mobile the list expands to its full height and the page scrolls instead
+:host-context( .nrcl-device-mobile ) {
+    height: auto;
+    overflow: visible;
+
+    .list {
+        flex-grow: 0;
+        overflow-y: visible;
+    }
+}
+
 ::ng-deep .cdk-overlay-container {
     .station-sorting-menu {
         max-width: 180px;
