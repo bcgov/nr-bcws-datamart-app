@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 import { StationSelectionContentMapInformationPanelComponent } from './information-panel/station-selection-content-map-information-panel.component';
 import { SelectedWeatherStationsService } from '../../../services/selected-weather-stations.service';
 import { WeatherStationFeature, WeatherStationService } from '../../../services/weather-station.service';
+import { loadFailureMessage } from '../../../util';
 
 declare const SMK: any;
 
@@ -131,7 +132,10 @@ export class StationSelectionContentMapComponent implements AfterViewInit, OnDes
                     }
                 } )
             } )
-            .catch( console.warn )
+            .catch( err => {
+                console.warn( 'map initialization failed', err )
+                this.snackbarUtilService.error( loadFailureMessage( [ 'map' ] ) )
+            } )
     }
 
     ngOnDestroy(): void {
