@@ -40,11 +40,17 @@ export class DataMartMarkdownComponent implements OnInit {
         let base = new URL( document.baseURI )
         if ( url.origin != location.origin || !url.pathname.startsWith( base.pathname ) ) return
 
+        // only links to the app's own pages; other paths on this host (e.g. the REST API's
+        // /api/openapi) aren't app routes and must be left to the browser
+        let path = url.pathname.substring( base.pathname.length ).replace( /\/$/, '' )
+        let isAppRoute = this.router.config.some( r => r.path != '**' && r.path == path )
+        if ( !isAppRoute ) return
+
         ev.preventDefault()
 
         // same-page anchor links (e.g. "On this page") go through the router too, so they get
         // a history entry whose scroll position can be restored with the back button
-        let appUrl = '/' + url.pathname.substring( base.pathname.length ) + url.search
+        let appUrl = '/' + path + url.search
         let fragment = decodeURIComponent( url.hash.substring( 1 ) )
 
         this.router.navigateByUrl( appUrl + url.hash )
