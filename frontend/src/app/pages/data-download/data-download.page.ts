@@ -50,7 +50,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
     readonly MAX_TOTAL_ROW_COUNT = this.applicationStateService.environment.MAX_DOWNLOAD_ROW_COUNT
     formatNumber = formatNumber
-    
+
     @ViewChild( 'list' ) downloadList?: DownloadList
 
     filter: Filter = initialFilter( {
@@ -253,9 +253,9 @@ export class DataDownloadPage implements OnInit, OnDestroy {
                 if ( res == 'cancel' ) return
 
                 return this.downloadData( res?.email )
-            } )
-            .then( () => {
-                this.snackbarUtilService.successful( "We're preparing your download. We'll email you a link when it's ready" )
+                    .then( () => {
+                        this.snackbarUtilService.successful( "We're preparing your download. We'll email you a link when it's ready" )
+                    } )
             } )
     }
 
