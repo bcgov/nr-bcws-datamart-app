@@ -94,17 +94,30 @@ export function fetchAllPages<RESULT>( url: string, accum: RESULT[], maxPages: n
         } )
 }
 
+// statuses where a quick retry has a reasonable chance of succeeding. Not 504: the gateway has
+// already waited its full timeout, so retrying just multiplies how long the user waits for the failure.
+const RETRYABLE_STATUS = [ 429, 502, 503 ]
+
+class HttpStatusError extends Error {
+    constructor( public status: number, statusText: string ) {
+        super( `${ status } ${ statusText }` )
+    }
+}
+
 export function fetchWithRetry( url: string, description: string, retries: number, delay = 1000 ): Promise<Response> {
     return fetch( url )
         .then( res => {
             if ( !res.ok ) {
-                throw Error( res.statusText )
+                throw new HttpStatusError( res.status, res.statusText )
             }
 
             return res
         } )
         .catch( err => {
-            if ( retries > 0 ) {
+            // network errors (fetch rejects with TypeError) and retryable statuses are retried
+            let retryable = !( err instanceof HttpStatusError ) || RETRYABLE_STATUS.includes( err.status )
+
+            if ( retryable && retries > 0 ) {
                 console.warn( `${ description } failed: ${ err }, retrying` )
 
                 return new Promise( res => { setTimeout( res, delay ) } )
