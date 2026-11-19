@@ -13,7 +13,7 @@ import { DownloadList } from './list/data-download-list.base';
 import { ApplicationStateService } from '../../services/application-state.service';
 import { Subscription } from 'rxjs';
 import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
-import { GENERIC_FAILURE } from '../../util';
+import { GENERIC_FAILURE, loadFailureMessage } from '../../util';
 import { DialogService } from '../../services/dialog.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -126,6 +126,8 @@ export class DataDownloadPage implements OnInit, OnDestroy {
             this.filter = this.applicationStateService.downloadFilterState
         }
 
+        let stationsFailed = false
+
         this.trackLoading( Promise.resolve()
             .then( () => {
                 let param = this.activatedRoute.snapshot.queryParamMap
@@ -149,6 +151,10 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
                 let stationCodes = param.get( 'w' )!.split( ',' ).map( v => Number( v) )
                 return this.weatherStationService.getStationsByCode( stationCodes )
+                    .catch( err => {
+                        stationsFailed = true
+                        throw err
+                    } )
                     .then( ( stations ) => {
                         this.selectedWeatherStationsService.clearStations()
                         this.selectedWeatherStationsService.addStations( stations )
@@ -160,8 +166,8 @@ export class DataDownloadPage implements OnInit, OnDestroy {
                 } )
             } )
             .catch( err => {
-                console.warn( JSON.stringify( err, null, '  ' ) )
-                this.snackbarUtilService.error( GENERIC_FAILURE )
+                console.warn( 'data download startup failed', err )
+                this.snackbarUtilService.error( stationsFailed ? loadFailureMessage( [ 'selected weather stations' ] ) : GENERIC_FAILURE )
             } ) )
     }
 

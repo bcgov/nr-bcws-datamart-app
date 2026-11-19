@@ -2,9 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Filter } from '../pages/station-selection/filters/station-selection-filters.component';
 import { DatamartRestApiService } from './datamart-rest-api.service';
-import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 import { WeatherStation } from '../api-types';
-import { GENERIC_FAILURE } from '../util';
 import { CodeTableService } from './code-table.service';
 
 export type GeoJsonPoint<P> = {
@@ -23,7 +21,6 @@ export type WeatherStationFeature = GeoJsonPoint<WeatherStation>
 })
 export class WeatherStationService {
     datamartRestApiService = inject( DatamartRestApiService )
-    snackbarUtilService = inject( SnackbarUtilService )
     codeTableService = inject( CodeTableService )
 
     private readonly stationsSubject = new BehaviorSubject<any[]>([]);
@@ -51,9 +48,9 @@ export class WeatherStationService {
                 this.stationsSubject.next( stations )
                 this._stations = stations
             } )
+            // the pages that need stations report the failure to the user
             .catch( err => {
-                console.warn( JSON.stringify( err, null, '  ' ) )
-                this.snackbarUtilService.error( GENERIC_FAILURE )
+                console.warn( 'loading weather stations failed', err )
             } )
     }
 

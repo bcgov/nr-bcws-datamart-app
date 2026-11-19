@@ -6,7 +6,8 @@ import {
     OnInit
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { ButtonComponent, DesktopViewDirective, DeviceViewComponent, IconComponent, MobileViewDirective, TabComponent, TabContentDirective, TabGroupComponent, TabLabelDirective } from '@bcgov/nr-ngx-component-lib';
+import { ButtonComponent, DesktopViewDirective, DeviceViewComponent, IconComponent, MobileViewDirective, SnackbarUtilService, TabComponent, TabContentDirective, TabGroupComponent, TabLabelDirective } from '@bcgov/nr-ngx-component-lib';
+import { loadFailureMessage } from '../../util';
 import { ROUTE } from '../../bcws-datamart-app.routes';
 import { DataMartHeaderComponent } from '../../components/datamart-header/datamart-header.component';
 import { DialogService } from '../../services/dialog.service';
@@ -45,6 +46,7 @@ export class StationSelectionPage implements OnInit {
     dialogService = inject(DialogService)
     router = inject(Router)
     codeTableService = inject(CodeTableService)
+    snackbarUtilService = inject(SnackbarUtilService)
 
     loadingCount = 0
 
@@ -86,9 +88,24 @@ export class StationSelectionPage implements OnInit {
             this.changeDetectorRef.detectChanges()
         }, 1000);
 
-        this.trackLoading( this.weatherStationService.filterStations(emptyFilter()) )
-        this.trackLoading( this.codeTableService.FIRE_CENTRES.isLoading )
-        this.trackLoading( this.codeTableService.FIRE_ZONES.isLoading )
+        // collect every startup failure into one snackbar, since a new snackbar replaces the previous one
+        let failed: string[] = []
+        let load = ( resource: string, promise: Promise<unknown> ) => {
+            return this.trackLoading( promise )
+                .catch( err => {
+                    console.warn( `loading ${ resource } failed`, err )
+                    failed.push( resource )
+                } )
+        }
+
+        Promise.all( [
+            load( 'weather stations', this.weatherStationService.filterStations( emptyFilter() ) ),
+            load( 'fire centres', this.codeTableService.FIRE_CENTRES.isLoading ),
+            load( 'fire zones', this.codeTableService.FIRE_ZONES.isLoading ),
+        ] )
+            .then( () => {
+                if ( failed.length > 0 ) this.snackbarUtilService.error( loadFailureMessage( failed ) )
+            } )
     }
 
     onViewDataClick() {
