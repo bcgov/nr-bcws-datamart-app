@@ -19,6 +19,12 @@ import { AboutRestWeatherStationsComponent } from './weather-stations/about-rest
 } )
 export class AboutRestPage {
     applicationStateService = inject( ApplicationStateService )
+
+    // REST_BASE_URL may be relative to the app's host (e.g. 'api' in prod), so resolve it
+    // against the document's base URL to show users a full, usable URL
+    readonly restBaseUrl = new URL( this.applicationStateService.environment.REST_BASE_URL, document.baseURI ).href.replace( /\/$/, '' )
+
+    readonly openApiUrl = `${ this.restBaseUrl }/openapi`
 }
 
 
