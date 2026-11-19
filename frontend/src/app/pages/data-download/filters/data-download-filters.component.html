@@ -1,6 +1,7 @@
 <nrcl-filters-panel [showClear]="false">
     <nrcl-filter-date
         label="Start date"
+        [displayFormat]="dateDisplayFormat"
         [value]="filter.startDate"
         (valueChange)="onStartDateChange( $event )"
         [max]="endDateLess1"
@@ -9,6 +10,7 @@
 
     <nrcl-filter-date
         label="End date"
+        [displayFormat]="dateDisplayFormat"
         [value]="filter.endDate"
         (valueChange)="onEndDateChange( $event )"
         [min]="startDatePlus1"
