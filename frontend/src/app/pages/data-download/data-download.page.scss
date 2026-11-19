@@ -92,6 +92,48 @@
     }
 }
 
+// On mobile the list expands to its full height and the page scrolls as a whole
+:host-context( .nrcl-device-mobile ) {
+    height: auto;
+
+    .tabs-container {
+        flex-shrink: 0;
+        height: auto;
+
+        .nrcl-tab-group {
+            height: auto;
+
+            ::ng-deep .mat-mdc-tab-group {
+                height: auto;
+
+                // keep the tabs pinned to the top of the scrolling area
+                > .mat-mdc-tab-header {
+                    position: sticky;
+                    top: 0;
+                    z-index: 1001; // above the table's sticky header row
+                    background-color: white;
+                }
+
+                .mat-mdc-tab-body-wrapper {
+                    height: auto;
+
+                    .mat-mdc-tab-body-content {
+                        height: auto;
+                        // wide tables still scroll sideways
+                        overflow-x: auto;
+                        overflow-y: hidden;
+                    }
+                }
+            }
+        }
+    }
+}
+
 ::ng-deep .nrcl-application main:has( data-download-page ) {
     overflow: hidden !important;
+}
+
+// ...except on mobile, where the page scrolls instead of the list
+::ng-deep .nrcl-device-mobile .nrcl-application main:has( data-download-page ) {
+    overflow: auto !important;
 }

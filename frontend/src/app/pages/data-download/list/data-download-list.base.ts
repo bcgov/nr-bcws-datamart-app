@@ -1,15 +1,18 @@
 import {
+    AfterViewInit,
     ChangeDetectorRef,
     Directive,
+    ElementRef,
     EventEmitter,
     inject,
     Input,
     OnChanges,
+    OnDestroy,
     OnInit,
     Output,
     SimpleChanges
 } from '@angular/core';
-import { SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
+import { ConfigurationService, SnackbarUtilService } from '@bcgov/nr-ngx-component-lib';
 import { CodeDescriptionHeading, CodeTableService } from '../../../services/code-table.service';
 import { DatamartGraphqlApiService, Result } from '../../../services/datamart-graphql-api.service';
 import { DatamartRestApiService } from '../../../services/datamart-rest-api.service';
@@ -22,12 +25,14 @@ export interface DownloadList {
 }
 
 @Directive({})
-export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList, OnInit {
+export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList, OnInit, AfterViewInit, OnDestroy {
     selectedWeatherStationsService = inject( SelectedWeatherStationsService )
     datamartRestApiService = inject( DatamartRestApiService )
     weatherStationService = inject( WeatherStationService )
     datamartGraphqlApiService = inject( DatamartGraphqlApiService )
     changeDetectorRef = inject( ChangeDetectorRef )
+    elementRef = inject( ElementRef )
+    configurationService = inject( ConfigurationService )
     snackbarUtilService = inject( SnackbarUtilService )
     codeTableService = inject( CodeTableService )
 
@@ -55,6 +60,54 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
     ngOnChanges( changes: SimpleChanges ): void {}
 
     ngOnInit(): void {
+    }
+
+    ngAfterViewInit(): void {
+        // scroll events don't bubble, so listen in the capture phase to see <main> scrolling
+        document.addEventListener( 'scroll', this.schedulePinHeader, true )
+        window.addEventListener( 'resize', this.schedulePinHeader )
+    }
+
+    ngOnDestroy(): void {
+        document.removeEventListener( 'scroll', this.schedulePinHeader, true )
+        window.removeEventListener( 'resize', this.schedulePinHeader )
+        cancelAnimationFrame( this.pinHeaderFrame )
+    }
+
+    private pinHeaderFrame = 0
+
+    private schedulePinHeader = () => {
+        if ( this.pinHeaderFrame ) return
+
+        this.pinHeaderFrame = requestAnimationFrame( () => {
+            this.pinHeaderFrame = 0
+            this.pinHeader()
+        } )
+    }
+
+    // On mobile the whole page scrolls, but the table sits inside a horizontally scrolling
+    // container, so CSS sticky can't pin its header row to the screen. Instead, shift the
+    // header row down to sit just below the (sticky) tab header. It stays inside the
+    // horizontal scroller, so it still scrolls sideways with the columns.
+    private pinHeader() {
+        let host = this.elementRef.nativeElement as HTMLElement
+        let header = host.querySelector<HTMLElement>( 'mat-header-row' )
+        let table = host.querySelector<HTMLElement>( 'mat-table' )
+        if ( !header || !table ) return
+
+        let offset = 0
+
+        if ( this.configurationService.configuration.displayMode == 'mobile' ) {
+            let tabHeader = host.closest( '.mat-mdc-tab-group' )?.querySelector( ':scope > .mat-mdc-tab-header' )
+            let pinTop = tabHeader?.getBoundingClientRect().bottom ?? 0
+            let tableRect = table.getBoundingClientRect()
+
+            // pinned once the table's top passes under the tab header, until the table's bottom reaches it
+            offset = Math.max( 0, Math.min( pinTop - tableRect.top, tableRect.height - header.offsetHeight ) )
+        }
+
+        header.style.transform = offset > 0 ? `translateY( ${ offset }px )` : ''
+        header.classList.toggle( 'pinned', offset > 0 )
     }
 
     refreshList(): Promise<void> {
@@ -98,6 +151,9 @@ export abstract class DataDownloadListBase<R> implements OnChanges, DownloadList
                 this.sortRows()
 
                 this.changeDetectorRef.detectChanges()
+
+                // the header row is re-rendered with new data, so re-apply its pinned position
+                this.schedulePinHeader()
             } )
             .catch( err => {
                 console.warn( JSON.stringify(err, null, '  ') )
