@@ -5,6 +5,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ButtonComponent } from '@bcgov/nr-ngx-component-lib';
 import { SelectedWeatherStationsService } from '../../../services/selected-weather-stations.service';
 import { WeatherStationFeature, WeatherStationService } from '../../../services/weather-station.service';
+import { formatNumber } from '../../../util';
 
 type SortOption = 'nameAsc' | 'nameDesc' | 'codeAsc' | 'codeDesc';
 
@@ -41,14 +42,17 @@ export class StationSelectionContentListComponent implements OnInit {
     }
 
     get listDescription() {
-        let t = this.weatherStationService.totalCount
-        let f = this.weatherStationService.filteredCount
+        let t = formatNumber( this.weatherStationService.totalCount )
+        let f = formatNumber( this.weatherStationService.filteredCount )
 
-        if ( t == f ) {
-            return `Showing all ${ t } stations`
+        if ( t == '0' ) {
+            return `No stations`
+        }
+        else if ( t == f ) {
+            return `Showing ${ t } stations`
         }
         else {
-            return `Showing ${ f } station${ f == 1 ? '' : 's' } out of a total of ${ t }`
+            return `Showing ${ f } of ${ t } stations`
         }
     }
     

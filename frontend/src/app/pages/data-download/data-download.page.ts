@@ -13,7 +13,7 @@ import { DownloadList } from './list/data-download-list.base';
 import { ApplicationStateService } from '../../services/application-state.service';
 import { Subscription } from 'rxjs';
 import { DatamartGraphqlApiService } from '../../services/datamart-graphql-api.service';
-import { GENERIC_FAILURE, loadFailureMessage } from '../../util';
+import { formatNumber, GENERIC_FAILURE, loadFailureMessage } from '../../util';
 import { DialogService } from '../../services/dialog.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -49,7 +49,8 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     dialogService = inject(DialogService)
 
     readonly MAX_TOTAL_ROW_COUNT = this.applicationStateService.environment.MAX_DOWNLOAD_ROW_COUNT
-
+    formatNumber = formatNumber
+    
     @ViewChild( 'list' ) downloadList?: DownloadList
 
     filter: Filter = initialFilter( {
@@ -356,25 +357,15 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
     get dailyTabHeader() {
         let c = this.dailyRowCount
-        return `Daily weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : this.formatNumber(c) + ' records' })`
+        return `Daily weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : formatNumber(c) + ' records' })`
     }
 
     get hourlyTabHeader() {
         let c = this.hourlyRowCount
-        return `Hourly weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : this.formatNumber(c) + ' records' })`
+        return `Hourly weather data (${ c == 0 ? 'no records' : c == 1 ? '1 record' : formatNumber(c) + ' records' })`
     }
 
     onSelectedTabChange( ev:any ) {
         this.refreshListDelayed()
-    }
-
-    formatNumber( v: number ): string {
-        let sv = String( v )
-        let c = Math.floor( (sv.length - 1) / 3 )         
-        for ( let i = c; i > 0; i -= 1 ) {
-            let st = sv.length - i * 3 
-            sv = sv.substring( 0, st ) + ',' + sv.substring( st )
-        }
-        return sv
     }
 }

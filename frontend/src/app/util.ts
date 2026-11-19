@@ -30,3 +30,12 @@ export function formatTableTime( val: Moment|string|undefined ): string|undefine
     return moment( val ).format( 'HH:mm' )
 } 
 
+export function formatNumber( v: number ): string {
+    let sv = String( v )
+    let c = Math.floor( (sv.length - 1) / 3 )         
+    for ( let i = c; i > 0; i -= 1 ) {
+        let st = sv.length - i * 3 
+        sv = sv.substring( 0, st ) + ',' + sv.substring( st )
+    }
+    return sv
+}
