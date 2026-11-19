@@ -5,6 +5,7 @@ import { filter, Subscription } from 'rxjs';
 import { ROUTE } from './bcws-datamart-app.routes';
 import { DialogService } from './services/dialog.service';
 import { WeatherStationService } from './services/weather-station.service';
+import { ScrollRestorationService } from './services/scroll-restoration.service';
 import { DatamartRestApiService } from './services/datamart-rest-api.service';
 import { ApplicationStateService } from './services/application-state.service';
 import { CodeTableService } from './services/code-table.service';
@@ -40,6 +41,7 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
     dialogService = inject( DialogService )
     configurationService = inject( ConfigurationService )
     weatherStationService = inject(WeatherStationService)
+    scrollRestorationService = inject(ScrollRestorationService)
     datamartRestApiService = inject(DatamartRestApiService)
     applicationStateService = inject(ApplicationStateService)
     iconService = inject(IconService)
@@ -115,6 +117,7 @@ export class BcwsDatamartApp implements OnInit, OnDestroy {
             } )
 
         this.weatherStationService.initialize()
+        this.scrollRestorationService.initialize()
         // this.datamartRestApiService.getFireCentres()
 
         this.showDisclaimerDialog()
