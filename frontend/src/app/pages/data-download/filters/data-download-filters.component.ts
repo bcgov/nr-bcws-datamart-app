@@ -7,7 +7,7 @@ import {
     Output
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { DATE_FORMATS, FilterContainerComponent, FilterDateComponent, FilterSelectComponent, FiltersPanelComponent, IconComponent } from "@bcgov/nr-ngx-component-lib";
+import { ConfigurationService, DATE_FORMATS, FilterContainerComponent, FilterDateComponent, FilterSelectComponent, FiltersPanelComponent, IconComponent } from "@bcgov/nr-ngx-component-lib";
 import moment from "moment";
 import { CodeTableService } from "../../../services/code-table.service";
 import { DialogService } from "../../../services/dialog.service";
@@ -59,6 +59,7 @@ export function initialFilter( init: Partial<Filter> ): Filter {
 export class DataDownloadFiltersComponent {
     codeTableService = inject(CodeTableService)
     dialogService = inject(DialogService)
+    configurationService = inject(ConfigurationService)
 
     @Input() filter: Filter = emptyFilter()
     
@@ -126,12 +127,7 @@ export class DataDownloadFiltersComponent {
     }
 
     get dailyWeatherFieldCount() {
-        if ( this.filter.dailyColumns.length == 1 ) {
-            return '1 field selected'        
-        } 
-        else {
-            return this.filter.dailyColumns.length + ' fields selected'        
-        }
+        return this.fieldCount( this.filter.dailyColumns )
     }
 
     onHourlyWeatherClick() {
@@ -147,12 +143,7 @@ export class DataDownloadFiltersComponent {
     }
 
     get hourlyWeatherFieldCount() {
-        if ( this.filter.hourlyColumns.length == 1 ) {
-            return '1 field selected'        
-        } 
-        else {
-            return this.filter.hourlyColumns.length + ' fields selected'        
-        }
+        return this.fieldCount( this.filter.hourlyColumns )
     }
 
     onStationMetadataClick() {
@@ -168,11 +159,26 @@ export class DataDownloadFiltersComponent {
     }
 
     get stationMetadataFieldCount() {
-        if ( this.filter.metadataColumns.length == 1 ) {
-            return '1 field selected'        
-        } 
-        else {
-            return this.filter.metadataColumns.length + ' fields selected'        
+        return this.fieldCount( this.filter.metadataColumns )
+    }
+
+    get isMobile() {
+        return this.configurationService.configuration.displayMode == 'mobile'
+    }
+
+    // mobile has less room, so use a shorter month name
+    get dateDisplayFormat() {
+        return this.isMobile ? 'MMM DD, YYYY' : 'MMMM D, YYYY'
+    }
+
+    // mobile has less room, so drop the word "field(s)"
+    fieldCount( columns: string[] ): string {
+        let n = columns.length
+
+        if ( this.isMobile ) {
+            return `${ n } selected`
         }
+
+        return n == 1 ? '1 field selected' : `${ n } fields selected`
     }
 }
