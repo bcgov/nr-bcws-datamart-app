@@ -102,12 +102,31 @@ export class DataDownloadPage implements OnInit, OnDestroy {
         }
     }
 
+    // keeps the spinner visible until the promise settles (resolved or rejected)
+    trackLoading<T>( promise: Promise<T> ): Promise<T> {
+        this.startLoading()
+        promise
+            .catch( () => {} )
+            .finally( () => this.stopLoading() )
+        return promise
+    }
+
+    // the delay gives the tab's list component time to render before it is refreshed;
+    // the delay is tracked too, so the spinner doesn't drop out before the list starts loading
+    refreshListDelayed(): Promise<void> {
+        return this.trackLoading( new Promise<void>( resolve => {
+            setTimeout( () => {
+                ( this.downloadList?.refreshList() ?? Promise.resolve() ).finally( () => resolve() )
+            }, 1000 )
+        } ) )
+    }
+
     ngOnInit(): void {
         if ( this.applicationStateService.hasDownloadFilterState ) {
             this.filter = this.applicationStateService.downloadFilterState
         }
 
-        Promise.resolve()
+        this.trackLoading( Promise.resolve()
             .then( () => {
                 let param = this.activatedRoute.snapshot.queryParamMap
                 
@@ -140,6 +159,10 @@ export class DataDownloadPage implements OnInit, OnDestroy {
                     this.onFilterChange( this.filter )
                 } )
             } )
+            .catch( err => {
+                console.warn( JSON.stringify( err, null, '  ' ) )
+                this.snackbarUtilService.error( GENERIC_FAILURE )
+            } ) )
     }
 
     ngOnDestroy(): void {
@@ -189,9 +212,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
 
         this.changeDetectorRef.detectChanges()
 
-        setTimeout(() => {
-            this.downloadList?.refreshList()        
-        },1000)
+        this.refreshListDelayed()
 
         this.updateTotalRowCount()
     }
@@ -338,9 +359,7 @@ export class DataDownloadPage implements OnInit, OnDestroy {
     }
 
     onSelectedTabChange( ev:any ) {
-        setTimeout(() => {
-            this.downloadList?.refreshList()        
-        },1000)
+        this.refreshListDelayed()
     }
 
     formatNumber( v: number ): string {
