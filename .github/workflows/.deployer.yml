@@ -168,4 +168,4 @@ jobs:
         shell: bash
         working-directory: infra
         run: |
-          ./deploy-terraform.sh ${{ inputs.command }} -var-file=${{ vars.AZURE_ENVIRONMENT }}.tfvars
+          ./deploy-terraform.sh ${{ inputs.command }} -var-file=${{ inputs.app_env }}.tfvars
